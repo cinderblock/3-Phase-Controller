@@ -22,8 +22,6 @@ MCU = atmega32u4
 
 all: build #run
 
-UMAKER = ../uMaker/
-
 # Load local settings
 -include local.mk
 

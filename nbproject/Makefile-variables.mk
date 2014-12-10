@@ -7,21 +7,21 @@ CND_BASEDIR=`pwd`
 CND_BUILDDIR=build
 CND_DISTDIR=dist
 # Debug configuration
-CND_PLATFORM_Debug=WinAVR-Windows
-CND_ARTIFACT_DIR_Debug=dist/Debug/WinAVR-Windows
-CND_ARTIFACT_NAME_Debug=3-phase_controller_v2
-CND_ARTIFACT_PATH_Debug=dist/Debug/WinAVR-Windows/3-phase_controller_v2
-CND_PACKAGE_DIR_Debug=dist/Debug/WinAVR-Windows/package
-CND_PACKAGE_NAME_Debug=3-phasecontrollerv2.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/WinAVR-Windows/package/3-phasecontrollerv2.tar
+CND_PLATFORM_Debug=GNU_AVR-4.9.2-Windows
+CND_ARTIFACT_DIR_Debug=dist/Debug/GNU_AVR-4.9.2-Windows
+CND_ARTIFACT_NAME_Debug=3_phase_controller
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU_AVR-4.9.2-Windows/3_phase_controller
+CND_PACKAGE_DIR_Debug=dist/Debug/GNU_AVR-4.9.2-Windows/package
+CND_PACKAGE_NAME_Debug=3phasecontroller.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU_AVR-4.9.2-Windows/package/3phasecontroller.tar
 # Release configuration
-CND_PLATFORM_Release=WinAVR-Windows
-CND_ARTIFACT_DIR_Release=dist/Release/WinAVR-Windows
-CND_ARTIFACT_NAME_Release=3-phase_controller_v2
-CND_ARTIFACT_PATH_Release=dist/Release/WinAVR-Windows/3-phase_controller_v2
-CND_PACKAGE_DIR_Release=dist/Release/WinAVR-Windows/package
-CND_PACKAGE_NAME_Release=3-phasecontrollerv2.tar
-CND_PACKAGE_PATH_Release=dist/Release/WinAVR-Windows/package/3-phasecontrollerv2.tar
+CND_PLATFORM_Release=GNU_AVR-4.9.2-Windows
+CND_ARTIFACT_DIR_Release=dist/Release/GNU_AVR-4.9.2-Windows
+CND_ARTIFACT_NAME_Release=3_phase_controller
+CND_ARTIFACT_PATH_Release=dist/Release/GNU_AVR-4.9.2-Windows/3_phase_controller
+CND_PACKAGE_DIR_Release=dist/Release/GNU_AVR-4.9.2-Windows/package
+CND_PACKAGE_NAME_Release=3phasecontroller.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU_AVR-4.9.2-Windows/package/3phasecontroller.tar
 #
 # include compiler specific variables
 #
