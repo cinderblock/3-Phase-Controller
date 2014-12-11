@@ -12,10 +12,8 @@
  * 
  */
 void main() {
-    Board::LED.on();
-    
-    while(1);
-    
-    return;
+ Board::LED.on();
+
+ while(1);
 }
 
