@@ -42,6 +42,9 @@ namespace Board {
   extern IOpin AS;
   extern IOpin BS;
   extern IOpin CS;
+  extern u1 MuxA;
+  extern u1 MuxB;
+  extern u1 MuxC;
  };
 };
 
