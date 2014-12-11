@@ -15,8 +15,10 @@ CPP = main Board
 
 F_CPU = 16000000UL
 
-BLD_STD_GCC ?= c99
-BLD_STD_GXX ?= c++0x
+BLD_STD_GCC ?= c11
+BLD_STD_GXX ?= c++11
+
+TARGET = turnigy
 
 MCU = atmega32u4
 
