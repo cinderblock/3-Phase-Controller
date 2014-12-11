@@ -5,6 +5,7 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>Board.h</itemPath>
+      <itemPath>Config.h</itemPath>
       <itemPath>IOpin.h</itemPath>
       <itemPath>MLX90363.h</itemPath>
       <itemPath>SPI.h</itemPath>
@@ -51,6 +52,8 @@
       </item>
       <item path="Board.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Config.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="IOpin.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MLX90363.cpp" ex="false" tool="1" flavor2="0">
@@ -93,6 +96,8 @@
       <item path="Board.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Board.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Config.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="IOpin.h" ex="false" tool="3" flavor2="0">
       </item>
