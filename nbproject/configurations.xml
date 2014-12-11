@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>Board.h</itemPath>
       <itemPath>IOpin.h</itemPath>
+      <itemPath>MLX90363.h</itemPath>
       <itemPath>SPI.h</itemPath>
       <itemPath>basicTypes.h</itemPath>
       <itemPath>bigTypes.h</itemPath>
@@ -19,6 +20,7 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>Board.cpp</itemPath>
+      <itemPath>MLX90363.cpp</itemPath>
       <itemPath>SPI.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
@@ -50,6 +52,10 @@
       <item path="Board.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="IOpin.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MLX90363.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MLX90363.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="SPI.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -89,6 +95,10 @@
       <item path="Board.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="IOpin.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MLX90363.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MLX90363.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="SPI.cpp" ex="false" tool="1" flavor2="0">
       </item>
