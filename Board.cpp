@@ -14,34 +14,34 @@
 IOpin Board::LED        = IOpin(&PORTD, 4);
 
 //I2C
-IOpin Board::SCL        = IOpin(&PORTD, 0);
-IOpin Board::SDA        = IOpin(&PORTD, 1);
+IOpin Board::I2C::SCL        = IOpin(&PORTD, 0);
+IOpin Board::I2C::SDA        = IOpin(&PORTD, 1);
 
 //SPI
-IOpin Board::SCLK       = IOpin(&PORTB, 1);
-IOpin Board::MOSI       = IOpin(&PORTB, 2);
-IOpin Board::MISO       = IOpin(&PORTB, 3);
-IOpin Board::MagSel     = IOpin(&PORTD, 5);
+IOpin Board::SPI::SCLK       = IOpin(&PORTB, 1);
+IOpin Board::SPI::MOSI       = IOpin(&PORTB, 2);
+IOpin Board::SPI::MISO       = IOpin(&PORTB, 3);
+IOpin Board::MagSel          = IOpin(&PORTD, 5);
 
 //Input Voltage Checks
 IOpin Board::AIN0       = IOpin(&PORTE, 6);
 IOpin Board::VBATS      = IOpin(&PORTF, 5);
 
 //Fet controllers
-IOpin Board::AH         = IOpin(&PORTB, 7);
-IOpin Board::AL         = IOpin(&PORTB, 0);
-IOpin Board::BH         = IOpin(&PORTB, 6);
-IOpin Board::BL         = IOpin(&PORTF, 0);
-IOpin Board::CH         = IOpin(&PORTB, 5);
-IOpin Board::CL         = IOpin(&PORTB, 4);
+IOpin Board::DRV::AH         = IOpin(&PORTB, 7);
+IOpin Board::DRV::AL         = IOpin(&PORTB, 0);
+IOpin Board::DRV::BH         = IOpin(&PORTB, 6);
+IOpin Board::DRV::BL         = IOpin(&PORTF, 0);
+IOpin Board::DRV::CH         = IOpin(&PORTB, 5);
+IOpin Board::DRV::CL         = IOpin(&PORTB, 4);
 //Fet Voltage Dividers
-IOpin Board::AS         = IOpin(&PORTD, 6);
-IOpin Board::BS         = IOpin(&PORTF, 4);
-IOpin Board::CS         = IOpin(&PORTD, 7);
+IOpin Board::SEN::AS         = IOpin(&PORTD, 6);
+IOpin Board::SEN::BS         = IOpin(&PORTF, 4);
+IOpin Board::SEN::CS         = IOpin(&PORTD, 7);
 
 //Serial
-IOpin Board::Rx         = IOpin(&PORTD, 2);
-IOpin Board::Tx         = IOpin(&PORTD, 3);
+IOpin Board::SER::Rx         = IOpin(&PORTD, 2);
+IOpin Board::SER::Tx         = IOpin(&PORTD, 3);
 
 /*
 IOpin Board::SCK  = IOpin(&PORTB, 5);

@@ -12,32 +12,37 @@
 
 //using namespace AVR;
 
-class Board {
-public:
-    //For PWM control
-    static IOpin AL;
-    static IOpin SCLK;
-    static IOpin MOSI;
-    static IOpin MISO;
-    static IOpin CL;
-    static IOpin CH;
-    static IOpin BH;
-    static IOpin AH;
-    static IOpin SCL;
-    static IOpin SDA;
-    static IOpin Rx;
-    static IOpin Tx;
-    static IOpin LED;
-    static IOpin MagSel;
-    static IOpin AS;
-    static IOpin CS;
-    static IOpin AIN0;
-    static IOpin BL;
-    static IOpin BS;
-    static IOpin VBATS;
-    
-private:
-
+namespace Board {
+ extern IOpin LED;
+ extern IOpin VBATS;
+ extern IOpin AIN0;
+ extern IOpin MagSel;
+ namespace I2C {
+  extern IOpin SCL;
+  extern IOpin SDA;
+ };
+ namespace SPI {
+  extern IOpin SCLK;
+  extern IOpin MOSI;
+  extern IOpin MISO;
+ };
+ namespace SER {
+  extern IOpin Rx;
+  extern IOpin Tx;
+ };
+ namespace DRV {
+  extern IOpin AH;
+  extern IOpin BH;
+  extern IOpin CH;
+  extern IOpin AL;
+  extern IOpin BL;
+  extern IOpin CL;
+ };
+ namespace SEN {
+  extern IOpin AS;
+  extern IOpin BS;
+  extern IOpin CS;
+ };
 };
 
 #endif	/* BOARD_H */
