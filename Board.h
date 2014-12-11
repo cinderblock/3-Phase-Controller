@@ -42,10 +42,13 @@ namespace Board {
   extern IOpin AS;
   extern IOpin BS;
   extern IOpin CS;
-  extern u1 MuxA;
-  extern u1 MuxB;
-  extern u1 MuxC;
  };
+ namespace MUX {
+  extern u1 AS;
+  extern u1 BS;
+  extern u1 CS;
+  extern u1 VBATS;
+ }
 };
 
 #endif	/* BOARD_H */

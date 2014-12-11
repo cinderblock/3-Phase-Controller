@@ -26,6 +26,7 @@ IOpin Board::MagSel          = IOpin(&PORTD, 5);
 //Input Voltage Checks
 IOpin Board::AIN0       = IOpin(&PORTE, 6);
 IOpin Board::VBATS      = IOpin(&PORTF, 5);
+IOpin Board::MUX::VBATS = 0b000101; // ADC5
 
 //Fet controllers
 IOpin Board::DRV::AH         = IOpin(&PORTB, 7);
@@ -38,9 +39,9 @@ IOpin Board::DRV::CL         = IOpin(&PORTB, 4);
 IOpin Board::SEN::AS         = IOpin(&PORTD, 6);
 IOpin Board::SEN::BS         = IOpin(&PORTF, 4);
 IOpin Board::SEN::CS         = IOpin(&PORTD, 7);
-IOpin Board::SEN::MuxA = 0b100001; // ADC9
-IOpin Board::SEN::MuxB = 0b000100; // ADC4
-IOpin Board::SEN::MuxC = 0b100010; // ADC10
+IOpin Board::MUX::AS = 0b100001; // ADC9
+IOpin Board::MUX::BS = 0b000100; // ADC4
+IOpin Board::MUX::CS = 0b100010; // ADC10
 
 //Serial
 IOpin Board::SER::Rx         = IOpin(&PORTD, 2);
