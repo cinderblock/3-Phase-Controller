@@ -16,6 +16,8 @@ using namespace AVR::SPI;
 void SPI_STC_vect() {
  if (MLX90363::bufferPosition + 1 != MLX90363::messageLength)
   *DR = MLX90363::buffer[MLX90363::bufferPosition + 1];
+ else
+  MLX90363::SS.on();
  MLX90363::buffer[MLX90363::bufferPosition++] = *DR;
 }
 
@@ -23,8 +25,8 @@ u1 MLX90363::buffer[messageLength];
 u1 MLX90363::bufferPosition = messageLength;
 
 void MLX90363::init() {
- Board::MagSel.on();
- Board::MagSel.output();
+ SS.on();
+ SS.output();
  SR->byte = 0;
  CR->byte = 0b11010100;
  
@@ -41,6 +43,7 @@ void MLX90363::init() {
 void MLX90363::startTransmitting() {
  if (isTransmitting()) return;
  bufferPosition = 0;
+ SS.off();
  *DR = buffer[bufferPosition];
 }
  

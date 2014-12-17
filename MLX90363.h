@@ -11,6 +11,8 @@
 #include <avr/interrupt.h>
 
 #include "basicTypes.h"
+#include "IOpin.h"
+#include "Board.h"
 
 ISR(SPI_STC_vect);
 
@@ -25,6 +27,8 @@ class MLX90363 {
  static void startTransmitting();
  
  static void calcBufferCRC();
+ 
+ static constexpr IOpin &SS = Board::MagSel;
  
 public:
  static void init();
