@@ -24,6 +24,8 @@ class MLX90363 {
  
  static void startTransmitting();
  
+ static void calcBufferCRC();
+ 
 public:
  static void init();
  inline static bool isTransmitting() {return bufferPosition < messageLength;}
