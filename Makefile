@@ -8,7 +8,7 @@
 C = 
 
 # List of CPP file basenames to build
-CPP = main Board SPI
+CPP = main Board SPI MLX90363 ThreePhaseDriver
 
 # Select specific LUFA source files to compile like this
 #LUFA_SRC = LUFA/Drivers/USB/Class/Common/HIDParser.c
@@ -22,7 +22,7 @@ TARGET = turnigy
 
 MCU = atmega32u4
 
-all: build #run
+all: build-lss
 
 # Load local settings
 -include local.mk

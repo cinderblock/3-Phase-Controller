@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/Board.o \
 	${OBJECTDIR}/MLX90363.o \
 	${OBJECTDIR}/SPI.o \
+	${OBJECTDIR}/ThreePhaseDriver.o \
 	${OBJECTDIR}/main.o
 
 
@@ -79,6 +80,11 @@ ${OBJECTDIR}/SPI.o: SPI.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/SPI.o SPI.cpp
+
+${OBJECTDIR}/ThreePhaseDriver.o: ThreePhaseDriver.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ThreePhaseDriver.o ThreePhaseDriver.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
