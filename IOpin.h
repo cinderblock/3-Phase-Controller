@@ -9,7 +9,6 @@
 #define _IOPIN_H
 
 #include <avr/sfr_defs.h>
-//#include "basicTypes.h"
 #include "bitTypes.h"
 
 #define PORT(port) _MMIO_BYTE(port - 0)

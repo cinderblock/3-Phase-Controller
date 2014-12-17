@@ -8,15 +8,15 @@
 C = 
 
 # List of CPP file basenames to build
-CPP = main Board
+CPP = main Board SPI
 
 # Select specific LUFA source files to compile like this
 #LUFA_SRC = LUFA/Drivers/USB/Class/Common/HIDParser.c
 
 F_CPU = 16000000UL
 
-BLD_STD_GCC ?= c11
-BLD_STD_GXX ?= c++11
+#BLD_STD_GCC ?= c11
+#BLD_STD_GXX ?= c++11
 
 TARGET = turnigy
 

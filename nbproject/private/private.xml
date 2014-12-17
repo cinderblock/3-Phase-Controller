@@ -4,4 +4,17 @@
         <activeConfTypeElem>1</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/MLX90363.h</file>
+            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/Config.h</file>
+            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/IOpin.h</file>
+            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/main.cpp</file>
+            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/Board.cpp</file>
+            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/SPI.cpp</file>
+            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/Board.h</file>
+            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/SPI.h</file>
+        </group>
+    </open-files>
 </project-private>

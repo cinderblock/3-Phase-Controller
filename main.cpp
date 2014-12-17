@@ -8,6 +8,8 @@
 #include <util/delay.h>
 #include "Board.h"
 
+#include "SPI.h"
+
 /*
  * 
  */
