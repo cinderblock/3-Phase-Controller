@@ -11,8 +11,6 @@
 #include <avr/io.h>
 #include "bitTypes.h"
 
-#undef AVR
-
 namespace AVR {
  namespace SPI {
   typedef union {
