@@ -28,7 +28,11 @@ void MLX90363::init() {
  SS.on();
  SS.output();
  SR->byte = 0;
- CR->byte = 0b11010100;
+ CR->byte = 0b11010101; // F_CPU/16 by default
+}
+
+void MLX90363::setSPISpeed(const u1 c) {
+ CR->Divider = c;
 }
 
 void MLX90363::startTransmitting() {

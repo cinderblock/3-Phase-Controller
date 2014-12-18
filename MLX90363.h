@@ -53,6 +53,7 @@ class MLX90363 {
  
 public:
  static void init();
+ static void setSPISpeed(u1 const);
 
  inline static bool isTransmitting() {return bufferPosition < messageLength;}
 
