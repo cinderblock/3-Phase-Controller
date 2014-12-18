@@ -74,11 +74,11 @@ static const u1 cba_256_TAB[] PROGMEM = {
 };
 
 static u1 readTable(u1 const b) __attribute__((const));
-static u1 readTable(u1 const b) {
+inline static u1 readTable(u1 const b) {
  return pgm_read_byte(&cba_256_TAB[b]);
 }
 
-void MLX90363::calcBufferCRC() {
+u1 MLX90363::getBufferCRC() {
  u1 crc = 0xff;
  
  crc = readTable(buffer[0] ^ crc);
@@ -89,6 +89,6 @@ void MLX90363::calcBufferCRC() {
  crc = readTable(buffer[5] ^ crc);
  crc = readTable(buffer[6] ^ crc);
  
- buffer[7] = ~crc;
+ return ~crc;
 }
 

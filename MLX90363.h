@@ -26,7 +26,9 @@ class MLX90363 {
  
  static void startTransmitting();
  
- static void calcBufferCRC();
+ static u1 getBufferCRC();
+ inline static void fillBufferCRC() {buffer[7] = getBufferCRC();}
+ inline static bool checkBufferCRC() {return buffer[7] == getBufferCRC();}
  
  static constexpr IOpin &SS = Board::MagSel;
  
