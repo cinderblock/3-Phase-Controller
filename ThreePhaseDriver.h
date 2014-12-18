@@ -11,7 +11,7 @@
 #include "basicTypes.h"
 
 class ThreePhaseDriver {
- static u2 getPhasePWM(u1 const phase) __attribute__((const));
+ static u1 getPhasePWM(u1 const phase) __attribute__((const));
 public:
  static void init();
 
