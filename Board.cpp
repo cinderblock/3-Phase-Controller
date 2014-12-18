@@ -46,31 +46,3 @@ u1    Board::MUX::CS = 0b100010; // ADC10
 //Serial
 IOpin Board::SER::Rx         = IOpin(&PORTD, 2);
 IOpin Board::SER::Tx         = IOpin(&PORTD, 3);
-
-/*
-IOpin Board::SCK  = IOpin(&PORTB, 5);
-IOpin Board::MOSI = IOpin(&PORTB, 3);
-IOpin Board::MISO = IOpin(&PORTB, 4);
-IOpin Board::SS   = IOpin(&PORTB, 2);
-IOpin Board::Interrupt = IOpin(&PORTB, 1); //arduino mini pro D9 
-IOpin Board::LED1 = IOpin(&PORTD, 2);
-IOpin Board::LED2 = IOpin(&PORTD, 3);
-IOpin Board::PWM1 = IOpin(&PORTD, 4);
-//IOpin Board::led3 = IOpin(&PORTE, 0);
-//IOpin Board::led2 = IOpin(&PORTE, 1);
-
-// harness soldered into these header pins
-// f for front of FileBot
-IOpin Board::fButton = IOpin(&PORTD, 2); //arduino mini pro D2
-IOpin Board::fSpeed  = IOpin(&PORTD, 3); //arduino mini pro D3
-IOpin Board::fSteer  = IOpin(&PORTD, 4); //arduino mini pro D4
-
-// r for rear of FileBot
-IOpin Board::rSteer  = IOpin(&PORTD, 5); //arduino mini pro D5
-IOpin Board::rSpeed  = IOpin(&PORTD, 6); //arduino mini pro D6
-IOpin Board::rButton = IOpin(&PORTD, 7); //arduino mini pro D7
-
-                                         //arduino mini pro D8 PORTB0 is available
-
-//IOpin Board::rEncoder = IOpin(&PORTDC, 0); //arduino mini pro A0\
- */
