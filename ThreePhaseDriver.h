@@ -8,7 +8,10 @@
 #ifndef THREEPHASEDRIVER_H
 #define	THREEPHASEDRIVER_H
 
+#include "basicTypes.h"
+
 class ThreePhaseDriver {
+ static u2 getPhasePWM(u1 const phase) __attribute__((const));
 public:
  static void init();
 
