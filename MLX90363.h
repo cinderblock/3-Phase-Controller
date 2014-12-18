@@ -31,6 +31,9 @@ class MLX90363 {
  inline static bool checkBufferCRC() {return buffer[7] == getBufferCRC();}
  
  static constexpr IOpin &SS = Board::MagSel;
+ static constexpr IOpin &MISO = Board::SPI::MISO;
+ static constexpr IOpin &MOSI = Board::SPI::MOSI;
+ static constexpr IOpin &SCLK = Board::SPI::SCLK;
  
  enum class Opcode: b6 {
   // Outgoing               Incoming
@@ -65,7 +68,9 @@ public:
  static void init();
  static void setSPISpeed(u1 const);
 
- inline static bool isTransmitting() {return bufferPosition < messageLength;}
+ inline static bool isTransmitting() {return !SS.isHigh();}
+ 
+ static u1 num;
 
  static void sendMessage();
  

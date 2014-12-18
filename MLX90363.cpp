@@ -24,9 +24,17 @@ void SPI_STC_vect() {
 u1 MLX90363::buffer[messageLength];
 u1 MLX90363::bufferPosition = messageLength;
 
+u1 MLX90363::num;
+
 void MLX90363::init() {
  SS.on();
  SS.output();
+ SCLK.off();
+ SCLK.output();
+ MOSI.output();
+ // SPI hardware does this for us, but do it anyway
+ MISO.input();
+ MISO.on();
  SR->byte = 0;
  CR->byte = 0b11010101; // F_CPU/16 by default
 }

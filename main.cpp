@@ -19,6 +19,7 @@ void init() __attribute__((constructor));
 
 void init() {
  Board::LED.output();
+ Board::LED.off();
 
  // Make sure the ^SS pin is a driven output BEFORE initializing the SPI hardware.
  // The AVR's ^SS pin is really Board::DRV::AL, controlled by ThreePhaseDriver.
@@ -30,24 +31,28 @@ void init() {
  * 
  */
 void main() {
- Board::LED.on();
  
- _delay_ms(1000);
+ _delay_ms(100);
  
  sei();
  
- MLX90363::sendGET1Message(MLX90363::Marker::Alpha);
+ u1 num = 0;
  
- Board::LED.off();
- 
- while (MLX90363::isTransmitting());
+ do {
+  MLX90363::sendGET1Message(MLX90363::Marker::AlphaBeta);
+//  num = MLX90363::num;
+  
+  num =255;
+  
   Board::LED.on();
+  _delay_us(num);
+  Board::LED.off();
+  _delay_us(256-num);
+  
+  while (MLX90363::isTransmitting());
+ } while (MLX90363::handleResponse());
  
- _delay_ms(1000);
- 
- if (MLX90363::handleResponse())
- 
- Board::LED.off();
+// Board::LED.on();
 
  while(1);
 }
