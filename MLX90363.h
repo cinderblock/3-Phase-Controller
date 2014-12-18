@@ -10,7 +10,7 @@
 
 #include <avr/interrupt.h>
 
-#include "basicTypes.h"
+#include "bitTypes.h"
 #include "IOpin.h"
 #include "Board.h"
 
@@ -30,7 +30,7 @@ class MLX90363 {
  
  static constexpr IOpin &SS = Board::MagSel;
  
- enum class Opcode: u1 {
+ enum class Opcode: b6 {
   GET1 = 0x13,
   GET2 = 0x14,
   GET3 = 0x15,              Get3Ready = 0x2D,
