@@ -30,10 +30,30 @@ class MLX90363 {
  
  static constexpr IOpin &SS = Board::MagSel;
  
+ enum class Opcode: u1 {
+  GET1 = 0x13,
+  GET2 = 0x14,
+  GET3 = 0x15,              Get3Ready = 0x2D,
+  MemoryRead = 0x01,        MemoryRead_Answer = 0x02,
+  EEPROMWrite = 0x03,       EEPROMWrite_Challenge = 0x04,
+  EEChallengeAns = 0x05,    EEReadAnswer = 0x28,
+  EEReadChallenge = 0x0F,   EEPROMWrite_Status = 0x0E,
+  NOP__Challenge = 0x10,    Challenge__NOP_MISO_Packet = 0x11,
+  DiagnosticDetails = 0x16, Diagnostics_Answer = 0x17,
+  OscCounterStart = 0x18,   OscCounterStart_Acknowledge = 0x19,
+  OscCounterStop = 0x1A,    OscCounterStopAck_CounterValue = 0x1B,
+  Reboot = 0x2F,
+  Standby = 0x31,           StandbyAck = 0x32,
+                            Error_frame = 0x3D,
+                            NothingToTransmit = 0x3E,
+                            Ready_Message = 0x2C,
+ };
+ 
 public:
  static void init();
+
  inline static bool isTransmitting() {return bufferPosition < messageLength;}
- 
+
  void sendMessage();
  
 
