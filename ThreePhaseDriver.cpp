@@ -25,7 +25,7 @@ void ThreePhaseDriver::init() {
  Board::DRV::BH.output();
  Board::DRV::CH.output();
  
- // WGM = 0b0001
+ // WGM = 0b0001 (PWM Phase Correct 8-bit)
  // COM1{A,B,C} = 0b10
  
  OCR1A = 0;
@@ -56,7 +56,7 @@ static const u1 limitedSinTable[] PROGMEM = {
 };
 
 u1 ThreePhaseDriver::getPhasePWM(const u1 phase) {
-// return 255 * SIN(PI * phase * 2/3/256);
+// return 255 * SIN(PI * phase * 2/3/StepsPerPhase);
  return pgm_read_byte(&limitedSinTable[phase]);
 }
 

@@ -12,6 +12,8 @@
 
 class ThreePhaseDriver {
  static u1 getPhasePWM(u1 const phase) __attribute__((const));
+ static u2 const StepsPerPhase = 256;
+ static u2 const StepsPerCycle = StepsPerPhase * 3;
 public:
  static void init();
 
