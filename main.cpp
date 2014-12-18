@@ -8,7 +8,6 @@
 #include <util/delay.h>
 #include "Board.h"
 
-#include "SPI.h"
 #include "ThreePhaseDriver.h"
 #include "MLX90363.h"
 
@@ -32,6 +31,23 @@ void init() {
  */
 void main() {
  Board::LED.on();
+ 
+ _delay_ms(1000);
+ 
+ sei();
+ 
+ MLX90363::sendGET1Message(MLX90363::Marker::Alpha);
+ 
+ Board::LED.off();
+ 
+ while (MLX90363::isTransmitting());
+  Board::LED.on();
+ 
+ _delay_ms(1000);
+ 
+ if (MLX90363::handleResponse())
+ 
+ Board::LED.off();
 
  while(1);
 }

@@ -33,6 +33,7 @@ class MLX90363 {
  static constexpr IOpin &SS = Board::MagSel;
  
  enum class Opcode: b6 {
+  // Outgoing               Incoming
   GET1 = 0x13,
   GET2 = 0x14,
   GET3 = 0x15,              Get3Ready = 0x2D,
@@ -51,13 +52,26 @@ class MLX90363 {
                             Ready_Message = 0x2C,
  };
  
+ static void handleAlpha();
+ static void handleAlphaBeta();
+ static void handleXYZ();
+ 
 public:
+ 
+ enum class Marker: b2 {
+  Alpha = 0, AlphaBeta = 1, XYZ = 2, Other = 3
+ };
+ 
  static void init();
  static void setSPISpeed(u1 const);
 
  inline static bool isTransmitting() {return bufferPosition < messageLength;}
 
- void sendMessage();
+ static void sendMessage();
+ 
+ static u1 handleResponse();
+ 
+ static void sendGET1Message(Marker const type, const u2 timeout = 0xffff, bool const resetRoll = false);
  
 
 };

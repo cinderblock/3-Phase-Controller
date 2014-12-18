@@ -36,7 +36,6 @@ void MLX90363::setSPISpeed(const u1 c) {
 }
 
 void MLX90363::startTransmitting() {
- if (isTransmitting()) return;
  bufferPosition = 0;
  SS.off();
  *DR = buffer[bufferPosition];
@@ -96,3 +95,63 @@ u1 MLX90363::getBufferCRC() {
  return ~crc;
 }
 
+u1 MLX90363::handleResponse() {
+ if (!checkBufferCRC()) return 0;
+ 
+ u1 const marker = buffer[6] >> 6;
+ 
+ if (marker == 0) {
+  handleAlpha();
+  return true;
+ }
+ 
+ if (marker == 1) {
+  handleAlphaBeta();
+  return true;
+ }
+ 
+ if (marker == 2) {
+  handleXYZ();
+  return true;
+ }
+ 
+ u1 const opcode = buffer[6] & 0x3f;
+ 
+ return opcode;
+}
+
+void MLX90363::handleAlpha() {
+ u2 const alpha = buffer[0] | (buffer[1] & 0x3f) << 8;
+ u1 const err = buffer[1] >> 6;
+ u1 const VG = buffer[4];
+ u1 const ROLL = buffer[6] & 0x3f;
+}
+
+void MLX90363::handleAlphaBeta() {
+ u2 const alpha = buffer[0] | (buffer[1] & 0x3f) << 8;
+ u2 const beta  = buffer[2] | (buffer[3] & 0x3f) << 8;
+ u1 const err = buffer[1] >> 6;
+ u1 const VG = buffer[4];
+ u1 const ROLL = buffer[6] & 0x3f;
+}
+
+void MLX90363::handleXYZ() {
+ u2 const X = buffer[0] | (buffer[1] & 0x3f) << 8;
+ u2 const Y = buffer[2] | (buffer[3] & 0x3f) << 8;
+ u2 const Z = buffer[4] | (buffer[5] & 0x3f) << 8;
+ u1 const err = buffer[1] >> 6;
+ u1 const ROLL = buffer[6] & 0x3f;
+}
+
+void MLX90363::sendGET1Message(Marker const type, const u2 timeout, bool const resetRoll) {
+ if (isTransmitting()) return;
+ buffer[0] = 0;
+ buffer[1] = resetRoll;
+ buffer[2] = timeout & 0xff;
+ buffer[3] = timeout >> 8;
+ buffer[4] = 0;
+ buffer[5] = 0;
+ buffer[6] = (u1)type << 6 | (u1)Opcode::GET1;
+ fillBufferCRC();
+ startTransmitting();
+}
