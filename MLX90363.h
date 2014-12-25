@@ -72,8 +72,6 @@ public:
  
  static u1 num;
 
- static void sendMessage();
- 
  static u1 handleResponse();
  
  static void sendGET1Message(Marker const type, const u2 timeout = 0xffff, bool const resetRoll = false);

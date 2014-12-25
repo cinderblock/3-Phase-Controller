@@ -32,6 +32,26 @@ void ThreePhaseDriver::init() {
  OCR1B = 0;
  OCR1C = 0;
  
+ /*
+  * WGM10:  1 -  
+  * WGM11:  0 - 
+  * COM1C0: 0 - 
+  * COM1C1: 1 - 
+  * COM1B0: 0 - 
+  * COM1B1: 1 - 
+  * COM1A0: 0 - 
+  * COM1A1: 1 - 
+  * 
+  * CS10:  1 - 
+  * CS11:  0 - 
+  * CS12:  0 - 
+  * WGM12: 0 - 
+  * WGM13: 0 - 
+  * ~~~~~: 0 - 
+  * ICES1: 0 - 
+  * ICNC1: 0 - 
+  */
+ 
  TCCR1A = 0b10101001;
  TCCR1B = 0b00000001;
 }

@@ -6,16 +6,6 @@
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/MLX90363.h</file>
-            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/MLX90363.cpp</file>
-            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/main.cpp</file>
-            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/local.mk</file>
-            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/ThreePhaseDriver.cpp</file>
-            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/SPI.cpp</file>
-            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/SPI.h</file>
-            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/ThreePhaseDriver.h</file>
-            <file>file:/C:/Users/Cameron/git/Twill/3%20Phase%20Controller/Makefile</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
