@@ -40,14 +40,14 @@ void main() {
  
  do {
   MLX90363::sendGET1Message(MLX90363::Marker::AlphaBeta);
-//  num = MLX90363::num;
+  num = MLX90363::num;
   
-  num =255;
+//  num = 255;
   
   Board::LED.on();
   _delay_us(num);
   Board::LED.off();
-  _delay_us(256-num);
+  _delay_ms(1);
   
   while (MLX90363::isTransmitting());
  } while (MLX90363::handleResponse());

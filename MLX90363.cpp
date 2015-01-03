@@ -27,16 +27,24 @@ u1 MLX90363::bufferPosition = messageLength;
 u1 MLX90363::num;
 
 void MLX90363::init() {
+ // Setup Slave Select line
  SS.on();
  SS.output();
- SCLK.off();
+ 
+ // Setup "User Defined" hardware lines
  SCLK.output();
  MOSI.output();
+ // Don't forget the AVR's hardware SS line!
+ 
  // SPI hardware does this for us, but do it anyway
+ SCLK.off();
  MISO.input();
  MISO.on();
+ 
+ // Setup control registers
  SR->byte = 0;
- CR->byte = 0b11010101; // F_CPU/16 by default
+ // F_CPU/32 by default
+ CR->byte = 0b11010110;
 }
 
 void MLX90363::setSPISpeed(const u1 c) {
@@ -125,6 +133,8 @@ void MLX90363::handleAlphaBeta() {
  u1 const err = buffer[1] >> 6;
  u1 const VG = buffer[4];
  u1 const ROLL = buffer[6] & 0x3f;
+ 
+ num = alpha >> 6;
 }
 
 void MLX90363::handleXYZ() {
