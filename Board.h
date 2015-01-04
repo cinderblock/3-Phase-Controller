@@ -9,6 +9,7 @@
 #define	BOARD_H
 
 #include "IOpin.h"
+#include "Config.h"
 
 //using namespace AVR;
 
