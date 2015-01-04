@@ -287,3 +287,6 @@ void ThreePhaseDriver::advance() {
  if (++step == 0x300) step = 0;
 }
 
+void ThreePhaseDriver::setAmplitude(const u1 a) {
+ amplitude = a;
+}

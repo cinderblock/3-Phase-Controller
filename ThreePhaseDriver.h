@@ -71,6 +71,9 @@ public:
   * @param step
   */
  static void advanceTo(Phase const phase, u1 const step);
+ 
+ static inline void setAmplitude(u1 const);
+
 };
 
 #endif	/* THREEPHASEDRIVER_H */
