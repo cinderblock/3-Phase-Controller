@@ -50,6 +50,11 @@ public:
 
  static void init();
  
+ /**
+  * Convenience function with its own step counter.
+  */
+ static void advance();
+ 
  inline static void advanceTo(u2 const step) {advanceTo((Phase)step, step);}
  static void advanceTo(Phase const phase, u1 const step);
 };

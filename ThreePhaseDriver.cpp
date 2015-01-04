@@ -281,4 +281,9 @@ void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
  // This would only happen if we're spinning fast.
 }
 
+void ThreePhaseDriver::advance() {
+ static u2 step = 0;
+ advanceTo(step);
+ if (++step == 0x300) step = 0;
+}
 

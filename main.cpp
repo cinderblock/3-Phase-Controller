@@ -35,14 +35,10 @@ void main() {
  _delay_ms(100);
  
  sei();
- 
- u2 step = 0;
 
  while (1) {
   _delay_us(200);
-  ThreePhaseDriver::advanceTo(step++);
-  if (step == 0x300)
-   step = 0;
+  ThreePhaseDriver::advance();
  }
  
  u1 num = 0;
