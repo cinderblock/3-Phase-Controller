@@ -228,9 +228,11 @@ u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
 // u1 const sin = MAX * SIN(2 * PI * step / StepsPerCycle);
  u1 const sin = pgm_read_byte(&limitedSinTable[step]);
  
- // TODO: This product (and subsequent truncation) does not fully cover the range of 
- // the return u1. Look into if we should just add 1, or something else to make it perfect.
- u2 const prod = sin * amplitude;
+ // TODO: This product (and subsequent truncation) does not fully cover the
+ // range of the return u1. Ideally, instead of dividing by 256 (>> 8) we should
+ // be dividing by 255. We can get closer, on average, to that ideal division
+ // if we add 188 for instance.
+ u2 const prod = sin * amplitude + 188;
  
  return prod >> 8;
 }
