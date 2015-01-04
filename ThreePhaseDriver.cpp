@@ -61,6 +61,8 @@ void TIMER1_OVF_vect() {
 
 /**
  * Interrupt that turns off B (low) and turns on C (low)
+ * 
+ * Happens at the end of Phase::B, beginning of Phase::C
  */
 extern "C" void TIMER1_COMPA_vect() __attribute__ ((naked,__INTR_ATTRS));
 
@@ -82,6 +84,8 @@ void TIMER1_COMPA_vect() {
 
 /**
  * Interrupt that turns off C (low) and turns on A (low)
+ * 
+ * Happens at the end of Phase::C, beginning of Phase::A
  */
 extern "C" void TIMER1_COMPB_vect() __attribute__ ((naked,__INTR_ATTRS));
 
@@ -103,6 +107,8 @@ void TIMER1_COMPB_vect() {
 
 /**
  * Interrupt that turns off A (low) and turns on B (low)
+ * 
+ * Happens at the end of Phase::A, beginning of Phase::B
  */
 extern "C" void TIMER1_COMPC_vect() __attribute__ ((naked,__INTR_ATTRS));
 
@@ -216,12 +222,20 @@ static const u1 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
  236,235,234,233,232,231,231,230,229,228,227,226,225,224,223,222,
 };
 
+u1 ThreePhaseDriver::amplitude = 0;
+
 u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
-// return MAX * SIN(2 * PI * step / StepsPerCycle);
- return pgm_read_byte(&limitedSinTable[step]);
+// u1 const sin = MAX * SIN(2 * PI * step / StepsPerCycle);
+ u1 const sin = pgm_read_byte(&limitedSinTable[step]);
+ 
+ // TODO: This product (and subsequent truncation) does not fully cover the range of 
+ // the return u1. Look into if we should just add 1, or something else to make it perfect.
+ u2 const prod = sin * amplitude;
+ 
+ return prod >> 8;
 }
 
-ThreePhaseDriver::Phase ThreePhaseDriver::currentPhase = Phase::INIT;
+ThreePhaseDriver::Phase ThreePhaseDriver::currentPhase = Phase::C;
 
 void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
  u1 const ONE = getPhasePWM(    step);
@@ -231,24 +245,38 @@ void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
   cacheA = 0;
   cacheB = TWO;
   cacheC = ONE;
+  if (currentPhase == Phase::C)
+   cacheM = 1 << OCF1B;
  } else if (phase == Phase::B) {
   cacheA = ONE;
   cacheB = 0;
   cacheC = TWO;
+  if (currentPhase == Phase::A)
+   cacheM = 1 << OCF1C;
  } else if (phase == Phase::C) {
   cacheA = TWO;
   cacheB = ONE;
   cacheC = 0;
+  if (currentPhase == Phase::B)
+   cacheM = 1 << OCF1A;
  } else {
   cacheA = 0;
   cacheB = 0;
   cacheC = 0;
+  cacheM = 0;
+  return;
+  
+  // TODO: Not fully reset. Any low could be high right now
  }
  
- if (phase == currentPhase) return;
- if (currentPhase == Phase::INIT) return;
- 
+ // Enable the overflow interrupt which will do the rest of this stuff for us
  TIMSK1 = 1;
+
+ currentPhase = phase;
+ 
+ // BIG TODO: IF WE'RE CHANGING PHASES, THE OLD VALUES, TWO must be less than ONE.
+ // Otherwise, the interrupt would happen at the wrong time, and we could blow things up.
+ // This would only happen if we're spinning fast.
 }
 
 

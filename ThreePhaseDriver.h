@@ -20,11 +20,13 @@ class ThreePhaseDriver {
   */
  static inline u1 getPhasePWM(u1 const phase) __attribute__((const));
  
+ static u1 amplitude;
+ 
 // static u1 cacheA;
 // static register u1 cacheB asm("r11");
 // static register u1 cacheC asm("r12");
 public:
- enum class Phase : u1 {INIT, A, B, C, ERR};
+ enum class Phase : u1 {A=0, B=1, C=2, ERR};
 
 protected:
  static Phase currentPhase;
@@ -48,7 +50,7 @@ public:
 
  static void init();
  
- 
+ inline static void advanceTo(u2 const step) {advanceTo((Phase)step, step);}
  static void advanceTo(Phase const phase, u1 const step);
 };
 
