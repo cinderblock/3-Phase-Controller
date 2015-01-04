@@ -55,7 +55,21 @@ public:
   */
  static void advance();
  
+ /**
+  * Version of advanceTo() that takes a single u2 between 0 and 0x2ff inclusive
+  * @param step
+  */
  inline static void advanceTo(u2 const step) {advanceTo((Phase)step, step);}
+ 
+ /**
+  * Advance the pwm outputs to the new commutation.
+  * 
+  * 
+  * Currently, things will break if you call this function too fast, or step ahead too fast.
+  * 
+  * @param phase
+  * @param step
+  */
  static void advanceTo(Phase const phase, u1 const step);
 };
 
