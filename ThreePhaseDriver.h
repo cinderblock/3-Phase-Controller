@@ -11,14 +11,7 @@
 #include "basicTypes.h"
 #include <avr/interrupt.h>
 
-ISR(TIMER1_OVF_vect,__attribute__((naked)));
-
 class ThreePhaseDriver {
- /*
-  * Called by the naked interrupt routine so it needs to pretend to be the interrupt.
-  * Give it the same attributes.
-  */
- static void stepFunction() __attribute__ ((signal,__INTR_ATTRS));
  
  /**
   * Read the sin table
@@ -27,11 +20,14 @@ class ThreePhaseDriver {
   */
  static inline u1 getPhasePWM(u1 const phase) __attribute__((const));
  
- friend void TIMER1_OVF_vect();
- 
 // static u1 cacheA;
 // static register u1 cacheB asm("r11");
 // static register u1 cacheC asm("r12");
+public:
+ enum class Phase : u1 {INIT, A, B, C, ERR};
+
+protected:
+ static Phase currentPhase;
 
 public:
  /**
@@ -51,7 +47,9 @@ public:
  static u2 constexpr StepsPerCycle = StepsPerPhase * PhasesPerCycle;
 
  static void init();
- static void advanceTo(u1 const phase, u1 const step);
+ 
+ 
+ static void advanceTo(Phase const phase, u1 const step);
 };
 
 #endif	/* THREEPHASEDRIVER_H */

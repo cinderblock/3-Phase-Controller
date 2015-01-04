@@ -51,9 +51,17 @@
       <compileType>
         <cTool>
           <standard>10</standard>
+          <preprocessorList>
+            <Elem>F_CPU=16000000UL</Elem>
+            <Elem>__AVR_ATmega32U4__</Elem>
+          </preprocessorList>
         </cTool>
         <ccTool>
           <standard>8</standard>
+          <preprocessorList>
+            <Elem>F_CPU=16000000UL</Elem>
+            <Elem>__AVR_ATmega32U4__</Elem>
+          </preprocessorList>
         </ccTool>
       </compileType>
       <item path="Board.cpp" ex="false" tool="1" flavor2="0">

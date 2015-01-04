@@ -18,6 +18,8 @@ F_CPU = 16000000UL
 #BLD_STD_GCC ?= c11
 #BLD_STD_GXX ?= c++11
 
+BLD_FLAGS_EXTRA=-ffixed-2 -ffixed-3 -ffixed-4 -ffixed-5 -ffixed-6
+
 TARGET = turnigy
 
 MCU = atmega32u4

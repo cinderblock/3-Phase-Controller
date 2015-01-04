@@ -10,38 +10,123 @@
 #include "ThreePhaseDriver.h"
 #include "Board.h"
 
-inline static void clearTimerMatchInterrupts();
+/**
+ * We need an extra zero register that REALLY stays as zero.
+ * 
+ * The __zero_reg__ from avr-gcc can be clobbered by multiplication
+ */
+register u1 ZERO asm("r2");
 
-register u1 cacheA asm("r2");
-register u1 cacheB asm("r3");
-register u1 cacheC asm("r4");
-
-void TIMER1_OVF_vect() {
- clearTimerMatchInterrupts();
- // IFF ThreePhaseDriver::stepFunction's definition comes immediately after in
- // the final assembly, we do not need this rjmp.
- asm ("rjmp _ZN16ThreePhaseDriver12stepFunctionEv" : : );
-}
-
-void ThreePhaseDriver::stepFunction() {
- OCR1A = cacheA;
- OCR1B = cacheB;
- OCR1C = cacheC;
-}
-
-void clearTimerMatchInterrupts() {
- TIFR1 |= 0b10;
- TIFR1 |= 0b100;
- TIFR1 |= 0b1000;
-}
+// Reserved AVR registers for timer operation so we don't need to waste time
+// with context switching and such.
+register u1 cacheA asm("r3");
+register u1 cacheB asm("r4");
+register u1 cacheC asm("r5");
+register u1 cacheM asm("r6");
 
 //u1 ThreePhaseDriver::cacheA = 0;
 //u1 ThreePhaseDriver::cacheB = 0;
 //u1 ThreePhaseDriver::cacheC = 0;
 
+/**
+ * The overflow vector. We need to:
+ *  - clear the interrupt flag of the next interrupt fast
+ *  - update our OCRnx values
+ *  - enable the next interrupt
+ *  - return
+ * 
+ * None of these instructions modify any register or SREG (besides interrupt)
+ */
+extern "C" void TIMER1_OVF_vect() __attribute__ ((naked,__INTR_ATTRS));
 
+void TIMER1_OVF_vect() {
+ // clear timer match interrupts
+ TIFR1 = cacheM; // asm ("out	0x16, r5" : : );
+
+ OCR1AL = cacheA; // asm ("sts	0x0088, r2" : : );
+ OCR1BL = cacheB; // asm ("sts	0x008A, r3" : : );
+ OCR1CL = cacheC; // asm ("sts	0x008C, r4" : : );
+ 
+ // Enable next interrupt
+ TIMSK1 = cacheM; // asm ("sts	0x006F, r5" : : );
+ 
+ // Manual interrupt return
+ asm ("reti" : : );
+}
+
+// Save some grief later
+#ifndef TIMER1_OVF_vect
+#error Include <avr/io.h>!
+#endif
+
+/**
+ * Interrupt that turns off B (low) and turns on C (low)
+ */
+extern "C" void TIMER1_COMPA_vect() __attribute__ ((naked,__INTR_ATTRS));
+
+void TIMER1_COMPA_vect() {
+ // B low off
+// Board::DRV::BL.off();
+ PORTF &= ~(1 << 0);
+ 
+ // C low on
+// Board::DRV::CL.on();
+ PORTB |=  (1 << 4);
+ 
+ // Disable timer interrupts
+ TIMSK1 = ZERO;
+ 
+ // Manual interrupt return
+ asm ("reti" : : );
+}
+
+/**
+ * Interrupt that turns off C (low) and turns on A (low)
+ */
+extern "C" void TIMER1_COMPB_vect() __attribute__ ((naked,__INTR_ATTRS));
+
+void TIMER1_COMPB_vect() {
+ // C low off
+// Board::DRV::CL.off();
+ PORTB &= ~(1 << 4);
+ 
+ // A low on
+// Board::DRV::AL.on();
+ PORTB |=  (1 << 0);
+ 
+ // Disable timer interrupts
+ TIMSK1 = ZERO;
+ 
+ // Manual interrupt return
+ asm ("reti" : : );
+}
+
+/**
+ * Interrupt that turns off A (low) and turns on B (low)
+ */
+extern "C" void TIMER1_COMPC_vect() __attribute__ ((naked,__INTR_ATTRS));
+
+void TIMER1_COMPC_vect() {
+ // A low off
+// Board::DRV::AL.off();
+ PORTB &= ~(1 << 0);
+ 
+ // B low on
+// Board::DRV::BL.on();
+ PORTF |=  (1 << 0);
+ 
+ // Disable timer interrupts
+ TIMSK1 = ZERO;
+ 
+ // Manual interrupt return
+ asm ("reti" : : );
+}
 
 void ThreePhaseDriver::init() {
+ // Gotta do it somewhere...
+ ZERO = 0;
+ 
+ // Turn everything off
  Board::DRV::AL.off();
  Board::DRV::BL.off();
  Board::DRV::CL.off();
@@ -49,6 +134,7 @@ void ThreePhaseDriver::init() {
  Board::DRV::BH.off();
  Board::DRV::CH.off();
  
+ // Enable outputs
  Board::DRV::AL.output();
  Board::DRV::BL.output();
  Board::DRV::CL.output();
@@ -135,19 +221,21 @@ u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
  return pgm_read_byte(&limitedSinTable[step]);
 }
 
-void ThreePhaseDriver::advanceTo(const u1 phase, const u1 step) {
+ThreePhaseDriver::Phase ThreePhaseDriver::currentPhase = Phase::INIT;
+
+void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
  u1 const ONE = getPhasePWM(    step);
  u1 const TWO = getPhasePWM(255-step);
  
- if (phase == 0) {
+ if (phase == Phase::A) {
   cacheA = 0;
   cacheB = TWO;
   cacheC = ONE;
- } else if (phase == 1) {
+ } else if (phase == Phase::B) {
   cacheA = ONE;
   cacheB = 0;
   cacheC = TWO;
- } else if (phase == 2) {
+ } else if (phase == Phase::C) {
   cacheA = TWO;
   cacheB = ONE;
   cacheC = 0;
@@ -156,6 +244,11 @@ void ThreePhaseDriver::advanceTo(const u1 phase, const u1 step) {
   cacheB = 0;
   cacheC = 0;
  }
+ 
+ if (phase == currentPhase) return;
+ if (currentPhase == Phase::INIT) return;
+ 
+ TIMSK1 = 1;
 }
 
 
