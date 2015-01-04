@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=3-phase-motor-controller-v2
+PROJECTNAME=3 Phase Controller
 
 # Active Configuration
 DEFAULTCONF=Debug

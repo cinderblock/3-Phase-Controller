@@ -42,8 +42,6 @@ void main() {
   MLX90363::sendGET1Message(MLX90363::Marker::AlphaBeta);
   num = MLX90363::num;
   
-//  num = 255;
-  
   Board::LED.on();
   _delay_us(num);
   Board::LED.off();

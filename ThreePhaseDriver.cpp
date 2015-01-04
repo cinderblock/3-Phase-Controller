@@ -10,6 +10,37 @@
 #include "ThreePhaseDriver.h"
 #include "Board.h"
 
+inline static void clearTimerMatchInterrupts();
+
+register u1 cacheA asm("r2");
+register u1 cacheB asm("r3");
+register u1 cacheC asm("r4");
+
+void TIMER1_OVF_vect() {
+ clearTimerMatchInterrupts();
+ // IFF ThreePhaseDriver::stepFunction's definition comes immediately after in
+ // the final assembly, we do not need this rjmp.
+ asm ("rjmp _ZN16ThreePhaseDriver12stepFunctionEv" : : );
+}
+
+void ThreePhaseDriver::stepFunction() {
+ OCR1A = cacheA;
+ OCR1B = cacheB;
+ OCR1C = cacheC;
+}
+
+void clearTimerMatchInterrupts() {
+ TIFR1 |= 0b10;
+ TIFR1 |= 0b100;
+ TIFR1 |= 0b1000;
+}
+
+//u1 ThreePhaseDriver::cacheA = 0;
+//u1 ThreePhaseDriver::cacheB = 0;
+//u1 ThreePhaseDriver::cacheC = 0;
+
+
+
 void ThreePhaseDriver::init() {
  Board::DRV::AL.off();
  Board::DRV::BL.off();
@@ -25,12 +56,31 @@ void ThreePhaseDriver::init() {
  Board::DRV::BH.output();
  Board::DRV::CH.output();
  
- // WGM = 0b0001 (PWM Phase Correct 8-bit)
- // COM1{A,B,C} = 0b10
+ // Turn off interrupts just in case
+ TIMSK1 = 0;
+ // And clear them all (just the ones we know about) just in case
+ TIFR1 = 0b00101111;
  
+ // Clear compare match registers for now
  OCR1A = 0;
  OCR1B = 0;
  OCR1C = 0;
+ 
+ /* 
+  * Set WGM for PWM Phase Correct 8-bit
+  * WGM = 0b0001
+  * 
+  * Set all compare output modules to:
+  * Clear OC1[ABC] on compare match when up-counting.
+  * Set OC1[ABC] on compare match when down-counting.
+  * COM1[ABC] = 0b10
+  * 
+  * This makes the OCR1[ABC] registers reflect the output's "high time" per cycle
+  * 
+  * Select the fastest clock divider ( clkIO/1 )
+  * 
+  * CS1 = 0b001;
+  */
  
  /*
   * WGM10:  1 -  
@@ -54,9 +104,14 @@ void ThreePhaseDriver::init() {
  
  TCCR1A = 0b10101001;
  TCCR1B = 0b00000001;
+ 
+ /**
+  * Enable the timer's overflow interrupt
+  */
+ TIMSK1 = 0b00000001;
 }
 
-static const u1 limitedSinTable[] PROGMEM = {
+static const u1 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
    0,  2,  4,  6,  8, 10, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31,
   33, 35, 37, 39, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64,
   66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96,
@@ -75,9 +130,32 @@ static const u1 limitedSinTable[] PROGMEM = {
  236,235,234,233,232,231,231,230,229,228,227,226,225,224,223,222,
 };
 
-u1 ThreePhaseDriver::getPhasePWM(const u1 phase) {
-// return 255 * SIN(PI * phase * 2/3/StepsPerPhase);
- return pgm_read_byte(&limitedSinTable[phase]);
+u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
+// return MAX * SIN(2 * PI * step / StepsPerCycle);
+ return pgm_read_byte(&limitedSinTable[step]);
+}
+
+void ThreePhaseDriver::advanceTo(const u1 phase, const u1 step) {
+ u1 const ONE = getPhasePWM(    step);
+ u1 const TWO = getPhasePWM(255-step);
+ 
+ if (phase == 0) {
+  cacheA = 0;
+  cacheB = TWO;
+  cacheC = ONE;
+ } else if (phase == 1) {
+  cacheA = ONE;
+  cacheB = 0;
+  cacheC = TWO;
+ } else if (phase == 2) {
+  cacheA = TWO;
+  cacheB = ONE;
+  cacheC = 0;
+ } else {
+  cacheA = 0;
+  cacheB = 0;
+  cacheC = 0;
+ }
 }
 
 
