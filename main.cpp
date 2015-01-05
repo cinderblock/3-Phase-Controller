@@ -45,6 +45,8 @@ void main() {
  Board::SEN::BS.on();
  Board::SEN::BS.output();
  Board::SEN::BS.off();
+ 
+ ThreePhaseDriver::setAmplitude(255);
 
  while (1) {
   _delay_us(200);
