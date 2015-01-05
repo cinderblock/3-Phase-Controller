@@ -26,6 +26,7 @@ TARGET = turnigy
 MCU = atmega32u4
 
 all: build-lss
+run: dfu-flash dfu-reset
 
 # Load local settings
 -include local.mk
@@ -48,7 +49,5 @@ include $(UMAKER)tools/build.mk
 include $(UMAKER)tools/dfu.mk
 #include $(UMAKER)tools/nrfjprog.mk
 #include $(UMAKER)tools/AVR/avrdude.mk
-
-run: dfu-flash dfu-reset
 
 .PHONY: all run
