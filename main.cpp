@@ -25,6 +25,12 @@ void init() {
  // The AVR's ^SS pin is really Board::DRV::AL, controlled by ThreePhaseDriver.
  ThreePhaseDriver::init();
  MLX90363::init();
+ 
+ UBRR1 = 0;
+ UCSR1D = 0b00;
+ UCSR1C = 0b00000110;
+ UCSR1A = 0b00000000;
+ UCSR1B = 0b00001000;
 }
 
 /*
@@ -35,6 +41,10 @@ void main() {
  _delay_ms(100);
  
  sei();
+ 
+ Board::SEN::BS.on();
+ Board::SEN::BS.output();
+ Board::SEN::BS.off();
 
  while (1) {
   _delay_us(200);
