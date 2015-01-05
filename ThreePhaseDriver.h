@@ -59,7 +59,7 @@ public:
   * Version of advanceTo() that takes a single u2 between 0 and 0x2ff inclusive
   * @param step
   */
- inline static void advanceTo(u2 const step) {advanceTo((Phase)step, step);}
+ inline static void advanceTo(u2 const step) {advanceTo((Phase)(step >> 8), step);}
  
  /**
   * Advance the pwm outputs to the new commutation.
@@ -72,7 +72,7 @@ public:
   */
  static void advanceTo(Phase const phase, u1 const step);
  
- static inline void setAmplitude(u1 const);
+ static inline void setAmplitude(u1 const a) {amplitude = a;}
 
 };
 

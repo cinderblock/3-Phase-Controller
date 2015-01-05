@@ -132,22 +132,6 @@ void ThreePhaseDriver::init() {
  // Gotta do it somewhere...
  ZERO = 0;
  
- // Turn everything off
- Board::DRV::AL.off();
- Board::DRV::BL.off();
- Board::DRV::CL.off();
- Board::DRV::AH.off();
- Board::DRV::BH.off();
- Board::DRV::CH.off();
- 
- // Enable outputs
- Board::DRV::AL.output();
- Board::DRV::BL.output();
- Board::DRV::CL.output();
- Board::DRV::AH.output();
- Board::DRV::BH.output();
- Board::DRV::CH.output();
- 
  // Turn off interrupts just in case
  TIMSK1 = 0;
  // And clear them all (just the ones we know about) just in case
@@ -197,10 +181,21 @@ void ThreePhaseDriver::init() {
  TCCR1A = 0b10101001;
  TCCR1B = 0b00000001;
  
- /**
-  * Enable the timer's overflow interrupt
-  */
- TIMSK1 = 0b00000001;
+ // Turn everything off
+ Board::DRV::AL.off();
+ Board::DRV::BL.off();
+ Board::DRV::CL.off();
+ Board::DRV::AH.off();
+ Board::DRV::BH.off();
+ Board::DRV::CH.off();
+ 
+ // Enable outputs
+ Board::DRV::AL.output();
+ Board::DRV::BL.output();
+ Board::DRV::CL.output();
+ Board::DRV::AH.output();
+ Board::DRV::BH.output();
+ Board::DRV::CH.output();
 }
 
 static const u1 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
@@ -285,8 +280,4 @@ void ThreePhaseDriver::advance() {
  static u2 step = 0;
  advanceTo(step);
  if (++step == 0x300) step = 0;
-}
-
-void ThreePhaseDriver::setAmplitude(const u1 a) {
- amplitude = a;
 }
