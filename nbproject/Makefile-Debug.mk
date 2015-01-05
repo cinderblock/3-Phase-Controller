@@ -69,27 +69,27 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/3_phase_controller.exe: ${OBJECTFILES
 ${OBJECTDIR}/Board.o: Board.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D__AVR_ATmega32U4__ -DF_CPU=16000000UL -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Board.o Board.cpp
+	$(COMPILE.cc) -g -DF_CPU=16000000UL -D__AVR_ATmega32U4__ -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Board.o Board.cpp
 
 ${OBJECTDIR}/MLX90363.o: MLX90363.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D__AVR_ATmega32U4__ -DF_CPU=16000000UL -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MLX90363.o MLX90363.cpp
+	$(COMPILE.cc) -g -DF_CPU=16000000UL -D__AVR_ATmega32U4__ -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MLX90363.o MLX90363.cpp
 
 ${OBJECTDIR}/SPI.o: SPI.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D__AVR_ATmega32U4__ -DF_CPU=16000000UL -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/SPI.o SPI.cpp
+	$(COMPILE.cc) -g -DF_CPU=16000000UL -D__AVR_ATmega32U4__ -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/SPI.o SPI.cpp
 
 ${OBJECTDIR}/ThreePhaseDriver.o: ThreePhaseDriver.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D__AVR_ATmega32U4__ -DF_CPU=16000000UL -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ThreePhaseDriver.o ThreePhaseDriver.cpp
+	$(COMPILE.cc) -g -DF_CPU=16000000UL -D__AVR_ATmega32U4__ -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ThreePhaseDriver.o ThreePhaseDriver.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -D__AVR_ATmega32U4__ -DF_CPU=16000000UL -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -DF_CPU=16000000UL -D__AVR_ATmega32U4__ -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:
