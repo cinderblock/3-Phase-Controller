@@ -73,7 +73,7 @@ void TIMER1_COMPA_vect() {
  
  // C low on
 // Board::DRV::CL.on();
- PORTB |=  (1 << 4);
+ PORTB |=  (1 << 0);
  
  // Disable timer interrupts
  TIMSK1 = ZERO;
@@ -92,11 +92,11 @@ extern "C" void TIMER1_COMPB_vect() __attribute__ ((naked,__INTR_ATTRS));
 void TIMER1_COMPB_vect() {
  // C low off
 // Board::DRV::CL.off();
- PORTB &= ~(1 << 4);
+ PORTB &= ~(1 << 0);
  
  // A low on
 // Board::DRV::AL.on();
- PORTB |=  (1 << 0);
+ PORTB |=  (1 << 4);
  
  // Disable timer interrupts
  TIMSK1 = ZERO;
@@ -115,7 +115,7 @@ extern "C" void TIMER1_COMPC_vect() __attribute__ ((naked,__INTR_ATTRS));
 void TIMER1_COMPC_vect() {
  // A low off
 // Board::DRV::AL.off();
- PORTB &= ~(1 << 0);
+ PORTB &= ~(1 << 4);
  
  // B low on
 // Board::DRV::BL.on();
