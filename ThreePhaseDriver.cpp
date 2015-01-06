@@ -279,6 +279,6 @@ void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
 void ThreePhaseDriver::advance() {
  static u2 step = 0;
  advanceTo(step);
- UDR1 = step >> 2;
+ UDR1 = step >> 2; // DEBUG
  if (++step == 0x300) step = 0;
 }
