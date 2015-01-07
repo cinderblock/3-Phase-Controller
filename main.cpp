@@ -46,10 +46,10 @@ void main() {
  Board::SEN::BS.output();
  Board::SEN::BS.off();
  
- ThreePhaseDriver::setAmplitude(255);
+ ThreePhaseDriver::setAmplitude(20);
 
  while (1) {
-  _delay_us(200);
+  _delay_us(100);
   ThreePhaseDriver::advance();
  }
  
