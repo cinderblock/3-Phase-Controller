@@ -61,6 +61,8 @@ void TIMER1_OVF_vect() {
 static inline void transitionInterruptCleanupBody() {
  // Disable timer interrupts
  TIMSK1 = 0;
+ // Prevent future transitions from doing the same
+ cacheI = 0;
 }
 
 /**
