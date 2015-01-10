@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/Board.o \
+	${OBJECTDIR}/Debug.o \
 	${OBJECTDIR}/MLX90363.o \
 	${OBJECTDIR}/SPI.o \
 	${OBJECTDIR}/ThreePhaseDriver.o \
@@ -70,6 +71,11 @@ ${OBJECTDIR}/Board.o: Board.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Board.o Board.cpp
+
+${OBJECTDIR}/Debug.o: Debug.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Debug.o Debug.cpp
 
 ${OBJECTDIR}/MLX90363.o: MLX90363.cpp 
 	${MKDIR} -p ${OBJECTDIR}

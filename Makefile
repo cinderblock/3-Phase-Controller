@@ -8,7 +8,7 @@
 C = 
 
 # List of CPP file basenames to build
-CPP = main Board SPI MLX90363 ThreePhaseDriver
+CPP = main Board SPI MLX90363 ThreePhaseDriver Debug
 
 # Select specific LUFA source files to compile like this
 #LUFA_SRC = LUFA/Drivers/USB/Class/Common/HIDParser.c

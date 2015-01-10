@@ -9,6 +9,7 @@
 
 #include "ThreePhaseDriver.h"
 #include "Board.h"
+#include "Debug.h"
 
 /**
  * We need an extra zero register that REALLY stays as zero.
@@ -227,7 +228,7 @@ u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
  // range of the return u1. Ideally, instead of dividing by 256 (>> 8) we should
  // be dividing by 255. We can get closer, on average, to that ideal division
  // if we add 188 for instance.
- u2 const prod = sin * amplitude + 188;
+ u2 const prod = sin * amplitude + sin + amplitude;
  
  return prod >> 8;
 }
@@ -279,6 +280,6 @@ void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
 void ThreePhaseDriver::advance() {
  static u2 step = 0;
  advanceTo(step);
- UDR1 = step >> 2; // DEBUG
+ Debug::reportByte(step >> 2);
  if (++step == 0x300) step = 0;
 }
