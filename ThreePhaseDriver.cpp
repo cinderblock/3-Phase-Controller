@@ -11,19 +11,22 @@
 #include "Board.h"
 #include "Debug.h"
 
-/**
- * We need an extra zero register that REALLY stays as zero.
- * 
- * The __zero_reg__ from avr-gcc can be clobbered by multiplication
- */
-register u1 ZERO asm("r2");
+
+inline static void ALowOff() {PORTB &= ~(1 << 4);}
+inline static void BLowOff() {PORTF &= ~(1 << 0);}
+inline static void CLowOff() {PORTB &= ~(1 << 0);}
+
+inline static void ALowOn()  {PORTB |=  (1 << 4);}
+inline static void BLowOn()  {PORTF |=  (1 << 0);}
+inline static void CLowOn()  {PORTB |=  (1 << 0);}
 
 // Reserved AVR registers for timer operation so we don't need to waste time
 // with context switching and such.
+register u1 cacheW asm("r2");
 register u1 cacheA asm("r3");
 register u1 cacheB asm("r4");
 register u1 cacheC asm("r5");
-register u1 cacheM asm("r6");
+register u1 cacheI asm("r6");
 
 //u1 ThreePhaseDriver::cacheA = 0;
 //u1 ThreePhaseDriver::cacheB = 0;
@@ -42,97 +45,113 @@ extern "C" void TIMER1_OVF_vect() __attribute__ ((naked,__INTR_ATTRS));
 
 void TIMER1_OVF_vect() {
  // clear timer match interrupts
- TIFR1 = cacheM; // asm ("out	0x16, r5" : : );
+ TIFR1 = cacheI;
 
- OCR1AL = cacheA; // asm ("sts	0x0088, r2" : : );
- OCR1BL = cacheB; // asm ("sts	0x008A, r3" : : );
- OCR1CL = cacheC; // asm ("sts	0x008C, r4" : : );
+ OCR1AL = cacheA;
+ OCR1BL = cacheB;
+ OCR1CL = cacheC;
  
  // Enable next interrupt
- TIMSK1 = cacheM; // asm ("sts	0x006F, r5" : : );
+ TIMSK1 = cacheI;
  
  // Manual interrupt return
  asm ("reti" : : );
 }
 
-// Save some grief later
-#ifndef TIMER1_OVF_vect
-#error Include <avr/io.h>!
-#endif
+static inline void transitionInterruptCleanupBody() {
+ // Disable timer interrupts
+ TIMSK1 = 0;
+}
 
 /**
- * Interrupt that turns off B (low) and turns on C (low)
+ * Function that should generate proper interrupt entry and exit code.
  * 
- * Happens at the end of Phase::B, beginning of Phase::C
+ * It however will not inline and I'm not trying to do a jump just yet.
+ */
+static inline void transitionInterruptCleanup() __attribute__((interrupt, used));
+static inline void transitionInterruptCleanup() {
+ transitionInterruptCleanupBody();
+}
+
+/**
+ * Function to manually save state like the above function should
+ */
+static inline void transitionInterruptCleanupManual() {
+ /**
+  * Since we're done with all of out timed requirements, we can do the cleanup
+  * slower. Instead of using dedicated registers as before, we save our context
+  * like a normal interrupt using some of the stack.
+  */
+
+ /* Save context that is important */
+ asm ("push r1" : : );
+ asm ("push r0" : : );
+ asm ("in r0, 0x3f" : : );
+ asm ("clr r1" : : );
+ // If we use r0, save it too
+// asm ("push r0" : : );
+ 
+ /** Then we do the trivial cleanup */
+// asm ("sts 0x006F, r1" : : );
+ transitionInterruptCleanupBody();
+ 
+ /** And restore context */
+
+ // If we saved r0, pop it back
+// asm ("pop r0" : : );
+ asm ("out 0x3f, r0" : : );
+ asm ("pop r0" : : );
+ asm ("pop r1" : : );
+ asm ("reti" : : );
+}
+
+static inline void transitionInterruptBody() {
+ TCCR1A = cacheW;
+ 
+ // If the enable bit for the output module is off, we can turn on our low side
+ if (!(cacheW & (1 << COM1A1)))
+  ALowOn();
+ 
+ if (!(cacheW & (1 << COM1B1)))
+  BLowOn();
+ 
+ if (!(cacheW & (1 << COM1C1)))
+  CLowOn();
+
+ transitionInterruptCleanupManual();
+}
+
+/**
+ * Happens at the end of Phase::A
  */
 extern "C" void TIMER1_COMPA_vect() __attribute__ ((naked,__INTR_ATTRS));
 
-void TIMER1_COMPA_vect() {
- // B low off
-// Board::DRV::BL.off();
- PORTF &= ~(1 << 0);
- 
- // C low on
-// Board::DRV::CL.on();
- PORTB |=  (1 << 0);
- 
- // Disable timer interrupts
- TIMSK1 = ZERO;
- 
- // Manual interrupt return
- asm ("reti" : : );
-}
-
 /**
- * Interrupt that turns off C (low) and turns on A (low)
- * 
- * Happens at the end of Phase::C, beginning of Phase::A
+ * Happens at the end of Phase::B
  */
 extern "C" void TIMER1_COMPB_vect() __attribute__ ((naked,__INTR_ATTRS));
 
-void TIMER1_COMPB_vect() {
- // C low off
-// Board::DRV::CL.off();
- PORTB &= ~(1 << 0);
- 
- // A low on
-// Board::DRV::AL.on();
- PORTB |=  (1 << 4);
- 
- // Disable timer interrupts
- TIMSK1 = ZERO;
- 
- // Manual interrupt return
- asm ("reti" : : );
-}
-
 /**
- * Interrupt that turns off A (low) and turns on B (low)
- * 
- * Happens at the end of Phase::A, beginning of Phase::B
+ * Happens at the end of Phase::C
  */
 extern "C" void TIMER1_COMPC_vect() __attribute__ ((naked,__INTR_ATTRS));
 
+void TIMER1_COMPA_vect() {
+ ALowOff();
+ transitionInterruptBody();
+}
+
+void TIMER1_COMPB_vect() {
+ BLowOff();
+ transitionInterruptBody();
+}
+
 void TIMER1_COMPC_vect() {
- // A low off
-// Board::DRV::AL.off();
- PORTB &= ~(1 << 4);
- 
- // B low on
-// Board::DRV::BL.on();
- PORTF |=  (1 << 0);
- 
- // Disable timer interrupts
- TIMSK1 = ZERO;
- 
- // Manual interrupt return
- asm ("reti" : : );
+ CLowOff();
+ transitionInterruptBody();
 }
 
 void ThreePhaseDriver::init() {
- // Gotta do it somewhere...
- ZERO = 0;
- 
  // Turn off interrupts just in case
  TIMSK1 = 0;
  // And clear them all (just the ones we know about) just in case
@@ -147,39 +166,33 @@ void ThreePhaseDriver::init() {
   * Set WGM for PWM Phase Correct 8-bit
   * WGM = 0b0001
   * 
-  * Set all compare output modules to:
+  * Eventually, set all compare output modules to:
   * Clear OC1[ABC] on compare match when up-counting.
   * Set OC1[ABC] on compare match when down-counting.
   * COM1[ABC] = 0b10
   * 
   * This makes the OCR1[ABC] registers reflect the output's "high time" per cycle
   * 
+  * But for now, we leave them off and let the timed sequenced turn them on as needed
+  * 
   * Select the fastest clock divider ( clkIO/1 )
   * 
   * CS1 = 0b001;
   */
  
- /*
-  * WGM10:  1 -  
-  * WGM11:  0 - 
-  * COM1C0: 0 - 
-  * COM1C1: 1 - 
-  * COM1B0: 0 - 
-  * COM1B1: 1 - 
-  * COM1A0: 0 - 
-  * COM1A1: 1 - 
-  * 
-  * CS10:  1 - 
-  * CS11:  0 - 
-  * CS12:  0 - 
-  * WGM12: 0 - 
-  * WGM13: 0 - 
-  * ~~~~~: 0 - 
-  * ICES1: 0 - 
-  * ICNC1: 0 - 
+ /**
+  * TCCR1A:
+  * COM1A1 COM1A0 COM1B1 COM1B0 COM1C1 COM1C0 WGM11 WGM10
+  * 0b   0      0      0      0      0      0     0     1
   */
  
- TCCR1A = 0b10101001;
+ TCCR1A = 0b00000001;
+
+ /**
+  * TCCR1B
+  * ICNC1 ICES1 ~~~~~ WGM13 WGM12 CS12 CS11 CS10
+  * 0b  0     0     0     0     0    0    0    1
+  */
  TCCR1B = 0b00000001;
  
  // Turn everything off
@@ -238,43 +251,49 @@ ThreePhaseDriver::Phase ThreePhaseDriver::currentPhase = Phase::C;
 void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
  u1 const ONE = getPhasePWM(    step);
  u1 const TWO = getPhasePWM(255-step);
+ u1 const max = ONE > TWO ? ONE : TWO;
+
+ // Prevent us from using a MAX that is too low
+ u1 const MAX = max > 50 ? max : 50;
  
  if (phase == Phase::A) {
-  cacheA = 0;
+  cacheA = MAX;
   cacheB = TWO;
   cacheC = ONE;
-  if (currentPhase == Phase::C)
-   cacheM = 1 << OCF1B;
+  cacheW = 0b10101001 & ~(1 << COM1A1);
  } else if (phase == Phase::B) {
   cacheA = ONE;
-  cacheB = 0;
+  cacheB = MAX;
   cacheC = TWO;
-  if (currentPhase == Phase::A)
-   cacheM = 1 << OCF1C;
+  cacheW = 0b10101001 & ~(1 << COM1B1);
  } else if (phase == Phase::C) {
   cacheA = TWO;
   cacheB = ONE;
-  cacheC = 0;
-  if (currentPhase == Phase::B)
-   cacheM = 1 << OCF1A;
+  cacheC = MAX;
+  cacheW = 0b10101001 & ~(1 << COM1C1);
  } else {
   cacheA = 0;
   cacheB = 0;
   cacheC = 0;
-  cacheM = 0;
+  cacheI = 0;
   return;
   
   // TODO: Not fully reset. Any low could be high right now
  }
  
- // Enable the overflow interrupt which will do the rest of this stuff for us
- TIMSK1 = 1;
+ if (currentPhase != phase) {
+  if (currentPhase == Phase::A) cacheI = 1 << OCF1A;
+  if (currentPhase == Phase::B) cacheI = 1 << OCF1B;
+  if (currentPhase == Phase::C) cacheI = 1 << OCF1C;
+ }
 
+ // Clear the overflow flag (so that we don't immediately trigger an overflow))
+ TIFR1 |= 1 << TOV1;
+ // And enable the overflow interrupt
+ TIMSK1 = 1 << TOV1;
+
+ // Save current phase
  currentPhase = phase;
- 
- // BIG TODO: IF WE'RE CHANGING PHASES, THE OLD VALUES, TWO must be less than ONE.
- // Otherwise, the interrupt would happen at the wrong time, and we could blow things up.
- // This would only happen if we're spinning fast.
 }
 
 void ThreePhaseDriver::advance() {
