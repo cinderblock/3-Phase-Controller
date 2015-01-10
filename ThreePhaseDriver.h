@@ -69,7 +69,9 @@ public:
   */
  static void advanceTo(Phase const phase, u1 const step);
  
- static inline void setAmplitude(u1 const a) {amplitude = a;}
+ static constexpr u1 maxAmplitude = 250;
+ 
+ static inline void setAmplitude(u1 const a) {amplitude = a > maxAmplitude ? maxAmplitude : a;}
 
 };
 
