@@ -240,9 +240,14 @@ u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
  // TODO: This product (and subsequent truncation) does not fully cover the
  // range of the return u1. Ideally, instead of dividing by 256 (>> 8) we should
  // be dividing by 255. We can get closer, on average, to that ideal division
- // if we add 188 for instance.
+ // if we add 188 for instance. Here we add both values that are bing multiplied
+ // as a slightly better approximation at the extremes.
  u2 const prod = sin * amplitude + sin + amplitude;
  
+ // Ideal:
+// return prod / 255;
+ 
+ // Close enough:
  return prod >> 8;
 }
 
@@ -252,9 +257,11 @@ void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
  u1 const ONE = getPhasePWM(    step);
  u1 const TWO = getPhasePWM(255-step);
  u1 const max = ONE > TWO ? ONE : TWO;
+ 
+ const u1 minimumPhaseSwitchMatch = 50;
 
  // Prevent us from using a MAX that is too low
- u1 const MAX = max > 50 ? max : 50;
+ u1 const MAX = max > minimumPhaseSwitchMatch ? max : minimumPhaseSwitchMatch;
  
  if (phase == Phase::A) {
   cacheA = MAX;
@@ -285,6 +292,7 @@ void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
   if (currentPhase == Phase::A) cacheI = 1 << OCF1A;
   if (currentPhase == Phase::B) cacheI = 1 << OCF1B;
   if (currentPhase == Phase::C) cacheI = 1 << OCF1C;
+  // we use cacheW to tell the interrupt which low side driver to turn on
  }
 
  // Clear the overflow flag (so that we don't immediately trigger an overflow))
