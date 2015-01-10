@@ -51,7 +51,7 @@ public:
  static void init();
  
  /**
-  * Convenience function with its own step counter.
+  * Convenience function with its own internal step counter
   */
  static void advance();
  
@@ -62,10 +62,7 @@ public:
  inline static void advanceTo(u2 const step) {advanceTo((Phase)(step >> 8), step);}
  
  /**
-  * Advance the pwm outputs to the new commutation.
-  * 
-  * 
-  * Currently, things will break if you call this function too fast, or step ahead too fast.
+  * Advance the pwm outputs to a new commutation
   * 
   * @param phase
   * @param step

@@ -256,6 +256,9 @@ u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
 ThreePhaseDriver::Phase ThreePhaseDriver::currentPhase = Phase::C;
 
 void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
+ // If this timer's interrupts are on, don't mess with a running change
+ if (TIMSK1) return;
+ 
  u1 const ONE = getPhasePWM(    step);
  u1 const TWO = getPhasePWM(255-step);
  u1 const max = ONE > TWO ? ONE : TWO;
