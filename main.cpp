@@ -50,7 +50,7 @@ void main() {
  u1 num = 0;
  
  do {
-  MLX90363::sendGET1Message(MLX90363::Marker::AlphaBeta);
+  MLX90363::prepareGET1Message(MLX90363::Marker::AlphaBeta);
   num = MLX90363::num;
   
   Debug::LED.on();

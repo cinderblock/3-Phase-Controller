@@ -14,17 +14,23 @@
 using namespace AVR::SPI;
 
 void SPI_STC_vect() {
- if (MLX90363::bufferPosition + 1 != MLX90363::messageLength)
-  *DR = MLX90363::buffer[MLX90363::bufferPosition + 1];
- else
-  MLX90363::SS.on();
- MLX90363::buffer[MLX90363::bufferPosition++] = *DR;
+ MLX90363::RxBuffer[MLX90363::bufferPosition++] = *DR;
+ if (MLX90363::bufferPosition == MLX90363::messageLength) {
+  MLX90363::SSon();
+ } else {
+  *DR = MLX90363::TxBuffer[MLX90363::bufferPosition];
+ }
 }
 
-u1 MLX90363::buffer[messageLength];
+u1 MLX90363::TxBuffer[messageLength];
+u1 MLX90363::RxBuffer[messageLength];
 u1 MLX90363::bufferPosition = messageLength;
 
 u1 MLX90363::num;
+
+void MLX90363::SSon () {PORTD |=  (1<<5);}
+void MLX90363::SSoff() {PORTD &= ~(1<<5);}
+
 
 void MLX90363::init() {
  // Setup Slave Select line
@@ -51,10 +57,10 @@ void MLX90363::setSPISpeed(const u1 c) {
  CR->Divider = c;
 }
 
-void MLX90363::startTransmitting() {
+void MLX90363::startTransmittingUnsafe() {
  bufferPosition = 0;
  SS.off();
- *DR = buffer[bufferPosition];
+ *DR = TxBuffer[bufferPosition];
 }
 
 static const u1 cba_256_TAB[] PROGMEM = {
@@ -81,24 +87,38 @@ inline static u1 readTable(u1 const b) {
  return pgm_read_byte(&cba_256_TAB[b]);
 }
 
-u1 MLX90363::getBufferCRC() {
+bool MLX90363::checkRxBufferCRC() {
  u1 crc = 0xff;
  
- crc = readTable(buffer[0] ^ crc);
- crc = readTable(buffer[1] ^ crc);
- crc = readTable(buffer[2] ^ crc);
- crc = readTable(buffer[3] ^ crc);
- crc = readTable(buffer[4] ^ crc);
- crc = readTable(buffer[5] ^ crc);
- crc = readTable(buffer[6] ^ crc);
- 
- return ~crc;
+ crc = readTable(RxBuffer[0] ^ crc);
+ crc = readTable(RxBuffer[1] ^ crc);
+ crc = readTable(RxBuffer[2] ^ crc);
+ crc = readTable(RxBuffer[3] ^ crc);
+ crc = readTable(RxBuffer[4] ^ crc);
+ crc = readTable(RxBuffer[5] ^ crc);
+ crc = readTable(RxBuffer[6] ^ crc);
+
+ return RxBuffer[7] == ~crc;
+}
+
+void MLX90363::fillTxBufferCRC() {
+ u1 crc = 0xff;
+
+ crc = readTable(TxBuffer[0] ^ crc);
+ crc = readTable(TxBuffer[1] ^ crc);
+ crc = readTable(TxBuffer[2] ^ crc);
+ crc = readTable(TxBuffer[3] ^ crc);
+ crc = readTable(TxBuffer[4] ^ crc);
+ crc = readTable(TxBuffer[5] ^ crc);
+ crc = readTable(TxBuffer[6] ^ crc);
+
+ TxBuffer[7] = ~crc;
 }
 
 u1 MLX90363::handleResponse() {
- if (!checkBufferCRC()) return 0;
+ if (!checkRxBufferCRC()) return 0;
  
- u1 const marker = buffer[6] >> 6;
+ u1 const marker = TxBuffer[6] >> 6;
  
  if (marker == 0) {
   handleAlpha();
@@ -115,45 +135,44 @@ u1 MLX90363::handleResponse() {
   return true;
  }
  
- u1 const opcode = buffer[6] & 0x3f;
+ u1 const opcode = TxBuffer[6] & 0x3f;
  
  return opcode;
 }
 
 void MLX90363::handleAlpha() {
- u2 const alpha = buffer[0] | (buffer[1] & 0x3f) << 8;
- u1 const err = buffer[1] >> 6;
- u1 const VG = buffer[4];
- u1 const ROLL = buffer[6] & 0x3f;
+ u2 const alpha = TxBuffer[0] | (TxBuffer[1] & 0x3f) << 8;
+ u1 const err = TxBuffer[1] >> 6;
+ u1 const VG = TxBuffer[4];
+ u1 const ROLL = TxBuffer[6] & 0x3f;
 }
 
 void MLX90363::handleAlphaBeta() {
- u2 const alpha = buffer[0] | (buffer[1] & 0x3f) << 8;
- u2 const beta  = buffer[2] | (buffer[3] & 0x3f) << 8;
- u1 const err = buffer[1] >> 6;
- u1 const VG = buffer[4];
- u1 const ROLL = buffer[6] & 0x3f;
+ u2 const alpha = TxBuffer[0] | (TxBuffer[1] & 0x3f) << 8;
+ u2 const beta  = TxBuffer[2] | (TxBuffer[3] & 0x3f) << 8;
+ u1 const err = TxBuffer[1] >> 6;
+ u1 const VG = TxBuffer[4];
+ u1 const ROLL = TxBuffer[6] & 0x3f;
  
  num = alpha >> 6;
 }
 
 void MLX90363::handleXYZ() {
- u2 const X = buffer[0] | (buffer[1] & 0x3f) << 8;
- u2 const Y = buffer[2] | (buffer[3] & 0x3f) << 8;
- u2 const Z = buffer[4] | (buffer[5] & 0x3f) << 8;
- u1 const err = buffer[1] >> 6;
- u1 const ROLL = buffer[6] & 0x3f;
+ u2 const X = TxBuffer[0] | (TxBuffer[1] & 0x3f) << 8;
+ u2 const Y = TxBuffer[2] | (TxBuffer[3] & 0x3f) << 8;
+ u2 const Z = TxBuffer[4] | (TxBuffer[5] & 0x3f) << 8;
+ u1 const err = TxBuffer[1] >> 6;
+ u1 const ROLL = TxBuffer[6] & 0x3f;
 }
 
-void MLX90363::sendGET1Message(Marker const type, const u2 timeout, bool const resetRoll) {
+void MLX90363::prepareGET1Message(Marker const type, const u2 timeout, bool const resetRoll) {
  if (isTransmitting()) return;
- buffer[0] = 0;
- buffer[1] = resetRoll;
- buffer[2] = timeout & 0xff;
- buffer[3] = timeout >> 8;
- buffer[4] = 0;
- buffer[5] = 0;
- buffer[6] = (u1)type << 6 | (u1)Opcode::GET1;
- fillBufferCRC();
- startTransmitting();
+ TxBuffer[0] = 0;
+ TxBuffer[1] = resetRoll;
+ TxBuffer[2] = timeout & 0xff;
+ TxBuffer[3] = timeout >> 8;
+ TxBuffer[4] = 0;
+ TxBuffer[5] = 0;
+ TxBuffer[6] = (u1)type << 6 | (u1)Opcode::GET1;
+ fillTxBufferCRC();
 }
