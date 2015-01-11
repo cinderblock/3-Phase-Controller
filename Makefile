@@ -25,7 +25,7 @@ TARGET = turnigy
 
 MCU = atmega32u4
 
-all: build-lss
+all: build-lss .bld/test.cpp.S
 run: dfu-flash dfu-reset
 
 # Load local settings
@@ -44,6 +44,9 @@ include $(UMAKER)vars/AVR.mk
 
 # Build targets
 include $(UMAKER)tools/build.mk
+
+# Intermediate assembly
+include $(UMAKER)tools/assembly.mk
 
 # Programmer targets
 include $(UMAKER)tools/dfu.mk
