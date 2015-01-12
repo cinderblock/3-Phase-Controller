@@ -8,5 +8,9 @@
 #ifndef CONFIG_H
 #define	CONFIG_H
 
+namespace Config {
+ 
+}
+
 #endif	/* CONFIG_H */
 
