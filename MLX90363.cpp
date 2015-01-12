@@ -11,14 +11,51 @@
 #include "SPI.h"
 #include "Board.h"
 
-using namespace AVR::SPI;
+static inline void sendSPI(u1 const b) {
+ *AVR::SPI::DR = b;
+}
+
+static inline u1 receiveSPI() {
+ return *AVR::SPI::DR;
+}
+
+static inline void SSon () {PORTD |=  (1<<5);}
+static inline void SSoff() {PORTD &= ~(1<<5);}
+
+/**
+ * Declare the SPI Transfer Complete interrupt as a non-blocking interrupt so
+ * that the motor driver has minimum latency.
+ * 
+ * gcc simply enables interrupts at the beginning of the routine allowing any
+ * interrupt to fire again. We can trust that this one will not fire twice
+ * accidentally by not starting a serial transfer until the end of the interrupt.
+ * 
+ * This is not a guarantee, but it will be good enough if we leave enough stack
+ * room.
+ */
+void SPI_STC_vect() ISR_NOBLOCK;
 
 void SPI_STC_vect() {
- MLX90363::RxBuffer[MLX90363::bufferPosition++] = *DR;
+ // Receive a byte
+ MLX90363::RxBuffer[MLX90363::bufferPosition++] = receiveSPI();
+ 
+ // Check if we're done sending
  if (MLX90363::bufferPosition == MLX90363::messageLength) {
-  MLX90363::SSon();
+  // We're done. De-assert (turn on) the slave select line
+  SSon();
  } else {
-  *DR = MLX90363::TxBuffer[MLX90363::bufferPosition];
+  sendSPI(MLX90363::TxBuffer[MLX90363::bufferPosition]);
+  /**
+   * Once this gets sent, there is a chance of nesting deep on the stack.
+   * Luckily, we're, in this particular usage, limited to transmissions of 8 bytes
+   * at a time. Therefore, this whole could only ever worst case nest with 7 layers.
+   * Looking at the assembly code, we can see that the interrupt uses 8 bytes of
+   * stack, add the 3 for the interrupt return location for each, and we're at
+   * 77 bytes of stack maximum.
+   * 
+   * Add the worst case of another interrupt happening, to get the real worst
+   * case stack usage.
+   */
  }
 }
 
@@ -27,9 +64,6 @@ u1 MLX90363::RxBuffer[messageLength];
 u1 MLX90363::bufferPosition = messageLength;
 
 u1 MLX90363::num;
-
-void MLX90363::SSon () {PORTD |=  (1<<5);}
-void MLX90363::SSoff() {PORTD &= ~(1<<5);}
 
 
 void MLX90363::init() {
@@ -48,19 +82,19 @@ void MLX90363::init() {
  MISO.on();
  
  // Setup control registers
- SR->byte = 0;
+ AVR::SPI::SR->byte = 0;
  // F_CPU/32 by default
- CR->byte = 0b11010110;
+ AVR::SPI::CR->byte = 0b11010110;
 }
 
 void MLX90363::setSPISpeed(const u1 c) {
- CR->Divider = c;
+ AVR::SPI::CR->Divider = c;
 }
 
 void MLX90363::startTransmittingUnsafe() {
  bufferPosition = 0;
  SS.off();
- *DR = TxBuffer[bufferPosition];
+ sendSPI(TxBuffer[bufferPosition]);
 }
 
 static const u1 cba_256_TAB[] PROGMEM = {
@@ -96,9 +130,9 @@ bool MLX90363::checkRxBufferCRC() {
  crc = readTable(RxBuffer[3] ^ crc);
  crc = readTable(RxBuffer[4] ^ crc);
  crc = readTable(RxBuffer[5] ^ crc);
- crc = readTable(RxBuffer[6] ^ crc);
+ crc =~readTable(RxBuffer[6] ^ crc);
 
- return RxBuffer[7] == ~crc;
+ return RxBuffer[7] == crc;
 }
 
 void MLX90363::fillTxBufferCRC() {
