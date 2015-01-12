@@ -115,7 +115,11 @@ public:
  };
  
  /**
-  * Initialize the hardware
+  * Initialize the hardware.
+  * 
+  * One thing that is not done is to set the AVR's hardware SS line to an output,
+  * preventing the hardware from automatically switching to slave mode. Make sure
+  * that it is set to an output (and stays that way) before calling this function.
   */
  static void init();
  
