@@ -47,7 +47,7 @@ void SPI_STC_vect() {
   sendSPI(MLX90363::TxBuffer[MLX90363::bufferPosition]);
   /**
    * Once this gets sent, there is a chance of nesting deep on the stack.
-   * Luckily, we're, in this particular usage, limited to transmissions of 8 bytes
+   * Luckily we're, in this particular usage, limited to transmissions of 8 bytes
    * at a time. Therefore, this whole could only ever worst case nest with 7 layers.
    * Looking at the assembly code, we can see that the interrupt uses 8 bytes of
    * stack, add the 3 for the interrupt return location for each, and we're at
@@ -130,7 +130,7 @@ bool MLX90363::checkRxBufferCRC() {
  crc = readTable(RxBuffer[3] ^ crc);
  crc = readTable(RxBuffer[4] ^ crc);
  crc = readTable(RxBuffer[5] ^ crc);
- crc =~readTable(RxBuffer[6] ^ crc);
+ crc = ~readTable(RxBuffer[6] ^ crc);
 
  return RxBuffer[7] == crc;
 }
