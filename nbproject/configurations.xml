@@ -6,6 +6,7 @@
                    projectFiles="true"
                    kind="ROOT">
       <itemPath>.bld/MLX90363.cpp.S</itemPath>
+      <itemPath>.bld/TwillBotInterface.cpp.S</itemPath>
       <itemPath>.bld/test.cpp.S</itemPath>
     </logicalFolder>
     <logicalFolder name="HeaderFiles"
@@ -19,6 +20,7 @@
       <itemPath>MLX90363.h</itemPath>
       <itemPath>SPI.h</itemPath>
       <itemPath>ThreePhaseDriver.h</itemPath>
+      <itemPath>TwillBotInterface.h</itemPath>
       <itemPath>basicTypes.h</itemPath>
       <itemPath>bigTypes.h</itemPath>
       <itemPath>bitTypes.h</itemPath>
@@ -36,6 +38,7 @@
       <itemPath>MLX90363.cpp</itemPath>
       <itemPath>SPI.cpp</itemPath>
       <itemPath>ThreePhaseDriver.cpp</itemPath>
+      <itemPath>TwillBotInterface.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>test.cpp</itemPath>
     </logicalFolder>
@@ -78,6 +81,8 @@
       </compileType>
       <item path=".bld/MLX90363.cpp.S" ex="false" tool="4" flavor2="0">
       </item>
+      <item path=".bld/TwillBotInterface.cpp.S" ex="false" tool="4" flavor2="0">
+      </item>
       <item path=".bld/test.cpp.S" ex="false" tool="4" flavor2="0">
       </item>
       <item path="Board.cpp" ex="false" tool="1" flavor2="0">
@@ -107,6 +112,10 @@
       <item path="ThreePhaseDriver.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ThreePhaseDriver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TwillBotInterface.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TwillBotInterface.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="basicTypes.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -143,6 +152,8 @@
       </compileType>
       <item path=".bld/MLX90363.cpp.S" ex="false" tool="4" flavor2="0">
       </item>
+      <item path=".bld/TwillBotInterface.cpp.S" ex="false" tool="4" flavor2="0">
+      </item>
       <item path=".bld/test.cpp.S" ex="false" tool="4" flavor2="0">
       </item>
       <item path="Board.cpp" ex="false" tool="1" flavor2="0">
@@ -172,6 +183,10 @@
       <item path="ThreePhaseDriver.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ThreePhaseDriver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TwillBotInterface.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TwillBotInterface.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="basicTypes.h" ex="false" tool="3" flavor2="0">
       </item>

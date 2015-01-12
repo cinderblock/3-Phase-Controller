@@ -10,6 +10,8 @@ C =
 # List of CPP file basenames to build
 CPP = main Board SPI MLX90363 ThreePhaseDriver Debug
 
+CPP += TwillBotInterface
+
 # Select specific LUFA source files to compile like this
 #LUFA_SRC = LUFA/Drivers/USB/Class/Common/HIDParser.c
 
@@ -28,7 +30,7 @@ MCU = atmega32u4
 all: build-lss asm
 run: dfu-flash dfu-reset
 
-asm: .bld/test.cpp.S .bld/MLX90363.cpp.S
+asm: .bld/TwillBotInterface.cpp.S .bld/MLX90363.cpp.S
 
 # Load local settings
 -include local.mk
