@@ -116,21 +116,21 @@ static const u1 cba_256_TAB[] PROGMEM = {
  0xd8,0xf7,0x86,0xa9,0x64,0x4b,0x3a,0x15,0x8f,0xa0,0xd1,0xfe,0x33,0x1c,0x6d,0x42,
 };
 
-static u1 readTable(u1 const b) __attribute__((const));
-inline static u1 readTable(u1 const b) {
+static u1 lookupCRC(u1 const b) __attribute__((const));
+inline static u1 lookupCRC(u1 const b) {
  return pgm_read_byte(&cba_256_TAB[b]);
 }
 
 bool MLX90363::checkRxBufferCRC() {
  u1 crc = 0xff;
  
- crc = readTable(RxBuffer[0] ^ crc);
- crc = readTable(RxBuffer[1] ^ crc);
- crc = readTable(RxBuffer[2] ^ crc);
- crc = readTable(RxBuffer[3] ^ crc);
- crc = readTable(RxBuffer[4] ^ crc);
- crc = readTable(RxBuffer[5] ^ crc);
- crc = ~readTable(RxBuffer[6] ^ crc);
+ crc = lookupCRC(RxBuffer[0] ^ crc);
+ crc = lookupCRC(RxBuffer[1] ^ crc);
+ crc = lookupCRC(RxBuffer[2] ^ crc);
+ crc = lookupCRC(RxBuffer[3] ^ crc);
+ crc = lookupCRC(RxBuffer[4] ^ crc);
+ crc = lookupCRC(RxBuffer[5] ^ crc);
+ crc = ~lookupCRC(RxBuffer[6] ^ crc);
 
  return RxBuffer[7] == crc;
 }
@@ -138,13 +138,13 @@ bool MLX90363::checkRxBufferCRC() {
 void MLX90363::fillTxBufferCRC() {
  u1 crc = 0xff;
 
- crc = readTable(TxBuffer[0] ^ crc);
- crc = readTable(TxBuffer[1] ^ crc);
- crc = readTable(TxBuffer[2] ^ crc);
- crc = readTable(TxBuffer[3] ^ crc);
- crc = readTable(TxBuffer[4] ^ crc);
- crc = readTable(TxBuffer[5] ^ crc);
- crc = readTable(TxBuffer[6] ^ crc);
+ crc = lookupCRC(TxBuffer[0] ^ crc);
+ crc = lookupCRC(TxBuffer[1] ^ crc);
+ crc = lookupCRC(TxBuffer[2] ^ crc);
+ crc = lookupCRC(TxBuffer[3] ^ crc);
+ crc = lookupCRC(TxBuffer[4] ^ crc);
+ crc = lookupCRC(TxBuffer[5] ^ crc);
+ crc = lookupCRC(TxBuffer[6] ^ crc);
 
  TxBuffer[7] = ~crc;
 }
