@@ -25,8 +25,10 @@ TARGET = turnigy
 
 MCU = atmega32u4
 
-all: build-lss .bld/test.cpp.S
+all: build-lss asm
 run: dfu-flash dfu-reset
+
+asm: .bld/test.cpp.S .bld/MLX90363.cpp.S
 
 # Load local settings
 -include local.mk
