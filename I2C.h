@@ -15,7 +15,6 @@ namespace AVR {
  namespace I2C {
   
   typedef union {
-   u1 byte;
    struct {
     b1 InterruptEnable:1;
     u1:1;
@@ -26,23 +25,24 @@ namespace AVR {
     b1 EnableAcknowledge:1;
     b1 InterruptFlag:1;
    };
+   u1 byte;
   } CRt;
 
   typedef union {
-   u1 byte;
    struct {
     b2 Prescaler:2;
     u1:1;
     b5 Status:5;
    };
+   u1 byte;
   } SRt;
 
   typedef union {
-   u1 byte;
    struct {
     b1 GeneralCallRecognition:1;
     b7 SlaveAddress:7;
    };
+   u1 byte;
   } ARt;
 
   constexpr volatile u1  * const BR  =                       &TWBR;

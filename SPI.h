@@ -14,7 +14,6 @@
 namespace AVR {
  namespace SPI {
   typedef union {
-   u1 byte;
    struct {
     b2 Divider:2;
     b1 ClockPhase:1;
@@ -24,16 +23,17 @@ namespace AVR {
     b1 Enable:1;
     b1 InterruptEnable:1;
    };
+   u1 byte;
   } CRt;
 
   typedef union {
-   u1 byte;
    struct {
     b1 DoubleSpeed:1;
     u1:5;
     b1 Collision:1;
     b1 InterruptFlag:1;
    };
+   u1 byte;
   } SRt;
 
   constexpr volatile CRt * const CR = (volatile CRt * const)&SPCR;
