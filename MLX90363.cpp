@@ -99,6 +99,8 @@ void MLX90363::startTransmittingUnsafe() {
 
 /**
  * Lookup table from MLX90363 datasheet
+ * 
+ * The name cba_256_TAB comes from the datasheet as well
  */
 static const u1 cba_256_TAB[] PROGMEM = {
  0x00,0x2f,0x5e,0x71,0xbc,0x93,0xe2,0xcd,0x57,0x78,0x09,0x26,0xeb,0xc4,0xb5,0x9a,
@@ -119,6 +121,11 @@ static const u1 cba_256_TAB[] PROGMEM = {
  0xd8,0xf7,0x86,0xa9,0x64,0x4b,0x3a,0x15,0x8f,0xa0,0xd1,0xfe,0x33,0x1c,0x6d,0x42,
 };
 
+/**
+ * Lookup the next crc value from the above table
+ * @param b
+ * @return 
+ */
 static u1 lookupCRC(u1 const b) __attribute__((const));
 inline static u1 lookupCRC(u1 const b) {
  return pgm_read_byte(&cba_256_TAB[b]);
