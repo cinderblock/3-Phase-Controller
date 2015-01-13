@@ -60,6 +60,7 @@ void TIMER1_OVF_vect() {
 
 static inline void transitionInterruptCleanupBody() {
  // Disable timer interrupts
+// asm ("sts 0x006F, r1" : : );
  TIMSK1 = 0;
  // Prevent future transitions from doing the same
  cacheI = 0;
@@ -93,8 +94,7 @@ static inline void transitionInterruptCleanupManual() {
  // If we use r0, save it too
 // asm ("push r0" : : );
  
- /** Then we do the trivial cleanup */
-// asm ("sts 0x006F, r1" : : );
+ /** Then we do the cleanup */
  transitionInterruptCleanupBody();
  
  /** And restore context */
