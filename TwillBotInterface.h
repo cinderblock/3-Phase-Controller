@@ -8,11 +8,14 @@
 #ifndef TWILLBOTINTERFACE_H
 #define	TWILLBOTINTERFACE_H
 
+#include <avr/interrupt.h>
 #include "Config.h"
+
+ISR(TWI_vect);
 
 class TwillBotInterface {
  static constexpr b7 address = Config::I2CslaveAddress;
- 
+ friend void TWI_vect();
  
 public:
  
