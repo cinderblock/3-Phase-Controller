@@ -29,34 +29,34 @@ inline static void CLowOn()  {PORTB |=  (1 << 0);}
  * 
  * Used for disabling high side drivers when using their compare match interrupt.
  */
-register u1 cacheW asm("r2");
+register u1 cachedTCR asm("r2");
 
 /**
  * Cached value to write to OCR1AL at the next overflow
  */
-register u1 cacheA asm("r3");
+register u1 cachedOCRA asm("r3");
 
 /**
  * Cached value to write to OCR1BL at the next overflow
  */
-register u1 cacheB asm("r4");
+register u1 cachedOCRB asm("r4");
 
 /**
  * Cached value to write to OCR1CL at the next overflow
  */
-register u1 cacheC asm("r5");
+register u1 cachedOCRC asm("r5");
 
 /**
  * Cached value to write to TIMSK1 at the next overflow.
  * 
  * Used to select which interrupt will fire next
  */
-register u1 cacheI asm("r6");
+register u1 cachedNextIntEnable asm("r6");
 
 inline static void stageNextPhase(ThreePhaseDriver::Phase const p) {
-      if (p == ThreePhaseDriver::Phase::A) cacheW = 0b10101001 & ~(1 << COM1A1);
- else if (p == ThreePhaseDriver::Phase::B) cacheW = 0b10101001 & ~(1 << COM1B1);
- else if (p == ThreePhaseDriver::Phase::C) cacheW = 0b10101001 & ~(1 << COM1C1);
+      if (p == ThreePhaseDriver::Phase::A) cachedTCR = 0b10101001 & ~(1 << COM1A1);
+ else if (p == ThreePhaseDriver::Phase::B) cachedTCR = 0b10101001 & ~(1 << COM1B1);
+ else if (p == ThreePhaseDriver::Phase::C) cachedTCR = 0b10101001 & ~(1 << COM1C1);
 }
 
 //u1 ThreePhaseDriver::cacheA = 0;
@@ -76,14 +76,14 @@ extern "C" void TIMER1_OVF_vect() __attribute__ ((naked,__INTR_ATTRS));
 
 void TIMER1_OVF_vect() {
  // clear timer match interrupts
- TIFR1 = cacheI;
+ TIFR1 = cachedNextIntEnable;
 
- OCR1AL = cacheA;
- OCR1BL = cacheB;
- OCR1CL = cacheC;
+ OCR1AL = cachedOCRA;
+ OCR1BL = cachedOCRB;
+ OCR1CL = cachedOCRC;
  
  // Enable next interrupt
- TIMSK1 = cacheI;
+ TIMSK1 = cachedNextIntEnable;
  
  // Manual interrupt return
  asm ("reti" : : );
@@ -97,11 +97,11 @@ static inline void disableTimerInterrupts() {
 // cacheI = 0;
  
  // If we do the above manually instead, we can same a few clock cycles later
- asm ("clr %0" : : "r"(cacheI));
+ asm ("clr %0" : : "r"(cachedNextIntEnable));
  
  // Disable timer interrupts
  // Using the freshly cleared cacheI lets us save a few clock cycles in cleanup
- TIMSK1 = cacheI;
+ TIMSK1 = cachedNextIntEnable;
 }
 
 /**
@@ -153,12 +153,12 @@ static inline void transitionInterruptCleanup() {
  * the low sides who's matching high sides have been turned off
  */
 static inline void prepareNextPhase() {
- TCCR1A = cacheW;
+ TCCR1A = cachedTCR;
 
  // If the enable bit for the output module is off, we can turn on our low side
- if (!(cacheW & (1 << COM1A1))) ALowOn();
- if (!(cacheW & (1 << COM1B1))) BLowOn();
- if (!(cacheW & (1 << COM1C1))) CLowOn();
+ if (!(cachedTCR & (1 << COM1A1))) ALowOn();
+ if (!(cachedTCR & (1 << COM1B1))) BLowOn();
+ if (!(cachedTCR & (1 << COM1C1))) CLowOn();
 }
 
 /**
@@ -328,34 +328,34 @@ void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
  u1 const MAX = max > minimumPhaseSwitchMatch ? max : minimumPhaseSwitchMatch;
  
  if (phase == Phase::A) {
-  cacheA = MAX;
-  cacheB = TWO;
-  cacheC = ONE;
+  cachedOCRA = MAX;
+  cachedOCRB = TWO;
+  cachedOCRC = ONE;
   stageNextPhase(Phase::A);
  } else if (phase == Phase::B) {
-  cacheA = ONE;
-  cacheB = MAX;
-  cacheC = TWO;
+  cachedOCRA = ONE;
+  cachedOCRB = MAX;
+  cachedOCRC = TWO;
   stageNextPhase(Phase::B);
  } else if (phase == Phase::C) {
-  cacheA = TWO;
-  cacheB = ONE;
-  cacheC = MAX;
+  cachedOCRA = TWO;
+  cachedOCRB = ONE;
+  cachedOCRC = MAX;
   stageNextPhase(Phase::C);
  } else {
   // Should not get here. bad phase...
   
-  cacheA = 0;
-  cacheB = 0;
-  cacheC = 0;
-  cacheI = 0;
+  cachedOCRA = 0;
+  cachedOCRB = 0;
+  cachedOCRC = 0;
+  cachedNextIntEnable = 0;
   return;
  }
  
  if (currentPhase != phase) {
-  if (currentPhase == Phase::A) cacheI = 1 << OCF1A;
-  else if (currentPhase == Phase::B) cacheI = 1 << OCF1B;
-  else if (currentPhase == Phase::C) cacheI = 1 << OCF1C;
+  if      (currentPhase == Phase::A) cachedNextIntEnable = 1 << OCF1A;
+  else if (currentPhase == Phase::B) cachedNextIntEnable = 1 << OCF1B;
+  else if (currentPhase == Phase::C) cachedNextIntEnable = 1 << OCF1C;
   else {
    // We must be initializing. The main purpose of cacheI (where is is used) is
    // is to disable the old low, enable the new one, and actually enable the OCR
@@ -430,50 +430,50 @@ void ThreePhaseDriver::advanceToBackEMF(const Phase phase, const u1 step) {
 
  if (phase == Phase::A) {
   if (step & 0b10000000) {
-   cacheA = MAX;
-   cacheB = 0;
-   cacheC = ONE;
+   cachedOCRA = MAX;
+   cachedOCRB = 0;
+   cachedOCRC = ONE;
   } else {
-   cacheA = MAX;
-   cacheB = ONE;
-   cacheC = 0;
+   cachedOCRA = MAX;
+   cachedOCRB = ONE;
+   cachedOCRC = 0;
   }
  } else if (phase == Phase::B) {
   if (step & 0b10000000) {
-   cacheA = ONE;
-   cacheB = MAX;
-   cacheC = 0;
+   cachedOCRA = ONE;
+   cachedOCRB = MAX;
+   cachedOCRC = 0;
   } else {
-   cacheA = 0;
-   cacheB = MAX;
-   cacheC = ONE;
+   cachedOCRA = 0;
+   cachedOCRB = MAX;
+   cachedOCRC = ONE;
   }
  } else if (phase == Phase::C) {
   if (step & 0b10000000) {
-   cacheA = 0;
-   cacheB = ONE;
-   cacheC = MAX;
+   cachedOCRA = 0;
+   cachedOCRB = ONE;
+   cachedOCRC = MAX;
   } else {
-   cacheA = ONE;
-   cacheB = 0;
-   cacheC = MAX;
+   cachedOCRA = ONE;
+   cachedOCRB = 0;
+   cachedOCRC = MAX;
   }
  } else {
   // Should not get here. bad phase...
   
-  cacheA = 0;
-  cacheB = 0;
-  cacheC = 0;
-  cacheI = 0;
+  cachedOCRA = 0;
+  cachedOCRB = 0;
+  cachedOCRC = 0;
+  cachedNextIntEnable = 0;
   return;
  }
  
  stageNextPhase(phase);
 
  // Stage the correct interrupt to turn off the current phase's low driver
-      if (currentPhase == Phase::A) cacheI = 1 << OCF1A;
- else if (currentPhase == Phase::B) cacheI = 1 << OCF1B;
- else if (currentPhase == Phase::C) cacheI = 1 << OCF1C;
+ if      (currentPhase == Phase::A) cachedNextIntEnable = 1 << OCF1A;
+ else if (currentPhase == Phase::B) cachedNextIntEnable = 1 << OCF1B;
+ else if (currentPhase == Phase::C) cachedNextIntEnable = 1 << OCF1C;
  // we must be initializing
  else prepareNextPhase();
 
@@ -484,5 +484,4 @@ void ThreePhaseDriver::advanceToBackEMF(const Phase phase, const u1 step) {
 
  // Update where we last were
  currentPhase = phase;
-
 }
