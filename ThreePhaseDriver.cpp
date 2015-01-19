@@ -397,34 +397,32 @@ void ThreePhaseDriver::advanceToBackEMF(const Phase phase, const u1 step) {
    if (step & 0b10000000) {
     OCR1BL = 0;
     OCR1CL = ONE;
-    OCR1AL = MAX;
    } else {
     OCR1CL = 0;
     OCR1BL = ONE;
-    OCR1AL = MAX;
    }
+   OCR1AL = MAX;
   } else if (phase == Phase::B) {
    if (step & 0b10000000) {
     OCR1CL = 0;
     OCR1AL = ONE;
-    OCR1BL = MAX;
    } else {
     OCR1AL = 0;
     OCR1CL = ONE;
-    OCR1BL = MAX;
    }
+   OCR1BL = MAX;
   } else if (phase == Phase::C) {
    if (step & 0b10000000) {
     OCR1AL = 0;
     OCR1BL = ONE;
-    OCR1CL = MAX;
    } else {
     OCR1BL = 0;
     OCR1AL = ONE;
-    OCR1CL = MAX;
    }
+   OCR1CL = MAX;
   } else {
    // TODO: Error. We should not get here.
+   return;
   }
   // We're done if this was a trivial duty cycle update
   return;
