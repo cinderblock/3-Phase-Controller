@@ -11,6 +11,7 @@
 #include "Board.h"
 #include "Debug.h"
 
+// IOpin should be made optimizable enough so we don't need to do this. Oh well.
 
 inline static void ALowOff() {PORTB &= ~(1 << 4);}
 inline static void BLowOff() {PORTF &= ~(1 << 0);}
