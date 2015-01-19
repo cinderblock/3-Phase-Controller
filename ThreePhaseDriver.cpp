@@ -158,12 +158,12 @@ static inline void transitionInterruptCleanupManual() {
  * the low sides who's matching high sides have been turned off
  */
 static inline void prepareNextPhase() {
+ TCCR1A = cacheW;
+
  // If the enable bit for the output module is off, we can turn on our low side
  if (!(cacheW & (1 << COM1A1))) ALowOn();
  if (!(cacheW & (1 << COM1B1))) BLowOn();
  if (!(cacheW & (1 << COM1C1))) CLowOn();
-
- TCCR1A = cacheW;
 }
 
 /**
