@@ -91,7 +91,7 @@ void TIMER1_OVF_vect() {
 /**
  * Turns off the timer interrupts and clear cacheI
  */
-static inline void transitionInterruptCleanupBody() {
+static inline void disableTimerInterrupts() {
  // Prevent future transitions from doing the same
 // cacheI = 0;
  
@@ -99,29 +99,23 @@ static inline void transitionInterruptCleanupBody() {
  asm ("clr %0" : : "r"(cacheI));
  
  // Disable timer interrupts
- // Using the freshly cleared cacheI lets us save a few clock cycles later
+ // Using the freshly cleared cacheI lets us save a few clock cycles in cleanup
  TIMSK1 = cacheI;
 }
 
 /**
- * Function that should generate proper interrupt entry and exit code.
+ * Cleanup after the timer OCR (aka transition) interrupts by turning them off
  * 
- * It however will not inline and I want this interrupt to run as fast as
- * possible, so we use the manual version instead
+ * Handles the "return from interrupt" that the naked calling function need
  */
-static inline void transitionInterruptCleanup() __attribute__((signal));
 static inline void transitionInterruptCleanup() {
- transitionInterruptCleanupBody();
-}
-
-/**
- * Function to manually save state like the above function should
- */
-static inline void transitionInterruptCleanupManual() {
  /**
   * Since we're done with all of out timed requirements, we can do the cleanup
   * slower. Instead of using dedicated registers as before, we save our context
   * like a normal interrupt using some of the stack.
+  * 
+  * Since we're running this interrupt regularly, let's optimize it as much as
+  * possible.
   */
 
  // Save registers that we use
@@ -135,7 +129,7 @@ static inline void transitionInterruptCleanupManual() {
 // asm ("push r0" : : );
  
  /** Then we do the cleanup */
- transitionInterruptCleanupBody();
+ disableTimerInterrupts();
  
  // And restore the context
 
@@ -187,7 +181,7 @@ extern "C" void TIMER1_COMPC_vect() __attribute__ ((naked,__INTR_ATTRS));
 void TIMER1_COMPA_vect() {
  ALowOff();
  prepareNextPhase();
- transitionInterruptCleanupManual();
+ transitionInterruptCleanup();
 }
 
 
@@ -197,7 +191,7 @@ void TIMER1_COMPA_vect() {
 void TIMER1_COMPB_vect() {
  BLowOff();
  prepareNextPhase();
- transitionInterruptCleanupManual();
+ transitionInterruptCleanup();
 }
 
 
@@ -207,7 +201,7 @@ void TIMER1_COMPB_vect() {
 void TIMER1_COMPC_vect() {
  CLowOff();
  prepareNextPhase();
- transitionInterruptCleanupManual();
+ transitionInterruptCleanup();
 }
 
 static const u1 minimumPhaseSwitchMatch = 50;
