@@ -205,6 +205,28 @@ void TIMER1_COMPC_vect() {
  transitionInterruptCleanup();
 }
 
+/**
+ * Number of timer cycles to wait before switching which low is on minimum
+ * 
+ * If our drive amplitude is very low, we need a minimum number of cycles to wait
+ * before turning on because if we're too fast, the overflow interrupt might clear
+ * the next compare match flag after it's been set! The OVerFlow interrupt is
+ * written so that the flag clearing happens in its first instruction. Therefore
+ * its maximum delay, if interrupts are enabled, is:
+ * <interrupt jump cycles>            3 +
+ * <interrupt jump table jump cycles> 2 +
+ * <flag clear instruction cycles>    1 = 6 cycles
+ * 
+ * There is a chance interrupts are off, if another interrupt handler is running.
+ * To ensure the motor controller has minium latency, here in particular, we will
+ * ensure all those interrupts enable interrupts as their first instruction,
+ * adding 4 to the maximum latency of clearing the timer flag.
+ * 
+ * Therefore, this could be set to 11, possibly 10, but there is no reason we
+ * can't be safe and set it higher. As long as it's far away from 255. That "far"
+ * distance (in time/clock cycles) is to ensure the transition interrupt has enough
+ * time to run. Around 18 cycles.
+ */
 static const u1 minimumPhaseSwitchMatch = 50;
 
 void ThreePhaseDriver::init() {
