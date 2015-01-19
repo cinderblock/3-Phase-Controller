@@ -69,7 +69,7 @@ public:
   */
  static void advanceToFullSine(Phase const phase, u1 const step);
  
- static constexpr u1 maxAmplitude = 220;
+ static constexpr u1 maxAmplitude = 0xff - 30;
  
  static inline void setAmplitude(u1 const a) {amplitude = a > maxAmplitude ? maxAmplitude : a;}
 
