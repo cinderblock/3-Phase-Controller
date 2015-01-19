@@ -11,6 +11,7 @@
 #include "ThreePhaseDriver.h"
 #include "MLX90363.h"
 #include "Debug.h"
+#include "TwillBotInterface.h"
 
 /**
  * All the init functions should go in here.
@@ -23,6 +24,7 @@ void init() {
  // The AVR's ^SS pin is really Board::DRV::AL, controlled by ThreePhaseDriver.
  ThreePhaseDriver::init();
  MLX90363::init();
+ TwillBotInterface::init();
  
  Debug::init();
 }

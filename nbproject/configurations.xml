@@ -3,8 +3,7 @@
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="f1"
                    displayName="Generated Assembly Files"
-                   projectFiles="true"
-                   kind="ROOT">
+                   projectFiles="true">
       <itemPath>.bld/MLX90363.cpp.S</itemPath>
       <itemPath>.bld/TwillBotInterface.cpp.S</itemPath>
       <itemPath>.bld/test.cpp.S</itemPath>
