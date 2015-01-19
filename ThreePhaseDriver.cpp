@@ -92,11 +92,15 @@ void TIMER1_OVF_vect() {
  * Turns off the timer interrupts and clear cacheI
  */
 static inline void transitionInterruptCleanupBody() {
- // Disable timer interrupts
-// asm ("sts 0x006F, r1" : : );
- TIMSK1 = 0;
  // Prevent future transitions from doing the same
- cacheI = 0;
+// cacheI = 0;
+ 
+ // If we do the above manually instead, we can same a few clock cycles later
+ asm ("clr %0" : : "r"(cacheI));
+ 
+ // Disable timer interrupts
+ // Using the freshly cleared cacheI lets us save a few clock cycles later
+ TIMSK1 = cacheI;
 }
 
 /**
@@ -120,30 +124,38 @@ static inline void transitionInterruptCleanupManual() {
   * like a normal interrupt using some of the stack.
   */
 
- /* Save context that is important */
- asm ("push r1" : : );
+ // Save registers that we use
  asm ("push r0" : : );
+// asm ("push r1" : : );
+ 
+ // Save the SREG since the body clobbers it
  asm ("in r0, 0x3f" : : );
- asm ("clr r1" : : );
- // If we use r0, save it too
+ 
+ // Uncomment if the body uses r0. Otherwise, why waste the time.
 // asm ("push r0" : : );
  
  /** Then we do the cleanup */
  transitionInterruptCleanupBody();
  
- /** And restore context */
+ // And restore the context
 
- // If we saved r0, pop it back
+ // If we saved r0 above, pop it back. Otherwise, save time
 // asm ("pop r0" : : );
+ 
+ // Restore SREG
  asm ("out 0x3f, r0" : : );
+ 
+ // Restore used registers
+// asm ("pop r1" : : );
  asm ("pop r0" : : );
- asm ("pop r1" : : );
+ 
+ // Manual interrupt return since this function is used in naked interrupts
  asm ("reti" : : );
 }
 
 /**
  * Turns on the next next high side outputs, as prepared in cacheW, and turns on
- * the low sides that have been configured as off.
+ * the low sides who's matching high sides have been turned off
  */
 static inline void prepareNextPhase() {
  // If the enable bit for the output module is off, we can turn on our low side
