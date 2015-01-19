@@ -22,11 +22,41 @@ inline static void CLowOn()  {PORTB |=  (1 << 0);}
 
 // Reserved AVR registers for timer operation so we don't need to waste time
 // with context switching and such.
+
+/**
+ * Next value to write to TCCR1A in each OC interrupt.
+ * 
+ * Used for disabling high side drivers when using their compare match interrupt.
+ */
 register u1 cacheW asm("r2");
+
+/**
+ * Cached value to write to OCR1AL at the next overflow
+ */
 register u1 cacheA asm("r3");
+
+/**
+ * Cached value to write to OCR1BL at the next overflow
+ */
 register u1 cacheB asm("r4");
+
+/**
+ * Cached value to write to OCR1CL at the next overflow
+ */
 register u1 cacheC asm("r5");
+
+/**
+ * Cached value to write to TIMSK1 at the next overflow.
+ * 
+ * Used to select which interrupt will fire next
+ */
 register u1 cacheI asm("r6");
+
+inline static void stageNextPhase(ThreePhaseDriver::Phase const p) {
+      if (p == ThreePhaseDriver::Phase::A) cacheW = 0b10101001 & ~(1 << COM1A1);
+ else if (p == ThreePhaseDriver::Phase::B) cacheW = 0b10101001 & ~(1 << COM1B1);
+ else if (p == ThreePhaseDriver::Phase::C) cacheW = 0b10101001 & ~(1 << COM1C1);
+}
 
 //u1 ThreePhaseDriver::cacheA = 0;
 //u1 ThreePhaseDriver::cacheB = 0;
@@ -58,6 +88,9 @@ void TIMER1_OVF_vect() {
  asm ("reti" : : );
 }
 
+/**
+ * Turns off the timer interrupts and clear cacheI
+ */
 static inline void transitionInterruptCleanupBody() {
  // Disable timer interrupts
  TIMSK1 = 0;
@@ -68,9 +101,10 @@ static inline void transitionInterruptCleanupBody() {
 /**
  * Function that should generate proper interrupt entry and exit code.
  * 
- * It however will not inline and I'm not trying to do a jump just yet.
+ * It however will not inline and I want this interrupt to run as fast as
+ * possible, so we use the manual version instead
  */
-static inline void transitionInterruptCleanup() __attribute__((interrupt, used));
+static inline void transitionInterruptCleanup() __attribute__((signal));
 static inline void transitionInterruptCleanup() {
  transitionInterruptCleanupBody();
 }
@@ -107,20 +141,17 @@ static inline void transitionInterruptCleanupManual() {
  asm ("reti" : : );
 }
 
-static inline void transitionInterruptBody() {
- TCCR1A = cacheW;
- 
+/**
+ * Turns on the next next high side outputs, as prepared in cacheW, and turns on
+ * the low sides that have been configured as off.
+ */
+static inline void prepareNextPhase() {
  // If the enable bit for the output module is off, we can turn on our low side
- if (!(cacheW & (1 << COM1A1)))
-  ALowOn();
- 
- if (!(cacheW & (1 << COM1B1)))
-  BLowOn();
- 
- if (!(cacheW & (1 << COM1C1)))
-  CLowOn();
+ if (!(cacheW & (1 << COM1A1))) ALowOn();
+ if (!(cacheW & (1 << COM1B1))) BLowOn();
+ if (!(cacheW & (1 << COM1C1))) CLowOn();
 
- transitionInterruptCleanupManual();
+ TCCR1A = cacheW;
 }
 
 /**
@@ -138,20 +169,36 @@ extern "C" void TIMER1_COMPB_vect() __attribute__ ((naked,__INTR_ATTRS));
  */
 extern "C" void TIMER1_COMPC_vect() __attribute__ ((naked,__INTR_ATTRS));
 
+/**
+ * Turns off the A low side driver and turns on the next one
+ */
 void TIMER1_COMPA_vect() {
  ALowOff();
- transitionInterruptBody();
+ prepareNextPhase();
+ transitionInterruptCleanupManual();
 }
 
+
+/**
+ * Turns off the B low side driver and turns on the next one
+ */
 void TIMER1_COMPB_vect() {
  BLowOff();
- transitionInterruptBody();
+ prepareNextPhase();
+ transitionInterruptCleanupManual();
 }
 
+
+/**
+ * Turns off the C low side driver and turns on the next one
+ */
 void TIMER1_COMPC_vect() {
  CLowOff();
- transitionInterruptBody();
+ prepareNextPhase();
+ transitionInterruptCleanupManual();
 }
+
+static const u1 minimumPhaseSwitchMatch = 50;
 
 void ThreePhaseDriver::init() {
  // Turn off interrupts just in case
@@ -253,17 +300,22 @@ u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
  return prod >> 8;
 }
 
-ThreePhaseDriver::Phase ThreePhaseDriver::currentPhase = Phase::C;
+void ThreePhaseDriver::advance() {
+ static u2 step = 0;
+ advanceTo(step);
+ Debug::reportByte(step >> 2);
+ if (++step == 0x300) step = 0;
+}
 
-void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
+ThreePhaseDriver::Phase ThreePhaseDriver::currentPhase = Phase::INIT;
+
+void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
  // If this timer's interrupts are on, don't mess with a running change
  if (TIMSK1) return;
  
  u1 const ONE = getPhasePWM(    step);
  u1 const TWO = getPhasePWM(255-step);
  u1 const max = ONE > TWO ? ONE : TWO;
- 
- const u1 minimumPhaseSwitchMatch = 50;
 
  // Prevent us from using a MAX that is too low
  u1 const MAX = max > minimumPhaseSwitchMatch ? max : minimumPhaseSwitchMatch;
@@ -272,32 +324,43 @@ void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
   cacheA = MAX;
   cacheB = TWO;
   cacheC = ONE;
-  cacheW = 0b10101001 & ~(1 << COM1A1);
+  stageNextPhase(Phase::A);
  } else if (phase == Phase::B) {
   cacheA = ONE;
   cacheB = MAX;
   cacheC = TWO;
-  cacheW = 0b10101001 & ~(1 << COM1B1);
+  stageNextPhase(Phase::B);
  } else if (phase == Phase::C) {
   cacheA = TWO;
   cacheB = ONE;
   cacheC = MAX;
-  cacheW = 0b10101001 & ~(1 << COM1C1);
+  stageNextPhase(Phase::C);
  } else {
+  // Should not get here. bad phase...
+  
   cacheA = 0;
   cacheB = 0;
   cacheC = 0;
   cacheI = 0;
   return;
-  
-  // TODO: Not fully reset. Any low could be high right now
  }
  
  if (currentPhase != phase) {
   if (currentPhase == Phase::A) cacheI = 1 << OCF1A;
-  if (currentPhase == Phase::B) cacheI = 1 << OCF1B;
-  if (currentPhase == Phase::C) cacheI = 1 << OCF1C;
-  // we use cacheW to tell the interrupt which low side driver to turn on
+  else if (currentPhase == Phase::B) cacheI = 1 << OCF1B;
+  else if (currentPhase == Phase::C) cacheI = 1 << OCF1C;
+  else {
+   // We must be initializing. The main purpose of cacheI (where is is used) is
+   // is to disable the old low, enable the new one, and actually enable the OCR
+   // outputs. We could just do nothing here and let one commutation in software
+   // happen and then the outputs would be setup correctly. In the interest of
+   // stating up faster, let's manually just turn on the right low side and
+   // enable the outputs. Make sure this only happens when the currently locked
+   // OCR values are all 0.
+   
+   // This does everything for us :)
+   prepareNextPhase();
+  }
  }
 
  // Clear the overflow flag (so that we don't immediately trigger an overflow))
@@ -309,9 +372,112 @@ void ThreePhaseDriver::advanceTo(const Phase phase, const u1 step) {
  currentPhase = phase;
 }
 
-void ThreePhaseDriver::advance() {
- static u2 step = 0;
- advanceTo(step);
- Debug::reportByte(step >> 2);
- if (++step == 0x300) step = 0;
+void ThreePhaseDriver::advanceToBackEMF(const Phase phase, const u1 step) {
+ // If this timer's interrupts are on, don't mess with a running change
+ if (TIMSK1) return;
+ 
+ u1 const ONE = getPhasePWM(step | 0b10000000);
+ 
+ u1 const MAX = ONE > minimumPhaseSwitchMatch ? ONE : minimumPhaseSwitchMatch;
+ 
+ if (phase == currentPhase) {
+  if (phase == Phase::A) {
+   if (step & 0b10000000) {
+    OCR1BL = 0;
+    OCR1CL = ONE;
+    OCR1AL = MAX;
+   } else {
+    OCR1CL = 0;
+    OCR1BL = ONE;
+    OCR1AL = MAX;
+   }
+  } else if (phase == Phase::B) {
+   if (step & 0b10000000) {
+    OCR1CL = 0;
+    OCR1AL = ONE;
+    OCR1BL = MAX;
+   } else {
+    OCR1AL = 0;
+    OCR1CL = ONE;
+    OCR1BL = MAX;
+   }
+  } else if (phase == Phase::C) {
+   if (step & 0b10000000) {
+    OCR1AL = 0;
+    OCR1BL = ONE;
+    OCR1CL = MAX;
+   } else {
+    OCR1BL = 0;
+    OCR1AL = ONE;
+    OCR1CL = MAX;
+   }
+  } else {
+   // TODO: Error. We should not get here.
+  }
+  // We're done if this was a trivial duty cycle update
+  return;
+ }
+ 
+ // If we are not at the same phase, we basically just need to update the OCR
+ // for the current ONE and alternate which low is on. This however should
+ // follow the same timing requirements as the low speed commutation to prevent
+ // shoot-through. We can therefore use the same interrupts.
+
+ if (phase == Phase::A) {
+  if (step & 0b10000000) {
+   cacheA = MAX;
+   cacheB = 0;
+   cacheC = ONE;
+  } else {
+   cacheA = MAX;
+   cacheB = ONE;
+   cacheC = 0;
+  }
+ } else if (phase == Phase::B) {
+  if (step & 0b10000000) {
+   cacheA = ONE;
+   cacheB = MAX;
+   cacheC = 0;
+  } else {
+   cacheA = 0;
+   cacheB = MAX;
+   cacheC = ONE;
+  }
+ } else if (phase == Phase::C) {
+  if (step & 0b10000000) {
+   cacheA = 0;
+   cacheB = ONE;
+   cacheC = MAX;
+  } else {
+   cacheA = ONE;
+   cacheB = 0;
+   cacheC = MAX;
+  }
+ } else {
+  // Should not get here. bad phase...
+  
+  cacheA = 0;
+  cacheB = 0;
+  cacheC = 0;
+  cacheI = 0;
+  return;
+ }
+ 
+ stageNextPhase(phase);
+
+ // Stage the correct interrupt to turn off the current phase's low driver
+      if (currentPhase == Phase::A) cacheI = 1 << OCF1A;
+ else if (currentPhase == Phase::B) cacheI = 1 << OCF1B;
+ else if (currentPhase == Phase::C) cacheI = 1 << OCF1C;
+ // we must be initializing
+ else prepareNextPhase();
+
+ // Clear the overflow flag (so that we don't immediately trigger an overflow))
+ TIFR1 |= 1 << TOV1;
+ // And enable the overflow interrupt
+ TIMSK1 = 1 << TOV1;
+
+ // Update where we last were
+ currentPhase = phase;
+
 }

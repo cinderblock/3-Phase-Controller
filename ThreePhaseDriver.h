@@ -26,7 +26,7 @@ class ThreePhaseDriver {
 // static register u1 cacheB asm("r11");
 // static register u1 cacheC asm("r12");
 public:
- enum class Phase : u1 {A=0, B=1, C=2, ERR};
+ enum class Phase : u1 {A=0, B=1, C=2, INIT};
 
 protected:
  static Phase currentPhase;
@@ -59,7 +59,7 @@ public:
   * Version of advanceTo() that takes a single u2 between 0 and 0x2ff inclusive
   * @param step
   */
- inline static void advanceTo(u2 const step) {advanceTo((Phase)(step >> 8), step);}
+ inline static void advanceTo(u2 const step) {advanceToFullSine((Phase)(step >> 8), step);}
  
  /**
   * Advance the pwm outputs to a new commutation
@@ -67,12 +67,13 @@ public:
   * @param phase
   * @param step
   */
- static void advanceTo(Phase const phase, u1 const step);
+ static void advanceToFullSine(Phase const phase, u1 const step);
  
  static constexpr u1 maxAmplitude = 220;
  
  static inline void setAmplitude(u1 const a) {amplitude = a > maxAmplitude ? maxAmplitude : a;}
 
+ static void advanceToBackEMF(Phase const phase, u1 const step);
 };
 
 #endif	/* THREEPHASEDRIVER_H */
