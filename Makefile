@@ -30,7 +30,7 @@ MCU = atmega32u4
 all: build-lss asm
 run: dfu-flash dfu-reset
 
-asm: .bld/TwillBotInterface.cpp.S .bld/MLX90363.cpp.S
+asm: .bld/TwillBotInterface.cpp.S .bld/MLX90363.cpp.S .bld/test.cpp.S
 
 # Load local settings
 -include local.mk
