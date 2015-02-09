@@ -16,7 +16,7 @@ namespace AVR {
   
   typedef union {
    struct {
-    /** TWIE
+    /** @name TWIE
      * When this bit is written to one, and the I-bit in SREG is set, the TWI
      * interrupt request will be activated for as long as the TWINT Flag is high.
      */
