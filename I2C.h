@@ -118,6 +118,43 @@ namespace AVR {
   constexpr volatile ARt * const AR  = (volatile ARt * const)&TWAR;
   constexpr volatile u1  * const AMR =                       &TWAMR;
 
+  enum class Status : u1 {
+   MA_STARTTransmitted = 0x08,
+   MA_RepeatedSTARTTransmitted = 0x10,
+   MA_SLA_W_ACK = 0x18,
+   MA_SLA_W_NACK = 0x20,
+   MA_DATA_TX_ACK = 0x28,
+   MA_DATA_TX_NACK = 0x30,
+   MA_ArbitrationLost = 0x38,
+
+   MA_SLA_R_ACK = 0x40,
+   MA_SLA_R_NACK = 0x48,
+   MA_DATA_RX_ACK = 0x50,
+   MA_DATA_RX_NACK = 0x58,
+   
+   SL_SLA_W_ACK = 0x60,
+   SL_SLA_W_ACK_ArbitrationLost = 0x68,
+   SL_General_ACK = 0x70,
+   SL_General_ACK_ArbitrationLost = 0x78,
+   SL_DATA_RX_ACK = 0x80,
+   SL_DATA_RX_NACK = 0x88,
+   SL_General_DATA_RX_ACK = 0x90,
+   SL_General_DATA_RX_NACK = 0x98,
+   SL_STOP_RESTART = 0xA0,
+   
+   SL_SLA_R_ACK = 0xA8,
+   SL_SLA_R_ACK_ArbitrationLost = 0xB0,
+   SL_DATA_TX_ACK = 0xB8,
+   SL_DATA_TX_NACK = 0xC0,
+   SL_DATA_TX_ACK_Done = 0xC8,
+   
+   NoState = 0xF8,
+   BusError = 0x00
+  };
+  
+  volatile inline Status getStatus() {
+   return (Status)(SR->Status << 3);
+  }
  };
 };
 
