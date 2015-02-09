@@ -16,13 +16,15 @@ namespace AVR {
   
   typedef union {
    struct {
-    /** @name TWIE
+    /** TWIE
+     * 
      * When this bit is written to one, and the I-bit in SREG is set, the TWI
      * interrupt request will be activated for as long as the TWINT Flag is high.
      */
     b1 InterruptEnable:1;
     u1:1;
     /** TWEN
+     * 
      * The TWEN bit enables TWI operation and activates the TWI interface. When
      * TWEN is written to one, the TWI takes control over the I/O pins connected
      * to the SCL and SDA pins, enabling the slew-rate limiters and spike
@@ -31,12 +33,14 @@ namespace AVR {
      */
     b1 Enable:1;
     /** TWWC
+     * 
      * The TWWC bit is set when attempting to write to the TWI Data Register –
      * TWDR when TWINT is low. This flag is cleared by writing the TWDR Register
      * when TWINT is high.
      */
     b1 WriteCollisionFlag:1;
     /** TWSTO
+     * 
      * Writing the TWSTO bit to one in Master mode will generate a STOP
      * condition on the 2-wire Serial Bus. When the STOP condition is executed
      * on the bus, the TWSTO bit is cleared automatically. In Slave mode,
@@ -47,6 +51,7 @@ namespace AVR {
      */
     b1 StopCondition:1;
     /** TWSTA
+     * 
      * The application writes the TWSTA bit to one when it desires to become a
      * Master on the 2-wire Serial Bus. The TWI hardware checks if the bus is
      * available, and generates a START condition on the bus if it is free.
@@ -57,6 +62,7 @@ namespace AVR {
      */
     b1 StartCondition:1;
     /** TWEA
+     * 
      * The TWEA bit controls the generation of the acknowledge pulse. If the
      * TWEA bit is written to one, the ACK pulse is generated on the TWI bus if
      * the following conditions are met:
@@ -69,6 +75,7 @@ namespace AVR {
      */
     b1 EnableAcknowledge:1;
     /** TWINT
+     * 
      * This bit is set by hardware when the TWI has finished its current job and
      * expects application software response. If the I-bit in SREG and TWIE in
      * TWCR are set, the MCU will jump to the TWI Interrupt Vector. While the
