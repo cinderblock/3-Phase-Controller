@@ -33,7 +33,6 @@
                    projectFiles="true">
       <itemPath>Board.cpp</itemPath>
       <itemPath>Debug.cpp</itemPath>
-      <itemPath>I2C.cpp</itemPath>
       <itemPath>MLX90363.cpp</itemPath>
       <itemPath>SPI.cpp</itemPath>
       <itemPath>ThreePhaseDriver.cpp</itemPath>
@@ -93,8 +92,6 @@
       <item path="Debug.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Debug.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="I2C.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="I2C.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -164,8 +161,6 @@
       <item path="Debug.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Debug.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="I2C.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="I2C.h" ex="false" tool="3" flavor2="0">
       </item>
