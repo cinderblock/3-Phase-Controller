@@ -11,7 +11,7 @@
 using namespace AVR::I2C;
 
 u1 TwillBotInterface::incomingBuffer[];
-u1 TwillBotInterface::outgoingBuffer[];
+u1 TwillBotInterface::outgoingBuffer[] = {0,1,2,3,4,5,6,7,8,9};
 
 u1 TwillBotInterface::incomingIndex;
 u1 TwillBotInterface::outgoingIndex;
@@ -36,60 +36,60 @@ void TwillBotInterface::isr() {
  Status s = AVR::I2C::getStatus();
  bool nack = false;
  
- if (s == Status::SL_SLA_W_ACK) {
+ if (s == Status::SlaveWriteAck) {
   // Don't need to do anything. Everything should be ready for receiving data
   generalCall = false;
  }
- if (s == Status::SL_SLA_W_ACK_ArbitrationLost) {
+ if (s == Status::SlaveWriteAckMasterLost) {
   // This would only happen if we were a master while trying to send and then
   // were told to be a slave
  }
- if (s == Status::SL_General_ACK) {
+ if (s == Status::SlaveGeneralAck) {
   generalCall = true;
   // Return nack for now
   nack = true;
  }
- if (s == Status::SL_General_ACK_ArbitrationLost) {
+ if (s == Status::SlaveGeneralAckMasterLost) {
   // This would only happen if we were a master while trying to send and then
   // some other master tried to go to the general call
   generalCall = false;
  }
- if (s == Status::SL_DATA_RX_ACK) {
+ if (s == Status::SlaveDataReceivedAck) {
   incomingBuffer[incomingIndex++] = *DR;
   if (incomingIndex == incomingLength)
    nack = true;
  }
- if (s == Status::SL_DATA_RX_NACK) {
+ if (s == Status::SlaveDataReceivedNack) {
   incomingBuffer[incomingIndex] = *DR;
  }
- if (s == Status::SL_General_DATA_RX_ACK) {
+ if (s == Status::SlaveGeneralDataReceivedAck) {
   nack = true;
   // TODO: handle general call
  }
- if (s == Status::SL_General_DATA_RX_NACK) {
+ if (s == Status::SlaveGeneralDataReceivedNack) {
   // TODO: handle general call
  }
- if (s == Status::SL_STOP_RESTART) {
+ if (s == Status::SlaveStopped) {
   
  }
  
- if (s == Status::SL_SLA_R_ACK) {
+ if (s == Status::SlaveReadAck) {
   *DR = outgoingBuffer[outgoingIndex++];
   if (outgoingIndex == outgoingLength)
    nack = true;
  }
- if (s == Status::SL_SLA_R_ACK_ArbitrationLost) {
+ if (s == Status::SlaveReadAckMasterLost) {
   // Not a master. Won't get here.
  }
- if (s == Status::SL_DATA_TX_ACK) {
+ if (s == Status::SlaveDataTransmittedAck) {
   *DR = outgoingBuffer[outgoingIndex++];
   if (outgoingIndex == outgoingLength)
    nack = true;
  }
- if (s == Status::SL_DATA_TX_NACK) {
+ if (s == Status::SlaveDataTransmittedNack) {
   *DR = outgoingBuffer[outgoingIndex];
  }
- if (s == Status::SL_DATA_TX_ACK_Done) {
+ if (s == Status::SlaveDataTransmittedAckDone) {
   nack = true;
  }
  
