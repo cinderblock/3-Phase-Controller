@@ -11,7 +11,7 @@
 #include "bitTypes.h"
 
 namespace Config {
- b7 constexpr I2CslaveAddress = 0b1100000;
+ b7 constexpr i2cSlaveAddress = 0b1100000;
 }
 
 #endif	/* CONFIG_H */

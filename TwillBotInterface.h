@@ -11,24 +11,24 @@
 #include <avr/interrupt.h>
 #include "Config.h"
 
-ISR(TWI_vect);
+ISR(TWI_vect, ISR_NOBLOCK);
 
 class TwillBotInterface {
- static constexpr b7 address = Config::I2CslaveAddress;
+ static constexpr b7 address = Config::i2cSlaveAddress;
  static constexpr bool generalCallEnable = true;
  friend void TWI_vect();
  inline static void isr();
  
  static constexpr u1 incomingBufferSize = 10;
  static constexpr u1 outgoingBufferSize = 10;
- 
- static constexpr u1 incomingLength = incomingBufferSize;
- static constexpr u1 outgoingLength = outgoingBufferSize;
- 
- static u1 incomingIndex;
- static u1 outgoingIndex;
+
+ static u1 bufferIndex;
  
  static bool generalCall;
+ 
+ static bool newData;
+ 
+ static bool firstByte;
  
  static u1 incomingBuffer[incomingBufferSize];
  static u1 outgoingBuffer[outgoingBufferSize];
