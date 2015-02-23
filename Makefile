@@ -10,7 +10,7 @@ C =
 # List of CPP file basenames to build
 CPP = main Board SPI MLX90363 ThreePhaseDriver Debug
 
-CPP += TwillBotInterface
+CPP += TwillBotInterface TripleBuffer
 
 # Select specific LUFA source files to compile like this
 #LUFA_SRC = LUFA/Drivers/USB/Class/Common/HIDParser.c
@@ -35,6 +35,9 @@ asm: .bld/TwillBotInterface.cpp.S .bld/MLX90363.cpp.S .bld/test.cpp.S
 # Load local settings
 -include local.mk
 
+# Force setting certain make flags
+include $(UMAKER)tools/makeflags.mk
+
 # Optional configuration testing for development
 include $(UMAKER)tools/checks.mk
 
@@ -56,5 +59,8 @@ include $(UMAKER)tools/assembly.mk
 include $(UMAKER)tools/dfu.mk
 #include $(UMAKER)tools/nrfjprog.mk
 #include $(UMAKER)tools/AVR/avrdude.mk
+
+# Directory creation targets
+include $(UMAKER)tools/mkdir.mk
 
 .PHONY: all run
