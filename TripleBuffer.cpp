@@ -69,6 +69,9 @@ u1* TripleBuffer<size, readInterrupt>::getWriteBuffer() {
 
 template<u1 size, bool readInterrupt>
 bool TripleBuffer<size, readInterrupt>::isNewData() {
+ // We don't need to lock anything here since we're only reading
+ // And because of the machine's states, even if the state changes before a read
+ // (and we just returned true), it will stay true until a read
  switch (state) {
   case State::C:
   case State::D:
