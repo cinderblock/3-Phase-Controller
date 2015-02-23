@@ -19,6 +19,7 @@
       <itemPath>MLX90363.h</itemPath>
       <itemPath>SPI.h</itemPath>
       <itemPath>ThreePhaseDriver.h</itemPath>
+      <itemPath>TripleBuffer.h</itemPath>
       <itemPath>TwillBotInterface.h</itemPath>
       <itemPath>basicTypes.h</itemPath>
       <itemPath>bigTypes.h</itemPath>
@@ -36,6 +37,8 @@
       <itemPath>MLX90363.cpp</itemPath>
       <itemPath>SPI.cpp</itemPath>
       <itemPath>ThreePhaseDriver.cpp</itemPath>
+      <itemPath>TripleBuffer-impl.cpp</itemPath>
+      <itemPath>TripleBuffer.cpp</itemPath>
       <itemPath>TwillBotInterface.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>test.cpp</itemPath>
@@ -55,7 +58,7 @@
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
-    <conf name="Debug" type="1">
+    <conf name="Development" type="1">
       <toolsSet>
         <compilerSet>GNU_AVR-4.9.2|WinAVR</compilerSet>
         <dependencyChecking>true</dependencyChecking>
@@ -78,93 +81,6 @@
         </ccTool>
       </compileType>
       <item path=".bld/MLX90363.cpp.S" ex="false" tool="4" flavor2="0">
-      </item>
-      <item path=".bld/SPI.cpp.S" ex="false" tool="4" flavor2="0">
-      </item>
-      <item path=".bld/TripleBuffer-impl.cpp.S" ex="false" tool="4" flavor2="0">
-      </item>
-      <item path=".bld/TripleBuffer-impl.cpp.o" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path=".bld/TwillBotInterface.cpp.S" ex="false" tool="4" flavor2="0">
-      </item>
-      <item path=".bld/test.cpp.S" ex="false" tool="4" flavor2="0">
-      </item>
-      <item path="Board.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Board.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Config.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Debug.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Debug.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="I2C.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="IOpin.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MLX90363.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="MLX90363.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="SPI.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="SPI.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="ThreePhaseDriver.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="ThreePhaseDriver.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="TripleBuffer-impl.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="TripleBuffer.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="TripleBuffer.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="TwillBotInterface.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="TwillBotInterface.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="basicTypes.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="bigTypes.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="bitTypes.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="main.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="test.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-    </conf>
-    <conf name="Release" type="1">
-      <toolsSet>
-        <compilerSet>GNU_AVR-4.9.2|WinAVR</compilerSet>
-        <dependencyChecking>true</dependencyChecking>
-        <rebuildPropChanged>false</rebuildPropChanged>
-      </toolsSet>
-      <compileType>
-        <cTool>
-          <developmentMode>5</developmentMode>
-          <standard>10</standard>
-        </cTool>
-        <ccTool>
-          <developmentMode>5</developmentMode>
-          <standard>8</standard>
-        </ccTool>
-        <fortranCompilerTool>
-          <developmentMode>5</developmentMode>
-        </fortranCompilerTool>
-        <asmTool>
-          <developmentMode>5</developmentMode>
-        </asmTool>
-      </compileType>
-      <item path=".bld/MLX90363.cpp.S" ex="false" tool="4" flavor2="0">
-      </item>
-      <item path=".bld/SPI.cpp.S" ex="false" tool="4" flavor2="0">
-      </item>
-      <item path=".bld/TripleBuffer-impl.cpp.S" ex="false" tool="4" flavor2="0">
-      </item>
-      <item path=".bld/TripleBuffer-impl.cpp.o" ex="false" tool="3" flavor2="0">
       </item>
       <item path=".bld/TwillBotInterface.cpp.S" ex="false" tool="4" flavor2="0">
       </item>

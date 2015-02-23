@@ -10,10 +10,9 @@
 
 using namespace AVR::I2C;
 
-u1 TwillBotInterface::incomingBuffer[] = {0};
-u1 TwillBotInterface::outgoingBuffer[] = {0,1,2,3,4,5,6,7,8,9};
+TripleBuffer<TwillBotInterface::incomingBufferSize,  true> TwillBotInterface::incomingBuffer;
+TripleBuffer<TwillBotInterface::outgoingBufferSize, false> TwillBotInterface::outgoingBuffer;
 
-// Making these the same lets the master easily ask for any register quickly
 u1 TwillBotInterface::bufferIndex;
 
 bool TwillBotInterface::generalCall;
@@ -21,7 +20,7 @@ bool TwillBotInterface::newData = false;
 bool TwillBotInterface::firstByte = false;
 
 void TWI_vect() {
- TwillBotInterface::isr();
+ TwillBotInterface::handleNextI2CByte();
 }
 
 void TwillBotInterface::init() {
@@ -31,7 +30,7 @@ void TwillBotInterface::init() {
  CR->byte = 0b01000101;
 }
 
-void TwillBotInterface::isr() {
+void TwillBotInterface::handleNextI2CByte() {
  const Status s = AVR::I2C::getStatus();
  bool ack = false;
  
@@ -39,6 +38,7 @@ void TwillBotInterface::isr() {
   // We've been told to accept incoming data
 
   firstByte = true;
+  getIncomingWriteBuffer();
   
   ack = true;
   
@@ -64,7 +64,7 @@ void TwillBotInterface::isr() {
    bufferIndex = temp;
    firstByte = false;
   } else {
-   incomingBuffer[bufferIndex] = temp;
+   getCurrentIncomingWriteBuffer()[bufferIndex] = temp;
    newData = true;
   }
   
@@ -73,7 +73,7 @@ void TwillBotInterface::isr() {
  }
  if (s == Status::SlaveDataReceivedNacked) {
   if (bufferIndex < incomingBufferSize) {
-   incomingBuffer[bufferIndex] = *DR;
+   incomingBuffer.getCurrentWriteBuffer()[bufferIndex] = *DR;
   }
   newData = true;
   ack = true;
@@ -89,7 +89,7 @@ void TwillBotInterface::isr() {
  }
  
  if (s == Status::SlaveReadAcked || s == Status::SlaveDataTransmittedAcked) {
-  *DR = outgoingBuffer[bufferIndex++];
+  *DR = outgoingBuffer.getCurrentReadBuffer()[bufferIndex++];
   if (bufferIndex < outgoingBufferSize)
    ack = true;
  }
