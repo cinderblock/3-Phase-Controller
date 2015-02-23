@@ -79,6 +79,12 @@
       </compileType>
       <item path=".bld/MLX90363.cpp.S" ex="false" tool="4" flavor2="0">
       </item>
+      <item path=".bld/SPI.cpp.S" ex="false" tool="4" flavor2="0">
+      </item>
+      <item path=".bld/TripleBuffer-impl.cpp.S" ex="false" tool="4" flavor2="0">
+      </item>
+      <item path=".bld/TripleBuffer-impl.cpp.o" ex="false" tool="3" flavor2="0">
+      </item>
       <item path=".bld/TwillBotInterface.cpp.S" ex="false" tool="4" flavor2="0">
       </item>
       <item path=".bld/test.cpp.S" ex="false" tool="4" flavor2="0">
@@ -108,6 +114,8 @@
       <item path="ThreePhaseDriver.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ThreePhaseDriver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TripleBuffer-impl.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="TripleBuffer.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -152,6 +160,12 @@
       </compileType>
       <item path=".bld/MLX90363.cpp.S" ex="false" tool="4" flavor2="0">
       </item>
+      <item path=".bld/SPI.cpp.S" ex="false" tool="4" flavor2="0">
+      </item>
+      <item path=".bld/TripleBuffer-impl.cpp.S" ex="false" tool="4" flavor2="0">
+      </item>
+      <item path=".bld/TripleBuffer-impl.cpp.o" ex="false" tool="3" flavor2="0">
+      </item>
       <item path=".bld/TwillBotInterface.cpp.S" ex="false" tool="4" flavor2="0">
       </item>
       <item path=".bld/test.cpp.S" ex="false" tool="4" flavor2="0">
@@ -181,6 +195,8 @@
       <item path="ThreePhaseDriver.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ThreePhaseDriver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TripleBuffer-impl.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="TripleBuffer.cpp" ex="false" tool="1" flavor2="0">
       </item>
