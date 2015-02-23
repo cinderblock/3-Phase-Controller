@@ -28,6 +28,8 @@ public:
  u1 * getReadBuffer();
  
  u1 * getWriteBuffer();
+ 
+ bool isNewData();
 
 };
 

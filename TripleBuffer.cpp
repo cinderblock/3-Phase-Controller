@@ -68,3 +68,25 @@ u1* TripleBuffer<size>::getWriteBuffer() {
   case State::P: state = State::K; sei(); return rBuffer;
  }
 }
+
+template<u1 size>
+bool TripleBuffer<size>::isNewData() {
+ switch (state) {
+  case State::A:
+  case State::B:
+  case State::E:
+  case State::G:
+  case State::I:
+  case State::L:
+  case State::N:
+  case State::P: return false;
+  case State::C:
+  case State::D:
+  case State::F:
+  case State::H:
+  case State::J:
+  case State::K:
+  case State::M:
+  case State::O: return true;
+ }
+}
