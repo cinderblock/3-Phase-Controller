@@ -10,7 +10,7 @@
 
 #include "basicTypes.h"
 
-template <u1 size, bool readInterrupt>
+template <u1 size, bool readInterrupt, bool writeInterrupt = !readInterrupt>
 class TripleBuffer {
  
  // The three buffers of the Triple Buffer
@@ -62,6 +62,10 @@ public:
   * @return 
   */
  bool isNewData();
+ 
+ u1 * getCurrentWriteBuffer();
+ 
+ u1 * getCurrentReadBuffer();
 
 };
 
