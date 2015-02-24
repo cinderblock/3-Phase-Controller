@@ -103,10 +103,9 @@ void TwillBotInterface::handleNextI2CByte() {
  
  if (s == Status::SlaveDataTransmittedAcked) {
   // We told the AVR hardware to send a byte and we received an ACK as expected
-  if (bufferIndex < outgoingBufferSize) {
-   *DR = outgoingBuffer.getReadBuffer()[bufferIndex++];
+  *DR = outgoingBuffer.getReadBuffer()[bufferIndex++];
+  if (bufferIndex < outgoingBufferSize)
    ack = true;
-  }
  }
  
  if (s == Status::SlaveDataTransmittedNacked) {
