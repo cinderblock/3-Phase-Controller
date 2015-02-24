@@ -44,21 +44,13 @@ void main() {
  
  ThreePhaseDriver::setAmplitude(20);
 
- while (1) {
-  _delay_us(100);
-  ThreePhaseDriver::advance();
- }
- 
- u1 num = 0;
+// while (1) {
+//  _delay_us(100);
+//  ThreePhaseDriver::advance();
+// }
  
  do {
-  MLX90363::prepareGET1Message(MLX90363::Marker::AlphaBeta);
-  num = MLX90363::num;
-  
-  Debug::LED.on();
-  _delay_us(num);
-  Debug::LED.off();
-  _delay_ms(1);
+  MLX90363::prepareGET1Message(MLX90363::Marker::XYZ);
   
   while (MLX90363::isTransmitting());
  } while (MLX90363::handleResponse());
