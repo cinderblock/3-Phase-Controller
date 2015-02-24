@@ -85,7 +85,7 @@ void TwillBotInterface::handleNextI2CByte() {
  if (s == Status::SlaveReadAcked) {
   // We just entered SLA+R
   
-  // Clear our buffer
+  // Clear our buffer index
   bufferIndex = 0;
   
   // Only iff there is new data available should we send anything
