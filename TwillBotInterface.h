@@ -26,10 +26,6 @@ class TwillBotInterface {
  static u1 bufferIndex;
  
  static bool generalCall;
- 
- static bool newData;
- 
- static bool firstByte;
 
  /**
   * The buffer that SLA+W writes to and that the local software reads from
@@ -40,23 +36,37 @@ class TwillBotInterface {
   * The buffer that SLA+R reads from and that the local software write to
   */ 
  static TripleBuffer<outgoingBufferSize, false> outgoingBuffer;
-
- inline static u1 * getOutgoingReadBuffer() {return outgoingBuffer.getReadBuffer();}
- 
- inline static u1 * getIncomingWriteBuffer() {return incomingBuffer.getWriteBuffer();}
- 
- inline static u1 * getCurrentOutgoingReadBuffer() {return outgoingBuffer.getCurrentReadBuffer();}
- 
- inline static u1 * getCurrentIncomingWriteBuffer() {return incomingBuffer.getCurrentWriteBuffer();}
 public:
  
+ /**
+  * Check if the master has sent a new block
+  * @return 
+  */
+ inline static bool hasReceivedBlock() {return incomingBuffer.isNewData();}
+ 
+ /**
+  * If the master has send a new block, we can reserve it now
+  */
+ inline static void reserveNextReadBuffer() {incomingBuffer.reserveNewestBufferForReading();}
+
+ /**
+  * Once we've reserved out read buffer, we can grab it as many times as we like
+  * @return 
+  */
  inline static u1 * getIncomingReadBuffer() {return incomingBuffer.getReadBuffer();}
 
+ /**
+  * Get the current write block that we're preparing for the master
+  * 
+  * Release when new data is fully written
+  * @return 
+  */
  inline static u1 * getOutgoingWriteBuffer() {return outgoingBuffer.getWriteBuffer();}
 
- inline static u1 * getCurrentIncomingReadBuffer() {return incomingBuffer.getCurrentReadBuffer();}
-
- inline static u1 * getCurrentOutgoingWriteBuffer() {return outgoingBuffer.getCurrentWriteBuffer();}
+ /**
+  * Mark the current block of data as ready to send to the master
+  */
+ inline static void releaseNextWriteBuffer() {outgoingBuffer.markNewestBuffer();}
  
  static void init();
  

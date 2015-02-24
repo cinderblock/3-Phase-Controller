@@ -46,16 +46,17 @@ public:
  TripleBuffer();
  
  /**
-  * Get the next buffer for reading
+  * Reserve the newest block for reading
   * @return 
   */
- u1 * getReadBuffer();
+ void reserveNewestBufferForReading();
  
  /**
-  * Get the next buffer for writing and let the reader read
+  * Mark the buffer the writer is using as the newest, indicating that data is
+  * available and allowing the reader to access the next block
   * @return 
   */
- u1 * getWriteBuffer();
+ void markNewestBuffer();
  
  /**
   * Check if there is new data available for the reader side
@@ -63,9 +64,17 @@ public:
   */
  bool isNewData();
  
- u1 * getCurrentWriteBuffer();
+ /**
+  * Get the buffer that should be written to
+  * @return 
+  */
+ u1 * getWriteBuffer();
  
- u1 * getCurrentReadBuffer();
+ /**
+  * Get the buffer that should be read from
+  * @return 
+  */
+ u1 * getReadBuffer();
 
 };
 

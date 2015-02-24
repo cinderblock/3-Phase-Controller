@@ -14,57 +14,46 @@ TripleBuffer<size, readInterrupt, writeInterrupt>::TripleBuffer() :state(State::
 }
 
 template<u1 size, bool readInterrupt, bool writeInterrupt>
-u1* TripleBuffer<size, readInterrupt, writeInterrupt>::getReadBuffer() {
+void TripleBuffer<size, readInterrupt, writeInterrupt>::reserveNewestBufferForReading() {
  if (readInterrupt) cli();
  switch (state) {
-  default: // WTF
-  case State::A:
-  case State::B:                   if (readInterrupt) sei(); return nullptr;
-
-  case State::E:                   if (readInterrupt) sei(); return rBuffer;
-  case State::F: state = State::G;
-  case State::G:                   if (readInterrupt) sei(); return gBuffer;
-  case State::H: state = State::I;
-  case State::I:                   if (readInterrupt) sei(); return bBuffer;
+  default: break;
+  case State::F: state = State::G; break;
+  case State::H: state = State::I; break;
   case State::C:
-  case State::J: state = State::E; if (readInterrupt) sei(); return rBuffer;
+  case State::J: state = State::E; break;
   case State::D:
-  case State::K: state = State::L;
-  case State::L:                   if (readInterrupt) sei(); return gBuffer;
-  case State::M: state = State::N;
-  case State::N:                   if (readInterrupt) sei(); return rBuffer;
-  case State::O: state = State::P;
-  case State::P:                   if (readInterrupt) sei(); return bBuffer;
+  case State::K: state = State::L; break;
+  case State::M: state = State::N; break;
+  case State::O: state = State::P; break;
  }
- // WTF
- return nullptr;
+ if (readInterrupt) sei();
 }
 
 template<u1 size, bool readInterrupt, bool writeInterrupt>
-u1* TripleBuffer<size, readInterrupt, writeInterrupt>::getWriteBuffer() {
+void TripleBuffer<size, readInterrupt, writeInterrupt>::markNewestBuffer() {
  if (writeInterrupt) cli();
  switch (state) {
   default: // WTF
-  case State::A: state = State::B; if (writeInterrupt) sei(); return rBuffer;
+  case State::A: state = State::B; break;
   case State::B:
-  case State::D: state = State::C; if (writeInterrupt) sei(); return gBuffer;
-  case State::C: state = State::D; if (writeInterrupt) sei(); return rBuffer;
+  case State::D: state = State::C; break;
+  case State::C: state = State::D; break;
 
   case State::E:
-  case State::O: state = State::F; if (writeInterrupt) sei(); return bBuffer;
+  case State::O: state = State::F; break;
   case State::F:
-  case State::N: state = State::O; if (writeInterrupt) sei(); return gBuffer;
+  case State::N: state = State::O; break;
   case State::G:
-  case State::M: state = State::H; if (writeInterrupt) sei(); return rBuffer;
+  case State::M: state = State::H; break;
   case State::H:
-  case State::L: state = State::M; if (writeInterrupt) sei(); return bBuffer;
+  case State::L: state = State::M; break;
   case State::I:
-  case State::K: state = State::J; if (writeInterrupt) sei(); return gBuffer;
+  case State::K: state = State::J; break;
   case State::J:
-  case State::P: state = State::K; if (writeInterrupt) sei(); return rBuffer;
+  case State::P: state = State::K; break;
  }
- // WTF
- return nullptr;
+ if (writeInterrupt) sei();
 }
 
 template<u1 size, bool readInterrupt, bool writeInterrupt>
@@ -88,7 +77,7 @@ bool TripleBuffer<size, readInterrupt, writeInterrupt>::isNewData() {
 }
 
 template<u1 size, bool readInterrupt, bool writeInterrupt>
-u1* TripleBuffer<size, readInterrupt, writeInterrupt>::getCurrentWriteBuffer() {
+u1* TripleBuffer<size, readInterrupt, writeInterrupt>::getWriteBuffer() {
  switch (state) {
   case State::A: return nullptr;
   case State::B: 
@@ -112,7 +101,7 @@ u1* TripleBuffer<size, readInterrupt, writeInterrupt>::getCurrentWriteBuffer() {
 }
 
 template<u1 size, bool readInterrupt, bool writeInterrupt>
-u1* TripleBuffer<size, readInterrupt, writeInterrupt>::getCurrentReadBuffer() {
+u1* TripleBuffer<size, readInterrupt, writeInterrupt>::getReadBuffer() {
  switch (state) {
   case State::A: 
   case State::B: 
