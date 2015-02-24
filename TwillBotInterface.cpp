@@ -40,20 +40,9 @@ void TwillBotInterface::handleNextI2CByte() {
   generalCall = false;
  }
  
- if (s == Status::SlaveWriteAckedMasterLost) {
-  // This would only happen if we were a master while trying to send and then
-  // were told to be a slave
- }
- 
  if (s == Status::SlaveGeneralAcked) {
   generalCall = true;
   // Don't ACK any data after the general call
- }
- 
- if (s == Status::SlaveGeneralAckedMasterLost) {
-  // This would only happen if we were a master while trying to send and then
-  // some other master tried to go to the general call
-  //generalCall = false;
  }
  
  if (s == Status::SlaveDataReceivedAcked) {
@@ -80,6 +69,9 @@ void TwillBotInterface::handleNextI2CByte() {
  
  if (s == Status::SlaveGeneralDataReceivedNacked) {
   // TODO: handle general call
+  
+  // Make sure we leave with the interface enabled
+  ack = true;
  }
  
  if (s == Status::SlaveStopped) {
