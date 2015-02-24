@@ -130,7 +130,7 @@ public:
  static void setSPISpeed(u1 const);
 
  /**
-  * Check if the 
+  * Check if we're still talking on the SPI bus
   * @return 
   */
  inline static bool isTransmitting() {
