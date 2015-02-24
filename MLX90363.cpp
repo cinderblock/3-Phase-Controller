@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   MLX90363.cpp
  * Author: Cameron
- * 
+ *
  * Created on December 10, 2014, 4:11 PM
  */
 
@@ -25,11 +25,11 @@ static inline void SSoff() {PORTD &= ~(1<<5);}
 /**
  * Declare the SPI Transfer Complete interrupt as a non-blocking interrupt so
  * that the motor driver has minimum latency.
- * 
+ *
  * gcc simply enables interrupts at the beginning of the routine allowing any
  * interrupt to fire again. We can trust that this one will not fire twice
  * accidentally by not starting a serial transfer until the end of the interrupt.
- * 
+ *
  * This is not a guarantee, but it will be good enough if we leave enough stack
  * room.
  */
@@ -38,7 +38,7 @@ void SPI_STC_vect() ISR_NOBLOCK;
 void SPI_STC_vect() {
  // Receive a byte
  MLX90363::RxBuffer[MLX90363::bufferPosition++] = receiveSPI();
- 
+
  // Check if we're done sending
  if (MLX90363::bufferPosition == MLX90363::messageLength) {
   // We're done. De-assert (turn on) the slave select line
@@ -52,7 +52,7 @@ void SPI_STC_vect() {
    * Looking at the assembly code, we can see that the interrupt uses 8 bytes of
    * stack, add the 3 for the interrupt return location for each, and we're at
    * 77 bytes of stack maximum.
-   * 
+   *
    * Add the worst case of another interrupt happening, to get the real worst
    * case stack usage.
    */
@@ -70,17 +70,17 @@ void MLX90363::init() {
  // Setup Slave Select line
  SS.on();
  SS.output();
- 
+
  // Setup "User Defined" hardware lines
  SCLK.output();
  MOSI.output();
  // Don't forget the AVR's hardware SS line!
- 
+
  // SPI hardware does this for us, but do it anyway
  SCLK.off();
  MISO.input();
  MISO.on();
- 
+
  // Setup control registers
  AVR::SPI::SR->byte = 0;
  // F_CPU/32 by default
@@ -99,7 +99,7 @@ void MLX90363::startTransmittingUnsafe() {
 
 /**
  * Lookup table from MLX90363 datasheet
- * 
+ *
  * The name cba_256_TAB comes from the datasheet as well
  */
 static const u1 cba_256_TAB[] PROGMEM = {
@@ -124,7 +124,7 @@ static const u1 cba_256_TAB[] PROGMEM = {
 /**
  * Lookup the next crc value from the above table
  * @param b
- * @return 
+ * @return
  */
 static u1 lookupCRC(u1 const b) __attribute__((const));
 inline static u1 lookupCRC(u1 const b) {
@@ -133,7 +133,7 @@ inline static u1 lookupCRC(u1 const b) {
 
 bool MLX90363::checkRxBufferCRC() {
  u1 crc = 0xff;
- 
+
  crc = lookupCRC(RxBuffer[0] ^ crc);
  crc = lookupCRC(RxBuffer[1] ^ crc);
  crc = lookupCRC(RxBuffer[2] ^ crc);
@@ -161,52 +161,52 @@ void MLX90363::fillTxBufferCRC() {
 
 u1 MLX90363::handleResponse() {
  if (!checkRxBufferCRC()) return 0;
- 
- u1 const marker = TxBuffer[6] >> 6;
- 
+
+ u1 const marker = RxBuffer[6] >> 6;
+
  if (marker == 0) {
   handleAlpha();
   return true;
  }
- 
+
  if (marker == 1) {
   handleAlphaBeta();
   return true;
  }
- 
+
  if (marker == 2) {
   handleXYZ();
   return true;
  }
- 
- u1 const opcode = TxBuffer[6] & 0x3f;
- 
+
+ u1 const opcode = RxBuffer[6] & 0x3f;
+
  return opcode;
 }
 
 void MLX90363::handleAlpha() {
- u2 const alpha = TxBuffer[0] | (TxBuffer[1] & 0x3f) << 8;
- u1 const err = TxBuffer[1] >> 6;
- u1 const VG = TxBuffer[4];
- u1 const ROLL = TxBuffer[6] & 0x3f;
+ u2 const alpha = RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8;
+ u1 const err = RxBuffer[1] >> 6;
+ u1 const VG = RxBuffer[4];
+ u1 const ROLL = RxBuffer[6] & 0x3f;
 }
 
 void MLX90363::handleAlphaBeta() {
- u2 const alpha = TxBuffer[0] | (TxBuffer[1] & 0x3f) << 8;
- u2 const beta  = TxBuffer[2] | (TxBuffer[3] & 0x3f) << 8;
- u1 const err = TxBuffer[1] >> 6;
- u1 const VG = TxBuffer[4];
- u1 const ROLL = TxBuffer[6] & 0x3f;
- 
+ u2 const alpha = RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8;
+ u2 const beta  = RxBuffer[2] | (RxBuffer[3] & 0x3f) << 8;
+ u1 const err = RxBuffer[1] >> 6;
+ u1 const VG = RxBuffer[4];
+ u1 const ROLL = RxBuffer[6] & 0x3f;
+
  num = alpha >> 6;
 }
 
 void MLX90363::handleXYZ() {
- u2 const X = TxBuffer[0] | (TxBuffer[1] & 0x3f) << 8;
- u2 const Y = TxBuffer[2] | (TxBuffer[3] & 0x3f) << 8;
- u2 const Z = TxBuffer[4] | (TxBuffer[5] & 0x3f) << 8;
- u1 const err = TxBuffer[1] >> 6;
- u1 const ROLL = TxBuffer[6] & 0x3f;
+ u2 const X = RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8;
+ u2 const Y = RxBuffer[2] | (RxBuffer[3] & 0x3f) << 8;
+ u2 const Z = RxBuffer[4] | (RxBuffer[5] & 0x3f) << 8;
+ u1 const err = RxBuffer[1] >> 6;
+ u1 const ROLL = RxBuffer[6] & 0x3f;
 }
 
 void MLX90363::prepareGET1Message(Marker const type, const u2 timeout, bool const resetRoll) {
