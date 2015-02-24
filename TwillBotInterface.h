@@ -29,11 +29,17 @@ class TwillBotInterface {
 
  /**
   * The buffer that SLA+W writes to and that the local software reads from
+  * 
+  * Since we're reading from the main loop, we need to enable interrupts to protect
+  * the buffer's state only on the reading side.
   */ 
  static TripleBuffer<incomingBufferSize, true> incomingBuffer;
 
  /**
   * The buffer that SLA+R reads from and that the local software write to
+  * 
+  * Since we're writing from the main loop, we need to enable interrupts to protect
+  * the buffer's state only on the writing side.
   */ 
  static TripleBuffer<outgoingBufferSize, false> outgoingBuffer;
 public:
