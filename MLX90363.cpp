@@ -6,10 +6,12 @@
  */
 
 #include <avr/pgmspace.h>
+#include <string.h>
 
 #include "MLX90363.h"
 #include "SPI.h"
 #include "Board.h"
+#include "TwillBotInterface.h"
 
 static inline void sendSPI(u1 const b) {
  *AVR::SPI::DR = b;
@@ -161,6 +163,9 @@ void MLX90363::fillTxBufferCRC() {
 
 u1 MLX90363::handleResponse() {
  if (!checkRxBufferCRC()) return 0;
+
+ memcpy(TwillBotInterface::getOutgoingWriteBuffer(), RxBuffer, messageLength);
+ TwillBotInterface::releaseNextWriteBuffer();
 
  u1 const marker = RxBuffer[6] >> 6;
 
