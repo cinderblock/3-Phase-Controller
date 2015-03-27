@@ -34,27 +34,54 @@ void init() {
  */
 void main() {
  
+ Board::LED.output();
+ Board::LED.on();
+ 
  _delay_ms(100);
  
  sei();
  
- Board::SEN::BS.on();
- Board::SEN::BS.output();
- Board::SEN::BS.off();
+ //Board::SEN::BS.on();
+ //Board::SEN::BS.output();
+ //Board::SEN::BS.off();
  
  ThreePhaseDriver::setAmplitude(20);
-
+ 
+ while(*TwillBotInterface::getIncomingReadBuffer() != 0x33){
+     TwillBotInterface::reserveNextReadBuffer();
+ }
+ 
+ Board::LED.off();
+ //u1 N = 0x20;
+ 
+ while(1)
+ {
+     MLX90363::prepareGET1Message(MLX90363::Marker::XYZ);
+     while (MLX90363::isTransmitting());
+     MLX90363::handleResponse();
+    //TwillBotInterface::releaseNextWriteBuffer();
+    //for(u1 i = 0; i<10;i++)
+       //TwillBotInterface::getOutgoingWriteBuffer()[i] = (u1)(N+i);
+     
+    Board::LED.tgl();
+    
+    _delay_ms(100);
+  
+    //Board::LED.tgl();
+     
+    //N+=0x01;
+ }
 // while (1) {
 //  _delay_us(100);
 //  ThreePhaseDriver::advance();
 // }
- 
+ /*
  do {
   MLX90363::prepareGET1Message(MLX90363::Marker::XYZ);
   
   while (MLX90363::isTransmitting());
  } while (MLX90363::handleResponse());
- 
+ */
 // Debug::LED.on();
 
  while(1);

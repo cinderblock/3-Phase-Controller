@@ -74,6 +74,9 @@
         </cTool>
         <ccTool>
           <standard>8</standard>
+          <incDir>
+            <pElem>C:/Users/chtacklind/Desktop/Blake Git/avr</pElem>
+          </incDir>
           <preprocessorList>
             <Elem>F_CPU=16000000UL</Elem>
             <Elem>__AVR_ATmega32U4__</Elem>

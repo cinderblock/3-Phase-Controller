@@ -12,12 +12,13 @@
 #include "Config.h"
 #include "TripleBuffer.h"
 
-ISR(TWI_vect, ISR_NOBLOCK);
+ISR(TWI_vect);
 
 class TwillBotInterface {
  static constexpr b7 address = Config::i2cSlaveAddress;
- static constexpr bool generalCallEnable = true;
+ static constexpr bool generalCallEnable = false;
  friend void TWI_vect();
+ inline static void unblockInterrupt();
  inline static void handleNextI2CByte();
  
  static constexpr u1 incomingBufferSize = Config::i2cBufferIncomingSize;

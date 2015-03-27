@@ -27,8 +27,8 @@ TARGET = turnigy
 
 MCU = atmega32u4
 
-all: build-lss asm
-run: dfu-flash dfu-reset
+all: build-lss asm run
+run: dfu-erase dfu-flash dfu-reset
 	
 ASM = #$(CPP:%=%.cpp.S)
 
@@ -48,6 +48,7 @@ include $(UMAKER)vars/AVR.mk
 # Library targets
 #include $(UMAKER)tools/AVR/lufa.mk
 #include $(UMAKER)tools/extlib.mk
+include $(UMAKER)tools/AVR/AVR++.mk
 
 # Build targets
 include $(UMAKER)tools/build.mk

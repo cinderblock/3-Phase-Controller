@@ -5,8 +5,10 @@
  * Created on January 12, 2015, 12:33 AM
  */
 
+#include <AVR++/I2C.h>
+
 #include "TwillBotInterface.h"
-#include "I2C.h"
+#include "Board.h"
 
 using namespace AVR::I2C;
 
@@ -18,6 +20,7 @@ u1 TwillBotInterface::bufferIndex;
 bool TwillBotInterface::generalCall;
 
 void TWI_vect() {
+ TwillBotInterface::unblockInterrupt();
  TwillBotInterface::handleNextI2CByte();
 }
 
@@ -25,7 +28,20 @@ void TwillBotInterface::init() {
  AR->byte = (address << 1) | generalCallEnable;
  *AMR = 0;
 
- CR->byte = 0b01000101;
+// CR->byte = 0b01000101;
+ CR->byte =
+         1 << TWIE |
+         1 << TWEN |
+         1 << TWEA |
+         1 << TWINT;
+}
+
+void TwillBotInterface::unblockInterrupt() {
+ // Turn off the TWI interrupt
+ CR->byte = 1 << TWEN;
+ 
+ // Enable global interrupts
+ sei();
 }
 
 void TwillBotInterface::handleNextI2CByte() {
@@ -125,7 +141,19 @@ void TwillBotInterface::handleNextI2CByte() {
   ack = true;
  }
  
+ // Re-enable I2C interrupt while clearing the interrupt flag (by setting it)
 // CR->EnableAcknowledge = ack;
 // CR->InterruptFlag = 1;
- CR->byte = ack ? 0b11000101 : 0b10000101;
+// CR->byte = ack ? 0b11000101 : 0b10000101;
+ CR->byte = ack ? (
+         1 << TWIE |
+         1 << TWEN |
+         1 << TWEA |
+         1 << TWINT
+         ) : (
+         1 << TWIE |
+         1 << TWEN |
+         0 << TWEA |
+         1 << TWINT
+         );
 }

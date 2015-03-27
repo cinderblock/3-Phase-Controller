@@ -163,10 +163,11 @@ void MLX90363::fillTxBufferCRC() {
 
 u1 MLX90363::handleResponse() {
  if (!checkRxBufferCRC()) return 0;
-
+ 
  memcpy(TwillBotInterface::getOutgoingWriteBuffer(), RxBuffer, messageLength);
  TwillBotInterface::releaseNextWriteBuffer();
-
+ return true;
+ 
  u1 const marker = RxBuffer[6] >> 6;
 
  if (marker == 0) {
