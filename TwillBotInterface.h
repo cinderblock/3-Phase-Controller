@@ -75,6 +75,12 @@ public:
   */
  inline static void releaseNextWriteBuffer() {outgoingBuffer.markNewestBuffer();}
  
+ /**
+  * Check if the master has read the most recent block of data from us
+  * @return 
+  */
+ inline static bool hasLatestDataBeenRead() {return !outgoingBuffer.isNewData();}
+ 
  static void init();
  
  
