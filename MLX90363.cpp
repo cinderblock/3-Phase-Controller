@@ -21,8 +21,8 @@ static inline u1 receiveSPI() {
  return *AVR::SPI::DR;
 }
 
-static inline void SSon () {PORTD |=  (1<<5);}
-static inline void SSoff() {PORTD &= ~(1<<5);}
+static inline void SSon () {PORTD |=  (1<<5); PORTF |=  (1<<4);}   //BS is for testing
+static inline void SSoff() {PORTD &= ~(1<<5); PORTF &= ~(1<<4);}   //BS is for testing
 
 /**
  * Declare the SPI Transfer Complete interrupt as a non-blocking interrupt so
@@ -70,7 +70,8 @@ u1 MLX90363::num;
 
 void MLX90363::init() {
  // Setup Slave Select line
- SS.on();
+ SSon();
+ Board::SEN::BS.output(); //FOR TESTING
  SS.output();
 
  // Setup "User Defined" hardware lines
@@ -95,7 +96,7 @@ void MLX90363::setSPISpeed(const u1 c) {
 
 void MLX90363::startTransmittingUnsafe() {
  bufferPosition = 0;
- SS.off();
+ SSoff();
  sendSPI(TxBuffer[bufferPosition]);
 }
 
@@ -164,10 +165,6 @@ void MLX90363::fillTxBufferCRC() {
 u1 MLX90363::handleResponse() {
  if (!checkRxBufferCRC()) return 0;
  
- memcpy(TwillBotInterface::getOutgoingWriteBuffer(), RxBuffer, messageLength);
- TwillBotInterface::releaseNextWriteBuffer();
- return true;
- 
  u1 const marker = RxBuffer[6] >> 6;
 
  if (marker == 0) {
@@ -175,6 +172,10 @@ u1 MLX90363::handleResponse() {
   return true;
  }
 
+ memcpy(TwillBotInterface::getOutgoingWriteBuffer(), RxBuffer, messageLength);
+ TwillBotInterface::releaseNextWriteBuffer();
+ return true;
+ 
  if (marker == 1) {
   handleAlphaBeta();
   return true;
@@ -195,6 +196,7 @@ void MLX90363::handleAlpha() {
  u1 const err = RxBuffer[1] >> 6;
  u1 const VG = RxBuffer[4];
  u1 const ROLL = RxBuffer[6] & 0x3f;
+ *(u2*)TwillBotInterface::getOutgoingWriteBuffer() = alpha;
 }
 
 void MLX90363::handleAlphaBeta() {
@@ -225,4 +227,10 @@ void MLX90363::prepareGET1Message(Marker const type, const u2 timeout, bool cons
  TxBuffer[5] = 0;
  TxBuffer[6] = (u1)type << 6 | (u1)Opcode::GET1;
  fillTxBufferCRC();
+ //startTransmittingUnsafe();
+}
+
+void MLX90363::startTransmitting(){
+ if (isTransmitting()) return;
+ startTransmittingUnsafe();
 }
