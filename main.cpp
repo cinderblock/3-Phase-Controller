@@ -12,6 +12,7 @@
 #include "MLX90363.h"
 #include "Debug.h"
 #include "TwillBotInterface.h"
+#include "MotorControl.h"
 
 /**
  * All the init functions should go in here.
@@ -25,7 +26,6 @@ void init() {
  ThreePhaseDriver::init();
  MLX90363::init();
  TwillBotInterface::init();
- 
  Debug::init();
 }
 
@@ -35,7 +35,7 @@ void init() {
 void main() {
  
  Board::LED.output();
- Board::LED.off();
+ Board::LED.on();
  
  _delay_ms(100);
  
@@ -45,7 +45,7 @@ void main() {
  //Board::SEN::BS.output();
  //Board::SEN::BS.off();
  
- ThreePhaseDriver::setAmplitude(20);
+ ThreePhaseDriver::setAmplitude(15);
  MLX90363::prepareGET1Message(MLX90363::Marker::Alpha);
  u2 step = 0;
  TwillBotInterface::releaseNextWriteBuffer();
@@ -54,8 +54,9 @@ void main() {
      TwillBotInterface::reserveNextReadBuffer();
  }
  
- Board::LED.on();
+ Board::LED.off();
  //u1 N = 0x20;
+ b1 forward = 1;
  
  while(1)
  {
@@ -69,7 +70,14 @@ void main() {
     TwillBotInterface::releaseNextWriteBuffer();
     
     //Debug::reportByte(step >> 2);
-    if ((step++) == 0x300) step = 0;
+    if (forward) {
+        if (++step == 0x300)
+            forward = 0;
+    }
+    else{
+        if (--step == 0)
+            forward = 1;
+    }
     //TwillBotInterface::releaseNextWriteBuffer();
     //for(u1 i = 0; i<10;i++)
        //TwillBotInterface::getOutgoingWriteBuffer()[i] = (u1)(N+i);
