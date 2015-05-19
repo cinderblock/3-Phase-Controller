@@ -143,9 +143,9 @@ bool MLX90363::checkRxBufferCRC() {
  crc = lookupCRC(RxBuffer[3] ^ crc);
  crc = lookupCRC(RxBuffer[4] ^ crc);
  crc = lookupCRC(RxBuffer[5] ^ crc);
- crc = ~lookupCRC(RxBuffer[6] ^ crc);
+ crc = lookupCRC(RxBuffer[6] ^ crc);
 
- return RxBuffer[7] == crc;
+ return RxBuffer[7] == ~crc;
 }
 
 void MLX90363::fillTxBufferCRC() {
