@@ -13,6 +13,8 @@
 #include "Board.h"
 #include "TwillBotInterface.h"
 
+#include "avr/interrupt.h"
+
 static inline void sendSPI(u1 const b) {
  *AVR::SPI::DR = b;
 }
@@ -21,8 +23,8 @@ static inline u1 receiveSPI() {
  return *AVR::SPI::DR;
 }
 
-static inline void SSon () {PORTD |=  (1<<5); PORTF |=  (1<<4);}   //BS is for testing
-static inline void SSoff() {PORTD &= ~(1<<5); PORTF &= ~(1<<4);}   //BS is for testing
+static inline void SlaveSelectOn () {PORTD |=  (1<<5);}
+static inline void SlaveSelectOff() {PORTD &= ~(1<<5);}
 
 /**
  * Declare the SPI Transfer Complete interrupt as a non-blocking interrupt so
@@ -35,16 +37,19 @@ static inline void SSoff() {PORTD &= ~(1<<5); PORTF &= ~(1<<4);}   //BS is for t
  * This is not a guarantee, but it will be good enough if we leave enough stack
  * room.
  */
-void SPI_STC_vect() ISR_NOBLOCK;
+ISR (SPI_STC_vect, ISR_NOBLOCK) {
+ MLX90363::isr();
+}
 
-void SPI_STC_vect() {
+void MLX90363::isr() {
  // Receive a byte
  MLX90363::RxBuffer[MLX90363::bufferPosition++] = receiveSPI();
 
  // Check if we're done sending
  if (MLX90363::bufferPosition == MLX90363::messageLength) {
   // We're done. De-assert (turn on) the slave select line
-  SSon();
+  SlaveSelectOn();
+  
  } else {
   sendSPI(MLX90363::TxBuffer[MLX90363::bufferPosition]);
   /**
@@ -70,7 +75,7 @@ u1 MLX90363::num;
 
 void MLX90363::init() {
  // Setup Slave Select line
- SSon();
+ SlaveSelectOn();
  Board::SEN::BS.output(); //FOR TESTING
  SS.output();
 
@@ -96,7 +101,7 @@ void MLX90363::setSPISpeed(const u1 c) {
 
 void MLX90363::startTransmittingUnsafe() {
  bufferPosition = 0;
- SSoff();
+ SlaveSelectOff();
  sendSPI(TxBuffer[bufferPosition]);
 }
 

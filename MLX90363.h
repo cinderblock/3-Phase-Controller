@@ -17,7 +17,6 @@
 ISR(SPI_STC_vect);
 
 class MLX90363 {
- friend void SPI_STC_vect();
  
  /**
   * The fixed message length that the MLX90363 sends
@@ -122,6 +121,8 @@ public:
   * that it is set to an output (and stays that way) before calling this function.
   */
  static void init();
+ 
+ static inline void isr();
  
  /**
   * Set the SPI hardware's divider
