@@ -46,7 +46,7 @@ void main() {
  //Board::SEN::BS.off();
  
  ThreePhaseDriver::setAmplitude(15);
- MLX90363::prepareGET1Message(MLX90363::Marker::Alpha);
+ MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
  u2 step = 0;
  TwillBotInterface::releaseNextWriteBuffer();
  
@@ -66,6 +66,7 @@ void main() {
     MLX90363::startTransmitting();
     while (MLX90363::isTransmitting());
     MLX90363::handleResponse();
+    
     ((u2*)TwillBotInterface::getOutgoingWriteBuffer())[1]=step;
     TwillBotInterface::releaseNextWriteBuffer();
     

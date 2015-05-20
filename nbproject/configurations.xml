@@ -113,8 +113,6 @@
       </item>
       <item path="MotorControl.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="SPI.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="SPI.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ThreePhaseDriver.cpp" ex="false" tool="1" flavor2="0">
