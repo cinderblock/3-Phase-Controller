@@ -10,8 +10,8 @@
 
 #include <avr/interrupt.h>
 
-#include "bitTypes.h"
-#include "IOpin.h"
+#include <AVR++/bitTypes.h>
+#include <AVR++/IOpin.h>
 #include "Board.h"
 
 ISR(SPI_STC_vect);

@@ -8,7 +8,7 @@
 #ifndef CONFIG_H
 #define	CONFIG_H
 
-#include "bitTypes.h"
+#include <AVR++/bitTypes.h>
 
 namespace Config {
  b7 constexpr i2cSlaveAddress = 0b1100000;

@@ -8,7 +8,7 @@
 #ifndef THREEPHASEDRIVER_H
 #define	THREEPHASEDRIVER_H
 
-#include "basicTypes.h"
+#include <AVR++/basicTypes.h>
 #include <avr/interrupt.h>
 
 class ThreePhaseDriver {

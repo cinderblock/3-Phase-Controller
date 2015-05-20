@@ -8,7 +8,7 @@
 #ifndef TRIPLEBUFFER_H
 #define	TRIPLEBUFFER_H
 
-#include "basicTypes.h"
+#include <AVR++/basicTypes.h>
 
 template <u1 size, bool readInterrupt, bool writeInterrupt = !readInterrupt>
 class TripleBuffer {
