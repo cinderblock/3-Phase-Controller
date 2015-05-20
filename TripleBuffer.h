@@ -10,6 +10,8 @@
 
 #include <AVR++/basicTypes.h>
 
+using namespace AVR;
+
 template <u1 size, bool readInterrupt, bool writeInterrupt = !readInterrupt>
 class TripleBuffer {
  

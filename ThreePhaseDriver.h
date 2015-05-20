@@ -11,6 +11,8 @@
 #include <AVR++/basicTypes.h>
 #include <avr/interrupt.h>
 
+using namespace AVR;
+
 class ThreePhaseDriver {
  
  /**
