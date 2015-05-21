@@ -153,8 +153,7 @@ public:
   */
  inline static bool isTransmitting() {
   // Any of there would work. Not sure which is most effective
-  return responseState != ResponseState::Ready;
-  //return bufferPosition != messageLength;
+  return bufferPosition != messageLength;
   //return !SS.isHigh();
   // Since IOpin isn't optimized, lets use the low level test
 //  return !(PORTD & (1<<5));
@@ -177,7 +176,7 @@ public:
   */
  static void handleResponse();
  
- inline static u2 getAlpha() {return alpha;}
+ inline static u2 getAlpha() {cli(); u2 const a = alpha; sei(); return a;}
  
  inline static u2 getBeta() {return beta;}
  
@@ -186,6 +185,8 @@ public:
  inline static u2 getY() {return Y;}
  
  inline static u2 getZ() {return Z;}
+ 
+ inline static u1 getRoll() {return ROLL;}
  
  /**
   * Construct a standard GET1 message

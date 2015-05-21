@@ -11,6 +11,7 @@ C =
 CPP = main Board MLX90363 ThreePhaseDriver Debug
 
 CPP += TwillBotInterface TripleBuffer-impl
+# HENRY: I removed "test", might want to add it back
 
 # Select specific LUFA source files to compile like this
 #LUFA_SRC = LUFA/Drivers/USB/Class/Common/HIDParser.c

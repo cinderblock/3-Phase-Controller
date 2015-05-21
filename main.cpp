@@ -50,10 +50,10 @@ void main() {
  u2 step = 0;
  TwillBotInterface::releaseNextWriteBuffer();
  
- while(*TwillBotInterface::getIncomingReadBuffer() != 0x33){
-     TwillBotInterface::reserveNextReadBuffer();
- }
- 
+// while(*TwillBotInterface::getIncomingReadBuffer() != 0x33){
+//     TwillBotInterface::reserveNextReadBuffer();
+// }
+
  Board::LED.off();
  //u1 N = 0x20;
  b1 forward = 1;
@@ -61,31 +61,34 @@ void main() {
  while(1)
  {
     //ThreePhaseDriver::advance();
-    ThreePhaseDriver::advanceTo(step);
+    //ThreePhaseDriver::advanceTo(step);
     
     MLX90363::startTransmitting();
     while (MLX90363::isTransmitting());
-    MLX90363::handleResponse();
+     
+//    Board::LED.tgl();
     
-    ((u2*)TwillBotInterface::getOutgoingWriteBuffer())[1]=step;
+    u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
+    
+    buff[0] = MLX90363::getRoll();
+    buff[1] = step++;
+    
     TwillBotInterface::releaseNextWriteBuffer();
     
     //Debug::reportByte(step >> 2);
-    if (forward) {
-        if (++step == 0x300)
-            forward = 0;
-    }
-    else{
-        if (--step == 0)
-            forward = 1;
-    }
+//    if (forward) {
+//        if (++step == 0x300)
+//            forward = 0;
+//    }
+//    else{
+//        if (--step == 0)
+//            forward = 1;
+//    }
     //TwillBotInterface::releaseNextWriteBuffer();
     //for(u1 i = 0; i<10;i++)
        //TwillBotInterface::getOutgoingWriteBuffer()[i] = (u1)(N+i);
-     
-    //Board::LED.tgl();
     
-    _delay_ms(1);
+    _delay_ms(100);
   
     //Board::LED.tgl();
      

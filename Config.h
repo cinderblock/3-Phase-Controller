@@ -13,7 +13,7 @@
 using namespace AVR;
 
 namespace Config {
- b7 constexpr i2cSlaveAddress = 0b1100000;
+ b7 constexpr i2cSlaveAddress = 50;
  u1 constexpr i2cBufferOutgoingSize = 10;
  u1 constexpr i2cBufferIncomingSize = 10;
 }

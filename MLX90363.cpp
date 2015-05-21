@@ -9,7 +9,6 @@
 
 #include "MLX90363.h"
 #include "Board.h"
-#include "TwillBotInterface.h"
 
 #include <avr/interrupt.h>
 #include <AVR++/SPI.h>
@@ -41,11 +40,13 @@ ISR (SPI_STC_vect, ISR_NOBLOCK) {
 }
 
 void MLX90363::isr() {
+     
+    Board::LED.on();
  // Receive a byte
- MLX90363::RxBuffer[MLX90363::bufferPosition++] = receiveSPI();
+ RxBuffer[bufferPosition++] = receiveSPI();
 
  // Check if we're done sending
- if (MLX90363::bufferPosition == MLX90363::messageLength) {
+ if (bufferPosition == messageLength) {
   // We're done. De-assert (turn on) the slave select line
   slaveDeselect();
   
@@ -53,9 +54,11 @@ void MLX90363::isr() {
   
   // Check the received CRC and read values
   handleResponse();
+     
+    Board::LED.off();
   
  } else {
-  sendSPI(MLX90363::TxBuffer[MLX90363::bufferPosition]);
+  sendSPI(TxBuffer[bufferPosition]);
   /**
    * Once this gets sent, there is a chance of nesting deep on the stack.
    * Luckily we're, in this particular usage, limited to transmissions of 8 bytes
@@ -74,7 +77,7 @@ u1 MLX90363::TxBuffer[messageLength];
 u1 MLX90363::RxBuffer[messageLength];
 u1 MLX90363::bufferPosition = messageLength;
 
-MLX90363::ResponseState MLX90363::responseState = MLX90363::ResponseState::Ready;
+MLX90363::ResponseState MLX90363::responseState = MLX90363::ResponseState::Init;
 
 
 u2 MLX90363::alpha;
@@ -185,8 +188,6 @@ void MLX90363::fillTxBufferCRC() {
 }
 
 void MLX90363::handleResponse() {
- responseState = ResponseState::Receiving;
- 
  if (!checkRxBufferCRC()) {
   responseState = ResponseState::failedCRC;
   return;
@@ -225,7 +226,7 @@ void MLX90363::handleAlpha() {
  
  err   = RxBuffer[1] >> 6;
  VG    = RxBuffer[4];
- ROLL = RxBuffer[6] & 0x3f;
+ ROLL  = RxBuffer[6] & 0x3f;
 }
 
 void MLX90363::handleAlphaBeta() {
