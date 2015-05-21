@@ -10,19 +10,18 @@
 
 #include <avr/interrupt.h>
 
-#include "bitTypes.h"
-#include "IOpin.h"
+#include <AVR++/bitTypes.h>
+#include <AVR++/IOpin.h>
 #include "Board.h"
 
 ISR(SPI_STC_vect);
 
 class MLX90363 {
- friend void SPI_STC_vect();
  
  /**
   * The fixed message length that the MLX90363 sends
   */
- static const u1 messageLength = 8;
+ static constexpr u1 messageLength = 8;
  
  /**
   * Staged transmit buffer. Will be sent automatically by the interrupt routine
@@ -39,6 +38,19 @@ class MLX90363 {
   * Where we are while sending/reading the data in the SPI interrupt
   */
  static u1 bufferPosition;
+ 
+ enum class ResponseState : u1;
+ 
+ static ResponseState responseState;
+ 
+ static u2 alpha;
+ static u2 beta;
+ static u2 X;
+ static u2 Y;
+ static u2 Z;
+ static u1 err;
+ static u1 VG;
+ static u1 ROLL;
  
  /**
   * INTERNAL: Reset the buffer position and start the transmission sequence.
@@ -107,10 +119,14 @@ class MLX90363 {
  static void handleXYZ();
  
 public:
+ enum class ResponseState: u1 {
+  Init, Ready, Receiving, Received, failedCRC, TypeA, TypeAB, TypeXYZ, Other
+ };
+ 
  /**
   * The 2-bit marker attached to all incoming messages for easy processing
   */
- enum class Marker: b2 {
+ enum class MessageType: b2 {
   Alpha = 0, AlphaBeta = 1, XYZ = 2, Other = 3
  };
  
@@ -122,6 +138,8 @@ public:
   * that it is set to an output (and stays that way) before calling this function.
   */
  static void init();
+ 
+ static inline void isr();
  
  /**
   * Set the SPI hardware's divider
@@ -135,10 +153,10 @@ public:
   */
  inline static bool isTransmitting() {
   // Any of there would work. Not sure which is most effective
-  //return bufferPosition != messageLength;
+  return bufferPosition != messageLength;
   //return !SS.isHigh();
   // Since IOpin isn't optimized, lets use the low level test
-  return !(PORTD & (1<<5));
+//  return !(PORTD & (1<<5));
  }
  
  /**
@@ -147,10 +165,7 @@ public:
   */
  static void startTransmitting();
  
- /**
-  * Temporary number for development
-  */
- static u1 num;
+ static b6 getReceivedOpCode();
 
  /**
   * Handle a received message.
@@ -158,10 +173,20 @@ public:
   * Checks the CRC
   * Checks for standard marker
   *  and passes the message off to another internal handler
-  * 
-  * @return the opcode
   */
- static u1 handleResponse();
+ static void handleResponse();
+ 
+ inline static u2 getAlpha() {cli(); u2 const a = alpha; sei(); return a;}
+ 
+ inline static u2 getBeta() {return beta;}
+ 
+ inline static u2 getX() {return X;}
+ 
+ inline static u2 getY() {return Y;}
+ 
+ inline static u2 getZ() {return Z;}
+ 
+ inline static u1 getRoll() {return ROLL;}
  
  /**
   * Construct a standard GET1 message
@@ -169,7 +194,7 @@ public:
   * @param timeout
   * @param resetRoll
   */
- static void prepareGET1Message(Marker const type, const u2 timeout = 0xffff, bool const resetRoll = false);
+ static void prepareGET1Message(MessageType const type, const u2 timeout = 0xffff, bool const resetRoll = false);
 
 };
 

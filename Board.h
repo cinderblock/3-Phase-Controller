@@ -8,10 +8,10 @@
 #ifndef BOARD_H
 #define	BOARD_H
 
-#include "IOpin.h"
+#include <AVR++/IOpin.h>
 #include "Config.h"
 
-//using namespace AVR;
+using namespace AVR;
 
 namespace Board {
  extern IOpin LED;

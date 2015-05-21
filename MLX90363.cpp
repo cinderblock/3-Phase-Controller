@@ -6,12 +6,12 @@
  */
 
 #include <avr/pgmspace.h>
-#include <string.h>
 
 #include "MLX90363.h"
-#include "SPI.h"
 #include "Board.h"
-#include "TwillBotInterface.h"
+
+#include <avr/interrupt.h>
+#include <AVR++/SPI.h>
 
 static inline void sendSPI(u1 const b) {
  *AVR::SPI::DR = b;
@@ -21,8 +21,8 @@ static inline u1 receiveSPI() {
  return *AVR::SPI::DR;
 }
 
-static inline void SSon () {PORTD |=  (1<<5); PORTF |=  (1<<4);}   //BS is for testing
-static inline void SSoff() {PORTD &= ~(1<<5); PORTF &= ~(1<<4);}   //BS is for testing
+static inline void slaveDeselect() {PORTD |=  (1<<5);}
+static inline void slaveSelect  () {PORTD &= ~(1<<5);}
 
 /**
  * Declare the SPI Transfer Complete interrupt as a non-blocking interrupt so
@@ -35,18 +35,30 @@ static inline void SSoff() {PORTD &= ~(1<<5); PORTF &= ~(1<<4);}   //BS is for t
  * This is not a guarantee, but it will be good enough if we leave enough stack
  * room.
  */
-void SPI_STC_vect() ISR_NOBLOCK;
+ISR (SPI_STC_vect, ISR_NOBLOCK) {
+ MLX90363::isr();
+}
 
-void SPI_STC_vect() {
+void MLX90363::isr() {
+     
+    Board::LED.on();
  // Receive a byte
- MLX90363::RxBuffer[MLX90363::bufferPosition++] = receiveSPI();
+ RxBuffer[bufferPosition++] = receiveSPI();
 
  // Check if we're done sending
- if (MLX90363::bufferPosition == MLX90363::messageLength) {
+ if (bufferPosition == messageLength) {
   // We're done. De-assert (turn on) the slave select line
-  SSon();
+  slaveDeselect();
+  
+  responseState = ResponseState::Received;
+  
+  // Check the received CRC and read values
+  handleResponse();
+     
+    Board::LED.off();
+  
  } else {
-  sendSPI(MLX90363::TxBuffer[MLX90363::bufferPosition]);
+  sendSPI(TxBuffer[bufferPosition]);
   /**
    * Once this gets sent, there is a chance of nesting deep on the stack.
    * Luckily we're, in this particular usage, limited to transmissions of 8 bytes
@@ -65,13 +77,23 @@ u1 MLX90363::TxBuffer[messageLength];
 u1 MLX90363::RxBuffer[messageLength];
 u1 MLX90363::bufferPosition = messageLength;
 
-u1 MLX90363::num;
+MLX90363::ResponseState MLX90363::responseState = MLX90363::ResponseState::Init;
+
+
+u2 MLX90363::alpha;
+u2 MLX90363::beta;
+u2 MLX90363::X;
+u2 MLX90363::Y;
+u2 MLX90363::Z;
+
+u1 MLX90363::err;
+u1 MLX90363::VG;
+u1 MLX90363::ROLL;
 
 
 void MLX90363::init() {
  // Setup Slave Select line
- SSon();
- Board::SEN::BS.output(); //FOR TESTING
+ slaveDeselect();
  SS.output();
 
  // Setup "User Defined" hardware lines
@@ -88,6 +110,8 @@ void MLX90363::init() {
  AVR::SPI::SR->byte = 0;
  // F_CPU/32 by default
  AVR::SPI::CR->byte = 0b11010110;
+
+ responseState = ResponseState::Ready;
 }
 
 void MLX90363::setSPISpeed(const u1 c) {
@@ -96,8 +120,9 @@ void MLX90363::setSPISpeed(const u1 c) {
 
 void MLX90363::startTransmittingUnsafe() {
  bufferPosition = 0;
- SSoff();
+ slaveSelect();
  sendSPI(TxBuffer[bufferPosition]);
+ responseState = ResponseState::Receiving;
 }
 
 /**
@@ -143,9 +168,9 @@ bool MLX90363::checkRxBufferCRC() {
  crc = lookupCRC(RxBuffer[3] ^ crc);
  crc = lookupCRC(RxBuffer[4] ^ crc);
  crc = lookupCRC(RxBuffer[5] ^ crc);
- crc = ~lookupCRC(RxBuffer[6] ^ crc);
+ crc = lookupCRC(RxBuffer[6] ^ crc);
 
- return RxBuffer[7] == crc;
+ return RxBuffer[7] == (u1)~crc;
 }
 
 void MLX90363::fillTxBufferCRC() {
@@ -162,62 +187,67 @@ void MLX90363::fillTxBufferCRC() {
  TxBuffer[7] = ~crc;
 }
 
-u1 MLX90363::handleResponse() {
- if (!checkRxBufferCRC()) return 0;
+void MLX90363::handleResponse() {
+ if (!checkRxBufferCRC()) {
+  responseState = ResponseState::failedCRC;
+  return;
+ }
  
  u1 const marker = RxBuffer[6] >> 6;
 
  if (marker == 0) {
   handleAlpha();
-  return true;
+  responseState = ResponseState::TypeA;
+  return;
  }
-
- memcpy(TwillBotInterface::getOutgoingWriteBuffer(), RxBuffer, messageLength);
- TwillBotInterface::releaseNextWriteBuffer();
- return true;
  
  if (marker == 1) {
   handleAlphaBeta();
-  return true;
+  responseState = ResponseState::TypeAB;
+  return;
  }
 
  if (marker == 2) {
   handleXYZ();
-  return true;
+  responseState = ResponseState::TypeXYZ;
+  return;
  }
 
- u1 const opcode = RxBuffer[6] & 0x3f;
-
- return opcode;
+ responseState = ResponseState::Other;
 }
 
+b6 MLX90363::getReceivedOpCode() {
+ return RxBuffer[6] & 0x3f;
+}
+
+
 void MLX90363::handleAlpha() {
- u2 const alpha = RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8;
- u1 const err = RxBuffer[1] >> 6;
- u1 const VG = RxBuffer[4];
- u1 const ROLL = RxBuffer[6] & 0x3f;
- *(u2*)TwillBotInterface::getOutgoingWriteBuffer() = alpha;
+ alpha = RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8;
+ 
+ err   = RxBuffer[1] >> 6;
+ VG    = RxBuffer[4];
+ ROLL  = RxBuffer[6] & 0x3f;
 }
 
 void MLX90363::handleAlphaBeta() {
- u2 const alpha = RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8;
- u2 const beta  = RxBuffer[2] | (RxBuffer[3] & 0x3f) << 8;
- u1 const err = RxBuffer[1] >> 6;
- u1 const VG = RxBuffer[4];
- u1 const ROLL = RxBuffer[6] & 0x3f;
-
- num = alpha >> 6;
+ alpha = RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8;
+ beta  = RxBuffer[2] | (RxBuffer[3] & 0x3f) << 8;
+ 
+ err   = RxBuffer[1] >> 6;
+ VG    = RxBuffer[4];
+ ROLL  = RxBuffer[6] & 0x3f;
 }
 
 void MLX90363::handleXYZ() {
- u2 const X = RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8;
- u2 const Y = RxBuffer[2] | (RxBuffer[3] & 0x3f) << 8;
- u2 const Z = RxBuffer[4] | (RxBuffer[5] & 0x3f) << 8;
- u1 const err = RxBuffer[1] >> 6;
- u1 const ROLL = RxBuffer[6] & 0x3f;
+ X = RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8;
+ Y = RxBuffer[2] | (RxBuffer[3] & 0x3f) << 8;
+ Z = RxBuffer[4] | (RxBuffer[5] & 0x3f) << 8;
+ 
+ err = RxBuffer[1] >> 6;
+ ROLL = RxBuffer[6] & 0x3f;
 }
 
-void MLX90363::prepareGET1Message(Marker const type, const u2 timeout, bool const resetRoll) {
+void MLX90363::prepareGET1Message(MessageType const type, const u2 timeout, bool const resetRoll) {
  if (isTransmitting()) return;
  TxBuffer[0] = 0;
  TxBuffer[1] = resetRoll;
@@ -227,7 +257,6 @@ void MLX90363::prepareGET1Message(Marker const type, const u2 timeout, bool cons
  TxBuffer[5] = 0;
  TxBuffer[6] = (u1)type << 6 | (u1)Opcode::GET1;
  fillTxBufferCRC();
- //startTransmittingUnsafe();
 }
 
 void MLX90363::startTransmitting(){

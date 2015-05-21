@@ -8,9 +8,10 @@
 C = 
 
 # List of CPP file basenames to build
-CPP = main Board SPI MLX90363 ThreePhaseDriver Debug
+CPP = main Board MLX90363 ThreePhaseDriver Debug
 
 CPP += TwillBotInterface TripleBuffer-impl
+# HENRY: I removed "test", might want to add it back
 
 # Select specific LUFA source files to compile like this
 #LUFA_SRC = LUFA/Drivers/USB/Class/Common/HIDParser.c
@@ -33,35 +34,35 @@ run: dfu-erase dfu-flash dfu-reset
 ASM = #$(CPP:%=%.cpp.S)
 
 # Load local settings
--include local.mk
+include local.mk
 
 # Force setting certain make flags
-include $(UMAKER)tools/makeflags.mk
+include $(uMakerPath)tools/makeflags.mk
 
 # Optional configuration testing for development
-include $(UMAKER)tools/checks.mk
+include $(uMakerPath)tools/checks.mk
 
 # Defs for our setup
-include $(UMAKER)vars/AVR.mk
+include $(uMakerPath)vars/AVR.mk
 
 
 # Library targets
-#include $(UMAKER)tools/AVR/lufa.mk
-#include $(UMAKER)tools/extlib.mk
-include $(UMAKER)tools/AVR/AVR++.mk
+#include $(uMakerPath)tools/AVR/lufa.mk
+#include $(uMakerPath)tools/extlib.mk
+include $(uMakerPath)tools/AVR/AVR++.mk
 
 # Build targets
-include $(UMAKER)tools/build.mk
+include $(uMakerPath)tools/build.mk
 
 # Intermediate assembly
-include $(UMAKER)tools/assembly.mk
+include $(uMakerPath)tools/assembly.mk
 
 # Programmer targets
-include $(UMAKER)tools/dfu.mk
-#include $(UMAKER)tools/nrfjprog.mk
-#include $(UMAKER)tools/AVR/avrdude.mk
+include $(uMakerPath)tools/dfu.mk
+#include $(uMakerPath)tools/nrfjprog.mk
+#include $(uMakerPath)tools/AVR/avrdude.mk
 
 # Directory creation targets
-include $(UMAKER)tools/mkdir.mk
+include $(uMakerPath)tools/mkdir.mk
 
 .PHONY: all run

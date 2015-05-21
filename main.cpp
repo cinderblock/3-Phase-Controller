@@ -46,14 +46,18 @@ void main() {
  //Board::SEN::BS.off();
  
  ThreePhaseDriver::setAmplitude(15);
- MLX90363::prepareGET1Message(MLX90363::Marker::Alpha);
+ MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
  u2 step = 0;
  TwillBotInterface::releaseNextWriteBuffer();
  
 // while(*TwillBotInterface::getIncomingReadBuffer() != 0x33){
 //     TwillBotInterface::reserveNextReadBuffer();
 // }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> faca922dbd4cb44145a5fa7632b009ae5dc13039
  Board::LED.off();
  //u1 N = 0x20;
  b1 forward = 1;
@@ -65,28 +69,38 @@ void main() {
     
     MLX90363::startTransmitting();
     while (MLX90363::isTransmitting());
+<<<<<<< HEAD
     MLX90363::handleResponse();
     
    
     ((u2*)TwillBotInterface::getOutgoingWriteBuffer())[1]=step;
     
+=======
+     
+//    Board::LED.tgl();
+    
+    u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
+    
+    buff[0] = MLX90363::getRoll();
+    buff[1] = step++;
+    
+    TwillBotInterface::releaseNextWriteBuffer();
+>>>>>>> faca922dbd4cb44145a5fa7632b009ae5dc13039
     
     //Debug::reportByte(step >> 2);
-    if (forward) {
-        if (++step == 0x300)
-            forward = 0;
-    }
-    else{
-        if (--step == 0)
-            forward = 1;
-    }
+//    if (forward) {
+//        if (++step == 0x300)
+//            forward = 0;
+//    }
+//    else{
+//        if (--step == 0)
+//            forward = 1;
+//    }
     //TwillBotInterface::releaseNextWriteBuffer();
     //for(u1 i = 0; i<10;i++)
        //TwillBotInterface::getOutgoingWriteBuffer()[i] = (u1)(N+i);
-     
-    //Board::LED.tgl();
     
-    _delay_ms(1);
+    _delay_ms(100);
   
     //Board::LED.tgl();
      
