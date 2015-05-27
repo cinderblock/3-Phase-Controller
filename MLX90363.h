@@ -152,8 +152,8 @@ public:
   * @return 
   */
  inline static bool isTransmitting() {
-  // Any of there would work. Not sure which is most effective
-  return bufferPosition != messageLength;
+  // Any of these would work. Not sure which is most effective
+//  return bufferPosition != messageLength;
   //return !SS.isHigh();
   // Since IOpin isn't optimized, lets use the low level test
 //  return !(PORTD & (1<<5));
@@ -187,6 +187,8 @@ public:
  inline static u2 getZ() {return Z;}
  
  inline static u1 getRoll() {return ROLL;}
+ 
+ inline static u1 getErr() {return err;}
  
  /**
   * Construct a standard GET1 message
