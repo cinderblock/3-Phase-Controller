@@ -55,7 +55,7 @@ void main() {
 
  Board::LED.off();
  //u1 N = 0x20;
- b1 forward = 1;
+ //b1 forward = 1;
  
  while(1) {
     TwillBotInterface::releaseNextWriteBuffer();

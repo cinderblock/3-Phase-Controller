@@ -21,8 +21,8 @@ static inline u1 receiveSPI() {
  return *AVR::SPI::DR;
 }
 
-static inline void slaveDeselect() {PORTD |=  (1<<5);}
-static inline void slaveSelect  () {PORTD &= ~(1<<5);}
+static inline void slaveDeselect() {PORTD |=  (1<<5);Board::SEN::BS.off();}
+static inline void slaveSelect  () {PORTD &= ~(1<<5);Board::SEN::BS.on ();}
 
 /**
  * Declare the SPI Transfer Complete interrupt as a non-blocking interrupt so
@@ -55,7 +55,7 @@ void MLX90363::isr() {
   // Check the received CRC and read values
   handleResponse();
      
-    Board::LED.off();
+  Board::LED.off();
   
  } else {
   sendSPI(TxBuffer[bufferPosition]);
