@@ -21,8 +21,8 @@ static inline u1 receiveSPI() {
  return *AVR::SPI::DR;
 }
 
-static inline void slaveDeselect() {PORTD |=  (1<<5);}
-static inline void slaveSelect  () {PORTD &= ~(1<<5);}
+static inline void slaveDeselect() {PORTD |=  (1<<5); PORTF |=  (1<<4);}
+static inline void slaveSelect  () {PORTD &= ~(1<<5); PORTF &= ~(1<<4);}
 
 /**
  * Declare the SPI Transfer Complete interrupt as a non-blocking interrupt so
@@ -41,7 +41,7 @@ ISR (SPI_STC_vect, ISR_NOBLOCK) {
 
 void MLX90363::isr() {
      
-    Board::LED.on();
+
  // Receive a byte
  RxBuffer[bufferPosition++] = receiveSPI();
 
@@ -54,9 +54,7 @@ void MLX90363::isr() {
   
   // Check the received CRC and read values
   handleResponse();
-     
-    Board::LED.off();
-  
+
  } else {
   sendSPI(TxBuffer[bufferPosition]);
   /**
@@ -95,6 +93,7 @@ void MLX90363::init() {
  // Setup Slave Select line
  slaveDeselect();
  SS.output();
+ Board::SEN::BS.output();
 
  // Setup "User Defined" hardware lines
  SCLK.output();
