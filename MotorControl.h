@@ -17,18 +17,15 @@
 class MotorControl {
 public:
     static void init();
-    static void go(u1 force);
-    static void goAt(u1 speed);
-    static void goTo(u2 position);
+    static void go(s1 force);
+    static void goAt(s1 speed);
+    static void goTo(s2 position);
+    static void goDistance(s4 distance);
     
 private:
     
     //static u1 stepSize = 1;
-    /*
-     * 0: forward
-     * 1: backward
-     */
-    //static b1 dir = 0; 
+    static u4 timeLastStep;
 
 };
 

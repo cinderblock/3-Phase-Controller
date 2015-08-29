@@ -19,7 +19,7 @@ void MotorControl::init(){
  
 }
 
-void MotorControl::go(u1 speed) {
-
+void MotorControl::go(s1 speed) {
+    
 }
 

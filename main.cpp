@@ -35,7 +35,7 @@ void init() {
 void main() {
  
  Board::LED.output();
- Board::LED.on();
+ Board::LED.off();
  
  _delay_ms(100);
  
@@ -49,11 +49,11 @@ void main() {
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
  u2 step = 0;
  
-// while(*TwillBotInterface::getIncomingReadBuffer() != 0x33){
-//     TwillBotInterface::reserveNextReadBuffer();
-// }
+ while(*TwillBotInterface::getIncomingReadBuffer() != 0x33){
+     TwillBotInterface::reserveNextReadBuffer();
+ }
+ Board::LED.on();
 
- Board::LED.off();
  //u1 N = 0x20;
  //b1 forward = 1;
  
