@@ -26,6 +26,7 @@ void init() {
  ThreePhaseDriver::init();
  MLX90363::init();
  TwillBotInterface::init();
+ MotorControl::init();
  Debug::init();
 }
 
@@ -49,33 +50,41 @@ void main() {
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
  u2 step = 0;
  
- while(*TwillBotInterface::getIncomingReadBuffer() != 0x33){
-     TwillBotInterface::reserveNextReadBuffer();
- }
+ MLX90363::startTransmitting();
+ while (MLX90363::isTransmitting());
+ 
+// MotorControl::setInitialPosition();
+ 
+// while(*TwillBotInterface::getIncomingReadBuffer() != 0x33){
+//     TwillBotInterface::reserveNextReadBuffer();
+// }
  Board::LED.on();
 
  //u1 N = 0x20;
  //b1 forward = 1;
  
  while(1) {
-    TwillBotInterface::releaseNextWriteBuffer();
     
-    _delay_ms(100);
+     //SPI doesn't work without this delay
+     //Most likely due to the Slave Select not going Low for long enough
+    _delay_ms(1);
     
     //ThreePhaseDriver::advance();
     //ThreePhaseDriver::advanceTo(step);
      
-    MLX90363::startTransmitting();
-    while (MLX90363::isTransmitting());
-    
+    TwillBotInterface::releaseNextWriteBuffer();
     u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
     
     buff[0] = MLX90363::getAlpha();
-    buff[1] = MLX90363::getBeta();
+    buff[1] = MotorControl::getTimer();
     buff[2] = MLX90363::getRoll();
     buff[3] = MLX90363::getErr();
-    buff[4] = ++step;
+    buff[4] = step==0x300 ? step = 0 : ++step;
     
+    MotorControl::advance();
+    
+    MLX90363::startTransmitting();
+    while (MLX90363::isTransmitting());
     
     //Debug::reportByte(step >> 2);
 //    if (forward) {
