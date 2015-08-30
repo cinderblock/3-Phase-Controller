@@ -37,13 +37,26 @@ void MotorControl::init(){
  //16-bit counter
  TCCR3A = 0;
  
- TCCR3B = 0b00000001;
+ TCCR3B = 0b00000100;
 
  TCCR3C = 0;
  
  TIMSK3 = 0b00000000;
  
  //count = 0;
+}
+
+u2 MotorControl::lastStep;
+u2 MotorControl::timeLastStep;
+
+void MotorControl::setInitialPosition(u4 pos){
+    
+    lastStep = getStepFromLocation(pos);
+    timeLastStep = getTimer();
+}
+
+u2 MotorControl::getStepFromLocation(u4 magData){
+    return 0;
 }
 
 void MotorControl::go(s1 force) {
@@ -59,7 +72,5 @@ void MotorControl::advance(){
     
 }
 
-void MotorControl::setInitialPosition(u2 pos){
-    lastStep = pos;
-    timeLastStep = getTimer();
-}
+
+

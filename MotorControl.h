@@ -18,7 +18,8 @@ class MotorControl {
 public:
     static void init();
     static void advance();
-    static void setInitialPosition(u2 pos);
+    //should only be run once at the initialization of motor driver
+    static void setInitialPosition(u4 pos);
     
     static void go(s1 force);
     static void goAt(s1 speed);
@@ -29,9 +30,18 @@ public:
     
 private:
     
+    //Based on the position of the motor and attached magnet
+    //values (should be) configured in local config
+    //This could be a look-up table
+    static u2 getStepFromLocation(u4 magData);
+    
     //static u1 stepSize = 1;
     static u2 timeLastStep;
     static u2 lastStep;
+    
+    enum class Command : u1 {
+        Acceleration, Velocity, Position, Turns
+    };
     
 };
 
