@@ -10,7 +10,7 @@
 #include "ThreePhaseDriver.h"
 
 /*
- * Uses 8-bit timer 0 to have a consistent time base for motor driving
+ * Uses 16-bit timer 3 to have a consistent time base for motor driving
  * 
  */
 
@@ -22,11 +22,12 @@ public:
     static void setInitialPosition(u4 pos);
     
     static void go(s1 force);
-    static void goAt(s1 speed);
+    static void goAt(s2 speed);
     static void goTo(u2 position);
     static void goDistance(s4 distance);
     
     inline static u2 getTimer(){return TCNT3;};
+    inline static u2 getStep(){return lastStep;};
     
 private:
     

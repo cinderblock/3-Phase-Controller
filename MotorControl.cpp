@@ -6,44 +6,44 @@
  */
 
 #include "MotorControl.h"
+#include "ThreePhaseDriver.h"
 
 void MotorControl::init(){
- //ThreePhaseDriver::init();
- 
- //Enable 8-bit Timer 0 for timing purposes. TOO SMALL OF VALUES
+    
+ //16-bit counter Enables
  /*
-  * COM0A   COM0A   COM0B   COM0B   ~~~~    ~~~~    WGM0    WGM0
-  * 0       0       0       0                       0       0
-  * Normal port   | Normal port                   | Normal Mode
-  * operations    | operations                    |
+  * COM3A1  COM3A0  COM3B1  COM3B0  COM3C1  COM3C0    WGM31   WGM30
+  * 0       0       0       0       0       0         0       0
+  * Normal port   | Normal port     | Normal port    | Normal Mode
+  * operations    | operations      | operations     |
   */
- //TCCR0A = 0;
- 
- /*
-  * FOC0A   FOC0B   ~~~~~   ~~~~~   WGM02    CS02    CS01    CS00
-  * 0       0                       0        0       0       1
-  * Normal port   |               | Normal  | No pre-scaling
-  * operations    |               | Mode    | on CLK
-  */
- //TCCR0B = 0b00000101;
+ TCCR3A = 0b00000000;
  
  /*
-  * ~~~~~   ~~~~~   ~~~~~   ~~~~~   ~~~~~  OCIE0B  OCIE0A  TOIE0
-  *                                        0       0       0
-  *                                          Disabled Interrupts
+  * ICNC3    ICES3   ~~~~~    WGM33    WGM32    CS32    CS31   CS30
+  * 0        0                0        0        1       0      0
+  * Noise   |Edge            | Normal          | 1/256 pre-scaling
+  * Canceler|Select          | Mode            | on CLK (~1 cycle/sec)
   */
- //TIMSK0 = 0b00000001;
- 
- //16-bit counter
- TCCR3A = 0;
- 
  TCCR3B = 0b00000100;
-
- TCCR3C = 0;
  
+ /*
+  * FOC3A    ~~~~~   ~~~~~    ~~~~~    ~~~~~    ~~~~~   ~~~~~   ~~~~~  
+  * 0
+  * Force Output 
+  * Compare (disable)
+  */
+ TCCR3C = 0b00000000;
+ 
+ /*
+  * ~~~~~   ~~~~~   ICIE3   ~~~~~   OCIE3C  OCIE3B  OCIE0A  TOIE0 
+  *                 0               0       0       0       0
+  *                Input Capture   | Disabled Interrupts
+  *               Interrupt Enable |
+  */
  TIMSK3 = 0b00000000;
  
- //count = 0;
+ 
 }
 
 u2 MotorControl::lastStep;
@@ -56,20 +56,38 @@ void MotorControl::setInitialPosition(u4 pos){
 }
 
 u2 MotorControl::getStepFromLocation(u4 magData){
-    return 0;
+    return magData;
 }
 
 void MotorControl::go(s1 force) {
     
 }
 
-void MotorControl::goAt(s1 speed) {
-  
+void MotorControl::goAt(s2 speed) {
+    
 }
 
 
 void MotorControl::advance(){
+    u2 currTime = getTimer();
+    u2 timeDiff;
+    if (currTime > timeLastStep)
+        timeDiff = currTime - timeLastStep;
+    else
+        timeDiff = currTime + (0xFFFF - timeLastStep);
     
+    s2 stepSize = -(timeDiff / 40);
+    
+    if (stepSize != 0){
+        s2 nextStep = lastStep + stepSize;
+    
+        if (nextStep > 0x2FF) nextStep -= 0x2FF;
+        else if (nextStep < 0) nextStep += 0x2FF;
+    
+        timeLastStep = currTime;
+        lastStep = nextStep;
+        ThreePhaseDriver::advanceTo(nextStep);
+    }
 }
 
 
