@@ -65,8 +65,8 @@ void main() {
  
  while(1) {
     
-     //SPI doesn't work without this delay
-     //Most likely due to the Slave Select not going Low for long enough
+    //SPI doesn't work without this delay
+    //Most likely due to the Slave Select not going Low for long enough
     _delay_ms(1);
     
     //Do motor stuff
@@ -74,18 +74,17 @@ void main() {
     //ThreePhaseDriver::advance();
     //ThreePhaseDriver::advanceTo(step);
      
+    MLX90363::startTransmitting();
+    while (MLX90363::isTransmitting());
+
     TwillBotInterface::releaseNextWriteBuffer();
     u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
-    
+
     buff[0] = MLX90363::getAlpha();
     buff[1] = MotorControl::getTimer();
     buff[2] = MLX90363::getRoll();
     buff[3] = MLX90363::getErr();
     buff[4] = MotorControl::getStep();
-    
-    
-    MLX90363::startTransmitting();
-    while (MLX90363::isTransmitting());
     
     //Debug::reportByte(step >> 2);
 //    if (forward) {
