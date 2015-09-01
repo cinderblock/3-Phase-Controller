@@ -7,8 +7,9 @@
 
 #ifndef MOTORCONTROL_H
 #define	MOTORCONTROL_H
-#include "ThreePhaseDriver.h"
 
+#include "ThreePhaseDriver.h"
+#include "Timer.h"
 /*
  * Uses 16-bit timer 3 to have a consistent time base for motor driving
  * 
@@ -26,7 +27,7 @@ public:
     static void goTo(u2 position);
     static void goDistance(s4 distance);
     
-    inline static u2 getTimer(){return TCNT3;};
+    inline static u2 getTimer(){return Timer::getCurTime();};
     inline static u2 getStep(){return lastStep;};
     
 private:

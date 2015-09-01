@@ -26,6 +26,7 @@ void init() {
  ThreePhaseDriver::init();
  MLX90363::init();
  TwillBotInterface::init();
+ Timer::init();
  MotorControl::init();
  Debug::init();
 }

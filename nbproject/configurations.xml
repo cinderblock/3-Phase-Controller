@@ -33,6 +33,7 @@
       <itemPath>MLX90363.cpp</itemPath>
       <itemPath>MotorControl.cpp</itemPath>
       <itemPath>ThreePhaseDriver.cpp</itemPath>
+      <itemPath>Timer.cpp</itemPath>
       <itemPath>TripleBuffer-impl.cpp</itemPath>
       <itemPath>TripleBuffer.cpp</itemPath>
       <itemPath>TwillBotInterface.cpp</itemPath>
@@ -107,6 +108,8 @@
       <item path="ThreePhaseDriver.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="ThreePhaseDriver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Timer.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Timer.h" ex="false" tool="3" flavor2="0">
       </item>
