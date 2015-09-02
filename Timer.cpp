@@ -7,9 +7,11 @@
 
 #include "Timer.h"
 
-//const b3 Timer::CLKprescale;
+
+//const u1 Timer::CLKprescale;
 
 void Timer::init(){
+    
     
  //16-bit counter Enables
  /*
@@ -26,7 +28,7 @@ void Timer::init(){
   * Noise   |Edge            | Normal          | Clock
   * Canceler|Select          | Mode            | user defined
   */
- TCCR3B = 0b00000000 & CLKprescale;
+ TCCR3B = 0b00000000 | CLKprescale;
  
  /*
   * FOC3A    ~~~~~   ~~~~~    ~~~~~    ~~~~~    ~~~~~   ~~~~~   ~~~~~  
@@ -59,7 +61,7 @@ const u2 Timer::prescaleDiv(){
 
 u2 Timer::getSince(const u2 time){
     u2 t = getCurTime();
-    if(time < t) return t - time;
+    if(t < time) return t - time;
     else return t + (0xFFFF - time);
 }
 

@@ -35,14 +35,14 @@ void MotorControl::goAt(s2 speed) {
 
 
 void MotorControl::advance(){
-    u2 currTime = getTimer();
-    u2 timeDiff = Timer::getSince(timeLastStep);
+    const u2 currTime = getTimer();
+    const u2 timeDiff = Timer::getSince(timeLastStep);
     //if (currTime > timeLastStep)
     //    timeDiff = currTime - timeLastStep;
     //else
     //    timeDiff = currTime + (0xFFFF - timeLastStep);
     
-    s2 stepSize = -(timeDiff / 40);
+    s2 stepSize = (timeDiff >> 13);
     
     if (stepSize != 0){
         s2 nextStep = lastStep + stepSize;

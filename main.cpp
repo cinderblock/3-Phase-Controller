@@ -47,46 +47,51 @@ void main() {
  //Board::SEN::BS.output();
  //Board::SEN::BS.off();
  
- ThreePhaseDriver::setAmplitude(20);
+ ThreePhaseDriver::setAmplitude(100);
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
  //u2 step = 0;
  
  MLX90363::startTransmitting();
  while (MLX90363::isTransmitting());
+ u2 lastCheckedTime = Timer::getCurTime();
+ const u2 timeBetweenChecks = Timer::lengthUS(1000);
  
-// while(*TwillBotInterface::getIncomingReadBuffer() != 0x33){
-//     TwillBotInterface::reserveNextReadBuffer();
-// }
+ 
+ MotorControl::setInitialPosition(0);
+ 
  Board::LED.on();
 
  //u1 N = 0x20;
  //b1 forward = 1;
  
- MotorControl::setInitialPosition(155);
+ 
  
  while(1) {
     
     //SPI doesn't work without this delay
     //Most likely due to the Slave Select not going Low for long enough
-    _delay_ms(1);
+    //_delay_ms(1);
     
     //Do motor stuff
     MotorControl::advance();
     //ThreePhaseDriver::advance();
     //ThreePhaseDriver::advanceTo(step);
-     
-    MLX90363::startTransmitting();
-    while (MLX90363::isTransmitting());
-
-    TwillBotInterface::releaseNextWriteBuffer();
-    u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
-
-    buff[0] = MLX90363::getAlpha();
-    buff[1] = MotorControl::getTimer();
-    buff[2] = MLX90363::getRoll();
-    buff[3] = MLX90363::getErr();
-    buff[4] = MotorControl::getStep();
     
+    if (Timer::getSince(lastCheckedTime) > timeBetweenChecks){
+        MLX90363::startTransmitting();
+        while (MLX90363::isTransmitting());
+        lastCheckedTime = Timer::getCurTime();
+
+        TwillBotInterface::releaseNextWriteBuffer();
+        u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
+
+        buff[0] = MLX90363::getAlpha();
+        buff[1] = MotorControl::getTimer();
+        buff[2] = MLX90363::getRoll();
+        buff[3] = MLX90363::getErr();
+        buff[4] = MotorControl::getStep();
+        
+    }
     //Debug::reportByte(step >> 2);
 //    if (forward) {
 //        if (++step == 0x300)
