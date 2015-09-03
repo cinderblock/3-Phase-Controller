@@ -47,7 +47,7 @@ void main() {
  //Board::SEN::BS.output();
  //Board::SEN::BS.off();
  
- ThreePhaseDriver::setAmplitude(100);
+ ThreePhaseDriver::setAmplitude(30);
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
  //u2 step = 0;
  

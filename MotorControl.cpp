@@ -8,8 +8,10 @@
 #include "MotorControl.h"
 #include "ThreePhaseDriver.h"
 
+u1 MotorControl::forward;
+
 void MotorControl::init(){
-  
+  forward = 1;
 }
 
 u2 MotorControl::lastStep;
@@ -42,14 +44,24 @@ void MotorControl::advance(){
     //else
     //    timeDiff = currTime + (0xFFFF - timeLastStep);
     
-    s2 stepSize = (timeDiff >> 13);
+    s2 stepSize = (timeDiff >> 15);
+    
+    if (!forward) stepSize = -stepSize;
     
     if (stepSize != 0){
         s2 nextStep = lastStep + stepSize;
-    
+        
         if (nextStep > 0x2FF) nextStep -= 0x2FF;
         else if (nextStep < 0) nextStep += 0x2FF;
     
+        if (forward && nextStep >= 255){
+            forward = 0;
+            
+        }
+        else if (!forward && nextStep == 0){
+            forward = 1;
+        }
+        
         timeLastStep = currTime;
         lastStep = nextStep;
         ThreePhaseDriver::advanceTo(nextStep);
