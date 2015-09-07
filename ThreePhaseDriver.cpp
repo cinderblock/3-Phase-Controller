@@ -53,10 +53,12 @@ register u1 cachedOCRC asm("r5");
  */
 register u1 cachedNextIntEnable asm("r6");
 
+//constexpr u1 TCRdefault = 0b00001001;
+constexpr u1 TCRdefault = 0b10101001;
 inline static void stageNextPhase(ThreePhaseDriver::Phase const p) {
-      if (p == ThreePhaseDriver::Phase::A) cachedTCR = 0b10101001 & ~(1 << COM1A1);
- else if (p == ThreePhaseDriver::Phase::B) cachedTCR = 0b10101001 & ~(1 << COM1B1);
- else if (p == ThreePhaseDriver::Phase::C) cachedTCR = 0b10101001 & ~(1 << COM1C1);
+      if (p == ThreePhaseDriver::Phase::A) cachedTCR = TCRdefault & ~(1 << COM1A1);
+ else if (p == ThreePhaseDriver::Phase::B) cachedTCR = TCRdefault & ~(1 << COM1B1);
+ else if (p == ThreePhaseDriver::Phase::C) cachedTCR = TCRdefault & ~(1 << COM1C1);
 }
 
 //u1 ThreePhaseDriver::cacheA = 0;
@@ -312,7 +314,7 @@ static const u1 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
 u1 ThreePhaseDriver::amplitude = 0;
 
 u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
-    return step;
+    //return step;
  // u1 const sin = MAX * SIN(2 * PI * step / StepsPerCycle);
  u1 const sin = pgm_read_byte(&limitedSinTable[step]);
  

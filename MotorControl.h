@@ -17,14 +17,16 @@
 
 class MotorControl {
 public:
+    //initialize motor settings
     static void init();
+    //run as often as possible to move the motor
     static void advance();
     //should only be run once at the initialization of motor driver
     static void setInitialPosition(u4 pos);
     
     static void go(s1 force);
     static void goAt(s2 speed);
-    static void goTo(u2 position);
+    //static void goTo(u2 position);
     static void goDistance(s4 distance);
     
     inline static u2 getTimer(){return Timer::getCurTime();};
@@ -44,9 +46,10 @@ private:
     static u1 forward;
     
     enum class Command : u1 {
-        Acceleration, Velocity, Position, Turns
+        Acceleration, Velocity, Turns
     };
     
+    static Command curCommand;
 };
 
 #endif	/* MOTORCONTROL_H */

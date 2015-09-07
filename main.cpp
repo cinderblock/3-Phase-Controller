@@ -10,7 +10,7 @@
 
 #include "ThreePhaseDriver.h"
 #include "MLX90363.h"
-#include "Debug.h"
+//#include "Debug.h"
 #include "TwillBotInterface.h"
 #include "MotorControl.h"
 
@@ -28,7 +28,7 @@ void init() {
  TwillBotInterface::init();
  Timer::init();
  MotorControl::init();
- Debug::init();
+ //Debug::init();
 }
 
 /*
@@ -39,48 +39,39 @@ void main() {
  Board::LED.output();
  Board::LED.off();
  
+ //why is this here?
  _delay_ms(100);
  
  sei();
  
- //Board::SEN::BS.on();
- //Board::SEN::BS.output();
- //Board::SEN::BS.off();
- 
  ThreePhaseDriver::setAmplitude(30);
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
- //u2 step = 0;
  
  MLX90363::startTransmitting();
  while (MLX90363::isTransmitting());
- u2 lastCheckedTime = Timer::getCurTime();
- const u2 timeBetweenChecks = Timer::lengthUS(1000);
+ u2 lastTimeSPICheck = Timer::getCurTime();
+ const u2 timeBetweenSPIChecks = Timer::lengthUS(1000);
+ 
+ u2 lastTimei2cCheck = Timer::getCurTime();
+ const u2 timeBetweeni2cChecks = Timer::lengthUS(1000);
  
  
+ ThreePhaseDriver::advanceTo(0);
  MotorControl::setInitialPosition(0);
+ 
+ TwillBotInterface::reserveNextReadBuffer();
  
  Board::LED.on();
 
- //u1 N = 0x20;
- //b1 forward = 1;
- 
- 
- 
  while(1) {
-    
-    //SPI doesn't work without this delay
-    //Most likely due to the Slave Select not going Low for long enough
-    //_delay_ms(1);
     
     //Do motor stuff
     MotorControl::advance();
-    //ThreePhaseDriver::advance();
-    //ThreePhaseDriver::advanceTo(step);
     
-    if (Timer::getSince(lastCheckedTime) > timeBetweenChecks){
+    if (Timer::getSince(lastTimeSPICheck) > timeBetweenSPIChecks){
         MLX90363::startTransmitting();
         while (MLX90363::isTransmitting());
-        lastCheckedTime = Timer::getCurTime();
+        lastTimeSPICheck = Timer::getCurTime();
 
         TwillBotInterface::releaseNextWriteBuffer();
         u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
@@ -92,35 +83,21 @@ void main() {
         buff[4] = MotorControl::getStep();
         
     }
-    //Debug::reportByte(step >> 2);
-//    if (forward) {
-//        if (++step == 0x300)
-//            forward = 0;
-//    }
-//    else{
-//        if (--step == 0)
-//            forward = 1;
-//    }
-    //TwillBotInterface::releaseNextWriteBuffer();
-    //for(u1 i = 0; i<10;i++)
-       //TwillBotInterface::getOutgoingWriteBuffer()[i] = (u1)(N+i);
-  
-
-    //N+=0x01;
+    
+    if (Timer::getSince(lastTimei2cCheck) > timeBetweeni2cChecks){
+        lastTimei2cCheck = Timer::getCurTime();
+        if (*TwillBotInterface::getIncomingReadBuffer() == 0x33){
+            MotorControl::goDistance(1);
+            *TwillBotInterface::getIncomingReadBuffer() = 0;
+        }
+        if (*TwillBotInterface::getIncomingReadBuffer() == 0x20){
+            MotorControl::goAt(1);
+            *TwillBotInterface::getIncomingReadBuffer() = 0;
+        }
+        TwillBotInterface::reserveNextReadBuffer();
+    }
  }
-// while (1) {
-//  _delay_us(100);
-//  ThreePhaseDriver::advance();
-// }
- /*
- do {
-  MLX90363::prepareGET1Message(MLX90363::Marker::XYZ);
-  
-  while (MLX90363::isTransmitting());
- } while (MLX90363::handleResponse());
- */
-// Debug::LED.on();
-
+ 
  while(1);
 }
 
