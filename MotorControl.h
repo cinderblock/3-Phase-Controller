@@ -43,7 +43,7 @@ private:
     static u2 timeLastStep;
     static u2 lastStep;
     
-    static u1 forward;
+    static s4 commandVal;
     
     enum class Command : u1 {
         Acceleration, Velocity, Turns

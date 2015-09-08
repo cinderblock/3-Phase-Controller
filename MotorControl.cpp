@@ -8,10 +8,8 @@
 #include "MotorControl.h"
 #include "ThreePhaseDriver.h"
 
-u1 MotorControl::forward;
 
 void MotorControl::init(){
-  forward = 1;
 }
 
 u2 MotorControl::lastStep;
@@ -28,6 +26,7 @@ u2 MotorControl::getStepFromLocation(u4 magData){
     return magData;
 }
 
+s4 MotorControl::commandVal;
 void MotorControl::go(s1 force) {
     
 }
@@ -36,14 +35,28 @@ MotorControl::Command MotorControl::curCommand;
 
 void MotorControl::goAt(s2 speed) {
     curCommand = Command::Velocity;
+    if (speed < 0) speed = -speed;
+    if (speed > 15) speed = 15;
+    commandVal = speed;
 }
 
 void MotorControl::goDistance(s4 distance){
     curCommand = Command::Turns;
     
-    if (++lastStep > 0x2FF) lastStep -= 0x2FF;
+    if (distance > 0xFF)
+        commandVal = 0xFF;
+    else if (distance < -0xFF)
+        commandVal = -0xFF;
+    else 
+        commandVal = distance;
     
-    ThreePhaseDriver::advanceTo(lastStep);
+    s4 nextVal = (lastStep + commandVal);
+    
+    if (nextVal > 0x2FF) nextVal -= 0x300;
+    else if (nextVal < 0) nextVal += 0x300;
+    
+    ThreePhaseDriver::advanceTo(nextVal);
+    lastStep = nextVal;
 }
 
 /*
@@ -57,15 +70,13 @@ void MotorControl::advance(){
         const u2 timeDiff = Timer::getSince(timeLastStep);
 
         //currently has a hard programmed turn speed
-        s2 stepSize = (timeDiff >> 11);
-
-        if (!forward) stepSize = -stepSize;
+        s2 stepSize = (timeDiff >> commandVal);
 
         if (stepSize != 0){
             s2 nextStep = lastStep + stepSize;
 
-            if (nextStep > 0x2FF) nextStep -= 0x2FF;
-            else if (nextStep < 0) nextStep += 0x2FF;
+            if (nextStep > 0x2FF) nextStep -= 0x300;
+            else if (nextStep < 0) nextStep += 0x300;
 
             timeLastStep = currTime;
             lastStep = nextStep;

@@ -56,8 +56,8 @@ void main() {
  const u2 timeBetweeni2cChecks = Timer::lengthUS(1000);
  
  
- ThreePhaseDriver::advanceTo(0);
- MotorControl::setInitialPosition(0);
+ ThreePhaseDriver::advanceTo(40);
+ MotorControl::setInitialPosition(40);
  
  TwillBotInterface::reserveNextReadBuffer();
  
@@ -84,17 +84,24 @@ void main() {
         
     }
     
-    if (Timer::getSince(lastTimei2cCheck) > timeBetweeni2cChecks){
-        lastTimei2cCheck = Timer::getCurTime();
+    if (TwillBotInterface::hasReceivedBlock()){
+        TwillBotInterface::reserveNextReadBuffer();
         if (*TwillBotInterface::getIncomingReadBuffer() == 0x33){
             MotorControl::goDistance(1);
-            *TwillBotInterface::getIncomingReadBuffer() = 0;
+            //*TwillBotInterface::getIncomingReadBuffer() = 0;
         }
-        if (*TwillBotInterface::getIncomingReadBuffer() == 0x20){
-            MotorControl::goAt(1);
-            *TwillBotInterface::getIncomingReadBuffer() = 0;
+        else if (*TwillBotInterface::getIncomingReadBuffer() == 0x20){
+            MotorControl::goAt(10);
+            //*TwillBotInterface::getIncomingReadBuffer() = 0;
         }
-        TwillBotInterface::reserveNextReadBuffer();
+        else if (*TwillBotInterface::getIncomingReadBuffer() == 0x21){
+            MotorControl::goAt(TwillBotInterface::getIncomingReadBuffer()[1]);
+            //*TwillBotInterface::getIncomingReadBuffer() = 0;
+            //TwillBotInterface::getIncomingReadBuffer()[1] = 0;
+        }
+        else if (*TwillBotInterface::getIncomingReadBuffer() == 0x35){
+            MotorControl::goDistance(-1);
+        }
     }
  }
  
