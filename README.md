@@ -6,3 +6,4 @@
 ## Associated documentation
 
 [Phase switching explanations](https://drive.draw.io/#G0Bzw2V8vLyJThNWQ0T0RSMVpEN0U)
+[Triple Buffer](https://drive.draw.io/#G0Bzw2V8vLyJThV1dJRTZ0dXRsODQ)
