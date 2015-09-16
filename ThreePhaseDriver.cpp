@@ -8,6 +8,7 @@
 
 
 #include "ThreePhaseDriver.h"
+#include "Board.h"
 
 // IOpin should be made optimized enough so we don't need to do this. Oh well.
 
@@ -129,32 +130,32 @@ extern "C" void TIMER1_COMPB_vect() __attribute__ ((naked,__INTR_ATTRS));
 extern "C" void TIMER1_COMPC_vect() __attribute__ ((naked,__INTR_ATTRS));
 
 void TIMER1_COMPA_vect(){
-    if(cachedTgl == StepLocation::up1 || cachedTgl == StepLocation::up2){
+    if(cachedTgl == (u1)StepLocation::up1 || cachedTgl == (u1)StepLocation::up2){
         ALowOff();
         cachedTgl++;
         AHighOn();
     }
     else{
         AHighOff();
-        if (cachedTgl == StepLocation::down1) cachedTgl++;
-        else cachedTgl = StepLocation::up1;
-        ALowOn();
+        if (cachedTgl == (u1)StepLocation::down1) cachedTgl++;
+        else cachedTgl = (u1)StepLocation::up1;
+        //ALowOn();
     }
     
     asm("reti" : : );
 }
 
 void TIMER1_COMPB_vect(){
-    if(cachedTgl == StepLocation::up1 || cachedTgl == StepLocation::up2){
+    if(cachedTgl == (u1)StepLocation::up1 || cachedTgl == (u1)StepLocation::up2){
         BLowOff();
         cachedTgl++;
         BHighOn();
     }
     else{
         BHighOff();
-        if (cachedTgl == StepLocation::down1) cachedTgl++;
-        else cachedTgl = StepLocation::up1;
-        BLowOn();
+        if (cachedTgl == (u1)StepLocation::down1) cachedTgl++;
+        else cachedTgl = (u1)StepLocation::up1;
+        //BLowOn();
     }
     
     
@@ -162,16 +163,16 @@ void TIMER1_COMPB_vect(){
 }
 
 void TIMER1_COMPC_vect(){
-    if(cachedTgl == StepLocation::up1 || cachedTgl == StepLocation::up2){
+    if(cachedTgl == (u1)StepLocation::up1 || cachedTgl == (u1)StepLocation::up2){
         CLowOff();
         cachedTgl++;
         CHighOn();
     }
     else{
         CHighOff();
-        if (cachedTgl == StepLocation::down1) cachedTgl++;
-        else cachedTgl = StepLocation::up1;
-        CLowOn();
+        if (cachedTgl == (u1)StepLocation::down1) cachedTgl++;
+        else cachedTgl = (u1)StepLocation::up1;
+        //CLowOn();
     }
     
     asm("reti" : : );
@@ -194,6 +195,13 @@ void TIMER1_OVF_vect() {
 }
 
 
+constexpr u1 INTdefault = 0b00001110;
+inline static void stageNextPhase(ThreePhaseDriver::Phase const phase){
+      if (phase == ThreePhaseDriver::Phase::A) cachedNextIntEnable = INTdefault & ~(1 << OCIE1A);
+ else if (phase == ThreePhaseDriver::Phase::B) cachedNextIntEnable = INTdefault & ~(1 << OCIE1B);
+ else if (phase == ThreePhaseDriver::Phase::C) cachedNextIntEnable = INTdefault & ~(1 << OCIE1C);
+}
+
 void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
  
  if (TIMSK1 & 1) return;   
@@ -204,30 +212,24 @@ void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
  if(phase == Phase::A){
    cachedOCRB = TWO;
    cachedOCRC = ONE;
-   stageNextInt(Phase::A);
+   stageNextPhase(Phase::A);
  }
  else if(phase == Phase::B){
    cachedOCRA = ONE;
    cachedOCRC = TWO;
-   stageNextInt(Phase::B);
+   stageNextPhase(Phase::B);
  }
  else if(phase == Phase::C){
    cachedOCRA = TWO;
    cachedOCRB = ONE;
-   stageNextInt(Phase::C);
+   stageNextPhase(Phase::C);
  }
  
  TIMSK1 = cachedNextIntEnable | 0b00000001;
     
 }
 
-constexpr u1 INTdefault = 0b00001110;
-void stageNextInt(const ThreePhaseDriver::Phase phase){
-      if (phase = ThreePhaseDriver::Phase::A) cachedNextIntEnable = INTdefault & ~(1 << OCIE1A);
- else if (phase = ThreePhaseDriver::Phase::B) cachedNextIntEnable = INTdefault & ~(1 << OCIE1B);
- else if (phase = ThreePhaseDriver::Phase::C) cachedNextIntEnable = INTdefault & ~(1 << OCIE1C);
-}
-
+u1 ThreePhaseDriver::amplitude;
 u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
  
  // TODO: This product (and subsequent truncation) does not fully cover the
