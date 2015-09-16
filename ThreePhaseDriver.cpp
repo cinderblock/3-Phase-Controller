@@ -61,7 +61,7 @@ register u1 cachedNextIntEnable asm("r6");
 
 
 void ThreePhaseDriver::init(){
- TIMSK1 = 0b00001111;
+ TIMSK1 = 0b00101110;
  
  TIFR1 = 0b00101111;
  
@@ -98,7 +98,7 @@ void ThreePhaseDriver::init(){
  /**
   * TCCR1B
   * ICNC1 ICES1 ~~~~~ WGM13 WGM12 CS12 CS11 CS10
-  * 0b  0     0     0     0     0    0    0    1
+  * 0b  0     0     0     0     0    0    1    0
   */
  TCCR1B = 0b00000010;
  
@@ -138,7 +138,7 @@ void TIMER1_COMPA_vect(){
         AHighOff();
         if (cachedTgl == StepLocation::down1) cachedTgl++;
         else cachedTgl = StepLocation::up1;
-        AHighOn();
+        ALowOn();
     }
     
     asm("reti" : : );
@@ -146,15 +146,15 @@ void TIMER1_COMPA_vect(){
 
 void TIMER1_COMPB_vect(){
     if(cachedTgl == StepLocation::up1 || cachedTgl == StepLocation::up2){
-        ALowOff();
+        BLowOff();
         cachedTgl++;
-        AHighOn();
+        BHighOn();
     }
     else{
         BHighOff();
         if (cachedTgl == StepLocation::down1) cachedTgl++;
         else cachedTgl = StepLocation::up1;
-        BHighOn();
+        BLowOn();
     }
     
     
@@ -163,15 +163,15 @@ void TIMER1_COMPB_vect(){
 
 void TIMER1_COMPC_vect(){
     if(cachedTgl == StepLocation::up1 || cachedTgl == StepLocation::up2){
-        ALowOff();
+        CLowOff();
         cachedTgl++;
-        AHighOn();
+        CHighOn();
     }
     else{
-        BHighOff();
+        CHighOff();
         if (cachedTgl == StepLocation::down1) cachedTgl++;
         else cachedTgl = StepLocation::up1;
-        BHighOn();
+        CLowOn();
     }
     
     asm("reti" : : );
@@ -195,7 +195,9 @@ void TIMER1_OVF_vect() {
 
 
 void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
-
+ 
+ if (TIMSK1 & 1) return;   
+    
  u1 const ONE = getPhasePWM(    step);
  u1 const TWO = getPhasePWM(255-step);
  
@@ -214,25 +216,26 @@ void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
    cachedOCRB = ONE;
    stageNextInt(Phase::C);
  }
+ 
+ TIMSK1 = cachedNextIntEnable | 0b00000001;
     
 }
 
-constexpr u1 INTdefault = 0b00000001;
+constexpr u1 INTdefault = 0b00001110;
 void stageNextInt(const ThreePhaseDriver::Phase phase){
- if (phase = ThreePhaseDriver::Phase::A) cachedNextIntEnable = INTdefault & ~(1 << OCIE1A);
- else if (phase = ThreePhaseDriver::Phase::A) cachedNextIntEnable = INTdefault & ~(1 << OCIE1B);
- else if (phase = ThreePhaseDriver::Phase::A) cachedNextIntEnable = INTdefault & ~(1 << OCIE1C);
+      if (phase = ThreePhaseDriver::Phase::A) cachedNextIntEnable = INTdefault & ~(1 << OCIE1A);
+ else if (phase = ThreePhaseDriver::Phase::B) cachedNextIntEnable = INTdefault & ~(1 << OCIE1B);
+ else if (phase = ThreePhaseDriver::Phase::C) cachedNextIntEnable = INTdefault & ~(1 << OCIE1C);
 }
 
 u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
- u1 const sin = step;
  
  // TODO: This product (and subsequent truncation) does not fully cover the
  // range of the return u1. Ideally, instead of dividing by 256 (>> 8) we should
  // be dividing by 255. We can get closer, on average, to that ideal division
  // if we add 188 for instance. Here we add both values that are bing multiplied
  // as a slightly better approximation at the extremes.
- u2 const prod = sin * amplitude + sin + amplitude;
+ u2 const prod = step * amplitude + step + amplitude;
  
  // Ideal:
 // return prod / 255;
