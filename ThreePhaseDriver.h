@@ -76,6 +76,10 @@ public:
  static inline void setAmplitude(u1 const a) {amplitude = a > maxAmplitude ? maxAmplitude : a;}
 
  static void advanceToBackEMF(Phase const phase, u1 const step);
+ 
+ static inline void debugON() {PORTF |= (1 << 4);}
+ static inline void debugOFF() {PORTF &= ~(1 << 4);}
+ static inline void debugTGL() {PORTF & (1 << 4) ? debugOFF() : debugON();}
 };
 
 #endif	/* THREEPHASEDRIVER_H */

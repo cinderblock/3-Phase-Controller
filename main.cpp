@@ -38,13 +38,28 @@ void main() {
  
  Board::LED.output();
  Board::LED.off();
+ Board::SEN::AS.input();
+ Board::SEN::BS.input();
+ Board::SEN::CS.input();
+// ThreePhaseDriver::debugON();
+// 
+// Board::DRV::AL.on();
+// Board::DRV::AL.output();
+// Board::DRV::BL.on();
+// Board::DRV::BL.output();
+// Board::DRV::CL.on();
+// Board::DRV::CL.output();
+// 
+// 
+// ThreePhaseDriver::debugOFF();
  
  //why is this here?
  _delay_ms(100);
+ //Board::DRV::AL.off();
  
  sei();
  
- ThreePhaseDriver::setAmplitude(30);
+ ThreePhaseDriver::setAmplitude(200);
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
  
  MLX90363::startTransmitting();
@@ -52,12 +67,8 @@ void main() {
  u2 lastTimeSPICheck = Timer::getCurTime();
  const u2 timeBetweenSPIChecks = Timer::lengthUS(1000);
  
- u2 lastTimei2cCheck = Timer::getCurTime();
- const u2 timeBetweeni2cChecks = Timer::lengthUS(1000);
- 
- 
- ThreePhaseDriver::advanceTo(40);
- MotorControl::setInitialPosition(40);
+ ThreePhaseDriver::advanceTo(300);
+ MotorControl::setInitialPosition(300);
  
  TwillBotInterface::reserveNextReadBuffer();
  
@@ -88,16 +99,12 @@ void main() {
         TwillBotInterface::reserveNextReadBuffer();
         if (*TwillBotInterface::getIncomingReadBuffer() == 0x33){
             MotorControl::goDistance(1);
-            //*TwillBotInterface::getIncomingReadBuffer() = 0;
         }
         else if (*TwillBotInterface::getIncomingReadBuffer() == 0x20){
             MotorControl::goAt(10);
-            //*TwillBotInterface::getIncomingReadBuffer() = 0;
         }
         else if (*TwillBotInterface::getIncomingReadBuffer() == 0x21){
             MotorControl::goAt(TwillBotInterface::getIncomingReadBuffer()[1]);
-            //*TwillBotInterface::getIncomingReadBuffer() = 0;
-            //TwillBotInterface::getIncomingReadBuffer()[1] = 0;
         }
         else if (*TwillBotInterface::getIncomingReadBuffer() == 0x35){
             MotorControl::goDistance(-1);
