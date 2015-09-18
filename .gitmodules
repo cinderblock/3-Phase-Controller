@@ -1,0 +1,3 @@
+[submodule "AVR++"]
+	path = AVR++
+	url = git@lab.isozilla.com:cameron/avr.git
