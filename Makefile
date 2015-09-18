@@ -28,7 +28,7 @@ TARGET = turnigy
 
 MCU = atmega32u4
 
-all: build-lss asm run
+all: build-lss size run
 run: dfu-erase dfu-flash dfu-reset
 	
 ASM = #$(CPP:%=%.cpp.S)
