@@ -36,33 +36,26 @@ inline static bool isCHighOn()  {return PORTB & (1 << 7);}
 // with context switching and such.
 
 /**
- * Next value to write to TCCR1A in each OC interrupt.
- * 
- * Used for disabling high side drivers when using their compare match interrupt.
- */
-register u1 cachedTgl asm("r2");
-
-/**
  * Cached value to write to OCR1AL at the next overflow
  */
-register u1 cachedOCRA asm("r3");
+register u1 cachedOCRA asm("r2");
 
 /**
  * Cached value to write to OCR1BL at the next overflow
  */
-register u1 cachedOCRB asm("r4");
+register u1 cachedOCRB asm("r3");
 
 /**
  * Cached value to write to OCR1CL at the next overflow
  */
-register u1 cachedOCRC asm("r5");
+register u1 cachedOCRC asm("r4");
 
 /**
  * Cached value to write to TIMSK1 at the next overflow.
- * 
+ *
  * Used to select which interrupt will fire next
  */
-register u1 cachedNextIntEnable asm("r6");
+register u1 cachedNextIntEnable asm("r5");
 
 void ThreePhaseDriver::init() {
  TIMSK1 = 0b00101110;

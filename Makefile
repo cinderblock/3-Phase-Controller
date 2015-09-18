@@ -22,7 +22,7 @@ F_CPU = 16000000UL
 #BLD_STD_GXX ?= c++11
 
 # Registers used by ThreePhaseDriver
-BLD_FLAGS_EXTRA=-ffixed-2 -ffixed-3 -ffixed-4 -ffixed-5 -ffixed-6
+BLD_FLAGS_EXTRA=-ffixed-2 -ffixed-3 -ffixed-4 -ffixed-5
 
 TARGET = turnigy
 
