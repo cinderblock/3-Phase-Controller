@@ -58,7 +58,7 @@ register u1 cachedOCRC asm("r4");
 register u1 cachedNextIntEnable asm("r5");
 
 void ThreePhaseDriver::init() {
- TIMSK1 = 0b00101110;
+ TIMSK1 = 0;
 
  TIFR1 = 0b00101111;
 
