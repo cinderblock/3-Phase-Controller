@@ -132,11 +132,11 @@ void TIMER1_COMPA_vect() {
   AHighOff();
   delay();
   ALowOn();
- } else {
-  ALowOff();
-  delay();
-  AHighOn();
+  asm("reti" : :);
  }
+ ALowOff();
+ delay();
+ AHighOn();
  asm("reti" : :);
 }
 
@@ -145,11 +145,11 @@ void TIMER1_COMPB_vect() {
   BHighOff();
   delay();
   BLowOn();
- } else {
-  BLowOff();
-  delay();
-  BHighOn();
+  asm("reti" : :);
  }
+ BLowOff();
+ delay();
+ BHighOn();
  asm("reti" : :);
 }
 
@@ -158,11 +158,11 @@ void TIMER1_COMPC_vect() {
   CHighOff();
   delay();
   CLowOn();
- } else {
-  CLowOff();
-  delay();
-  CHighOn();
+  asm("reti" : :);
  }
+ CLowOff();
+ delay();
+ CHighOn();
  asm("reti" : :);
 }
 
