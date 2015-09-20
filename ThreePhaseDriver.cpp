@@ -193,7 +193,7 @@ inline static void stageNextPhase(ThreePhaseDriver::Phase const phase) {
 inline static u1 max(u1 const a, u1 const b) {return a > b ? a : b;}
 inline static u1 min(u1 const a, u1 const b) {return a < b ? a : b;}
 
-constexpr u1 MIN = 2;
+constexpr u1 MIN = 5;
 constexpr u1 MAX = 250;
 
 void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
