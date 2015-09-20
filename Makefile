@@ -28,10 +28,9 @@ TARGET = turnigy
 
 MCU = atmega32u4
 
-all: build-lss size run
+all: build-lss asm size run
 run: dfu-erase dfu-flash dfu-reset
 	
-ASM = #$(CPP:%=%.cpp.S)
 
 # Load local settings
 include local.mk
