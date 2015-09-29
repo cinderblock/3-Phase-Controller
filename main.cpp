@@ -13,6 +13,7 @@
 //#include "Debug.h"
 #include "TwillBotInterface.h"
 #include "MotorControl.h"
+#include "Debug.h"
 
 /**
  * All the init functions should go in here.
@@ -28,7 +29,7 @@ void init() {
  TwillBotInterface::init();
  Timer::init();
  MotorControl::init();
- //Debug::init();
+ Debug::init();
 }
 
 /*
@@ -43,13 +44,6 @@ void main() {
  Board::SEN::CS.input();
 // ThreePhaseDriver::debugON();
 // 
-// Board::DRV::AL.on();
-// Board::DRV::AL.output();
-// Board::DRV::BL.on();
-// Board::DRV::BL.output();
-// Board::DRV::CL.on();
-// Board::DRV::CL.output();
-// 
 // 
 // ThreePhaseDriver::debugOFF();
  
@@ -59,7 +53,7 @@ void main() {
  
  sei();
  
- ThreePhaseDriver::setAmplitude(200);
+ ThreePhaseDriver::setAmplitude(50);
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
  
  MLX90363::startTransmitting();
@@ -67,12 +61,22 @@ void main() {
  u2 lastTimeSPICheck = Timer::getCurTime();
  const u2 timeBetweenSPIChecks = Timer::lengthUS(1000);
  
- ThreePhaseDriver::advanceTo(300);
- MotorControl::setInitialPosition(300);
+ ThreePhaseDriver::advanceTo(100);
+ MotorControl::setInitialPosition(100);
  
  TwillBotInterface::reserveNextReadBuffer();
  
  Board::LED.on();
+ 
+ u2 i = 0;
+ 
+ while (1) {
+  ThreePhaseDriver::advanceTo(i++);
+   _delay_ms(2);
+   if (i > 270) i = 0;
+ }
+ 
+// MotorControl::goAt(10);
 
  while(1) {
     
