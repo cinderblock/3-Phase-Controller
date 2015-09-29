@@ -7,6 +7,8 @@
  */
 
 
+#include <avr/pgmspace.h>
+
 #include "ThreePhaseDriver.h"
 #include "Board.h"
 
@@ -125,7 +127,28 @@ extern "C" void TIMER1_COMPB_vect() __attribute__((naked, __INTR_ATTRS));
 
 extern "C" void TIMER1_COMPC_vect() __attribute__((naked, __INTR_ATTRS));
 
-inline static void delay() {asm("nop"::);}
+inline static void delay() {
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+    asm("nop"::);
+}
 
 void TIMER1_COMPA_vect() {
  if (isAHighOn()) {
@@ -194,7 +217,7 @@ inline static u1 max(u1 const a, u1 const b) {return a > b ? a : b;}
 inline static u1 min(u1 const a, u1 const b) {return a < b ? a : b;}
 
 constexpr u1 MIN = 5;
-constexpr u1 MAX = 250;
+constexpr u1 MAX = 200;
 
 void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
 
@@ -255,16 +278,37 @@ void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
 
 }
 
+static const u1 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
+   0,  2,  4,  6,  8, 10, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31,
+  33, 35, 37, 39, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64,
+  66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96,
+  98,100,101,103,105,107,109,111,113,115,117,118,120,122,124,126,
+ 128,129,131,133,135,136,138,140,142,143,145,147,149,150,152,154,
+ 155,157,159,160,162,163,165,167,168,170,171,173,174,176,177,179,
+ 180,182,183,185,186,188,189,190,192,193,194,196,197,198,200,201,
+ 202,204,205,206,207,208,210,211,212,213,214,215,217,218,219,220,
+ 221,222,223,224,225,226,227,228,229,230,231,231,232,233,234,235,
+ 236,236,237,238,239,239,240,241,241,242,243,243,244,245,245,246,
+ 246,247,247,248,248,249,249,250,250,250,251,251,252,252,252,253,
+ 253,253,253,254,254,254,254,254,254,255,255,255,255,255,255,255,
+ 255,255,255,255,255,255,255,255,254,254,254,254,254,254,253,253,
+ 253,253,252,252,252,251,251,250,250,250,249,249,248,248,247,247,
+ 246,246,245,245,244,243,243,242,241,241,240,239,239,238,237,236,
+ 236,235,234,233,232,231,231,230,229,228,227,226,225,224,223,222,
+};
+
 u1 ThreePhaseDriver::amplitude;
 
 u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
+ u1 const sin = step;
+// u1 const sin = pgm_read_byte(&limitedSinTable[step]);
 
  // TODO: This product (and subsequent truncation) does not fully cover the
  // range of the return u1. Ideally, instead of dividing by 256 (>> 8) we should
  // be dividing by 255. We can get closer, on average, to that ideal division
  // if we add 188 for instance. Here we add both values that are bing multiplied
  // as a slightly better approximation at the extremes.
- u2 const prod = step * amplitude + step + amplitude;
+ u2 const prod = sin * amplitude + sin + amplitude;
 
  // Ideal:
  // return prod / 255;
