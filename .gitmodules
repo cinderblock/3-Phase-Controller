@@ -1,3 +1,6 @@
 [submodule "AVR++"]
 	path = AVR++
 	url = git@lab.isozilla.com:cameron/avr.git
+[submodule "uMaker"]
+	path = uMaker
+	url = https://github.com/cinderblock/uMaker.git
