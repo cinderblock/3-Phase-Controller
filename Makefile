@@ -34,7 +34,10 @@ run: dfu-erase dfu-flash dfu-reset
 ASM = #$(CPP:%=%.cpp.S)
 
 # Load local settings
-include local.mk
+-include local.mk
+
+uMakerPath ?= uMaker/
+AVRpp_BASEDIR ?= AVR++/
 
 # Force setting certain make flags
 include $(uMakerPath)tools/makeflags.mk
