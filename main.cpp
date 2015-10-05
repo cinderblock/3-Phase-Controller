@@ -53,7 +53,7 @@ void main() {
  _delay_ms(100);
  //Board::DRV::AL.off();
  
- sei();
+ Debug::reportByte(0);
  
  ThreePhaseDriver::setAmplitude(50);
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
@@ -63,8 +63,10 @@ void main() {
  u2 lastTimeSPICheck = Timer::getCurTime();
  const u2 timeBetweenSPIChecks = Timer::lengthUS(1000);
  
- ThreePhaseDriver::advanceTo(100);
- MotorControl::setInitialPosition(100);
+// ThreePhaseDriver::advanceTo(0);
+ MotorControl::setInitialPosition(0);
+ 
+ Debug::reportByte(1);
  
  TwillBotInterface::reserveNextReadBuffer();
  
@@ -73,9 +75,11 @@ void main() {
  u2 i = 0;
  
  while (1) {
-  ThreePhaseDriver::advanceTo(i++);
-   _delay_ms(2);
-   if (i > 270) i = 0;
+  Debug::reportByte(i);
+  ThreePhaseDriver::advanceTo(i);
+  i += 59;
+  _delay_ms(2);
+  while (i >= 0x300) i -= 0x300;
  }
  
 // MotorControl::goAt(10);
