@@ -59,9 +59,11 @@ register u1 cachedOCRC asm("r4");
  */
 register u1 cachedNextIntEnable asm("r5");
 
-void ThreePhaseDriver::init() {
- TIMSK1 = 0;
+constexpr u1 INTdefault = 0b00001110;
 
+void ThreePhaseDriver::init() {
+ TCCR1B = 0;
+ 
  TIFR1 = 0b00101111;
 
  OCR1A = 0;
@@ -94,18 +96,11 @@ void ThreePhaseDriver::init() {
 
  TCCR1A = 0b00000001;
 
- /**
-  * TCCR1B
-  * ICNC1 ICES1 ~~~~~ WGM13 WGM12 CS12 CS11 CS10
-  * 0b  0     0     0     0     0    0    1    0
-  */
- TCCR1B = 0b00000010;
-
  // Turn highs off
  Board::DRV::AH.off();
  Board::DRV::BH.off();
  Board::DRV::CH.off();
- 
+
  // Enable outputs
  Board::DRV::AH.output();
  Board::DRV::BH.output();
@@ -113,12 +108,26 @@ void ThreePhaseDriver::init() {
  Board::DRV::AL.output();
  Board::DRV::BL.output();
  Board::DRV::CL.output();
- 
+
  // Turn lows on
  Board::DRV::AL.on();
  Board::DRV::BL.on();
  Board::DRV::CL.on();
 
+ TIMSK1 = INTdefault;
+ 
+ TCNT1 = 0;
+ TIFR1 = INTdefault;
+ 
+ sei();
+
+ /**
+  * TCCR1B
+  * ICNC1 ICES1 ~~~~~ WGM13 WGM12 CS12 CS11 CS10
+  * 0b  0     0     0     0     0    0    1    0
+  */
+ TCCR1B = 0b00000010;
+ 
 }
 
 extern "C" void TIMER1_COMPA_vect() __attribute__((naked, __INTR_ATTRS));
@@ -128,95 +137,121 @@ extern "C" void TIMER1_COMPB_vect() __attribute__((naked, __INTR_ATTRS));
 extern "C" void TIMER1_COMPC_vect() __attribute__((naked, __INTR_ATTRS));
 
 inline static void delay() {
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
-    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
+//    asm("nop"::);
 }
 
+unsigned char constexpr threshold = 12;
+
 void TIMER1_COMPA_vect() {
- if (isAHighOn()) {
-  AHighOff();
-  delay();
-  ALowOn();
-  asm("reti" : :);
+ asm("push r24" : :);
+ asm("push r25" : :);
+// asm("push __zero_reg__" : :);
+// asm("clr __zero_reg__" : :);
+ u1 const sreg = SREG;
+ if (TCNT1L > threshold) {
+  if (isAHighOn()) {
+   AHighOff();
+   delay();
+   ALowOn();
+  } else {
+   ALowOff();
+   delay();
+   AHighOn();
+  }
  }
- ALowOff();
- delay();
- AHighOn();
+ SREG = sreg;
+// asm("pop __zero_reg__" : :);
+ asm("pop r25" : :);
+ asm("pop r24" : :);
  asm("reti" : :);
 }
 
 void TIMER1_COMPB_vect() {
- if (isBHighOn()) {
-  BHighOff();
-  delay();
-  BLowOn();
-  asm("reti" : :);
+ asm("push r24" : :);
+ asm("push r25" : :);
+// asm("push __zero_reg__" : :);
+// asm("clr __zero_reg__" : :);
+ u1 const sreg = SREG;
+ if (TCNT1L > threshold) {
+  if (isBHighOn()) {
+   BHighOff();
+   delay();
+   BLowOn();
+  } else {
+   BLowOff();
+   delay();
+   BHighOn();
+  }
  }
- BLowOff();
- delay();
- BHighOn();
+ SREG = sreg;
+// asm("pop __zero_reg__" : :);
+ asm("pop r25" : :);
+ asm("pop r24" : :);
  asm("reti" : :);
 }
 
 void TIMER1_COMPC_vect() {
- if (isCHighOn()) {
-  CHighOff();
-  delay();
-  CLowOn();
-  asm("reti" : :);
+ asm("push r24" : :);
+ asm("push r25" : :);
+// asm("push __zero_reg__" : :);
+// asm("clr __zero_reg__" : :);
+ u1 const sreg = SREG;
+ if (TCNT1L > threshold) {
+  if (isCHighOn()) {
+   CHighOff();
+   delay();
+   CLowOn();
+  } else {
+   CLowOff();
+   delay();
+   CHighOn();
+  }
  }
- CLowOff();
- delay();
- CHighOn();
+ SREG = sreg;
+// asm("pop __zero_reg__" : :);
+ asm("pop r25" : :);
+ asm("pop r24" : :);
  asm("reti" : :);
 }
 
 extern "C" void TIMER1_OVF_vect() __attribute__((naked, __INTR_ATTRS));
 
 void TIMER1_OVF_vect() {
- // clear timer match interrupts
- TIFR1 = cachedNextIntEnable;
-
  OCR1AL = cachedOCRA;
  OCR1BL = cachedOCRB;
  OCR1CL = cachedOCRC;
 
+ asm("push r24" : :);
  // Enable next interrupts
- TIMSK1 = cachedNextIntEnable;
+ TIMSK1 = INTdefault;
+ asm("pop r24" : :);
 
  asm("reti" : :);
-}
-
-constexpr u1 INTdefault = 0b00001110;
-
-inline static void stageNextPhase(ThreePhaseDriver::Phase const phase) {
- if      (phase == ThreePhaseDriver::Phase::A) cachedNextIntEnable = INTdefault & ~(1 << OCIE1A);
- else if (phase == ThreePhaseDriver::Phase::B) cachedNextIntEnable = INTdefault & ~(1 << OCIE1B);
- else if (phase == ThreePhaseDriver::Phase::C) cachedNextIntEnable = INTdefault & ~(1 << OCIE1C);
 }
 
 inline static u1 max(u1 const a, u1 const b) {return a > b ? a : b;}
 inline static u1 min(u1 const a, u1 const b) {return a < b ? a : b;}
 
-constexpr u1 MIN = 5;
+constexpr u1 MIN = 24;
 constexpr u1 MAX = 200;
 
 void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
@@ -227,46 +262,37 @@ void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
  u1 const TWO = min(getPhasePWM(255 - step), MAX);
 
  if (phase == Phase::A) {
-  stageNextPhase(Phase::A);
   cachedOCRA = 0;
   if (TWO < MIN) {
-   cachedNextIntEnable &= ~(1 << OCIE1B);
    cachedOCRB = 0;
   } else {
    cachedOCRB = TWO;
   }
   if (ONE < MIN) {
-   cachedNextIntEnable &= ~(1 << OCIE1C);
    cachedOCRC = 0;
   } else {
    cachedOCRC = ONE;
   }
  } else if (phase == Phase::B) {
-  stageNextPhase(Phase::B);
   cachedOCRB = 0;
   if (TWO < MIN) {
-   cachedNextIntEnable &= ~(1 << OCIE1C);
    cachedOCRC = 0;
   } else {
    cachedOCRC = TWO;
   }
   if (ONE < MIN) {
-   cachedNextIntEnable &= ~(1 << OCIE1A);
    cachedOCRA = 0;
   } else {
    cachedOCRA = ONE;
   }
  } else if (phase == Phase::C) {
-  stageNextPhase(Phase::C);
   cachedOCRC = 0;
   if (TWO < MIN) {
-   cachedNextIntEnable &= ~(1 << OCIE1A);
    cachedOCRA = 0;
   } else {
    cachedOCRA = TWO;
   }
   if (ONE < MIN) {
-   cachedNextIntEnable &= ~(1 << OCIE1B);
    cachedOCRB = 0;
   } else {
    cachedOCRB = ONE;
@@ -274,7 +300,7 @@ void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
  }
 
  TIFR1 = 0b00000001;
- TIMSK1 = 0b00000001;
+ TIMSK1 = 0b00000001 | INTdefault;
 
 }
 
@@ -300,8 +326,8 @@ static const u1 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
 u1 ThreePhaseDriver::amplitude;
 
 u1 ThreePhaseDriver::getPhasePWM(const u1 step) {
- u1 const sin = step;
-// u1 const sin = pgm_read_byte(&limitedSinTable[step]);
+// u1 const sin = step;
+ u1 const sin = pgm_read_byte(&limitedSinTable[step]);
 
  // TODO: This product (and subsequent truncation) does not fully cover the
  // range of the return u1. Ideally, instead of dividing by 256 (>> 8) we should

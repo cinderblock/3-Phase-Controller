@@ -22,14 +22,16 @@
 void init() __attribute__((constructor));
 
 void init() {
- // Make sure the ^SS pin is a driven output BEFORE initializing the SPI hardware.
- // The AVR's ^SS pin is really Board::DRV::AL, controlled by ThreePhaseDriver.
- ThreePhaseDriver::init();
- MLX90363::init();
  TwillBotInterface::init();
  Timer::init();
  MotorControl::init();
  Debug::init();
+ Debug::reportByte(0xff);
+ // Make sure the ^SS pin is a driven output BEFORE initializing the SPI hardware.
+ // The AVR's ^SS pin is really Board::DRV::AL, controlled by ThreePhaseDriver.
+ ThreePhaseDriver::init();
+ sei();
+ MLX90363::init();
 }
 
 /*
