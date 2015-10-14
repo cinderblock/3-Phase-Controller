@@ -168,7 +168,6 @@ inline static void setCompareMatchC(u2 const val) {
 void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
  u1 const ONE = getPhasePWM(    step);
  u1 const TWO = getPhasePWM(255-step);
- u1 const max = ONE > TWO ? ONE : TWO;
  
  setUpdateLock(true);
  
