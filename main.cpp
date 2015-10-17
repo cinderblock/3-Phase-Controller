@@ -34,11 +34,6 @@ void init() {
  * 
  */
 void main() {
- 
- 
- //why is this here?
- _delay_ms(100);
- 
  sei();
  
  ThreePhaseDriver::setAmplitude(30);
