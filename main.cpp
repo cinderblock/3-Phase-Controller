@@ -13,6 +13,7 @@
 //#include "Debug.h"
 #include "TwillBotInterface.h"
 #include "MotorControl.h"
+#include "Debug.h"
 
 /**
  * All the init functions should go in here.
@@ -21,6 +22,7 @@
 void init() __attribute__((constructor));
 
 void init() {
+ Debug::init();
  // Make sure the ^SS pin is a driven output BEFORE initializing the SPI hardware.
  // The AVR's ^SS pin is really Board::DRV::AL, controlled by ThreePhaseDriver.
  ThreePhaseDriver::init();
@@ -28,7 +30,6 @@ void init() {
  TwillBotInterface::init();
  Timer::init();
  MotorControl::init();
- //Debug::init();
 }
 
 /*
@@ -36,8 +37,6 @@ void init() {
  */
 void main() {
  
- Board::LED.output();
- Board::LED.off();
  
  //why is this here?
  _delay_ms(100);
