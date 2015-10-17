@@ -151,7 +151,6 @@ u2 ThreePhaseDriver::getPhasePWM(const u1 step) {
 void ThreePhaseDriver::advance() {
  static u2 step = 0;
  advanceTo(step);
- Debug::reportByte(step >> 2);
  if (++step == 0x300) step = 0;
 }
 
@@ -200,6 +199,8 @@ void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
  }
  
  setUpdateLock(false);
+ 
+ Debug::reportByte(step);
 
  // Save current phase
  currentPhase = phase;
