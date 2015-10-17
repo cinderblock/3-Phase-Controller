@@ -40,8 +40,6 @@ ISR (SPI_STC_vect, ISR_NOBLOCK) {
 }
 
 void MLX90363::isr() {
-     
-    Board::LED.on();
  // Receive a byte
  RxBuffer[bufferPosition++] = receiveSPI();
 
@@ -54,9 +52,6 @@ void MLX90363::isr() {
   
   // Check the received CRC and read values
   handleResponse();
-     
-  Board::LED.off();
-  
  } else {
   sendSPI(TxBuffer[bufferPosition]);
   /**
