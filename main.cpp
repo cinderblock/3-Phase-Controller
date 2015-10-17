@@ -28,6 +28,8 @@ void init() {
  TwillBotInterface::init();
  Timer::init();
  MotorControl::init();
+ 
+ Board::LED.off();
 }
 
 /*

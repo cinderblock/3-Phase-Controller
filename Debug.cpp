@@ -12,7 +12,7 @@ IOpin & Debug::LED = Board::LED;
 
 void Debug::init() {
  LED.output();
- LED.off();
+ LED.on();
  
  UBRR1 = 0;
  UCSR1D = 0b00;
