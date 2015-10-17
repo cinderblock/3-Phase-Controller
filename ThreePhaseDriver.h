@@ -49,6 +49,11 @@ public:
   * certainly not one actual revolution of the motor shaft.
   */
  static u2 constexpr StepsPerCycle = StepsPerPhase * PhasesPerCycle;
+ 
+ /**
+  * Highest possible timer value
+  */
+ static u2 constexpr MAX = 0x7ff;
 
  static void init();
  

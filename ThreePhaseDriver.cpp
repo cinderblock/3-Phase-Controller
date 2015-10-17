@@ -173,23 +173,23 @@ inline static void setCompareMatchC(u2 const val) {
 }
 
 void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
- u1 const ONE = getPhasePWM(    step);
- u1 const TWO = getPhasePWM(255-step);
+ u2 const ONE = MAX - getPhasePWM(    step);
+ u2 const TWO = MAX - getPhasePWM(255-step);
  
  setUpdateLock(true);
  
  if (phase == Phase::A) {
-  setCompareMatchA(0);
+  setCompareMatchA(MAX);
   setCompareMatchB(TWO);
   setCompareMatchC(ONE);
  } else if (phase == Phase::B) {
   setCompareMatchA(ONE);
-  setCompareMatchB(0);
+  setCompareMatchB(MAX);
   setCompareMatchC(TWO);
  } else if (phase == Phase::C) {
   setCompareMatchA(TWO);
   setCompareMatchB(ONE);
-  setCompareMatchC(0);
+  setCompareMatchC(MAX);
  } else {
   // Should not get here. bad phase...
   
