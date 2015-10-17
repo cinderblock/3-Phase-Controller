@@ -6,6 +6,7 @@
  */
 
 #include <util/delay.h>
+#include <avr/wdt.h>
 #include "Board.h"
 
 #include "ThreePhaseDriver.h"
@@ -22,6 +23,8 @@
 void init() __attribute__((constructor));
 
 void init() {
+ wdt_reset();
+ wdt_disable();
  Debug::init();
  ThreePhaseDriver::init();
  MLX90363::init();
