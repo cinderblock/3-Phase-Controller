@@ -83,6 +83,7 @@ void ThreePhaseDriver::init() {
  // TCCR4E
  setUpdateLock(false);
 
+ // Start the timer
  /**
   * TCCR4B
   * PWM4X PSR4 DTPS41 DTPS40 CS43 CS42 CS41 CS40
