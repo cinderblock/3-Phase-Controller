@@ -38,17 +38,6 @@ void ThreePhaseDriver::init() {
  // Clear timer counter
  TCNT4 = 0;
  
- // Clear compare match registers for now
- OCR4A = 0;
- OCR4B = 0;
- OCR4D = 0;
- 
- // Set high bits needed for TOP value for 11-bit PWM
- TC4H = 0b11;
- 
- // Set the timer's TOP value
- OCR4C = 0xff;
- 
  // Clear all interrupts just in case
  TIFR4 = 0xff;
  
@@ -82,6 +71,17 @@ void ThreePhaseDriver::init() {
  
  // TCCR4E
  setUpdateLock(false);
+ 
+ // Clear compare match registers for now
+ OCR4A = 0;
+ OCR4B = 0;
+ OCR4D = 0;
+ 
+ // Set high bits needed for TOP value for 11-bit PWM
+ TC4H = 0xff;
+ 
+ // Set the timer's TOP value
+ OCR4C = 0xff;
 
  // Start the timer
  /**
