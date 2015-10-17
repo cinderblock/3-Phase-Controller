@@ -50,6 +50,8 @@ namespace Board {
   extern u1 CS;
   extern u1 VBATS;
  }
+ 
+ constexpr u4 ClockSpeed = F_CPU;
 };
 
 #endif	/* BOARD_H */
