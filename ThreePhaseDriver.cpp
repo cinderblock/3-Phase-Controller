@@ -24,8 +24,13 @@ void ThreePhaseDriver::init() {
  // Turn off interrupts just in case
  TIMSK4 = 0;
  
- // Stop the timer just in case it's already running
- TCCR4B = 0;
+ // Setup the timer but stopped.
+ /**
+  * TCCR4B
+  * PWM4X PSR4 DTPS41 DTPS40 CS43 CS42 CS41 CS40
+  * 0b  1    1      0      0    0    0    0    0
+  */
+ TCCR4B = 0b11000000;
  
  // Clear the high byte
  TC4H = 0;
