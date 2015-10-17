@@ -14,6 +14,7 @@
 #include "TwillBotInterface.h"
 #include "MotorControl.h"
 #include "Debug.h"
+#include "Clock.h"
 
 /**
  * All the init functions should go in here.
@@ -25,6 +26,10 @@ void init() {
  wdt_reset();
  wdt_disable();
  Debug::init();
+ 
+ Clock::enablePLL();
+ Clock::waitForPLL();
+ 
  ThreePhaseDriver::init();
  MLX90363::init();
  TwillBotInterface::init();
