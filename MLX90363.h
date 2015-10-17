@@ -156,7 +156,7 @@ public:
 //  return bufferPosition != messageLength;
   //return !SS.isHigh();
   // Since IOpin isn't optimized, lets use the low level test
-  return !(PORTD & (1<<5));
+  return !(PORTD & (1<<2));
  }
  
  /**
