@@ -58,6 +58,13 @@ void ThreePhaseDriver::init() {
   * 0b  0     0     0     0     0     0     0     0
   */
  DT4 = 0;
+
+ /**
+  * TCCR4D
+  * FPIE4 FPEN4 FPNC4 FPES4 FPAC4 FPF4 WGM41 WGM40
+  * 0b  0     0     0     0     0    1     0     1
+  */
+ TCCR4D = 0b00000101;
  
  /**
   * TCCR4A:
@@ -69,17 +76,11 @@ void ThreePhaseDriver::init() {
  /**
   * TCCR4C
   * COM4A1S COM4A0S COM4B1S COMAB0S COM4D1 COM4D0 FOC4D PWM4D
-  * 0b    0       0       0       0      0      1     0     1
+  * 0b    0       1       0       1      0      1     0     1
   */
- TCCR4C = 0b00000101;
-
- /**
-  * TCCR4D
-  * FPIE4 FPEN4 FPNC4 FPES4 FPAC4 FPF4 WGM41 WGM40
-  * 0b  0     0     0     0     0    1     0     1
-  */
- TCCR4D = 0b00000101;
+ TCCR4C = 0b01010101;
  
+ // TCCR4E
  setUpdateLock(false);
 
  /**
