@@ -8,8 +8,10 @@
 #ifndef TIMER_H
 #define	TIMER_H
 
-#include "ThreePhaseDriver.h"
+#include <AVR++/basicTypes.h>
+#include <avr/io.h>
 
+using namespace AVR;
 
 class Timer{
 public:
