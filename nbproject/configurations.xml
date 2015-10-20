@@ -11,6 +11,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>AVRClock.h</itemPath>
       <itemPath>Board.h</itemPath>
       <itemPath>Clock.h</itemPath>
       <itemPath>Config.h</itemPath>
@@ -88,6 +89,8 @@
       <item path=".bld/TwillBotInterface.cpp.S" ex="false" tool="4" flavor2="0">
       </item>
       <item path=".bld/test.cpp.S" ex="false" tool="4" flavor2="0">
+      </item>
+      <item path="AVRClock.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Board.cpp" ex="false" tool="1" flavor2="0">
       </item>
