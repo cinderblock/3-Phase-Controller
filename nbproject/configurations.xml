@@ -75,8 +75,7 @@
         <ccTool>
           <standard>8</standard>
           <incDir>
-            <pElem>../../AVR++</pElem>
-            <pElem>../avr</pElem>
+            <pElem>AVR++</pElem>
           </incDir>
           <preprocessorList>
             <Elem>F_CPU=16000000UL</Elem>
