@@ -15,6 +15,7 @@
 #include "MotorControl.h"
 #include "Debug.h"
 #include "AVRClock.h"
+#include "Clock.h"
 
 /**
  * All the init functions should go in here.
@@ -33,7 +34,7 @@ void init() {
  ThreePhaseDriver::init();
  MLX90363::init();
  TwillBotInterface::init();
- Timer::init();
+ ::Clock::init();
  MotorControl::init();
  
  Board::LED.off();
