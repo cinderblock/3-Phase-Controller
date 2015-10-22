@@ -41,17 +41,20 @@ void Clock::readTime(u4& dest) {
 void Clock::readTime(MicroTime& dest) {
  // Disable interrupts for the next few cycles
  cli();
+ 
+ // copy the times we care about
  u2 const micro = Timer::getCurTime();
- dest = micro;
+ u4 t = time;
  
- // If micro is small and there's a pending overflow, the real time has incremented
- if ((micro < 256) && (TIMSK3 & (1 << TOIE3))) {
-  // Copy the time to the destination
-  dest = time + 1;
- } else {
-  dest = time;
- }
- 
+ const u1 pendingInts = TIMSK3;
  // and re-enable the interrupts
  sei();
+
+ // If micro is small and there's a pending overflow, the real time has incremented
+ if ((micro < 256) && (pendingInts & (1 << TOIE3)))
+  t++;
+
+ // Copy the times to the destination
+ dest = micro;
+ dest = t;
 }
