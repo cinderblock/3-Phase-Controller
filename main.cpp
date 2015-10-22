@@ -45,16 +45,21 @@ void init() {
 void main() {
  sei();
  
- ThreePhaseDriver::setAmplitude(30);
+ ThreePhaseDriver::setAmplitude(10);
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
  
- MLX90363::startTransmitting();
- while (MLX90363::isTransmitting());
+// MLX90363::startTransmitting();
+// while (MLX90363::isTransmitting());
  u2 lastTimeSPICheck = Timer::getCurTime();
  const u2 timeBetweenSPIChecks = Timer::lengthUS(1000);
  
  u2 lastTimei2cCheck = Timer::getCurTime();
  const u2 timeBetweeni2cChecks = Timer::lengthUS(1000);
+ 
+ while (1) {
+  _delay_us(20);
+  ThreePhaseDriver::advance();
+ }
  
  
  ThreePhaseDriver::advanceTo(40);
