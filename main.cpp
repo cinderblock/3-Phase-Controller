@@ -50,11 +50,7 @@ void main() {
  
  MLX90363::startTransmitting();
  while (MLX90363::isTransmitting());
- u2 lastTimeSPICheck = Timer::getCurTime();
- const u2 timeBetweenSPIChecks = Timer::lengthUS(1000);
  
- u2 lastTimei2cCheck = Timer::getCurTime();
- const u2 timeBetweeni2cChecks = Timer::lengthUS(1000);
  
  
  ThreePhaseDriver::advanceTo(40);
@@ -69,10 +65,10 @@ void main() {
     //Do motor stuff
     MotorControl::advance();
     
-    if (Timer::getSince(lastTimeSPICheck) > timeBetweenSPIChecks){
+    if (false /*Timer::getSince(lastTimeSPICheck) > timeBetweenSPIChecks*/){
         MLX90363::startTransmitting();
         while (MLX90363::isTransmitting());
-        lastTimeSPICheck = Timer::getCurTime();
+//        lastTimeSPICheck = Timer::getCurTime();
 
         TwillBotInterface::releaseNextWriteBuffer();
         u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
