@@ -9,7 +9,7 @@
 #include <avr/wdt.h>
 #include "Board.h"
 
-#include "ThreePhaseDriver.h"
+#include "ThreePhaseController.h"
 #include "MLX90363.h"
 #include "TwillBotInterface.h"
 #include "MotorControl.h"
@@ -27,12 +27,11 @@ void init() {
  wdt_disable();
  Debug::init();
  
- ThreePhaseDriver::init();
- MLX90363::init();
+ ::Clock::init();
  
  TwillBotInterface::init();
  
- ::Clock::init();
+ ThreePhaseController::init();
  
  MotorControl::init();
  
