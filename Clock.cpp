@@ -42,12 +42,14 @@ void Clock::readTime(MicroTime& dest) {
  // Disable interrupts for the next few cycles
  cli();
  
- // copy the times we care about
+ // Copy the times we care about
  u2 const micro = Timer::getCurTime();
  u4 t = time;
- 
+
+ // Save pending interrupts 
  const u1 pendingInts = TIMSK3;
- // and re-enable the interrupts
+
+ // Re-enable the interrupts
  sei();
 
  // If micro is small and there's a pending overflow, the real time has incremented
