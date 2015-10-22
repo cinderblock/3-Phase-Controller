@@ -14,7 +14,6 @@
 #include "TwillBotInterface.h"
 #include "MotorControl.h"
 #include "Debug.h"
-#include "AVRClock.h"
 #include "Clock.h"
 
 /**
@@ -27,9 +26,6 @@ void init() {
  wdt_reset();
  wdt_disable();
  Debug::init();
- 
- AVR::Clock::enablePLL();
- AVR::Clock::waitForPLL();
  
  ThreePhaseDriver::init();
  MLX90363::init();
