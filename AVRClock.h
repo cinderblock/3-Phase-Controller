@@ -1,12 +1,12 @@
 /* 
- * File:   Clock.h
+ * File:   AVRClock.h
  * Author: Cameron
  *
  * Created on October 16, 2015, 11:41 PM
  */
 
-#ifndef CLOCK_H
-#define	CLOCK_H
+#ifndef AVRCLOCK_H
+#define	AVRCLOCK_H
 
 #include <avr/io.h>
 
@@ -26,5 +26,5 @@ namespace AVR {
  };
 };
 
-#endif	/* CLOCK_H */
+#endif	/* AVRCLOCK_H */
 
