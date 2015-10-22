@@ -33,10 +33,14 @@ void init() {
  
  ThreePhaseDriver::init();
  MLX90363::init();
+ 
  TwillBotInterface::init();
+ 
  ::Clock::init();
+ 
  MotorControl::init();
  
+ // End of init
  Board::LED.off();
 }
 
