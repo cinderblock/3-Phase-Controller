@@ -9,7 +9,33 @@
 #include "MLX90363.h"
 #include "ThreePhaseDriver.h"
 
+s2 ThreePhaseController::position;
+s2 ThreePhaseController::velocity;
+bool ThreePhaseController::isForward;
+
 void ThreePhaseController::init() {
  MLX90363::init();
  ThreePhaseDriver::init();
+ position = 0;
+ velocity = 0;
+ ThreePhaseDriver::setAmplitude(0);
+}
+
+void ThreePhaseController::setTorque(const Torque t) {
+ isForward = t.forward;
+ ThreePhaseDriver::setAmplitude(t.amplitude);
+ lookupAlphaToPhase(t.amplitude);
+}
+
+void ThreePhaseController::updateDriver() {
+ u2 pos = position;
+ 
+ if (isForward)
+  pos += drivePhaseShift;
+ else
+  pos += ThreePhaseDriver::StepsPerCycle - drivePhaseShift;
+ 
+ pos %= ThreePhaseDriver::StepsPerCycle;
+ 
+ ThreePhaseDriver::advanceTo(pos);
 }
