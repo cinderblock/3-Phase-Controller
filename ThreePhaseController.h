@@ -21,7 +21,7 @@ public:
  
  static void setTorque(s2 t);
  
- inline static u2 getPosition() {return position;}
+ inline static s2 getPosition() {return position;}
  inline static s2 getVelocity() {return velocity;}
 
 };
