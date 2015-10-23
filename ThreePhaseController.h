@@ -10,6 +10,8 @@
 
 #include <AVR++/basicTypes.h>
 
+using namespace AVR;
+
 class ThreePhaseController {
  static s2 position;
  static s2 velocity;
