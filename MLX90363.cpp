@@ -21,9 +21,6 @@ static inline u1 receiveSPI() {
  return *AVR::SPI::DR;
 }
 
-static inline void slaveDeselect() {PORTD |=  (1<<2);}//Board::SEN::BS.off();}
-static inline void slaveSelect  () {PORTD &= ~(1<<2);}//Board::SEN::BS.on ();}
-
 /**
  * Declare the SPI Transfer Complete interrupt as a non-blocking interrupt so
  * that the motor driver has minimum latency.
@@ -46,7 +43,7 @@ void MLX90363::isr() {
  // Check if we're done sending
  if (bufferPosition == messageLength) {
   // We're done. De-assert (turn on) the slave select line
-  slaveDeselect();
+  Board::SPI::slaveDeselect();
   
   responseState = ResponseState::Received;
   
@@ -88,7 +85,7 @@ u1 MLX90363::ROLL;
 
 void MLX90363::init() {
  // Setup Slave Select line
- slaveDeselect();
+ Board::SPI::slaveDeselect();
  SS.output();
 
  // Setup "User Defined" hardware lines
@@ -115,7 +112,7 @@ void MLX90363::setSPISpeed(const u1 c) {
 
 void MLX90363::startTransmittingUnsafe() {
  bufferPosition = 0;
- slaveSelect();
+ Board::SPI::slaveSelect();
  sendSPI(TxBuffer[bufferPosition]);
  responseState = ResponseState::Receiving;
 }

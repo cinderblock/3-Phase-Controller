@@ -146,17 +146,17 @@ public:
   * @param 
   */
  static void setSPISpeed(u1 const);
-
+ 
  /**
   * Check if we're still talking on the SPI bus
   * @return 
   */
  inline static bool isTransmitting() {
   // Any of these would work. Not sure which is most effective
-//  return bufferPosition != messageLength;
+  //return bufferPosition != messageLength;
   //return !SS.isHigh();
-  // Since IOpin isn't optimized, lets use the low level test
-  return !(PORTD & (1<<2));
+  // Let's use the low level test from Board::
+  return Board::SPI::isSlaveSelected();
  }
  
  /**
