@@ -19,7 +19,7 @@ class ThreePhaseController {
 public:
  static void init();
  
- static void setTorque(s2 t);
+ static void setTorque(s2 const t);
  
  inline static s2 getPosition() {return position;}
  inline static s2 getVelocity() {return velocity;}
