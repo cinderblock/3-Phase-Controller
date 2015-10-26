@@ -218,11 +218,17 @@ void ThreePhaseController::init() {
 void ThreePhaseController::setTorque(const Torque t) {
  isForward = t.forward;
  ThreePhaseDriver::setAmplitude(t.amplitude);
- lookupAlphaToPhase(t.amplitude);
 }
 
 void ThreePhaseController::updateDriver() {
- u2 pos = position;
+ u2 pos;
+
+ if (!MLX90363::isTransmitting()) {
+  MLX90363::startTransmitting();
+  position = pos = lookupAlphaToPhase(MLX90363::getAlpha());
+ } else {
+  pos = position;
+ }
  
  if (isForward)
   pos += drivePhaseShift;
