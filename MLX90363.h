@@ -141,6 +141,14 @@ public:
  
  static inline void isr();
  
+ static inline bool hasNewData(u1& lastRoll) {
+  u1 const r = ROLL;
+  if (r == lastRoll)
+   return false;
+  lastRoll = r;
+  return true;
+ }
+ 
  /**
   * Set the SPI hardware's divider
   * @param 
