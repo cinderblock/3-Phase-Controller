@@ -46,10 +46,7 @@ void main() {
  sei();
  
  ThreePhaseDriver::setAmplitude(30);
- MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
  
- MLX90363::startTransmitting();
- while (MLX90363::isTransmitting());
  
  
  

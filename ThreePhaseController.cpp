@@ -6,6 +6,7 @@
  */
 
 #include <avr/pgmspace.h>
+#include <util/delay.h>
 
 #include "ThreePhaseController.h"
 #include "MLX90363.h"
@@ -204,6 +205,14 @@ void ThreePhaseController::init() {
  position = 0;
  velocity = 0;
  ThreePhaseDriver::setAmplitude(0);
+ 
+ MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
+ 
+ // Prepare the first set of data
+ MLX90363::startTransmitting();
+ while (MLX90363::isTransmitting());
+ _delay_us(100);
+ MLX90363::startTransmitting();
 }
 
 void ThreePhaseController::setTorque(const Torque t) {
