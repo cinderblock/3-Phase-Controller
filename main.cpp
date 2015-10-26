@@ -44,13 +44,25 @@ void init() {
  */
 void main() {
  sei();
+ 
+ ThreePhaseDriver::setAmplitude(20);
+ 
+ u2 pos = 0;
+ 
+ while (1) {
+  Debug::reportPhase(pos);
+  ThreePhaseDriver::advanceTo(pos);
+  Debug::reportByte(',');
+  Debug::reportMag(MLX90363::getAlpha());
+  Debug::reportByte('\r');
+  Debug::reportByte('\n');
+  MLX90363::startTransmitting();
+  pos += 10;
+  if (pos >= 0x300) pos -= 0x300;
+ }
 
- ThreePhaseDriver::advanceTo(40);
- MotorControl::setInitialPosition(40);
  
  TwillBotInterface::reserveNextReadBuffer();
- 
- Board::LED.on();
 
  while(1) {
     
