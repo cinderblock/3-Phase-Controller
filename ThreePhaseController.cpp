@@ -218,8 +218,9 @@ void ThreePhaseController::updateDriver() {
   pos += drivePhaseShift;
  else
   pos += ThreePhaseDriver::StepsPerCycle - drivePhaseShift;
- 
- pos %= ThreePhaseDriver::StepsPerCycle;
+
+ if (pos >= ThreePhaseDriver::StepsPerCycle)
+  pos -= ThreePhaseDriver::StepsPerCycle;
  
  ThreePhaseDriver::advanceTo(pos);
 }
