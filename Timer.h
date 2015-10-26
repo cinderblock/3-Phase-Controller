@@ -8,28 +8,52 @@
 #ifndef TIMER_H
 #define	TIMER_H
 
-#include "ThreePhaseDriver.h"
+#include <AVR++/basicTypes.h>
+#include <avr/io.h>
 
+using namespace AVR;
 
-class Timer{
+class Timer {
+ /**
+  * clock prescaler on timer: /64
+  */
+ static constexpr u1 CLKprescaler = 1;
+ 
+ static constexpr u1 dividerShift =
+  CLKprescaler == 1 ?  0 : // /1
+  CLKprescaler == 2 ?  3 : // /8
+  CLKprescaler == 3 ?  6 : // /64
+  CLKprescaler == 4 ?  8 : // /256
+  CLKprescaler == 5 ? 10 : // /1024
+  0xff;
+ 
+ static constexpr u2 divider = 1 << dividerShift;
+ 
 public:
-  static void init();
-  
-  //gets ticks on timer converted from time in units
-  static const u2 lengthMS(const u2 ms);
-  static const u2 lengthUS(const u4 us);
-  
-  //return current timer position
-  inline static u2 getCurTime(){return TCNT3;};
-  //difference in timer position since given time within 1 cycle
-  static u2 getSince(const u2 time);
+ /**
+  * The number of counts that the timer will count to before overflowing
+  */
+ static constexpr u2 CountsPerClear = 8000;
+ 
 private:
-  //clock prescaler on timer
-  static const u1 CLKprescale = 0b100;
-  static const u1 cyclesPerUS = 16;
-  //finds the prescale division from a switch table
-  static const u2 prescaleDiv();
-  
+ static constexpr u2 TOP = CountsPerClear - 1;
+ 
+ static constexpr u4 Frequency = F_CPU / (2 * divider * (1 + TOP));
+ 
+public:
+ 
+ static void init();
+
+ /**
+  * Return current timer value
+  */
+ inline static u2 getCurTime() {return TCNT3;};
+ 
+ /**
+  * Difference between an old time and now
+  */
+ static u2 getSince(const u2 time);
+
 };
 
 

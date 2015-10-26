@@ -11,12 +11,14 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>AVRClock.h</itemPath>
       <itemPath>Board.h</itemPath>
       <itemPath>Clock.h</itemPath>
       <itemPath>Config.h</itemPath>
       <itemPath>Debug.h</itemPath>
       <itemPath>MLX90363.h</itemPath>
       <itemPath>MotorControl.h</itemPath>
+      <itemPath>ThreePhaseController.h</itemPath>
       <itemPath>ThreePhaseDriver.h</itemPath>
       <itemPath>Timer.h</itemPath>
       <itemPath>TripleBuffer.h</itemPath>
@@ -34,6 +36,7 @@
       <itemPath>Debug.cpp</itemPath>
       <itemPath>MLX90363.cpp</itemPath>
       <itemPath>MotorControl.cpp</itemPath>
+      <itemPath>ThreePhaseController.cpp</itemPath>
       <itemPath>ThreePhaseDriver.cpp</itemPath>
       <itemPath>Timer.cpp</itemPath>
       <itemPath>TripleBuffer-impl.cpp</itemPath>
@@ -74,8 +77,7 @@
         <ccTool>
           <standard>8</standard>
           <incDir>
-            <pElem>../../AVR++</pElem>
-            <pElem>../avr</pElem>
+            <pElem>AVR++</pElem>
           </incDir>
           <preprocessorList>
             <Elem>F_CPU=16000000UL</Elem>
@@ -88,6 +90,8 @@
       <item path=".bld/TwillBotInterface.cpp.S" ex="false" tool="4" flavor2="0">
       </item>
       <item path=".bld/test.cpp.S" ex="false" tool="4" flavor2="0">
+      </item>
+      <item path="AVRClock.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Board.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -110,6 +114,10 @@
       <item path="MotorControl.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MotorControl.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ThreePhaseController.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ThreePhaseController.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ThreePhaseDriver.cpp" ex="false" tool="1" flavor2="0">
       </item>

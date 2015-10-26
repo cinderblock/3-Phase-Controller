@@ -10,6 +10,7 @@
 #include "ThreePhaseDriver.h"
 #include "Board.h"
 #include "Debug.h"
+#include "AVRClock.h"
 
 inline static void setUpdateLock(const bool lock) {
  /**
@@ -21,6 +22,9 @@ inline static void setUpdateLock(const bool lock) {
 }
 
 void ThreePhaseDriver::init() {
+ AVR::Clock::enablePLL();
+ AVR::Clock::waitForPLL();
+ 
  // Turn off interrupts just in case
  TIMSK4 = 0;
  

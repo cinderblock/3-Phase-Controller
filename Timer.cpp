@@ -7,68 +7,53 @@
 
 #include "Timer.h"
 
-
-//const u1 Timer::CLKprescale;
-
-void Timer::init(){
-    
-    
- //16-bit counter Enables
+void Timer::init() {
  /*
   * COM3A1  COM3A0  COM3B1  COM3B0  COM3C1  COM3C0    WGM31   WGM30
   * 0       0       0       0       0       0         0       0
-  * Normal port   | Normal port     | Normal port    | Normal Mode
+  * Normal port   | Normal port     | Normal port    | CTC Mode
   * operations    | operations      | operations     |
   */
  TCCR3A = 0b00000000;
- 
+
  /*
+  * Setup for CTC mode but not yet running
   * ICNC3    ICES3   ~~~~~    WGM33    WGM32    CS32    CS31   CS30
-  * 0        0                0        0        -       -      -
-  * Noise   |Edge            | Normal          | Clock
-  * Canceler|Select          | Mode            | user defined
+  * 0        0                0        1        0       0      0
+  * Noise   |Edge            | CTC OCR3A       | Clock
+  * Canceler|Select          | Mode            | Initially stopped
   */
- TCCR3B = 0b00000000 | CLKprescale;
- 
+ // We'll using this const in a second
+ u1 constexpr B = 0b00001000;
+ TCCR3B = B;
+
  /*
-  * FOC3A    ~~~~~   ~~~~~    ~~~~~    ~~~~~    ~~~~~   ~~~~~   ~~~~~  
-  * 0
-  * Force Output 
-  * Compare (disable)
-  */
- TCCR3C = 0b00000000;
- 
- /*
+  * Disable all interrupts
   * ~~~~~   ~~~~~   ICIE3   ~~~~~   OCIE3C  OCIE3B  OCIE0A  TOIE0 
   *                 0               0       0       0       0
   *                Input Capture   | Disabled Interrupts
   *               Interrupt Enable |
   */
  TIMSK3 = 0b00000000;
+
+ // Start the timer at 0 just to be nice
+ TCNT3 = 0;
+
+ // Setup the correct timer TOP value
+ OCR3A = TOP;
+
+ // Clear all timer interrupt flags
+ TIFR3 = 0xff;
+
+ // Start the timer
+ TCCR3B = B | CLKprescaler;
+
+}
+
+u2 Timer::getSince(const u2 time) {
+ const u2 t = getCurTime();
+ if (t > time)
+  return t - time;
  
-}
-
-const u2 Timer::prescaleDiv(){
-    switch(CLKprescale){
-        case 0b001: return 1;
-        case 0b010: return 8;
-        case 0b011: return 64;
-        case 0b100: return 256;
-        case 0b101: return 1024;
-        default: return 0;
-    }
-}
-
-u2 Timer::getSince(const u2 time){
-    u2 t = getCurTime();
-    if(t < time) return t - time;
-    else return t + (0xFFFF - time);
-}
-
-const u2 Timer::lengthUS(const u4 us){
-    return cyclesPerUS * us / prescaleDiv();
-}
-
-const u2 Timer::lengthMS(const u2 ms){
-    return cyclesPerUS * ms * 1000 / prescaleDiv();
+ return CountsPerClear + t - time;
 }
