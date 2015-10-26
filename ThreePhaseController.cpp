@@ -182,11 +182,18 @@ static const u2 AlphaToPhaseLookup[loop] PROGMEM = {
  * @return phase value (0 - 0x2ff inclusive)
  */
 inline static u2 lookupAlphaToPhase(u2 alpha) {
+ // Make sure we're working with a 14-bit number
  alpha &= 0x7fff;
+ 
+ // We could use a loop or a modulo operation but since we know the range of our
+ // inputs, 14-bits, we can see that loop*7 covers all possible values of our
+ // inputs. Three compares and optional subtractions are easy operations.
+ 
  if (alpha >= loop * 4) alpha -= loop * 4;
  if (alpha >= loop * 2) alpha -= loop * 2;
  if (alpha >= loop * 1) alpha -= loop * 1;
  
+ // Read the phase number word from the calculated place in the lookup table
  return pgm_read_word(&AlphaToPhaseLookup[alpha]);
 }
 
