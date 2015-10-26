@@ -22,7 +22,8 @@ bool ThreePhaseController::isForward;
  * 14-bit lookup table for magnetometer Alpha value to Phase value
  */
 static const u2 AlphaToPhaseLookup[loop] PROGMEM = {
-//for(var i=0,l='';i<4681;){l+=String('   '+(Math.round(i*3*7*256/32768)%768)).slice(-3)+',';if(++i%31==0){console.log(l);l=''}}console.log(l)
+ // Table generated with node.js:
+ // for(var i=0,l='';i<4681;){l+=String('   '+(Math.round(i*3*7*256/32768)%768)).slice(-3)+',';if(++i%31==0){console.log(l);l=''}}console.log(l)
    0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,  3,  4,  4,  4,  4,  4,  4,  5,  5,  5,
    5,  5,  5,  6,  6,  6,  6,  6,  6,  7,  7,  7,  7,  7,  7,  8,  8,  8,  8,  8,  8,  9,  9,  9,  9,  9,  9, 10, 10, 10, 10,
   10, 10, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 15, 15, 15, 15,
