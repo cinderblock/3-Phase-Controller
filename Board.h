@@ -10,6 +10,7 @@
 
 #include <AVR++/IOpin.h>
 #include "Config.h"
+#include <avr/io.h>
 
 using namespace AVR;
 
@@ -26,6 +27,18 @@ namespace Board {
   extern IOpin SCLK;
   extern IOpin MOSI;
   extern IOpin MISO;
+
+  inline void slaveDeselect() {PORTD |=  (1<<2);}
+  inline void slaveSelect  () {PORTD &= ~(1<<2);}
+
+  /**
+   * Check if we're still talking on the SPI bus
+   * @return 
+   */
+  inline bool isSlaveSelected() {
+   //return !SS.isHigh();
+   return !(PORTD & (1<<2));
+  }
  };
  namespace SER {
   extern IOpin Rx;

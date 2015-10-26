@@ -44,19 +44,7 @@ void init() {
  */
 void main() {
  sei();
- 
- ThreePhaseDriver::setAmplitude(10);
- MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
- 
-// MLX90363::startTransmitting();
-// while (MLX90363::isTransmitting());
 
- while (1) {
-  _delay_us(20);
-  ThreePhaseDriver::advance();
- }
- 
- 
  ThreePhaseDriver::advanceTo(40);
  MotorControl::setInitialPosition(40);
  

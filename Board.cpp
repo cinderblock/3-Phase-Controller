@@ -6,7 +6,6 @@
  */
 
 #include "Board.h"
-#include <avr/io.h>
 
 // LED - indicator
 IOpin Board::LED        = IOpin(&PORTB, 7);
