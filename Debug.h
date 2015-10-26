@@ -16,6 +16,8 @@ namespace Debug {
 
  void init();
  void reportByte(u1 const);
+ void reportPhase(u2 const);
+ void reportMag(u2 const);
 
 };
 

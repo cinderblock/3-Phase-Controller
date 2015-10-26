@@ -22,5 +22,27 @@ void Debug::init() {
 }
 
 void Debug::reportByte(const u1 c) {
+ while (!(UCSR1A & (1 << UDRE1)));
  UDR1 = c;
+}
+
+u1 nibToHex(u1 const nib) {
+ if (nib < 10)
+  return '0' + nib;
+ if (nib < 16)
+  return 'A' - 10 + nib;
+ return '*';
+}
+
+void Debug::reportPhase(const u2 p) {
+ reportByte(nibToHex((p >> 8) & 0xf));
+ reportByte(nibToHex((p >> 4) & 0xf));
+ reportByte(nibToHex((p >> 0) & 0xf));
+}
+
+void Debug::reportMag(const u2 p) {
+ reportByte(nibToHex((p >> 12) & 0xf));
+ reportByte(nibToHex((p >> 8) & 0xf));
+ reportByte(nibToHex((p >> 4) & 0xf));
+ reportByte(nibToHex((p >> 0) & 0xf));
 }
