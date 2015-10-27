@@ -204,8 +204,6 @@ void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
  }
  
  setUpdateLock(false);
- 
- Debug::reportByte(step);
 
  // Save current phase
  currentPhase = phase;
