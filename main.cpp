@@ -51,6 +51,10 @@ void main() {
  u2 pos = 0;
  
  while (1) {
+  ThreePhaseController::updateDriver();
+ }
+ 
+ while (1) {
   Debug::reportPhase(pos);
   ThreePhaseDriver::advanceTo(pos);
   Debug::reportByte(',');
