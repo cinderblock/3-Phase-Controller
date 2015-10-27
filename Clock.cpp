@@ -5,12 +5,12 @@
  * Created on October 20, 2015, 12:16 AM
  */
 
-#include <avr/interrupt.h>
-
 #include "Clock.h"
 #include "Timer.h"
 
-ISR(TIMER3_OVF_vect, __attribute__((alias("_ZN5Clock4tickEv"))));
+void TIMER3_OVF_vect() {
+ Clock::tick();
+}
 
 u4 Clock::time;
 

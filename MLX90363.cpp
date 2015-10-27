@@ -10,7 +10,6 @@
 #include "MLX90363.h"
 #include "Board.h"
 
-#include <avr/interrupt.h>
 #include <AVR++/SPI.h>
 
 static inline void sendSPI(u1 const b) {
@@ -21,18 +20,7 @@ static inline u1 receiveSPI() {
  return *AVR::SPI::DR;
 }
 
-/**
- * Declare the SPI Transfer Complete interrupt as a non-blocking interrupt so
- * that the motor driver has minimum latency.
- *
- * gcc simply enables interrupts at the beginning of the routine allowing any
- * interrupt to fire again. We can trust that this one will not fire twice
- * accidentally by not starting a serial transfer until the end of the interrupt.
- *
- * This is not a guarantee, but it will be good enough if we leave enough stack
- * room.
- */
-ISR (SPI_STC_vect, ISR_NOBLOCK) {
+ISR (SPI_STC_vect) {
  MLX90363::isr();
 }
 

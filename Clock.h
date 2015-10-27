@@ -10,14 +10,19 @@
 
 #include <AVR++/basicTypes.h>
 
+#include <avr/interrupt.h>
+
 using namespace AVR;
+
+ISR(TIMER3_OVF_vect);
 
 class Clock {
  static u4 time;
+ inline static void tick();
+ friend void TIMER3_OVF_vect();
  
 public:
  
- static void tick();
  
  static void init();
  
