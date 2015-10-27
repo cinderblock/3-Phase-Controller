@@ -26,6 +26,8 @@ void init() {
  wdt_reset();
  wdt_disable();
  Debug::init();
+
+ sei();
  
  ::Clock::init();
  
@@ -43,7 +45,6 @@ void init() {
  * 
  */
 void main() {
- sei();
  
  ThreePhaseDriver::setAmplitude(20);
  
