@@ -70,7 +70,7 @@ void MLX90363::init() {
  MOSI.output();
  
  // Don't forget the AVR's hardware SS line!
- PORTB |= 1;
+ PORTB &= ~1;
  DDRB  |= 1;
 
  // SPI hardware does this for us, but do it anyway
