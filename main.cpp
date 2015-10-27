@@ -58,7 +58,7 @@ void main() {
   Debug::reportByte('\r');
   Debug::reportByte('\n');
   MLX90363::startTransmitting();
-  pos += 10;
+  pos += 1;
   if (pos >= 0x300) pos -= 0x300;
  }
 
