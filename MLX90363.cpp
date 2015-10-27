@@ -39,17 +39,6 @@ void MLX90363::isr() {
   handleResponse();
  } else {
   sendSPI(TxBuffer[bufferPosition]);
-  /**
-   * Once this gets sent, there is a chance of nesting deep on the stack.
-   * Luckily we're, in this particular usage, limited to transmissions of 8 bytes
-   * at a time. Therefore, this whole could only ever worst case nest with 7 layers.
-   * Looking at the assembly code, we can see that the interrupt uses 8 bytes of
-   * stack, add the 3 for the interrupt return location for each, and we're at
-   * 77 bytes of stack maximum.
-   *
-   * Add the worst case of another interrupt happening, to get the real worst
-   * case stack usage.
-   */
  }
 }
 
