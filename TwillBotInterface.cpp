@@ -20,7 +20,7 @@ u1 TwillBotInterface::bufferIndex;
 bool TwillBotInterface::generalCall;
 
 void TWI_vect() {
- TwillBotInterface::unblockInterrupt();
+// TwillBotInterface::unblockInterrupts();
  TwillBotInterface::handleNextI2CByte();
 }
 
@@ -36,7 +36,7 @@ void TwillBotInterface::init() {
          1 << TWINT;
 }
 
-void TwillBotInterface::unblockInterrupt() {
+void TwillBotInterface::unblockInterrupts() {
  // Turn off the TWI interrupt
  CR->byte = 1 << TWEN;
  
