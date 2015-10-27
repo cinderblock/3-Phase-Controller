@@ -86,7 +86,7 @@ u1 MLX90363::ROLL;
 void MLX90363::init() {
  // Setup Slave Select line
  Board::SPI::slaveDeselect();
- SS.output();
+ Board::SPI::slaveSelectSetup();
 
  // Setup "User Defined" hardware lines
  SCLK.output();

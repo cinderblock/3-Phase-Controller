@@ -28,8 +28,9 @@ namespace Board {
   extern IOpin MOSI;
   extern IOpin MISO;
 
-  inline void slaveDeselect() {PORTD |=  (1<<2);}
-  inline void slaveSelect  () {PORTD &= ~(1<<2);}
+  inline void slaveSelectSetup() {MagSel.output(); AIN0.output();}
+  inline void slaveDeselect() {PORTD |=  (1<<2); PORTE |=  (1<<6);}
+  inline void slaveSelect  () {PORTD &= ~(1<<2); PORTE &= ~(1<<6);}
 
   /**
    * Check if we're still talking on the SPI bus
