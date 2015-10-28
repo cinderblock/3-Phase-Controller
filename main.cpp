@@ -89,6 +89,7 @@ void main() {
   
   if (MLX90363::isMeasurementReady())
    MLX90363::startTransmitting();
+  
   pos += 1;
   if (pos >= 0x300) pos -= 0x300;
   
