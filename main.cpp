@@ -46,24 +46,58 @@ void init() {
  */
 void main() {
  
- ThreePhaseDriver::setAmplitude(20);
+ ThreePhaseDriver::setAmplitude(10);
  
  u2 pos = 0;
  
- while (1) {
-  ThreePhaseController::updateDriver();
+ Clock::MicroTime t(0);
+ Clock::MicroTime delta(0,100);
+ Clock::MicroTime now;
+ 
+ while (0) {
+  PINE |= 1<<6;
+  _delay_us(10);
  }
  
+ while (0) {
+ }
+ 
+ u1 print = 0;
+ 
+ 
+// while (1) {
+//  ThreePhaseController::updateDriver();
+// }
+ 
  while (1) {
-  Debug::reportPhase(pos);
+  t += delta;
+  do Clock::readTime(now);
+  while (t > now);
+  
+  if (!print) {
+//   Debug::reportClock();
+//   Debug::reportByte(',');
+   Debug::reportPhase(pos);
+  }
+  
   ThreePhaseDriver::advanceTo(pos);
-  Debug::reportByte(',');
-  Debug::reportMag(MLX90363::getAlpha());
-  Debug::reportByte('\r');
-  Debug::reportByte('\n');
-  MLX90363::startTransmitting();
+  
+  if (!print) {
+   Debug::reportByte(',');
+   Debug::reportMag(MLX90363::getAlpha());
+//   Debug::reportByte(',');
+//   Debug::reportHexByte(MLX90363::getRoll());
+   Debug::reportByte('\r');
+   Debug::reportByte('\n');
+  }
+  
+  if (MLX90363::isMeasurementReady())
+   MLX90363::startTransmitting();
   pos += 1;
   if (pos >= 0x300) pos -= 0x300;
+  
+  print++;
+  if (print >= 13) print = 0;
  }
 
  
