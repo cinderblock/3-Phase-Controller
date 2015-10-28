@@ -11,6 +11,9 @@
 #include "Board.h"
 
 #include <AVR++/SPI.h>
+#include "Clock.h"
+
+::Clock::MicroTime MLX90363::dataReadyTime(0);
 
 static inline void sendSPI(u1 const b) {
  *AVR::SPI::DR = b;
@@ -32,6 +35,10 @@ void MLX90363::isr() {
  if (bufferPosition == messageLength) {
   // We're done. De-assert (turn on) the slave select line
   Board::SPI::slaveDeselect();
+  
+  ::Clock::readTimeISR(dataReadyTime);
+  // If takes 920us for a measurement to complete
+  dataReadyTime += 2_ms;
   
   responseState = ResponseState::Received;
   
@@ -234,4 +241,8 @@ void MLX90363::prepareGET1Message(MessageType const type, const u2 timeout, bool
 void MLX90363::startTransmitting(){
  if (isTransmitting()) return;
  startTransmittingUnsafe();
+}
+
+bool MLX90363::isMeasurementReady() {
+ return !isTransmitting() && dataReadyTime.isInPast();
 }

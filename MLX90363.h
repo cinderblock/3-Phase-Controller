@@ -13,6 +13,7 @@
 #include <AVR++/bitTypes.h>
 #include <AVR++/IOpin.h>
 #include "Board.h"
+#include "Clock.h"
 
 ISR(SPI_STC_vect);
 
@@ -40,6 +41,8 @@ class MLX90363 {
   * Where we are while sending/reading the data in the SPI interrupt
   */
  static u1 bufferPosition;
+ 
+ static ::Clock::MicroTime dataReadyTime;
  
  enum class ResponseState : u1;
  
@@ -121,6 +124,9 @@ class MLX90363 {
  static void handleXYZ();
  
 public:
+ 
+ static bool isMeasurementReady();
+ 
  enum class ResponseState: u1 {
   Init, Ready, Receiving, Received, failedCRC, TypeA, TypeAB, TypeXYZ, Other
  };
