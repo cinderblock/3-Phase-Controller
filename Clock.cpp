@@ -8,7 +8,7 @@
 #include "Clock.h"
 #include "Timer.h"
 
-void TIMER3_OVF_vect() {
+void TIMER3_COMPA_vect() {
  Clock::tick();
 }
 
@@ -18,7 +18,7 @@ void Clock::init() {
  Timer::init();
  time = 0;
  // Enable the overflow interrupt in the timer
- TIMSK3 = 1 << TOIE3;
+ TIMSK3 = 1 << OCIE3A;
 }
 
 void Clock::tick() {
@@ -36,8 +36,6 @@ void Clock::readTime(u4& dest) {
  sei();
 }
 
-
-
 void Clock::readTime(MicroTime& dest) {
  // Disable interrupts for the next few cycles
  cli();
@@ -53,10 +51,25 @@ void Clock::readTime(MicroTime& dest) {
  sei();
 
  // If micro is small and there's a pending overflow, the real time has incremented
- if ((micro < 256) && (pendingInts & (1 << TOIE3)))
+ if ((micro < 256) && (pendingInts & (1 << OCIE3A)))
   t++;
 
  // Copy the times to the destination
- dest = micro;
- dest = t;
+ dest.setTimerCount(micro).setTicksCount(t);
+}
+
+void Clock::readTimeISR(MicroTime& dest) {
+ // Copy the times we care about
+ u2 const micro = Timer::getCurTime();
+ u4 t = time;
+
+ // Save pending interrupts 
+ const u1 pendingInts = TIMSK3;
+
+ // If micro is small and there's a pending overflow, the real time has incremented
+ if ((micro < 256) && (pendingInts & (1 << OCIE3A)))
+  t++;
+
+ // Copy the times to the destination
+ dest.setTimerCount(micro).setTicksCount(t);
 }
