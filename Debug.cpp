@@ -8,8 +8,11 @@
 #include "Debug.h"
 #include "Clock.h"
 #include <avr/io.h>
+#include <util/crc16.h>
 
 IOpin & Debug::LED = Board::LED;
+
+static u1 CRC;
 
 void Debug::init() {
  LED.output();
@@ -36,17 +39,22 @@ u1 nibToHex(u1 const nib) {
 }
 
 void Debug::reportHexByte(const u1 b) {
+ CRC = _crc8_ccitt_update(CRC, b);
  reportByte(nibToHex((b >> 4) & 0xf));
  reportByte(nibToHex((b >> 0) & 0xf));
 }
 
 void Debug::reportPhase(const u2 p) {
+ CRC = _crc8_ccitt_update(CRC, p >> 8);
+ CRC = _crc8_ccitt_update(CRC, p);
  reportByte(nibToHex((p >> 8) & 0xf));
  reportByte(nibToHex((p >> 4) & 0xf));
  reportByte(nibToHex((p >> 0) & 0xf));
 }
 
 void Debug::reportMag(const u2 p) {
+ CRC = _crc8_ccitt_update(CRC, p >> 8);
+ CRC = _crc8_ccitt_update(CRC, p);
  reportByte(nibToHex((p >> 12) & 0xf));
  reportByte(nibToHex((p >> 8) & 0xf));
  reportByte(nibToHex((p >> 4) & 0xf));
@@ -60,6 +68,8 @@ void Debug::reportClock() {
 }
 
 void Debug::endLine() {
+ reportHexByte(CRC);
+ CRC = 0xff;
  reportByte('\r');
  reportByte('\n');
 }
