@@ -15,6 +15,9 @@ namespace Debug {
  extern IOpin &LED;
 
  void init();
+ 
+ void endLine();
+ 
  void reportByte(u1 const);
  void reportHexByte(u1 const);
  void reportPhase(u2 const);

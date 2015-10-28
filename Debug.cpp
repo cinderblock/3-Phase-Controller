@@ -58,3 +58,8 @@ void Debug::reportClock() {
  Clock::readTime(t);
  reportMag(t);
 }
+
+void Debug::endLine() {
+ reportByte('\r');
+ reportByte('\n');
+}

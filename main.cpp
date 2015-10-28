@@ -87,8 +87,7 @@ void main() {
    Debug::reportMag(MLX90363::getAlpha());
 //   Debug::reportByte(',');
 //   Debug::reportHexByte(MLX90363::getRoll());
-   Debug::reportByte('\r');
-   Debug::reportByte('\n');
+   Debug::endLine();
   }
   
   if (MLX90363::isMeasurementReady())
