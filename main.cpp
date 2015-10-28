@@ -65,9 +65,9 @@ void main() {
  u1 print = 0;
  
  
-// while (1) {
-//  ThreePhaseController::updateDriver();
-// }
+ while (0) {
+  ThreePhaseController::updateDriver();
+ }
  
  while (1) {
   t += delta;
