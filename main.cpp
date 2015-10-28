@@ -94,7 +94,7 @@ void main() {
   if (pos >= 0x300) pos -= 0x300;
   
   print++;
-  if (print >= 13) print = 0;
+  if (print >= 5) print = 0;
  }
 
  
