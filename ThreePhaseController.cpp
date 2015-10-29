@@ -11,6 +11,7 @@
 #include "ThreePhaseController.h"
 #include "MLX90363.h"
 #include "ThreePhaseDriver.h"
+#include "Debug.h"
 
 s2 ThreePhaseController::position;
 s2 ThreePhaseController::velocity;
@@ -229,6 +230,9 @@ void ThreePhaseController::updateDriver() {
 
  if (MLX90363::isMeasurementReady()) {
   MLX90363::startTransmitting();
+  Debug::reportPhase(pos);
+  Debug::reportMag(alpha);
+  Debug::endLine();
  }
  
  if (!isForward)
