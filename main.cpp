@@ -49,7 +49,7 @@ void main() {
  u2 pos = 0;
  
  Clock::MicroTime t(0);
- Clock::MicroTime delta(0,100);
+ Clock::MicroTime delta(1);
  Clock::MicroTime now;
  
  while (0) {
