@@ -46,8 +46,6 @@ void init() {
  */
 void main() {
  
- ThreePhaseDriver::setAmplitude(10);
- 
  u2 pos = 0;
  
  Clock::MicroTime t(0);
@@ -68,6 +66,11 @@ void main() {
  while (0) {
   ThreePhaseController::updateDriver();
  }
+ 
+ ThreePhaseDriver::setAmplitude(10);
+ ThreePhaseDriver::advanceTo(0);
+ 
+ while (1);
  
  while (1) {
   t += delta;
