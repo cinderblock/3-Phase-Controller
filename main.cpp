@@ -62,8 +62,9 @@ void main() {
  
  u1 print = 0;
  
+ ThreePhaseController::setTorque(20);
  
- while (0) {
+ while (1) {
   ThreePhaseController::updateDriver();
  }
  
