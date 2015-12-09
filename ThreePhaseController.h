@@ -23,6 +23,8 @@ class ThreePhaseController {
  
  static u2 phase;
  static s1 velocity;
+ static constexpr u1 scaleShift = 2;
+ 
  static bool isForward;
  
  /**
