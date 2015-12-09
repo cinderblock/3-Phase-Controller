@@ -86,9 +86,11 @@ void MLX90363::init() {
  MISO.on();
 
  // Setup control registers
- AVR::SPI::SR->byte = 0;
- // F_CPU/32 by default
- AVR::SPI::CR->byte = 0b11010110;
+ 
+ // Enable SPI2X
+ AVR::SPI::SR->byte = 1 << SPI2X;
+ // F_CPU/8
+ AVR::SPI::CR->byte = 0b11010101;
 
  responseState = ResponseState::Ready;
 }
