@@ -14,7 +14,7 @@
 #include "Debug.h"
 
 u2 ThreePhaseController::phase;
-s2 ThreePhaseController::velocity;
+s1 ThreePhaseController::velocity;
 bool ThreePhaseController::isForward;
 
 

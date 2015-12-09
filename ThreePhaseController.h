@@ -16,7 +16,7 @@ using namespace AVR;
 
 class ThreePhaseController {
  static u2 phase;
- static s2 velocity;
+ static s1 velocity;
  static bool isForward;
  
  /**
@@ -42,7 +42,7 @@ public:
  static void updateDriver();
  
  inline static s2 getPosition() {return phase;}
- inline static s2 getVelocity() {return velocity;}
+ inline static s1 getVelocity() {return velocity;}
 
 };
 
