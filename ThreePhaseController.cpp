@@ -13,7 +13,7 @@
 #include "ThreePhaseDriver.h"
 #include "Debug.h"
 
-s2 ThreePhaseController::position;
+u2 ThreePhaseController::phase;
 s2 ThreePhaseController::velocity;
 bool ThreePhaseController::isForward;
 
@@ -203,17 +203,17 @@ inline static u2 lookupAlphaToPhase(u2 alpha) {
 void ThreePhaseController::init() {
  MLX90363::init();
  ThreePhaseDriver::init();
- position = 0;
  velocity = 0;
  ThreePhaseDriver::setAmplitude(0);
  
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
  
- // Prepare the first set of data
+ // Initialize phase
+ MLX90363::startTransmitting();
+ while (!MLX90363::isMeasurementReady());
  MLX90363::startTransmitting();
  while (MLX90363::isTransmitting());
- _delay_us(100);
- MLX90363::startTransmitting();
+ phase = lookupAlphaToPhase(MLX90363::getAlpha());
 }
 
 void ThreePhaseController::setTorque(const Torque t) {

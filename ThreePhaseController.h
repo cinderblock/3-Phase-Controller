@@ -15,7 +15,7 @@
 using namespace AVR;
 
 class ThreePhaseController {
- static s2 position;
+ static u2 phase;
  static s2 velocity;
  static bool isForward;
  
