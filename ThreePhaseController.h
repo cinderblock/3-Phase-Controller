@@ -41,7 +41,7 @@ public:
  
  static void updateDriver();
  
- inline static s2 getPosition() {return position;}
+ inline static s2 getPosition() {return phase;}
  inline static s2 getVelocity() {return velocity;}
 
 };
