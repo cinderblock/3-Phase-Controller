@@ -18,7 +18,7 @@ s2 ThreePhaseController::velocity;
 bool ThreePhaseController::isForward;
 
 
- u2 constexpr loop = 4681;
+u2 constexpr loop = 4681;
 
 /**
  * 14-bit lookup table for magnetometer Alpha value to Phase value
