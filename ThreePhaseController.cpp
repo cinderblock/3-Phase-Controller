@@ -17,6 +17,21 @@ u2 ThreePhaseController::phase;
 s1 ThreePhaseController::velocity;
 bool ThreePhaseController::isForward;
 
+void TIMER4_OVF_vect() {
+ ThreePhaseController::isr();
+}
+
+void ThreePhaseController::isr() {
+ u2 ph = phase;
+ ph += velocity;
+ if (ph > ThreePhaseDriver::StepsPerCycle) {
+  if (velocity > 0)
+   ph -= ThreePhaseDriver::StepsPerCycle;
+  else
+   ph += ThreePhaseDriver::StepsPerCycle;
+ }
+ phase = ph;
+}
 
 u2 constexpr loop = 4681;
 

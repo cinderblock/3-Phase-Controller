@@ -11,10 +11,16 @@
 #include <AVR++/basicTypes.h>
 
 #include "ThreePhaseDriver.h"
+#include <avr/interrupt.h>
 
 using namespace AVR;
 
+ISR(TIMER4_OVF_vect);
+
 class ThreePhaseController {
+ static inline void isr();
+ friend void TIMER4_OVF_vect();
+ 
  static u2 phase;
  static s1 velocity;
  static bool isForward;
