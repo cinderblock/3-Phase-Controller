@@ -13,8 +13,8 @@
 #include "ThreePhaseDriver.h"
 #include "Debug.h"
 
-u2 ThreePhaseController::phase;
-s1 ThreePhaseController::velocity;
+u2 ThreePhaseController::drivePhase;
+s1 ThreePhaseController::driveVelocity;
 bool ThreePhaseController::isForward;
 
 void TIMER4_OVF_vect() {
@@ -22,15 +22,15 @@ void TIMER4_OVF_vect() {
 }
 
 void ThreePhaseController::isr() {
- u2 ph = phase;
- ph += velocity;
+ u2 ph = drivePhase;
+ ph += driveVelocity;
  if (ph > ThreePhaseDriver::StepsPerCycle) {
-  if (velocity > 0)
+  if (driveVelocity > 0)
    ph -= ThreePhaseDriver::StepsPerCycle;
   else
    ph += ThreePhaseDriver::StepsPerCycle;
  }
- phase = ph;
+ drivePhase = ph;
 }
 
 u2 constexpr loop = 4681;
@@ -218,7 +218,7 @@ inline static u2 lookupAlphaToPhase(u2 alpha) {
 void ThreePhaseController::init() {
  MLX90363::init();
  ThreePhaseDriver::init();
- velocity = 0;
+ driveVelocity = 0;
  ThreePhaseDriver::setAmplitude(0);
  
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
@@ -228,7 +228,7 @@ void ThreePhaseController::init() {
  while (!MLX90363::isMeasurementReady());
  MLX90363::startTransmitting();
  while (MLX90363::isTransmitting());
- phase = lookupAlphaToPhase(MLX90363::getAlpha());
+ drivePhase = lookupAlphaToPhase(MLX90363::getAlpha()) << drivePhaseValueShift;
 }
 
 void ThreePhaseController::setTorque(const Torque t) {
