@@ -6,6 +6,7 @@
  */
 
 #include <avr/pgmspace.h>
+#include <util/atomic.h>
 #include <util/delay.h>
 
 #include "ThreePhaseController.h"
@@ -265,12 +266,12 @@ void ThreePhaseController::updateDriver() {
  
  // Adjust the driveVelocity to match what the magnetometer things it is
  if (velocity > driveVelocity) {
-  cli();
-  driveVelocity++;
-  sei();
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+   driveVelocity++;
+  }
  } else if (velocity < driveVelocity) {
-  cli();
-  driveVelocity--;
-  sei();
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+   driveVelocity--;
+  }
  }
 }
