@@ -30,7 +30,7 @@ class ThreePhaseController {
  /**
   * 90 degree phase shift
   */
- static constexpr u2 drivePhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
+ static constexpr u2 output90DegPhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
  
 public:
  static void init();

@@ -31,6 +31,7 @@ void ThreePhaseController::isr() {
    ph += ThreePhaseDriver::StepsPerCycle;
  }
  drivePhase = ph;
+ ThreePhaseDriver::advanceTo(ph >> drivePhaseValueShift);
 }
 
 u2 constexpr loop = 4681;
@@ -237,26 +238,39 @@ void ThreePhaseController::setTorque(const Torque t) {
 }
 
 void ThreePhaseController::updateDriver() {
- u2 pos;
- 
-// position = 0;
- u2 const alpha = MLX90363::getAlpha();
- pos = lookupAlphaToPhase(alpha);
-
+ // The MLX sensor requires ~1ms of wait time between measurements
  if (MLX90363::isMeasurementReady()) {
+  // Start the sequence that will get the next set of data from the sensor and
+  // start a new reading (which takes ~1ms).
   MLX90363::startTransmitting();
-  Debug::reportPhase(pos);
-  Debug::reportMag(alpha);
-  Debug::endLine();
  }
  
- if (!isForward)
-  pos += drivePhaseShift;
- else
-  pos += ThreePhaseDriver::StepsPerCycle - drivePhaseShift;
-
- if (pos >= ThreePhaseDriver::StepsPerCycle)
-  pos -= ThreePhaseDriver::StepsPerCycle;
+ // Make sure we only run this if we have new data
+ static u1 roll = 0xff;
+ const u1 r = MLX90363::getRoll();
+ if (r == roll) return;
+ roll = r;
  
- ThreePhaseDriver::advanceTo(pos);
+ static u2 lastPosition = drivePhase >> drivePhaseValueShift;
+ 
+ // We can always grab the latest Alpha value safely here
+ u2 const alpha = MLX90363::getAlpha();
+ u2 pos = lookupAlphaToPhase(alpha);
+ 
+ // Calculate the velocity from the magnetic data
+ s2 velocity = pos - lastPosition;
+ 
+ // Save the most recent magnetic position
+ lastPosition = pos;
+ 
+ // Adjust the driveVelocity to match what the magnetometer things it is
+ if (velocity > driveVelocity) {
+  cli();
+  driveVelocity++;
+  sei();
+ } else if (velocity < driveVelocity) {
+  cli();
+  driveVelocity--;
+  sei();
+ }
 }
