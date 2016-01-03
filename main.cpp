@@ -62,10 +62,20 @@ void main() {
  
  u1 print = 0;
  
- ThreePhaseController::setTorque(20);
+ s2 t = 20;
+ 
+ ThreePhaseController::setTorque(t);
+ 
+ auto lastV = ThreePhaseController::getVelocity();
  
  while (1) {
   ThreePhaseController::updateDriver();
+  auto v = ThreePhaseController::getVelocity();
+  if (v == lastV) continue;
+  lastV = v;
+  
+  if (v > 20) t--; else if (v < 15) t++;
+  ThreePhaseController::setTorque(t);
  }
  
  ThreePhaseDriver::setAmplitude(10);
