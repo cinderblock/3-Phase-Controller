@@ -75,6 +75,8 @@ void main() {
   lastV = v;
   
   if (v > 20) torque--; else if (v < 15) torque++;
+  if (torque > 20) torque = 20;
+  if (torque < 20) torque = -20;
   ThreePhaseController::setTorque(torque);
  }
  
