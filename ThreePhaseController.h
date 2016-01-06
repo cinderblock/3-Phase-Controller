@@ -21,8 +21,8 @@ class ThreePhaseController {
  static inline void isr();
  friend void TIMER4_OVF_vect();
  
- static u2 drivePhase;
- static s1 driveVelocity;
+ static u4 drivePhase;
+ static s2 driveVelocity;
  static constexpr u1 drivePhaseValueShift = 2;
  
  static bool isForward;

@@ -14,8 +14,8 @@
 #include "ThreePhaseDriver.h"
 #include "Debug.h"
 
-u2 ThreePhaseController::drivePhase;
-s1 ThreePhaseController::driveVelocity;
+u4 ThreePhaseController::drivePhase;
+s2 ThreePhaseController::driveVelocity;
 bool ThreePhaseController::isForward;
 
 void TIMER4_OVF_vect() {
@@ -23,7 +23,7 @@ void TIMER4_OVF_vect() {
 }
 
 void ThreePhaseController::isr() {
- u2 ph = drivePhase;
+ auto ph = drivePhase;
  ph += driveVelocity;
  if (ph > ThreePhaseDriver::StepsPerCycle) {
   if (driveVelocity > 0)
