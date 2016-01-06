@@ -231,6 +231,8 @@ void ThreePhaseController::init() {
  MLX90363::startTransmitting();
  while (MLX90363::isTransmitting());
  drivePhase = lookupAlphaToPhase(MLX90363::getAlpha()) << drivePhaseValueShift;
+
+ TIMSK4 = 1 << TOIE4;
 }
 
 void ThreePhaseController::setTorque(const Torque t) {
