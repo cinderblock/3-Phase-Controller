@@ -19,9 +19,17 @@ void Debug::init() {
  LED.on();
  
  UBRR1 = 0;
+ 
+ // Set default
  UCSR1D = 0b00;
+ 
+ // Set default
  UCSR1C = 0b00000110;
+ 
+ // Set default
  UCSR1A = 0b00000000;
+ 
+ // Enable transmitter
  UCSR1B = 0b00001000;
 }
 
