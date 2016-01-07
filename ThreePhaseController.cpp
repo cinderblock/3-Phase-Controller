@@ -264,6 +264,10 @@ void ThreePhaseController::updateDriver() {
  u2 const alpha = MLX90363::getAlpha();
  u2 pos = lookupAlphaToPhase(alpha);
  
+ Debug::reportPhase(pos);
+ Debug::reportPhase(drivePhase >> drivePhaseValueShift);
+ Debug::endLine();
+ 
  // Calculate the velocity from the magnetic data
  s2 velocity = pos - lastPosition;
  
