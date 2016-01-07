@@ -27,11 +27,11 @@ void ThreePhaseController::isr() {
  
  auto ph = drivePhase;
  ph += driveVelocity;
- if (ph > ThreePhaseDriver::StepsPerCycle) {
+ if (ph > (ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift)) {
   if (driveVelocity > 0)
-   ph -= ThreePhaseDriver::StepsPerCycle;
+   ph -= (ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift);
   else
-   ph += ThreePhaseDriver::StepsPerCycle;
+   ph += (ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift);
  }
  drivePhase = ph;
  ThreePhaseDriver::advanceTo(ph >> drivePhaseValueShift);
@@ -271,11 +271,11 @@ void ThreePhaseController::updateDriver() {
  lastPosition = pos;
  
  // Adjust the driveVelocity to match what the magnetometer things it is
- if (velocity > driveVelocity) {
+ if (velocity > (driveVelocity * cyclesPWMPerMLX >> drivePhaseValueShift)) {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
    driveVelocity++;
   }
- } else if (velocity < driveVelocity) {
+ } else if (velocity < (driveVelocity * cyclesPWMPerMLX >> drivePhaseValueShift)) {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
    driveVelocity--;
   }
