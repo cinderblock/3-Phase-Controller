@@ -33,12 +33,12 @@ public:
  /**
   * The number of counts that the timer will count to before overflowing
   */
- static constexpr u2 CountsPerClear = 8000;
+ static constexpr u2 CountsPerClear = 16000;
  
 private:
  static constexpr u2 TOP = CountsPerClear - 1;
  
- static constexpr u4 Frequency = F_CPU / (2 * divider * (1 + TOP));
+ static constexpr u4 Frequency = F_CPU / (divider * (1 + TOP));
  
 public:
  
