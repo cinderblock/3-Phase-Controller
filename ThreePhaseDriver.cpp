@@ -134,6 +134,8 @@ static const u2 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
 u1 ThreePhaseDriver::amplitude = 0;
 
 u2 ThreePhaseDriver::getPhasePWM(const u1 step) {
+ if (!amplitude) return 0;
+
  // u1 const sin = MAX * SIN(2 * PI * step / StepsPerCycle);
  u2 const sin = pgm_read_word(&limitedSinTable[step]);
 // u2 const sin = step;
