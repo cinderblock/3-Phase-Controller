@@ -37,8 +37,8 @@ void MLX90363::isr() {
   Board::SPI::slaveDeselect();
   
   ::Clock::readTimeISR(dataReadyTime);
-  // If takes 920us for a measurement to complete
-  dataReadyTime += 2_ms;
+  // It takes 920us for a measurement to complete
+  dataReadyTime += 1_ms;
   
   responseState = ResponseState::Received;
   
