@@ -23,6 +23,8 @@ void TIMER4_OVF_vect() {
 }
 
 void ThreePhaseController::isr() {
+ u1 static mlx = 1;
+ 
  auto ph = drivePhase;
  ph += driveVelocity;
  if (ph > ThreePhaseDriver::StepsPerCycle) {
@@ -33,6 +35,14 @@ void ThreePhaseController::isr() {
  }
  drivePhase = ph;
  ThreePhaseDriver::advanceTo(ph >> drivePhaseValueShift);
+ 
+ // Don't continue if we're not done counting down
+ if (--mlx)
+  return;
+ 
+ MLX90363::startTransmitting();
+ 
+ mlx = cyclesPWMPerMLX;
 }
 
 u2 constexpr loop = 4681;
@@ -241,12 +251,6 @@ void ThreePhaseController::setTorque(const Torque t) {
 }
 
 void ThreePhaseController::updateDriver() {
- // The MLX sensor requires ~1ms of wait time between measurements
- if (MLX90363::isMeasurementReady()) {
-  // Start the sequence that will get the next set of data from the sensor and
-  // start a new reading (which takes ~1ms).
-  MLX90363::startTransmitting();
- }
  
  // Make sure we only run this if we have new data
  static u1 roll = 0xff;

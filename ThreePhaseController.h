@@ -25,6 +25,13 @@ class ThreePhaseController {
  static s2 driveVelocity;
  static constexpr u1 drivePhaseValueShift = 2;
  
+ /**
+  * Number of cycles the PWM timer makes per measurement ready from MLX.
+  * 
+  * = frequency(PWM) * period(MLX) = 32kHz * 1.25ms = 40;
+  */
+ static constexpr u1 cyclesPWMPerMLX = 40;
+ 
  static bool isForward;
  
  /**
