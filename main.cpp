@@ -70,6 +70,9 @@ void main() {
  
  while (1) {
   ThreePhaseController::updateDriver();
+  
+  continue;
+  
   auto v = ThreePhaseController::getVelocity();
   if (v == lastV) continue;
   lastV = v;
