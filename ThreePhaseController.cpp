@@ -275,7 +275,7 @@ void ThreePhaseController::updateDriver() {
  // Save the most recent magnetic position
  lastPosition = pos;
  
- // Adjust the driveVelocity to match what the magnetometer things it is
+ // Adjust the driveVelocity to match what the magnetometer thinks it is
  if (velocity > (driveVelocity * cyclesPWMPerMLX >> drivePhaseValueShift)) {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
    driveVelocity++;
