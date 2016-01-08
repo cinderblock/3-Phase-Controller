@@ -25,6 +25,7 @@ class ThreePhaseController {
  static s2 driveVelocity;
  static constexpr u1 drivePhaseValueShift = 8;
  
+ static u2 lastMagPosition;
  static u1 magRoll;
  
  /**

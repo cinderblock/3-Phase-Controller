@@ -17,6 +17,7 @@
 u4 ThreePhaseController::drivePhase;
 s2 ThreePhaseController::driveVelocity;
 bool ThreePhaseController::isForward;
+u2 ThreePhaseController::lastMagPosition;
 u1 ThreePhaseController::magRoll;
 
 void TIMER4_OVF_vect() {
@@ -235,7 +236,6 @@ void ThreePhaseController::init() {
  ThreePhaseDriver::setAmplitude(0);
  
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
- drivePhase = lookupAlphaToPhase(MLX90363::getAlpha()) << drivePhaseValueShift;
 
  // Enable Timer4 Overflow Interrupt
  TIMSK4 = 1 << TOIE4;
@@ -245,6 +245,9 @@ void ThreePhaseController::init() {
  // Get two new readings to get started
  while (!MLX90363::hasNewData(magRoll));
  while (!MLX90363::hasNewData(magRoll));
+ 
+ lastMagPosition = lookupAlphaToPhase(MLX90363::getAlpha());
+ drivePhase = lastMagPosition << drivePhaseValueShift;
 }
 
 void ThreePhaseController::setTorque(const Torque t) {
@@ -253,7 +256,6 @@ void ThreePhaseController::setTorque(const Torque t) {
 }
 
 void ThreePhaseController::updateDriver() {
- static u2 lastPosition = drivePhase >> drivePhaseValueShift;
  if (!MLX90363::hasNewData(magRoll)) return;
  
  // We can always grab the latest Alpha value safely here
@@ -265,10 +267,10 @@ void ThreePhaseController::updateDriver() {
  Debug::endLine();
  
  // Calculate the velocity from the magnetic data
- s2 velocity = pos - lastPosition;
+ const s2 velocity = pos - lastMagPosition;
  
  // Save the most recent magnetic position
- lastPosition = pos;
+ lastMagPosition = pos;
  
  // Adjust the driveVelocity to match what the magnetometer thinks it is
  if (velocity > (driveVelocity * cyclesPWMPerMLX >> drivePhaseValueShift)) {
