@@ -25,6 +25,8 @@ class ThreePhaseController {
  static s2 driveVelocity;
  static constexpr u1 drivePhaseValueShift = 8;
  
+ static u1 magRoll;
+ 
  /**
   * Number of cycles the PWM timer makes per measurement ready from MLX.
   * 

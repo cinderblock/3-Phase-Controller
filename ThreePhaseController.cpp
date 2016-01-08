@@ -17,6 +17,7 @@
 u4 ThreePhaseController::drivePhase;
 s2 ThreePhaseController::driveVelocity;
 bool ThreePhaseController::isForward;
+u1 ThreePhaseController::magRoll;
 
 void TIMER4_OVF_vect() {
  ThreePhaseController::isr();
@@ -234,16 +235,16 @@ void ThreePhaseController::init() {
  ThreePhaseDriver::setAmplitude(0);
  
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
- 
- // Initialize phase
- MLX90363::startTransmitting();
- while (!MLX90363::isMeasurementReady());
- MLX90363::startTransmitting();
- while (MLX90363::isTransmitting());
  drivePhase = lookupAlphaToPhase(MLX90363::getAlpha()) << drivePhaseValueShift;
 
  // Enable Timer4 Overflow Interrupt
  TIMSK4 = 1 << TOIE4;
+ 
+ magRoll = MLX90363::getRoll();
+
+ // Get two new readings to get started
+ while (!MLX90363::hasNewData(magRoll));
+ while (!MLX90363::hasNewData(magRoll));
 }
 
 void ThreePhaseController::setTorque(const Torque t) {
@@ -252,14 +253,8 @@ void ThreePhaseController::setTorque(const Torque t) {
 }
 
 void ThreePhaseController::updateDriver() {
- 
- // Make sure we only run this if we have new data
- static u1 roll = 0xff;
- const u1 r = MLX90363::getRoll();
- if (r == roll) return;
- roll = r;
- 
  static u2 lastPosition = drivePhase >> drivePhaseValueShift;
+ if (!MLX90363::hasNewData(magRoll)) return;
  
  // We can always grab the latest Alpha value safely here
  u2 const alpha = MLX90363::getAlpha();
