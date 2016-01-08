@@ -48,14 +48,14 @@ class MLX90363 {
  
  static ResponseState responseState;
  
- static u2 alpha;
- static u2 beta;
- static u2 X;
- static u2 Y;
- static u2 Z;
- static u1 err;
- static u1 VG;
- static u1 ROLL;
+ volatile static u2 alpha;
+ volatile static u2 beta;
+ volatile static u2 X;
+ volatile static u2 Y;
+ volatile static u2 Z;
+ volatile static u1 err;
+ volatile static u1 VG;
+ volatile static u1 ROLL;
  
  /**
   * INTERNAL: Reset the buffer position and start the transmission sequence.

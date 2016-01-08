@@ -56,15 +56,15 @@ u1 MLX90363::bufferPosition = messageLength;
 MLX90363::ResponseState MLX90363::responseState = MLX90363::ResponseState::Init;
 
 
-u2 MLX90363::alpha;
-u2 MLX90363::beta;
-u2 MLX90363::X;
-u2 MLX90363::Y;
-u2 MLX90363::Z;
+volatile u2 MLX90363::alpha;
+volatile u2 MLX90363::beta;
+volatile u2 MLX90363::X;
+volatile u2 MLX90363::Y;
+volatile u2 MLX90363::Z;
 
-u1 MLX90363::err;
-u1 MLX90363::VG;
-u1 MLX90363::ROLL;
+volatile u1 MLX90363::err;
+volatile u1 MLX90363::VG;
+volatile u1 MLX90363::ROLL = 0xff;
 
 
 void MLX90363::init() {
