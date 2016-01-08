@@ -242,6 +242,7 @@ void ThreePhaseController::init() {
  while (MLX90363::isTransmitting());
  drivePhase = lookupAlphaToPhase(MLX90363::getAlpha()) << drivePhaseValueShift;
 
+ // Enable Timer4 Overflow Interrupt
  TIMSK4 = 1 << TOIE4;
 }
 
