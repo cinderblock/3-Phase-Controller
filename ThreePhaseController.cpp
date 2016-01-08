@@ -259,8 +259,8 @@ void ThreePhaseController::updateDriver() {
  if (!MLX90363::hasNewData(magRoll)) return;
  
  // We can always grab the latest Alpha value safely here
- u2 const alpha = MLX90363::getAlpha();
- u2 pos = lookupAlphaToPhase(alpha);
+ auto const alpha = MLX90363::getAlpha();
+ auto const pos = lookupAlphaToPhase(alpha);
  
  Debug::reportPhase(pos);
  Debug::reportPhase(drivePhase >> drivePhaseValueShift);
