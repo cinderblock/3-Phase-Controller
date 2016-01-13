@@ -15,9 +15,9 @@
 #include "Debug.h"
 
 u4 ThreePhaseController::drivePhase;
+u2 ThreePhaseController::lastMagPha;
 s2 ThreePhaseController::driveVelocity;
 bool ThreePhaseController::isForward;
-u2 ThreePhaseController::lastMagPosition;
 u1 ThreePhaseController::magRoll;
 
 void TIMER4_OVF_vect() {
@@ -36,6 +36,9 @@ void ThreePhaseController::isr() {
    ph += (ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift);
  }
  drivePhase = ph;
+ 
+ ph += driveVelocity * driveVelocityPhaseAdvance;
+ 
  ThreePhaseDriver::advanceTo(ph >> drivePhaseValueShift);
  
  // Don't continue if we're not done counting down
@@ -246,8 +249,8 @@ void ThreePhaseController::init() {
  while (!MLX90363::hasNewData(magRoll));
  while (!MLX90363::hasNewData(magRoll));
  
- lastMagPosition = lookupAlphaToPhase(MLX90363::getAlpha());
- drivePhase = lastMagPosition << drivePhaseValueShift;
+ lastMagPha = lookupAlphaToPhase(MLX90363::getAlpha());
+ drivePhase = lastMagPha << drivePhaseValueShift;
 }
 
 void ThreePhaseController::setTorque(const Torque t) {
@@ -260,26 +263,37 @@ void ThreePhaseController::updateDriver() {
  
  // We can always grab the latest Alpha value safely here
  auto const alpha = MLX90363::getAlpha();
- auto const pos = lookupAlphaToPhase(alpha);
+ auto const magPha = lookupAlphaToPhase(alpha);
  
- Debug::reportPhase(pos);
- Debug::reportPhase(drivePhase >> drivePhaseValueShift);
- Debug::endLine();
+ u2 drivePha;
+ 
+ ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  drivePha = drivePhase >> drivePhaseValueShift;
+ }
+
+ Debug::SOUT
+         << Debug::Printer::Special::Start
+         << magPha
+         << drivePha
+         << driveVelocity
+         << Debug::Printer::Special::End;
  
  // Calculate the velocity from the magnetic data
- const s2 velocity = pos - lastMagPosition;
+ const s2 magVelocity = magPha - lastMagPha;
  
- // Save the most recent magnetic position
- lastMagPosition = pos;
+ const s2 scaledDriveVelocity = (s4(driveVelocity) * cyclesPWMPerMLX) >> drivePhaseValueShift;
  
- // Adjust the driveVelocity to match what the magnetometer thinks it is
- if (velocity > (driveVelocity * cyclesPWMPerMLX >> drivePhaseValueShift)) {
+ // Adjust the driveVelocity to match what the magnetometer things it is
+ if (magVelocity > scaledDriveVelocity) {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
    driveVelocity++;
   }
- } else if (velocity < (driveVelocity * cyclesPWMPerMLX >> drivePhaseValueShift)) {
+ } else if (magVelocity < scaledDriveVelocity) {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
    driveVelocity--;
   }
  }
+ 
+ // Save the most recent magnetic position
+ lastMagPha = magPha;
 }

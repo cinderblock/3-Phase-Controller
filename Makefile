@@ -10,7 +10,7 @@ C =
 # List of CPP file basenames to build
 CPP = main Board MLX90363 ThreePhaseDriver MotorControl Debug Timer Clock ThreePhaseController
 
-CPP += TwillBotInterface TripleBuffer-impl
+CPP += TwillBotInterface TripleBuffer-impl CRC8
 # HENRY: I removed "test", might want to add it back
 
 # Select specific LUFA source files to compile like this

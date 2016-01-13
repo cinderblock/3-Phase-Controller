@@ -78,8 +78,8 @@ void main() {
   lastV = v;
   
   if (v > 20) torque--; else if (v < 15) torque++;
-  if (torque > 20) torque = 20;
-  if (torque < 20) torque = -20;
+  if (torque >  20) torque =  20;
+  if (torque < -20) torque = -20;
   ThreePhaseController::setTorque(torque);
  }
  
@@ -95,13 +95,13 @@ void main() {
   
   if (!print) {
 //   Debug::reportClock();
-   Debug::reportPhase(pos);
+   Debug::reportU2(pos);
   }
   
   ThreePhaseDriver::advanceTo(pos);
   
   if (!print) {
-   Debug::reportMag(MLX90363::getAlpha());
+   Debug::reportU2(MLX90363::getAlpha());
 //   Debug::reportHexByte(MLX90363::getRoll());
    Debug::endLine();
   }

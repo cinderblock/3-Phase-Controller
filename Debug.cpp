@@ -8,11 +8,14 @@
 #include "Debug.h"
 #include "Clock.h"
 #include <avr/io.h>
-#include <util/crc16.h>
 
-IOpin & Debug::LED = Board::LED;
+#include "CRC8.h"
 
-static u1 CRC;
+IOpin& Debug::LED = Board::LED;
+
+Debug::Printer Debug::SOUT;
+
+static CRC8 CRC;
 
 void Debug::init() {
  LED.output();
@@ -33,7 +36,7 @@ void Debug::init() {
  UCSR1B = 0b00001000;
 }
 
-void Debug::reportByte(const u1 c) {
+void Debug::sendByte(const u1 c) {
  while (!(UCSR1A & (1 << UDRE1)));
  UDR1 = c;
 }
@@ -46,38 +49,26 @@ u1 nibToHex(u1 const nib) {
  return '*';
 }
 
-void Debug::reportHexByte(const u1 b) {
- CRC = _crc8_ccitt_update(CRC, b);
- reportByte(nibToHex((b >> 4) & 0xf));
- reportByte(nibToHex((b >> 0) & 0xf));
-}
-
-void Debug::reportPhase(const u2 p) {
- CRC = _crc8_ccitt_update(CRC, p >> 8);
- CRC = _crc8_ccitt_update(CRC, p);
- reportByte(nibToHex((p >> 8) & 0xf));
- reportByte(nibToHex((p >> 4) & 0xf));
- reportByte(nibToHex((p >> 0) & 0xf));
-}
-
-void Debug::reportMag(const u2 p) {
- CRC = _crc8_ccitt_update(CRC, p >> 8);
- CRC = _crc8_ccitt_update(CRC, p);
- reportByte(nibToHex((p >> 12) & 0xf));
- reportByte(nibToHex((p >> 8) & 0xf));
- reportByte(nibToHex((p >> 4) & 0xf));
- reportByte(nibToHex((p >> 0) & 0xf));
+void Debug::reportU1(const u1 b) {
+ CRC << b;
+ sendByte(b);
 }
 
 void Debug::reportClock() {
  u4 t;
  Clock::readTime(t);
- reportMag(t);
+ reportU2(t);
 }
 
-void Debug::endLine() {
- reportHexByte(CRC);
- CRC = 0xff;
- reportByte('\r');
- reportByte('\n');
+void Debug::sendHeader() {
+ sendByte(0xff);
+ sendByte(0xff);
+ sendByte(0xff);
+ sendByte(0xff);
+ sendByte(0xff);
+ CRC.reset();
+}
+
+void Debug::sendEnd() {
+ sendByte(CRC.getCRC());
 }
