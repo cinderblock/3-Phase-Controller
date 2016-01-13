@@ -15,6 +15,7 @@
 #include "Debug.h"
 
 u4 ThreePhaseController::drivePhase;
+u2 ThreePhaseController::lastMagPha;
 s2 ThreePhaseController::driveVelocity;
 bool ThreePhaseController::isForward;
 
@@ -240,7 +241,8 @@ void ThreePhaseController::init() {
  while (!MLX90363::isMeasurementReady());
  MLX90363::startTransmitting();
  while (MLX90363::isTransmitting());
- drivePhase = lookupAlphaToPhase(MLX90363::getAlpha()) << drivePhaseValueShift;
+ lastMagPha = lookupAlphaToPhase(MLX90363::getAlpha());
+ drivePhase = lastMagPha << drivePhaseValueShift;
 
  TIMSK4 = 1 << TOIE4;
 }
@@ -258,30 +260,27 @@ void ThreePhaseController::updateDriver() {
  if (r == roll) return;
  roll = r;
  
- static u2 lastPosition = drivePhase >> drivePhaseValueShift;
- 
  // We can always grab the latest Alpha value safely here
  u2 const alpha = MLX90363::getAlpha();
- u2 pos = lookupAlphaToPhase(alpha);
+ u2 magPha = lookupAlphaToPhase(alpha);
  
- Debug::reportPhase(pos);
- Debug::reportPhase(drivePhase >> drivePhaseValueShift);
- Debug::endLine();
  
  // Calculate the velocity from the magnetic data
- s2 velocity = pos - lastPosition;
+ const s2 magVelocity = magPha - lastMagPha;
  
- // Save the most recent magnetic position
- lastPosition = pos;
+ const s2 scaledDriveVelocity = driveVelocity * cyclesPWMPerMLX >> drivePhaseValueShift;
  
  // Adjust the driveVelocity to match what the magnetometer things it is
- if (velocity > (driveVelocity * cyclesPWMPerMLX >> drivePhaseValueShift)) {
+ if (magVelocity > scaledDriveVelocity) {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
    driveVelocity++;
   }
- } else if (velocity < (driveVelocity * cyclesPWMPerMLX >> drivePhaseValueShift)) {
+ } else if (magVelocity < scaledDriveVelocity) {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
    driveVelocity--;
   }
  }
+ 
+ // Save the most recent magnetic position
+ lastMagPha = magPha;
 }
