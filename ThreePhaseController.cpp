@@ -264,6 +264,18 @@ void ThreePhaseController::updateDriver() {
  u2 const alpha = MLX90363::getAlpha();
  u2 magPha = lookupAlphaToPhase(alpha);
  
+ u2 drivePha;
+ 
+ ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  drivePha = drivePhase >> drivePhaseValueShift;
+ }
+
+ Debug::SOUT
+         << Debug::Printer::Special::Start
+         << magPha
+         << drivePha
+         << driveVelocity
+         << Debug::Printer::Special::End;
  
  // Calculate the velocity from the magnetic data
  const s2 magVelocity = magPha - lastMagPha;
