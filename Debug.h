@@ -18,12 +18,30 @@ namespace Debug {
  
  void endLine();
  
- void reportByte(u1 const);
- void reportHexByte(u1 const);
- void reportPhase(u2 const);
- void reportMag(u2 const);
+ void sendByte(u1 const);
+ void reportU1(u1 const);
+ inline void reportU2(u2 const w) {
+  reportU1(w);
+  reportU1(w >> 8);
+ }
+ inline void reportU4(u4 const l) {
+  reportU2(l);
+  reportU2(l >> 16);
+ }
+ inline void reportS1(s1 const b) {
+  reportU1(b);
+ }
+ inline void reportS2(s2 const w) {
+  reportU2(w);
+ }
+ inline void reportS4(s4 const l) {
+  reportU4(l);
+ }
+ 
  void reportClock();
 
+ void sendHeader();
+ void sendEnd();
 };
 
 #endif	/* DEBUG_H */

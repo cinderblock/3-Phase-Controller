@@ -95,13 +95,13 @@ void main() {
   
   if (!print) {
 //   Debug::reportClock();
-   Debug::reportPhase(pos);
+   Debug::reportU2(pos);
   }
   
   ThreePhaseDriver::advanceTo(pos);
   
   if (!print) {
-   Debug::reportMag(MLX90363::getAlpha());
+   Debug::reportU2(MLX90363::getAlpha());
 //   Debug::reportHexByte(MLX90363::getRoll());
    Debug::endLine();
   }
