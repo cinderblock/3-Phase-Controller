@@ -35,6 +35,9 @@ void ThreePhaseController::isr() {
    ph += (ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift);
  }
  drivePhase = ph;
+ 
+ ph += driveVelocity * driveVelocityPhaseAdvance;
+ 
  ThreePhaseDriver::advanceTo(ph >> drivePhaseValueShift);
  
  // Don't continue if we're not done counting down
