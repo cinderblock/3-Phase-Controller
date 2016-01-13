@@ -12,6 +12,8 @@
 
 IOpin& Debug::LED = Board::LED;
 
+Debug::Printer Debug::SOUT;
+
 static u1 CRC;
 
 void Debug::init() {

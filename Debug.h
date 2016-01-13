@@ -42,6 +42,53 @@ namespace Debug {
 
  void sendHeader();
  void sendEnd();
+ 
+ class Printer {
+ public:
+  enum class Special : u1 {Start, End};
+  
+  inline Printer& operator<< (const Special s) {
+   if (s == Special::Start) {
+    Debug::sendHeader();
+   } else if (s == Special::End) {
+    Debug::sendEnd();
+   }
+   return *this;
+  }
+  
+  inline Printer& operator<< (const u1 b) {
+   Debug::reportU1(b);
+   return *this;
+  }
+
+  inline Printer& operator<< (const u2 w) {
+   Debug::reportU2(w);
+   return *this;
+  }
+
+  inline Printer& operator<< (const u4 l) {
+   Debug::reportU4(l);
+   return *this;
+  }
+  
+  inline Printer& operator<< (const s1 b) {
+   Debug::reportS1(b);
+   return *this;
+  }
+
+  inline Printer& operator<< (const s2 w) {
+   Debug::reportS2(w);
+   return *this;
+  }
+
+  inline Printer& operator<< (const s4 l) {
+   Debug::reportS4(l);
+   return *this;
+  }
+  
+ };
+ 
+ extern Printer SOUT;
 };
 
 #endif	/* DEBUG_H */
