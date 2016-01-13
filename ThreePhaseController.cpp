@@ -280,7 +280,7 @@ void ThreePhaseController::updateDriver() {
  // Calculate the velocity from the magnetic data
  const s2 magVelocity = magPha - lastMagPha;
  
- const s2 scaledDriveVelocity = driveVelocity * cyclesPWMPerMLX >> drivePhaseValueShift;
+ const s2 scaledDriveVelocity = (s4(driveVelocity) * cyclesPWMPerMLX) >> drivePhaseValueShift;
  
  // Adjust the driveVelocity to match what the magnetometer things it is
  if (magVelocity > scaledDriveVelocity) {
