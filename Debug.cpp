@@ -10,7 +10,7 @@
 #include <avr/io.h>
 #include <util/crc16.h>
 
-IOpin & Debug::LED = Board::LED;
+IOpin& Debug::LED = Board::LED;
 
 static u1 CRC;
 
