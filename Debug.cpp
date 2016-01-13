@@ -8,13 +8,14 @@
 #include "Debug.h"
 #include "Clock.h"
 #include <avr/io.h>
-#include <util/crc16.h>
+
+#include "CRC8.h"
 
 IOpin& Debug::LED = Board::LED;
 
 Debug::Printer Debug::SOUT;
 
-static u1 CRC;
+static CRC8 CRC;
 
 void Debug::init() {
  LED.output();
@@ -49,7 +50,7 @@ u1 nibToHex(u1 const nib) {
 }
 
 void Debug::reportU1(const u1 b) {
- CRC = _crc8_ccitt_update(CRC, b);
+ CRC << b;
  sendByte(b);
 }
 
@@ -65,9 +66,9 @@ void Debug::sendHeader() {
  sendByte(0xff);
  sendByte(0xff);
  sendByte(0xff);
- CRC = 0xff;
+ CRC.reset();
 }
 
 void Debug::sendEnd() {
- sendByte(CRC);
+ sendByte(CRC.getCRC());
 }
