@@ -62,7 +62,7 @@ void main() {
  
  u1 print = 0;
  
- s2 torque = 20;
+ s2 torque = 0;
  
  ThreePhaseController::setTorque(torque);
  
