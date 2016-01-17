@@ -29,11 +29,14 @@ void ThreePhaseController::isr() {
  
  auto ph = drivePhase;
  ph += driveVelocity;
- if (ph > (ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift)) {
+ 
+ const u4 MAX = ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift;
+ 
+ if (ph > MAX) {
   if (driveVelocity > 0)
-   ph -= (ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift);
+   ph -= MAX;
   else
-   ph += (ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift);
+   ph += MAX;
  }
  drivePhase = ph;
  
