@@ -40,7 +40,7 @@ public:
  static u2 constexpr StepsPerPhase = 256;
  
  /**
-  * One for each of A, B and C.
+  * One for each of A, B, and C.
   */
  static u1 constexpr PhasesPerCycle = 3;
  
