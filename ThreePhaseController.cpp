@@ -269,32 +269,34 @@ void ThreePhaseController::updateDriver() {
  auto const magPha = lookupAlphaToPhase(alpha);
  
  u2 drivePha;
- 
+  
  ATOMIC_BLOCK(ATOMIC_FORCEON) {
   drivePha = drivePhase >> drivePhaseValueShift;
  }
+ 
+ auto localDriveVelocity = driveVelocity;
 
  Debug::SOUT
          << Debug::Printer::Special::Start
          << magPha
          << drivePha
-         << driveVelocity
+         << localDriveVelocity
          << Debug::Printer::Special::End;
  
  // Calculate the velocity from the magnetic data
  const s2 magVelocity = magPha - lastMagPha;
  
- const s2 scaledDriveVelocity = (s4(driveVelocity) * cyclesPWMPerMLX) >> drivePhaseValueShift;
+ const s2 scaledDriveVelocity = (s4(localDriveVelocity) * cyclesPWMPerMLX) >> drivePhaseValueShift;
  
  // Adjust the driveVelocity to match what the magnetometer things it is
  if (magVelocity > scaledDriveVelocity) {
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
-   driveVelocity++;
-  }
+  localDriveVelocity++;
  } else if (magVelocity < scaledDriveVelocity) {
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
-   driveVelocity--;
-  }
+  localDriveVelocity--;
+ }
+ 
+ ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  driveVelocity = localDriveVelocity;
  }
  
  // Save the most recent magnetic position
