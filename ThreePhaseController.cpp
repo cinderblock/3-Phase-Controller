@@ -297,6 +297,7 @@ void ThreePhaseController::updateDriver() {
  
  ATOMIC_BLOCK(ATOMIC_FORCEON) {
   driveVelocity = localDriveVelocity;
+  drivePhase = u4(magPha) << drivePhaseValueShift;
  }
  
  // Save the most recent magnetic position
