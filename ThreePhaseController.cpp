@@ -288,7 +288,7 @@ void ThreePhaseController::updateDriver() {
  
  const s2 scaledDriveVelocity = (s4(localDriveVelocity) * cyclesPWMPerMLX) >> drivePhaseValueShift;
  
- // Adjust the driveVelocity to match what the magnetometer things it is
+ // Adjust the driveVelocity to match what the magnetometer thinks it is
  if (magVelocity > scaledDriveVelocity) {
   localDriveVelocity++;
  } else if (magVelocity < scaledDriveVelocity) {
