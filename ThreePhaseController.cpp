@@ -49,7 +49,29 @@ void ThreePhaseController::isr() {
  // Adjust output for velocity lag
  ph += driveVelocity * driveVelocityPhaseAdvance;
  
- ThreePhaseDriver::advanceTo(ph >> drivePhaseValueShift);
+  // Check if ph(ase) value is out of range again
+ if (ph > MAX) {
+  // Fix it
+  if (forward) ph -= MAX;
+  else         ph += MAX;
+ }
+ 
+ // Scale phase to output range
+ u2 outputPhase = ph >> drivePhaseValueShift;
+ 
+ // Offset from current angle by 90deg for max torque
+ if (forward) outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
+ else         outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
+ 
+ // Fix outputPhase range
+ if (outputPhase > ThreePhaseDriver::StepsPerCycle) {
+  // Fix it
+  if (forward) outputPhase -= ThreePhaseDriver::StepsPerCycle;
+  else         outputPhase += ThreePhaseDriver::StepsPerCycle;
+ }
+ 
+ // Update driver outputs
+ ThreePhaseDriver::advanceTo(outputPhase);
  
  // Don't continue if we're not done counting down
  if (--mlx)
