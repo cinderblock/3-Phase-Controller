@@ -34,6 +34,7 @@ void ThreePhaseController::isr() {
  
  const u4 MAX = ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift;
  
+ // Check if ph(ase) value is out of range
  if (ph > MAX) {
   // Fix it
   if (forward)
@@ -41,8 +42,11 @@ void ThreePhaseController::isr() {
   else
    ph += MAX;
  }
+ 
+ // Store new drivePhase
  drivePhase = ph;
  
+ // Adjust output for velocity lag
  ph += driveVelocity * driveVelocityPhaseAdvance;
  
  ThreePhaseDriver::advanceTo(ph >> drivePhaseValueShift);
