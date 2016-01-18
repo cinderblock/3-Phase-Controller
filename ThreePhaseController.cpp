@@ -30,10 +30,13 @@ void ThreePhaseController::isr() {
  auto ph = drivePhase;
  ph += driveVelocity;
  
+ const bool forward = driveVelocity > 0;
+ 
  const u4 MAX = ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift;
  
  if (ph > MAX) {
-  if (driveVelocity > 0)
+  // Fix it
+  if (forward)
    ph -= MAX;
   else
    ph += MAX;
