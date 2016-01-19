@@ -36,7 +36,7 @@ class ThreePhaseController {
   */
  static constexpr u1 cyclesPWMPerMLX = 40;
  
- static bool isForward;
+ static bool isForwardTorque;
  
  /**
   * 90 degree phase shift

@@ -17,7 +17,7 @@
 u4 ThreePhaseController::drivePhase;
 u2 ThreePhaseController::lastMagPha;
 s2 ThreePhaseController::driveVelocity;
-bool ThreePhaseController::isForward;
+bool ThreePhaseController::isForwardTorque;
 u1 ThreePhaseController::magRoll;
 
 void TIMER4_OVF_vect() {
@@ -60,14 +60,14 @@ void ThreePhaseController::isr() {
  u2 outputPhase = ph >> drivePhaseValueShift;
  
  // Offset from current angle by 90deg for max torque
- if (forward) outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
- else         outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
+ if (isForwardTorque) outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
+ else                 outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
  
  // Fix outputPhase range
  if (outputPhase > ThreePhaseDriver::StepsPerCycle) {
   // Fix it
-  if (forward) outputPhase -= ThreePhaseDriver::StepsPerCycle;
-  else         outputPhase += ThreePhaseDriver::StepsPerCycle;
+  if (isForwardTorque) outputPhase -= ThreePhaseDriver::StepsPerCycle;
+  else                 outputPhase += ThreePhaseDriver::StepsPerCycle;
  }
  
  // Update driver outputs
@@ -286,7 +286,7 @@ void ThreePhaseController::init() {
 }
 
 void ThreePhaseController::setTorque(const Torque t) {
- isForward = t.forward;
+ isForwardTorque = t.forward;
  ThreePhaseDriver::setAmplitude(t.amplitude);
 }
 
