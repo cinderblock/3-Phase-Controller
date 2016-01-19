@@ -60,8 +60,8 @@ public:
  
  static void updateDriver();
  
- inline static s2 getPosition() {return drivePhase;}
- inline static s1 getVelocity() {return driveVelocity;}
+ inline static u4 getPosition() {return drivePhase;}
+ inline static s2 getVelocity() {return driveVelocity;}
 
 };
 
