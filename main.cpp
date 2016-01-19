@@ -72,7 +72,7 @@ void main() {
  
  auto lastV = ThreePhaseController::getVelocity();
  
- while (1) {
+ while (0) {
   ThreePhaseController::updateDriver();
   Clock::readTime(now);
   
@@ -87,14 +87,16 @@ void main() {
   torque += step;
   
   ThreePhaseController::setTorque(torque);
-  
-  continue;
+ }
+ 
+ while (1) {
+  while (!ThreePhaseController::updateDriver());
   
   auto v = ThreePhaseController::getVelocity();
   if (v == lastV) continue;
   lastV = v;
   
-  if (v > 20) torque--; else if (v < 15) torque++;
+  if (v > 400) torque--; else if (v < 390) torque++;
   if (torque >  maxTorque) torque =  maxTorque;
   if (torque < -maxTorque) torque = -maxTorque;
   ThreePhaseController::setTorque(torque);
