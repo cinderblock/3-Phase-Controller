@@ -49,7 +49,7 @@ void main() {
  u2 pos = 0;
  
  Clock::MicroTime t(0);
- Clock::MicroTime delta(1);
+ Clock::MicroTime delta = 25_ms;
  Clock::MicroTime now;
  
  while (0) {
@@ -62,7 +62,11 @@ void main() {
  
  u1 print = 0;
  
- s2 torque = 0;
+ s2 torque = 0; 
+ 
+ u1 const maxTorque = 40;
+ 
+ s1 step = 1;
  
  ThreePhaseController::setTorque(torque);
  
@@ -70,6 +74,19 @@ void main() {
  
  while (1) {
   ThreePhaseController::updateDriver();
+  Clock::readTime(now);
+  
+  if (t > now) continue;
+  
+  t += delta;
+  
+  if (step > 0) {
+   if (torque >= maxTorque) step = -1;
+  } else if (torque <= -maxTorque) step = 1;
+  
+  torque += step;
+  
+  ThreePhaseController::setTorque(torque);
   
   continue;
   
@@ -78,8 +95,8 @@ void main() {
   lastV = v;
   
   if (v > 20) torque--; else if (v < 15) torque++;
-  if (torque >  20) torque =  20;
-  if (torque < -20) torque = -20;
+  if (torque >  maxTorque) torque =  maxTorque;
+  if (torque < -maxTorque) torque = -maxTorque;
   ThreePhaseController::setTorque(torque);
  }
  
