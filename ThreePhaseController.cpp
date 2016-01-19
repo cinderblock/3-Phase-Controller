@@ -290,8 +290,8 @@ void ThreePhaseController::setTorque(const Torque t) {
  ThreePhaseDriver::setAmplitude(t.amplitude);
 }
 
-void ThreePhaseController::updateDriver() {
- if (!MLX90363::hasNewData(magRoll)) return;
+bool ThreePhaseController::updateDriver() {
+ if (!MLX90363::hasNewData(magRoll)) return false;
  
  // We can always grab the latest Alpha value safely here
  auto const alpha = MLX90363::getAlpha();
@@ -331,4 +331,6 @@ void ThreePhaseController::updateDriver() {
  
  // Save the most recent magnetic position
  lastMagPha = magPha;
+ 
+ return true;
 }

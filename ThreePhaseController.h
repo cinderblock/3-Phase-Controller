@@ -58,7 +58,7 @@ public:
  
  static void setTorque(const Torque t);
  
- static void updateDriver();
+ static bool updateDriver();
  
  inline static u4 getPosition() {return drivePhase;}
  inline static s2 getVelocity() {return driveVelocity;}
