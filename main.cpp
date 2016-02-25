@@ -103,7 +103,7 @@ void main() {
  }
  
  ThreePhaseDriver::setAmplitude(10);
- ThreePhaseDriver::advanceTo(0);
+ ThreePhaseDriver::advanceToFullSine(0);
  
  while (1);
  
@@ -117,7 +117,7 @@ void main() {
    Debug::reportU2(pos);
   }
   
-  ThreePhaseDriver::advanceTo(pos);
+  ThreePhaseDriver::advanceToFullSine(pos);
   
   if (!print) {
    Debug::reportU2(MLX90363::getAlpha());

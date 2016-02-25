@@ -46,6 +46,8 @@ class ThreePhaseController {
 public:
  static void init();
  
+ static volatile bool squareOutput;
+ 
  class Torque {
   bool forward;
   u1 amplitude;

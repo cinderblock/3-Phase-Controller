@@ -66,7 +66,8 @@ public:
   * Version of advanceTo() that takes a single u2 between 0 and 0x2ff inclusive
   * @param step
   */
- inline static void advanceTo(u2 const step) {advanceToFullSine((Phase)(step >> 8), step);}
+ inline static void advanceToFullSine  (u2 const step) {advanceToFullSine  ((Phase)(step >> 8), step);}
+ inline static void advanceToFullSquare(u2 const step) {advanceToFullSquare((Phase)(step >> 8), step);}
  
  /**
   * Advance the pwm outputs to a new commutation
@@ -74,7 +75,8 @@ public:
   * @param phase
   * @param step
   */
- static void advanceToFullSine(Phase const phase, u1 const step);
+ static void advanceToFullSine  (Phase const phase, u1 const step);
+ static void advanceToFullSquare(Phase const phase, u1 const step);
  
  static constexpr u1 maxAmplitude = 0xff - 30;
  

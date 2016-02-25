@@ -20,6 +20,8 @@ s2 ThreePhaseController::driveVelocity;
 bool ThreePhaseController::isForwardTorque;
 u1 ThreePhaseController::magRoll;
 
+volatile bool ThreePhaseController::squareOutput = false;
+
 void TIMER4_OVF_vect() {
  ThreePhaseController::isr();
 }
@@ -71,7 +73,10 @@ void ThreePhaseController::isr() {
  }
  
  // Update driver outputs
- ThreePhaseDriver::advanceTo(outputPhase);
+ if (squareOutput)
+  ThreePhaseDriver::advanceToFullSquare(outputPhase);
+ else
+  ThreePhaseDriver::advanceToFullSine(outputPhase);
  
  // Don't continue if we're not done counting down
  if (--mlx)

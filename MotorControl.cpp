@@ -55,7 +55,7 @@ void MotorControl::goDistance(s4 distance){
     if (nextVal > 0x2FF) nextVal -= 0x300;
     else if (nextVal < 0) nextVal += 0x300;
     
-    ThreePhaseDriver::advanceTo(nextVal);
+    ThreePhaseDriver::advanceToFullSine(nextVal);
     lastStep = nextVal;
 }
 
@@ -80,7 +80,7 @@ void MotorControl::advance(){
 
             timeLastStep = currTime;
             lastStep = nextStep;
-            ThreePhaseDriver::advanceTo(nextStep);
+            ThreePhaseDriver::advanceToFullSine(nextStep);
         }
     }
 }

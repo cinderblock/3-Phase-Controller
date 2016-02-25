@@ -156,7 +156,7 @@ u2 ThreePhaseDriver::getPhasePWM(const u1 step) {
 
 void ThreePhaseDriver::advance() {
  static u2 step = 0;
- advanceTo(step);
+ advanceToFullSine(step);
  if (++step == 0x300) step = 0;
 }
 
@@ -180,6 +180,40 @@ inline static void setCompareMatchC(u2 const val) {
 void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
  u2 const ONE = MAX - getPhasePWM(    step);
  u2 const TWO = MAX - getPhasePWM(255-step);
+ u2 const OFF = MAX;
+ 
+ setUpdateLock(true);
+ 
+ if (phase == Phase::A) {
+  setCompareMatchA(OFF);
+  setCompareMatchB(TWO);
+  setCompareMatchC(ONE);
+ } else if (phase == Phase::B) {
+  setCompareMatchA(ONE);
+  setCompareMatchB(OFF);
+  setCompareMatchC(TWO);
+ } else if (phase == Phase::C) {
+  setCompareMatchA(TWO);
+  setCompareMatchB(ONE);
+  setCompareMatchC(OFF);
+ } else {
+  // Should not get here. bad phase...
+  
+  setCompareMatchA(0);
+  setCompareMatchB(0);
+  setCompareMatchC(0);
+  return;
+ }
+ 
+ setUpdateLock(false);
+
+ // Save current phase
+ currentPhase = phase;
+}
+
+void ThreePhaseDriver::advanceToFullSquare(const Phase phase, const u1 step) {
+ u2 const ONE = MAX - (getPhasePWM(    step) > 5 ? amplitude : 0);
+ u2 const TWO = MAX - (getPhasePWM(255-step) > 5 ? amplitude : 0);
  u2 const OFF = MAX;
  
  setUpdateLock(true);
