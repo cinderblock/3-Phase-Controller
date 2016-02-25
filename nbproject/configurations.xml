@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="95">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="f1"
+                   displayName="Generated Assembly Files"
+                   projectFiles="true">
+      <itemPath>.bld/MLX90363.cpp.S</itemPath>
+      <itemPath>.bld/TwillBotInterface.cpp.S</itemPath>
+      <itemPath>.bld/test.cpp.S</itemPath>
+    </logicalFolder>
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>AVRClock.h</itemPath>
+      <itemPath>Board.h</itemPath>
+      <itemPath>CRC8.h</itemPath>
+      <itemPath>Clock.h</itemPath>
+      <itemPath>Config.h</itemPath>
+      <itemPath>Debug.h</itemPath>
+      <itemPath>MLX90363.h</itemPath>
+      <itemPath>MotorControl.h</itemPath>
+      <itemPath>ThreePhaseController.h</itemPath>
+      <itemPath>ThreePhaseDriver.h</itemPath>
+      <itemPath>Timer.h</itemPath>
+      <itemPath>TripleBuffer.h</itemPath>
+      <itemPath>TwillBotInterface.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>Board.cpp</itemPath>
+      <itemPath>CRC8.cpp</itemPath>
+      <itemPath>Clock.cpp</itemPath>
+      <itemPath>Debug.cpp</itemPath>
+      <itemPath>MLX90363.cpp</itemPath>
+      <itemPath>MotorControl.cpp</itemPath>
+      <itemPath>ThreePhaseController.cpp</itemPath>
+      <itemPath>ThreePhaseDriver.cpp</itemPath>
+      <itemPath>Timer.cpp</itemPath>
+      <itemPath>TripleBuffer-impl.cpp</itemPath>
+      <itemPath>TripleBuffer.cpp</itemPath>
+      <itemPath>TwillBotInterface.cpp</itemPath>
+      <itemPath>main.cpp</itemPath>
+      <itemPath>test.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+      <itemPath>local.mk</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Development" type="1">
+      <toolsSet>
+        <compilerSet>GNU_AVR-4.9.2|WinAVR</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <standard>10</standard>
+          <preprocessorList>
+            <Elem>F_CPU=16000000UL</Elem>
+            <Elem>__AVR_ATmega32U4__</Elem>
+          </preprocessorList>
+        </cTool>
+        <ccTool>
+          <standard>8</standard>
+          <incDir>
+            <pElem>AVR++</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>F_CPU=16000000UL</Elem>
+            <Elem>__AVR_ATmega32U4__</Elem>
+          </preprocessorList>
+        </ccTool>
+      </compileType>
+      <item path=".bld/MLX90363.cpp.S" ex="false" tool="4" flavor2="0">
+      </item>
+      <item path=".bld/TwillBotInterface.cpp.S" ex="false" tool="4" flavor2="0">
+      </item>
+      <item path=".bld/test.cpp.S" ex="false" tool="4" flavor2="0">
+      </item>
+      <item path="AVRClock.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Board.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Board.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="CRC8.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CRC8.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Clock.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Clock.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Debug.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Debug.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MLX90363.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MLX90363.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MotorControl.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MotorControl.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ThreePhaseController.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ThreePhaseController.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ThreePhaseDriver.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ThreePhaseDriver.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Timer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Timer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TripleBuffer-impl.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TripleBuffer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TripleBuffer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TwillBotInterface.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TwillBotInterface.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
