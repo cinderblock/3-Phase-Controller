@@ -7,6 +7,7 @@
 
 #include <util/delay.h>
 #include <avr/wdt.h>
+#include <avr/eeprom.h>
 #include "Board.h"
 
 #include "ThreePhaseController.h"
@@ -41,10 +42,15 @@ void init() {
  Board::LED.off();
 }
 
+constexpr uint8_t * const modeLocation = 0;
+
 /*
  * 
  */
 void main() {
+ u1 mode = eeprom_read_byte(modeLocation);
+ if (++mode > 2) mode = 0;
+ eeprom_write_byte(modeLocation, mode);
  
  u2 pos = 0;
  
