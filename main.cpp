@@ -74,6 +74,16 @@ void main() {
  
  s1 step = 1;
  
+ if (mode == 0) {
+  torque = 2;
+ } else if (mode == 1) {
+  torque = 20;
+ } else if (mode == 2) {
+  torque = 40;
+  ThreePhaseController::squareOutput = true;
+  Board::LED.on();
+ }
+ 
  ThreePhaseController::setTorque(torque);
  
  auto lastV = ThreePhaseController::getVelocity();
