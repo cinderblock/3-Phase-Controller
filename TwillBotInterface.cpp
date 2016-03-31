@@ -65,7 +65,7 @@ void TwillBotInterface::handleNextI2CByte() {
   incomingBuffer.getWriteBuffer()[bufferIndex++] = *DR;
   
   // ACK until we can only fit one more byte
-  if (bufferIndex < incomingBufferSize - 1)
+  if (bufferIndex < incomingBufferSize)
    ack = true;
  }
  
