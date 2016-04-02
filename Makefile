@@ -10,7 +10,7 @@ C =
 # List of CPP file basenames to build
 CPP = main Board MLX90363 ThreePhaseDriver MotorControl Debug Timer Clock ThreePhaseController
 
-CPP += TwillBotInterface TripleBuffer-impl CRC8
+CPP += TwillBotInterface TripleBuffer-impl CRC8 TimerTimeout
 
 # Select specific LUFA source files to compile like this
 #LUFA_SRC = LUFA/Drivers/USB/Class/Common/HIDParser.c

@@ -11,15 +11,20 @@
 #include <avr/interrupt.h>
 #include "Config.h"
 #include "TripleBuffer.h"
+#include "TimerTimeout.h"
 
 ISR(TWI_vect);
+ISR(TIMER0_COMPB_vect);
 
 class TwillBotInterface {
  static constexpr b7 address = Config::i2cSlaveAddress;
  static constexpr bool generalCallEnable = false;
  friend void TWI_vect();
- inline static void unblockInterrupts();
+ friend void TIMER0_COMPB_vect();
+ inline static void InterruptServiceRoutine();
  inline static void handleNextI2CByte();
+ 
+ static constexpr TimerTimeout::Period timeoutPeriod = 10.0_ms;
  
  static constexpr u1 incomingBufferSize = Config::i2cBufferIncomingSize;
  static constexpr u1 outgoingBufferSize = Config::i2cBufferOutgoingSize;
@@ -43,6 +48,8 @@ class TwillBotInterface {
   * the buffer's state only on the writing side.
   */ 
  static TripleBuffer<outgoingBufferSize, false> outgoingBuffer;
+ 
+ inline static void timeout();
 public:
  
  /**
