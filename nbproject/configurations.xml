@@ -65,7 +65,7 @@
   <confs>
     <conf name="Development" type="1">
       <toolsSet>
-        <compilerSet>GNU_AVR-4.9.2|WinAVR</compilerSet>
+        <compilerSet>avr-gcc-4.9.2|WinAVR</compilerSet>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
