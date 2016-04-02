@@ -6,6 +6,7 @@
  */
 
 #include <AVR++/I2C.h>
+#include <util/delay.h>
 
 #include "TwillBotInterface.h"
 #include "Board.h"
@@ -131,9 +132,13 @@ void TwillBotInterface::handleNextI2CByte() {
    // We don't have a block ready to send. Don't ACK and send a 0.
    *DR = 0;
   }
+
+  _delay_us(rPiI2CClockStrechUS);
  }
  
  if (s == Status::SlaveDataTransmittedAcked) {
+  _delay_us(rPiI2CClockStrechUS);
+
   // We told the AVR hardware to send a byte and we received an ACK as expected
   *DR = outgoingBuffer.getReadBuffer()[bufferIndex++];
   if (bufferIndex < outgoingBufferSize)

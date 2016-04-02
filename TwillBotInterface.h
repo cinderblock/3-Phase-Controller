@@ -26,6 +26,8 @@ class TwillBotInterface {
  
  static constexpr TimerTimeout::Period timeoutPeriod = 10.0_ms;
  
+ static constexpr u1 rPiI2CClockStrechUS = 2;
+ 
  static constexpr u1 incomingBufferSize = Config::i2cBufferIncomingSize;
  static constexpr u1 outgoingBufferSize = Config::i2cBufferOutgoingSize;
 
