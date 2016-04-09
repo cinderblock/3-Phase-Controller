@@ -28,6 +28,8 @@ class ThreePhaseController {
  static constexpr u1 driveVelocityPhaseAdvance = 1;
 
  static u1 magRoll;
+
+ static const u1 MaxTorque = 40;
  
  /**
   * Number of cycles the PWM timer makes per measurement ready from MLX.
@@ -45,7 +47,7 @@ class ThreePhaseController {
  
 public:
  static void init();
- 
+
  class Torque {
   bool forward;
   u1 amplitude;
@@ -62,6 +64,8 @@ public:
  
  inline static u4 getPosition() {return drivePhase;}
  inline static s2 getVelocity() {return driveVelocity;}
+
+ inline static constexpr u1 getMaxTorque(){return MaxTorque;};
 
 };
 

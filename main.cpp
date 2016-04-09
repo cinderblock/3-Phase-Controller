@@ -15,6 +15,7 @@
 #include "MotorControl.h"
 #include "Debug.h"
 #include "Clock.h"
+#include "Interpreter.h"
 
 /**
  * All the init functions should go in here.
@@ -52,15 +53,7 @@ void main() {
  Clock::MicroTime delta = 25_ms;
  Clock::MicroTime now;
  
- u1 print = 0;
- 
- s2 torque = 0; 
- 
- u1 const maxTorque = 40;
- 
- s1 step = 1;
- 
- ThreePhaseController::setTorque(torque);
+ ThreePhaseController::setTorque(0);
  
  auto lastV = ThreePhaseController::getVelocity();
  
@@ -69,20 +62,11 @@ void main() {
 
   if(TwillBotInterface::hasReceivedBlock()){
     TwillBotInterface::reserveNextReadBuffer();
-    
-    u1* incoming = TwillBotInterface::getIncomingReadBuffer();
-    if(incoming[0] == 0x20){
-      torque = *((s2*)(incoming+1));
-      
-      if(torque > maxTorque)
-        torque = maxTorque;
-      else if ( torque < -maxTorque)
-        torque = -maxTorque;
 
-      ThreePhaseController::setTorque(torque);
-    }
+    Interpreter::interpretFromMaster(TwillBotInterface::getIncomingReadBuffer());
   }
-
+  
+  Interpreter::sendNormalDataToMaster();
  }
 
  while(1);
