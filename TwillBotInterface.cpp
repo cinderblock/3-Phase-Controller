@@ -6,6 +6,7 @@
  */
 
 #include <AVR++/I2C.h>
+#include <util/delay.h>
 
 #include "TwillBotInterface.h"
 #include "Board.h"
@@ -20,11 +21,17 @@ u1 TwillBotInterface::bufferIndex;
 bool TwillBotInterface::generalCall;
 
 void TWI_vect() {
-// TwillBotInterface::unblockInterrupts();
- TwillBotInterface::handleNextI2CByte();
+ TwillBotInterface::InterruptServiceRoutine();
 }
 
+void TIMER0_COMPB_vect() {
+ TwillBotInterface::timeout();
+}
+
+
 void TwillBotInterface::init() {
+ TimerTimeout::init();
+
  AR->byte = (address << 1) | generalCallEnable;
  *AMR = 0;
 
@@ -36,12 +43,22 @@ void TwillBotInterface::init() {
          1 << TWINT;
 }
 
-void TwillBotInterface::unblockInterrupts() {
+void TwillBotInterface::timeout() {
+ Board::LED.on();
+ TimerTimeout::stopBISR();
+}
+
+void TwillBotInterface::InterruptServiceRoutine() {
  // Turn off the TWI interrupt
  CR->byte = 1 << TWEN;
  
  // Enable global interrupts
  sei();
+ 
+ TimerTimeout::stopBISR();
+ Board::LED.off();
+ 
+ TwillBotInterface::handleNextI2CByte();
 }
 
 void TwillBotInterface::handleNextI2CByte() {
@@ -115,9 +132,13 @@ void TwillBotInterface::handleNextI2CByte() {
    // We don't have a block ready to send. Don't ACK and send a 0.
    *DR = 0;
   }
+
+  _delay_us(rPiI2CClockStrechUS);
  }
  
  if (s == Status::SlaveDataTransmittedAcked) {
+  _delay_us(rPiI2CClockStrechUS);
+
   // We told the AVR hardware to send a byte and we received an ACK as expected
   *DR = outgoingBuffer.getReadBuffer()[bufferIndex++];
   if (bufferIndex < outgoingBufferSize)
@@ -156,4 +177,6 @@ void TwillBotInterface::handleNextI2CByte() {
          0 << TWEA |
          1 << TWINT
          );
+ 
+ TimerTimeout::startB(timeoutPeriod);
 }
