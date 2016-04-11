@@ -10,7 +10,7 @@ class Interpreter{
 	static u1 getCRC(u1 const * const, u1);
 
 public:
-	static void interpretFromMaster(u1*);
+	static void interpretFromMaster(u1 const * const);
 
 	static void sendNormalDataToMaster();
 };

@@ -3,7 +3,7 @@
 #include "Config.h"
 #include "ThreePhaseController.h"
 
-void Interpreter::interpretFromMaster(u1* incomingData){
+void Interpreter::interpretFromMaster(u1 const * const incomingData){
 	if (checkCRC(incomingData)){
 		return;
 	}
@@ -17,6 +17,20 @@ void Interpreter::interpretFromMaster(u1* incomingData){
 			torque = -ThreePhaseController::getMaxTorque();
 
 		ThreePhaseController::setTorque(torque);
+	}
+
+
+	if(incomingData[0] == 0x88){
+		//Start Streaming
+		if (incomingData[1] == 0xF0){
+
+		}
+		//Stop Streaming
+		else{
+			incomingData[2] == 0x0F){
+				
+			}
+		}
 	}
 }
 
