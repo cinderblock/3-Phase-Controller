@@ -9,9 +9,9 @@
 #include <avr/wdt.h>
 #include "Board.h"
 
-#include "ThreePhaseController.h"
 #include "MLX90363.h"
 #include "TwillBotInterface.h"
+#include "ThreePhaseCalibrator.h"
 #include "Debug.h"
 #include "Clock.h"
 #include "Interpreter.h"
@@ -32,8 +32,7 @@ void init() {
  ::Clock::init();
  
  TwillBotInterface::init();
- 
- ThreePhaseController::init();
+ ThreePhaseCalibrator::init();
  
  // End of init
  Board::LED.off();
@@ -50,12 +49,7 @@ void main() {
  Clock::MicroTime delta = 25_ms;
  Clock::MicroTime now;
  
- ThreePhaseController::setTorque(0);
- 
- auto lastV = ThreePhaseController::getVelocity();
- 
  while(1){
-  ThreePhaseController::updateDriver();
 
   if(TwillBotInterface::hasReceivedBlock()){
     TwillBotInterface::reserveNextReadBuffer();

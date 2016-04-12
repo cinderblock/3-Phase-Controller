@@ -1,33 +1,23 @@
 
 #include "Interpreter.h"
 #include "Config.h"
-#include "ThreePhaseController.h"
-// #include "MotorControl.h"
+#include "ThreePhaseCalibrator.h"
 #include "MLX90363.h"
 #include "TwillBotInterface.h"
 
-bool Interpreter::streaming = false;
+bool Interpreter::streaming = true;
 
 void Interpreter::interpretFromMaster(u1 const * const incomingData){
 	if (checkCRC(incomingData)){
 		return;
 	}
 
-	if (incomingData[0] == 0x20){
-		s2 torque = *((s2*)(incomingData+1));
-		
-		if(torque > ThreePhaseController::getMaxTorque())
-			torque = ThreePhaseController::getMaxTorque();
-		else if ( torque < -ThreePhaseController::getMaxTorque())
-			torque = -ThreePhaseController::getMaxTorque();
-
-		ThreePhaseController::setTorque(torque);
+	if (incomingData[0] == 0x10) {
+		ThreePhaseCalibrator::goTo(*((u2*)(incomingData+1)));
 	}
 
-	if (incomingData[0] == 0x10) {
-		s4 go = *((s4*)(incomingData+1));
-
-
+	if (incomingData[0] == 0x30) {
+		ThreePhaseCalibrator::advance();
 	}
 
 	if (incomingData[0] == 0x88){
@@ -51,7 +41,7 @@ void Interpreter::sendNormalDataToMaster(){
 	u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
 
 	buff[0] = MLX90363::getAlpha();
-	buff[1] = 0;
+	buff[1] = ThreePhaseCalibrator::getPhasePos();
 	buff[2] = MLX90363::getRoll();
 	buff[3] = MLX90363::getErr();
 	buff[4] = 0;
