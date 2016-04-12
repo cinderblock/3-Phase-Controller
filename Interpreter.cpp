@@ -27,7 +27,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 	if (incomingData[0] == 0x10) {
 		s4 go = *((s4*)(incomingData+1));
 
-		
+
 	}
 
 	if (incomingData[0] == 0x88){
@@ -51,10 +51,10 @@ void Interpreter::sendNormalDataToMaster(){
 	u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
 
 	buff[0] = MLX90363::getAlpha();
-	buff[1] = MotorControl::getTimer();
+	buff[1] = 0;
 	buff[2] = MLX90363::getRoll();
 	buff[3] = MLX90363::getErr();
-	buff[4] = MotorControl::getStep();
+	buff[4] = 0;
 	
 	TwillBotInterface::getOutgoingWriteBuffer()[Config::i2cBufferOutgoingSize-1] = getCRC(TwillBotInterface::getOutgoingWriteBuffer(), Config::i2cBufferOutgoingSize-1);
 

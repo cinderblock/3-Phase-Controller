@@ -12,7 +12,6 @@
 #include "ThreePhaseController.h"
 #include "MLX90363.h"
 #include "TwillBotInterface.h"
-#include "MotorControl.h"
 #include "Debug.h"
 #include "Clock.h"
 #include "Interpreter.h"
@@ -35,8 +34,6 @@ void init() {
  TwillBotInterface::init();
  
  ThreePhaseController::init();
- 
- MotorControl::init();
  
  // End of init
  Board::LED.off();
