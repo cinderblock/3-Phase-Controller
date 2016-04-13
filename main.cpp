@@ -12,7 +12,6 @@
 #include "MLX90363.h"
 #include "TwillBotInterface.h"
 #include "ThreePhaseCalibrator.h"
-#include "Debug.h"
 #include "Clock.h"
 #include "Interpreter.h"
 
@@ -25,7 +24,7 @@ void init() __attribute__((constructor));
 void init() {
  wdt_reset();
  wdt_disable();
- Debug::init();
+ // Debug::init();
 
  sei();
  
@@ -48,6 +47,10 @@ void main() {
  Clock::MicroTime t(0);
  Clock::MicroTime delta = 25_ms;
  Clock::MicroTime now;
+ 
+ // TwillBotInterface::releaseNextWriteBuffer();
+
+ TwillBotInterface::reserveNextReadBuffer();
  
  while(1){
 

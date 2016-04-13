@@ -11,16 +11,17 @@ void ThreePhaseCalibrator::init(){
 	ThreePhaseDriver::init();
 	position = 0;
 
-	ThreePhaseDriver::setAmplitude(0);
-
+	ThreePhaseDriver::setAmplitude(10);
 	MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
 
 
-	magRoll = MLX90363::getRoll();
+
+	// magRoll = MLX90363::getRoll();
+	
+	// MLX90363::startTransmitting();
 
 	// Get two new readings to get started
-	while (!MLX90363::hasNewData(magRoll));
-	while (!MLX90363::hasNewData(magRoll));
+	// while (!MLX90363::hasNewData(magRoll));
 
 
 }
@@ -30,6 +31,8 @@ void ThreePhaseCalibrator::goTo(u2 pos){
 		position = pos;
 	else
 		position = MAX;
+
+	ThreePhaseDriver::advanceTo(position);
 }
 
 void ThreePhaseCalibrator::advance(){
@@ -37,5 +40,7 @@ void ThreePhaseCalibrator::advance(){
 	if (++position > MAX){
 		position = 0;
 	}
+
+	ThreePhaseDriver::advanceTo(position);
 
 }

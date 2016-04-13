@@ -44,7 +44,7 @@ void TwillBotInterface::init() {
 }
 
 void TwillBotInterface::timeout() {
- Board::LED.on();
+ // Board::LED.on();
  TimerTimeout::stopBISR();
 }
 
@@ -56,7 +56,7 @@ void TwillBotInterface::InterruptServiceRoutine() {
  sei();
  
  TimerTimeout::stopBISR();
- Board::LED.off();
+ // Board::LED.off();
  
  TwillBotInterface::handleNextI2CByte();
 }

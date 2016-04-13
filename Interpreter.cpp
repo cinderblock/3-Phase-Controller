@@ -4,8 +4,9 @@
 #include "ThreePhaseCalibrator.h"
 #include "MLX90363.h"
 #include "TwillBotInterface.h"
+#include "ThreePhaseDriver.h"
 
-bool Interpreter::streaming = true;
+bool Interpreter::streaming = false;
 
 void Interpreter::interpretFromMaster(u1 const * const incomingData){
 	if (checkCRC(incomingData)){
@@ -18,6 +19,10 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 
 	if (incomingData[0] == 0x30) {
 		ThreePhaseCalibrator::advance();
+	}
+
+	if (incomingData[0] == 0x40){
+		ThreePhaseDriver::setAmplitude(incomingData[1]);
 	}
 
 	if (incomingData[0] == 0x88){
@@ -35,8 +40,10 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 void Interpreter::sendNormalDataToMaster(){
 	if (!streaming) return;
 
+	u2 extra = 0;
+
 	MLX90363::startTransmitting();
-	while (MLX90363::isTransmitting());
+	while (MLX90363::isTransmitting())extra++;
 
 	u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
 
@@ -44,7 +51,7 @@ void Interpreter::sendNormalDataToMaster(){
 	buff[1] = ThreePhaseCalibrator::getPhasePos();
 	buff[2] = MLX90363::getRoll();
 	buff[3] = MLX90363::getErr();
-	buff[4] = 0;
+	buff[4] = extra;
 	
 	TwillBotInterface::getOutgoingWriteBuffer()[Config::i2cBufferOutgoingSize-1] = getCRC(TwillBotInterface::getOutgoingWriteBuffer(), Config::i2cBufferOutgoingSize-1);
 

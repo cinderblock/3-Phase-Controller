@@ -33,6 +33,7 @@ void MLX90363::isr() {
 
  // Check if we're done sending
  if (bufferPosition == messageLength) {
+  Board::LED.tgl();
   // We're done. De-assert (turn on) the slave select line
   Board::SPI::slaveDeselect();
   
@@ -169,6 +170,7 @@ void MLX90363::fillTxBufferCRC() {
 }
 
 void MLX90363::handleResponse() {
+
  if (!checkRxBufferCRC()) {
   responseState = ResponseState::failedCRC;
   return;
