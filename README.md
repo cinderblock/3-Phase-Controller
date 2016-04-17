@@ -2,6 +2,16 @@
 
 3 Phase motor controller driver firmware.
 
+## Getting Started
+
+### Git Submodules
+
+After cloning this repo, you'll need to get the git submodules:
+
+```
+git submodule init
+git submodule update
+```
 
 ## Associated documentation
 
