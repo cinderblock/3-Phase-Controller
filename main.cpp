@@ -24,7 +24,6 @@ void init() __attribute__((constructor));
 void init() {
  wdt_reset();
  wdt_disable();
- // Debug::init();
 
  sei();
  
@@ -34,6 +33,7 @@ void init() {
  ThreePhaseCalibrator::init();
  
  // End of init
+ Board::LED.output();
  Board::LED.off();
 }
 
