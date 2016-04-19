@@ -21,6 +21,10 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 		ThreePhaseCalibrator::advance();
 	}
 
+	if (incomingData[0] == 0x33) {
+		ThreePhaseCalibrator::reverse();
+	}
+
 	if (incomingData[0] == 0x40){
 		ThreePhaseDriver::setAmplitude(incomingData[1]);
 	}

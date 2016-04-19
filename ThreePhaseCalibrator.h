@@ -14,6 +14,7 @@ public:
 	static void init();
 	static void goTo(u2);
 	static void advance();
+	static void reverse();
 
 	inline static u2 getPhasePos(){return position;};
 };

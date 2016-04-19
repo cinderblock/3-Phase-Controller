@@ -44,3 +44,13 @@ void ThreePhaseCalibrator::advance(){
 	ThreePhaseDriver::advanceTo(position);
 
 }
+
+void ThreePhaseCalibrator::reverse(){
+	
+	if (--position > MAX){
+		position = 0x2FF;
+	}
+
+	ThreePhaseDriver::advanceTo(position);
+
+}
