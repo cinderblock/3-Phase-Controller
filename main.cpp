@@ -25,7 +25,7 @@ void init() __attribute__((constructor));
 void init() {
  wdt_reset();
  wdt_disable();
- Debug::init();
+ // Debug::init();
 
  sei();
  
@@ -36,6 +36,7 @@ void init() {
  ThreePhaseController::init();
  
  // End of init
+ Board::LED.output();
  Board::LED.off();
 }
 
@@ -51,8 +52,6 @@ void main() {
  Clock::MicroTime now;
  
  ThreePhaseController::setTorque(0);
- 
- auto lastV = ThreePhaseController::getVelocity();
  
  while(1){
   ThreePhaseController::updateDriver();
