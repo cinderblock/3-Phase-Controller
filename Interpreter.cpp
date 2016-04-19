@@ -44,6 +44,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 
 void Interpreter::sendNormalDataToMaster(){
 	if (!streaming) return;
+	if (!MLX90363::isMeasurementReady()) return;
 
 	MLX90363::startTransmitting();
 	while (MLX90363::isTransmitting());

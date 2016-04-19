@@ -125,6 +125,11 @@ class MLX90363 {
  
 public:
  
+ /**
+  * MLX requires a time between data checks.
+  * This function returns true when the required time has passed
+  * as well as not currently transmitting
+  */
  static bool isMeasurementReady();
  
  enum class ResponseState: u1 {
