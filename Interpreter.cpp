@@ -6,7 +6,7 @@
 #include "TwillBotInterface.h"
 #include "ThreePhaseDriver.h"
 
-bool Interpreter::streaming = false;
+bool Interpreter::streaming = true;
 
 void Interpreter::interpretFromMaster(u1 const * const incomingData){
 	if (checkCRC(incomingData)){
