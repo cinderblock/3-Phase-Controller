@@ -41,10 +41,10 @@ void Interpreter::sendNormalDataToMaster(){
 	if (!streaming) return;
 	if (!MLX90363::isMeasurementReady()) return;
 
-	u2 extra = 0;
+	static u2 extra = 0;
 
 	MLX90363::startTransmitting();
-	while (MLX90363::isTransmitting())extra++;
+	while (MLX90363::isTransmitting());
 
 	u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
 
@@ -52,7 +52,7 @@ void Interpreter::sendNormalDataToMaster(){
 	buff[1] = ThreePhaseCalibrator::getPhasePos();
 	buff[2] = MLX90363::getRoll();
 	buff[3] = MLX90363::getErr();
-	buff[4] = extra;
+	buff[4] = extra++;
 	
 	TwillBotInterface::getOutgoingWriteBuffer()[Config::i2cBufferOutgoingSize-1] = getCRC(TwillBotInterface::getOutgoingWriteBuffer(), Config::i2cBufferOutgoingSize-1);
 
