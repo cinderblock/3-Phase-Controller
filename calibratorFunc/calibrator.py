@@ -23,7 +23,7 @@ else:
 file = file[file['phase'] != 65535][['MagData','phase']].ix[skip:]
 
 # reduce mag data to a usable number of elements by dividing by 7
-file['adj'] = (file['MagData']/7).apply(round).apply(int)
+file['adj'] = (file['MagData']/4).apply(round).apply(int)
 
 def rng(low, high):
 	def rngI(x):
@@ -41,7 +41,6 @@ for i in range(max(file['adj'])+1):
 			f = t
 		else:
 			f = b
-	# 	print filter(list(f), range(600,1000))
 	l.append(int(round(np.mean(f))))
 
 numPerLine = 32
@@ -52,6 +51,8 @@ for i in range(len(l)):
 	if i % numPerLine is numPerLine-1:
 		s=s+'\n '
 s=s+']'
+
+print len(l)
 
 f = open(out, 'w')
 f.write(s)
