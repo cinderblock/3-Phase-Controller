@@ -82,10 +82,11 @@ void ThreePhaseController::isr() {
  mlx = cyclesPWMPerMLX;
 }
 
+//size of table in program memory
 u2 constexpr loop = 4097;
 
 /**
- * 14-bit lookup table for magnetometer Alpha value to Phase value
+ * 12-bit lookup table for magnetometer Alpha value to Phase value
  */
 static const u2 AlphaToPhaseLookup[loop] PROGMEM = {
  // Table generated with python on calibration branch
