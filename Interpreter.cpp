@@ -29,6 +29,10 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 		ThreePhaseDriver::setAmplitude(incomingData[1]);
 	}
 
+	if (incomingData[0] == 0x36){
+		ThreePhaseDriver::setDT(incomingData[1]);
+	}
+
 	if (incomingData[0] == 0x88){
 		//Start Streaming
 		if (incomingData[1] == 0xF0){

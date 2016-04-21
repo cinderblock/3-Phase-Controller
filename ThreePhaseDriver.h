@@ -58,6 +58,11 @@ public:
  static void init();
  
  /**
+  * Sets the Dead Timer bits for calibration
+  */
+ static inline void setDT(u1 deadTimerByte){DT4 = deadTimerByte;};
+
+ /**
   * Convenience function with its own internal step counter
   */
  static void advance();
