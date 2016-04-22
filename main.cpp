@@ -54,7 +54,6 @@ void main() {
  ThreePhaseController::setTorque(0);
  
  while(1){
-  ThreePhaseController::updateDriver();
 
   if(TwillBotInterface::hasReceivedBlock()){
     TwillBotInterface::reserveNextReadBuffer();
