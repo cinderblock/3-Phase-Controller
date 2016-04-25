@@ -79,6 +79,10 @@ public:
  static constexpr u1 maxAmplitude = 0xff - 30;
  
  static inline void setAmplitude(u1 const a) {amplitude = a > maxAmplitude ? maxAmplitude : a;}
+ static inline u1 getAmplitude(){return amplitude;};
+
+ static inline void setDeadTimes(u1 dt){DT4 = dt;};
+ static inline u1 getDeadTimes(){return DT4;};
 
  static void advanceToBackEMF(Phase const phase, u1 const step);
 };

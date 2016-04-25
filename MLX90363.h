@@ -195,6 +195,7 @@ public:
   */
  static void handleResponse();
  
+ // inline static u2 getAlpha() {return (u2 const) alpha;}
  inline static u2 getAlpha() {cli(); u2 const a = alpha; sei(); return a;}
  
  inline static u2 getBeta() {return beta;}

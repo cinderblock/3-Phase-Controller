@@ -59,7 +59,11 @@ public:
  };
  
  static void setTorque(const Torque t);
- 
+ static inline s2 getTorque(){return isForwardTorque ? ThreePhaseDriver::getAmplitude() : -(s2)(ThreePhaseDriver::getAmplitude());};
+
+ static inline void setDeadTimes(u1 dt){ThreePhaseDriver::setDeadTimes(dt);};
+ static inline u1 getDeadTimes(){return ThreePhaseDriver::getDeadTimes();};
+
  static bool updateDriver();
  
  inline static u4 getPosition() {return drivePhase;}

@@ -6,7 +6,7 @@
 #include "MLX90363.h"
 #include "TwillBotInterface.h"
 
-bool Interpreter::streaming = false;
+bool Interpreter::streaming = true;
 
 void Interpreter::interpretFromMaster(u1 const * const incomingData){
 	if (checkCRC(incomingData)){
@@ -40,22 +40,38 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 			streaming = false;
 		}
 	}
+
+	//deadtime configuration
+	if (incomingData[0] == 0x40){
+		if (incomingData[1] == 0xF0){
+			//advance to next DeadTime
+			ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes()+1);
+
+		}
+		else if (incomingData[1] == 0x0F){
+			//decement to last DeadTime
+			ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes()-1);
+
+		}
+	}
 }
 
 void Interpreter::sendNormalDataToMaster(){
 	if (!streaming) return;
 	if (!MLX90363::isMeasurementReady()) return;
 
+	static u2 extra = 0;
+
 	MLX90363::startTransmitting();
 	while (MLX90363::isTransmitting());
 
 	u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
 
-	buff[0] = MLX90363::getAlpha();
-	buff[1] = 0;
-	buff[2] = MLX90363::getRoll();
-	buff[3] = MLX90363::getErr();
-	buff[4] = 0;
+	buff[0] = extra++;//MLX90363::getAlpha();
+	buff[1] = MLX90363::getAlpha();
+	buff[2] = (u2)ThreePhaseController::getVelocity();
+	buff[3] = (u2)ThreePhaseController::getTorque();
+	buff[4] = ThreePhaseController::getDeadTimes();
 	
 	TwillBotInterface::getOutgoingWriteBuffer()[Config::i2cBufferOutgoingSize-1] = getCRC(TwillBotInterface::getOutgoingWriteBuffer(), Config::i2cBufferOutgoingSize-1);
 
