@@ -233,7 +233,7 @@ inline static u2 lookupAlphaToPhase(u2 alpha) {
  //divide alpha by 4 to get a feasible table size
  alpha >>= 2;
  
- //if somehow we get a magnetomiter data larger then in calibration
+ //if somehow we get a magnetomiter reading larger then in calibration
  //circle around to begining
  if (alpha > loop){
   alpha -= loop;
