@@ -27,7 +27,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 	if (incomingData[0] == 0x10) {
 		s4 go = *((s4*)(incomingData+1));
 
-
+		
 	}
 
 	if (incomingData[0] == 0x88){
@@ -52,6 +52,9 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 			//decement to last DeadTime
 			ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes()-1);
 
+		}
+		else if (incomingData[1] == 0xFF){
+			ThreePhaseController::setDeadTimes(incomingData[2]);
 		}
 	}
 }
