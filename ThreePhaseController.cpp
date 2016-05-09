@@ -265,8 +265,10 @@ void ThreePhaseController::init() {
 }
 
 void ThreePhaseController::setTorque(const Torque t) {
- isForwardTorque = t.forward;
- ThreePhaseDriver::setAmplitude(t.amplitude);
+ ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  isForwardTorque = t.forward;
+  ThreePhaseDriver::setAmplitude(t.amplitude);
+ }
 }
 
 bool ThreePhaseController::updateDriver() {
