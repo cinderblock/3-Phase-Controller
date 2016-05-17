@@ -44,8 +44,13 @@ void TwillBotInterface::init() {
 }
 
 void TwillBotInterface::timeout() {
+ //i2c timeout detected
  Board::LED.on();
  TimerTimeout::stopBISR();
+
+ //do something...
+ const Status s = AVR::I2C::getStatus();
+ 
 }
 
 void TwillBotInterface::InterruptServiceRoutine() {
