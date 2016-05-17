@@ -29,7 +29,7 @@ class ThreePhaseController {
 
  static u1 magRoll;
 
- static const u1 MaxTorque = 40;
+ static const u1 MaxTorque = 255;
  
  /**
   * Number of cycles the PWM timer makes per measurement ready from MLX.
