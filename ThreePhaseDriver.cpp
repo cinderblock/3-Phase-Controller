@@ -32,9 +32,9 @@ void ThreePhaseDriver::init() {
  /**
   * TCCR4B
   * PWM4X PSR4 DTPS41 DTPS40 CS43 CS42 CS41 CS40
-  * 0b  1    1      0      0    0    0    0    0
+  * 0b  0    1      0      0    0    0    0    0
   */
- TCCR4B = 0b11000000;
+ TCCR4B = 0b01000000;
  
  // Clear the high byte
  TC4H = 0;
@@ -91,9 +91,9 @@ void ThreePhaseDriver::init() {
  /**
   * TCCR4B
   * PWM4X PSR4 DTPS41 DTPS40 CS43 CS42 CS41 CS40
-  * 0b  1    1      0      0    0    0    0    1
+  * 0b  0    1      0      0    0    0    0    1
   */
- TCCR4B = 0b11000001;
+ TCCR4B = 0b01000001;
  
  // Turn everything off
  Board::DRV::AL.off();
