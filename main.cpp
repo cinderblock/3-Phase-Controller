@@ -33,9 +33,9 @@ void init() {
  
  TwillBotInterface::init();
  
- // ThreePhaseController::init();
- ThreePhaseDriver::init();
- ThreePhaseDriver::setAmplitude(0);
+ ThreePhaseController::init();
+ // ThreePhaseDriver::init();
+ // ThreePhaseDriver::setAmplitude(0);
  
  // End of init
  Board::LED.output();
@@ -56,7 +56,7 @@ void main() {
  Board::LED.on();
  
  
- // ThreePhaseController::setTorque(0);
+ ThreePhaseController::setTorque(0);
  
  while(1){
   ThreePhaseController::updateDriver();

@@ -70,19 +70,19 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 
 void Interpreter::sendNormalDataToMaster(){
 	if (!streaming) return;
-	// if (!MLX90363::isMeasurementReady()) return;
+	if (!MLX90363::isMeasurementReady()) return;
 
 	static u2 extra = 0;
 
-	// MLX90363::startTransmitting();
-	// while (MLX90363::isTransmitting());
+	MLX90363::startTransmitting();
+	while (MLX90363::isTransmitting());
 
 	u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
 
 	buff[0] = extra++;//MLX90363::getAlpha();
-	// buff[1] = MLX90363::getAlpha();
-	// buff[2] = (u2)ThreePhaseController::getVelocity();
-	// buff[3] = (u2)ThreePhaseController::getTorque();
+	buff[1] = MLX90363::getAlpha();
+	buff[2] = (u2)ThreePhaseController::getVelocity();
+	buff[3] = (u2)ThreePhaseController::getTorque();
 	buff[4] = (u2)ThreePhaseController::getDeadTimes();
 	
 	TwillBotInterface::getOutgoingWriteBuffer()[Config::i2cBufferOutgoingSize-1] = getCRC(TwillBotInterface::getOutgoingWriteBuffer(), Config::i2cBufferOutgoingSize-1);
