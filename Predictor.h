@@ -18,9 +18,9 @@ class Predictor{
 
 public:
   static void freshPhase(u2 phase);
-  static void init();
+  static void init(u2);
   static u2 predict();
-  static s4 nextVelocity();
+  static s4 nextVelocity(s4, s2);
 
   inline static u4 getPredictedPosition(){return drivePhase;}
   inline static u2 getMeasuredPosition() {return lastMagPha;}

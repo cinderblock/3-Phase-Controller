@@ -232,7 +232,7 @@ void ThreePhaseController::init() {
  while (!MLX90363::hasNewData(magRoll));
  while (!MLX90363::hasNewData(magRoll));
  
- Predictor::init();
+ Predictor::init(lookupAlphaToPhase(MLX90363::getAlpha()));
 }
 
 void ThreePhaseController::setTorque(const Torque t) {

@@ -1,11 +1,13 @@
 
 #include "Predictor.h"
+// #include "Debug.h"
+#include <util/atomic.h>
+#include "ThreePhaseDriver.h"
 
 u4 Predictor::drivePhase;
 u2 Predictor::lastMagPha;
 s2 Predictor::driveVelocity;
 
-// predictor = new PositionPredictor(time_between_mag_updates)
 u2 Predictor::predict(){
 
  u4 ph = drivePhase;
@@ -54,22 +56,22 @@ void Predictor::freshPhase(u2 phase){
   drivePhase = u4(phase) << drivePhaseValueShift;
  }
  
- static u1 tick = 0;
+ // static u1 tick = 0;
 
- Debug::SOUT
-         << Debug::Printer::Special::Start
-         << tick++
-         << phase
-         << Debug::Printer::Special::End;
+ // Debug::SOUT
+ //         << Debug::Printer::Special::Start
+ //         << tick++
+ //         << phase
+ //         << Debug::Printer::Special::End;
 
  // Save the most recent magnetic position
  lastMagPha = phase;
  
 }
 
-s4 Predictor::nextVelocity(tempVelocity, measuredPhaseChange){
+s4 Predictor::nextVelocity(s4 tempVelocity, s2 measuredPhaseChange){
 
- const s2 predictedPhaseChange = (s4(tempVelocity) * cyclesPWMPerMLX) >> drivePhaseValueShift;
+ const s2 predictedPhaseChange = (s4(tempVelocity) * PredictsPerValue) >> drivePhaseValueShift;
 
  //TODO make this actually reflect max acceleration
  if (measuredPhaseChange > predictedPhaseChange) {
@@ -81,9 +83,9 @@ s4 Predictor::nextVelocity(tempVelocity, measuredPhaseChange){
  return tempVelocity;
 }
 
-void Predictor::init(){
+void Predictor::init(u2 magPha){
 
  driveVelocity = 0;
- lastMagPha = lookupAlphaToPhase(MLX90363::getAlpha());
+ lastMagPha = magPha;//lookupAlphaToPhase(MLX90363::getAlpha());
  drivePhase = lastMagPha << drivePhaseValueShift;
 }
