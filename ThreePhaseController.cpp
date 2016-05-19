@@ -13,10 +13,12 @@
 #include "MLX90363.h"
 #include "ThreePhaseDriver.h"
 #include "Debug.h"
+#include "Interpreter.h"
+#include "Predictor.h"
 
-u4 ThreePhaseController::drivePhase;
-u2 ThreePhaseController::lastMagPha;
-s2 ThreePhaseController::driveVelocity;
+// u4 ThreePhaseController::Predictor::drivePhase;
+// u2 ThreePhaseController::Predictor::lastMagPha;
+// s2 ThreePhaseController::Predictor::driveVelocity;
 bool ThreePhaseController::isForwardTorque;
 u1 ThreePhaseController::magRoll;
 
@@ -26,39 +28,10 @@ void TIMER4_OVF_vect() {
 
 void ThreePhaseController::isr() {
  u1 static mlx = 1;
- 
- auto ph = drivePhase;
- ph += driveVelocity;
- 
- const bool forward = driveVelocity > 0;
- 
- const u4 MAX = ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift;
- 
- // Check if ph(ase) value is out of range
- if (ph > MAX) {
-  // Fix it
-  if (forward)
-   ph -= MAX;
-  else
-   ph += MAX;
- }
- 
- // Store new drivePhase
- drivePhase = ph;
- 
- // Adjust output for velocity lag
- ph += driveVelocity * driveVelocityPhaseAdvance;
- 
-  // Check if ph(ase) value is out of range again
- if (ph > MAX) {
-  // Fix it
-  if (forward) ph -= MAX;
-  else         ph += MAX;
- }
- 
+
  // Scale phase to output range
- u2 outputPhase = ph >> drivePhaseValueShift;
- 
+ u2 outputPhase = Predictor::predict();
+
  // Offset from current angle by 90deg for max torque
  if (isForwardTorque) outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
  else                 outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
@@ -246,7 +219,6 @@ inline static u2 lookupAlphaToPhase(u2 alpha) {
 void ThreePhaseController::init() {
  MLX90363::init();
  ThreePhaseDriver::init();
- driveVelocity = 0;
  ThreePhaseDriver::setAmplitude(0);
  
  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
@@ -260,8 +232,7 @@ void ThreePhaseController::init() {
  while (!MLX90363::hasNewData(magRoll));
  while (!MLX90363::hasNewData(magRoll));
  
- lastMagPha = lookupAlphaToPhase(MLX90363::getAlpha());
- drivePhase = lastMagPha << drivePhaseValueShift;
+ Predictor::init();
 }
 
 void ThreePhaseController::setTorque(const Torque t) {
@@ -278,40 +249,90 @@ bool ThreePhaseController::updateDriver() {
  auto const alpha = MLX90363::getAlpha();
  auto const magPha = lookupAlphaToPhase(alpha);
  
- u2 drivePha;
-  
- ATOMIC_BLOCK(ATOMIC_FORCEON) {
-  drivePha = drivePhase >> drivePhaseValueShift;
- }
- 
- auto localDriveVelocity = driveVelocity;
+ Predictor::freshPhase(magPha);
 
- Debug::SOUT
-         << Debug::Printer::Special::Start
-         << magPha
-         << drivePha
-         << localDriveVelocity
-         << Debug::Printer::Special::End;
- 
- // Calculate the velocity from the magnetic data
- const s2 magVelocity = magPha - lastMagPha;
- 
- const s2 scaledDriveVelocity = (s4(localDriveVelocity) * cyclesPWMPerMLX) >> drivePhaseValueShift;
- 
- // Adjust the driveVelocity to match what the magnetometer thinks it is
- if (magVelocity > scaledDriveVelocity) {
-  localDriveVelocity++;
- } else if (magVelocity < scaledDriveVelocity) {
-  localDriveVelocity--;
- }
- 
- ATOMIC_BLOCK(ATOMIC_FORCEON) {
-  driveVelocity = localDriveVelocity;
-  drivePhase = u4(magPha) << drivePhaseValueShift;
- }
- 
- // Save the most recent magnetic position
- lastMagPha = magPha;
- 
  return true;
 }
+
+// predictor = new PositionPredictor(time_between_mag_updates)
+// u2 ThreePhaseController::Predictor::predict(){
+
+//  u4 ph = drivePhase;
+//  ph += driveVelocity;
+ 
+//  const bool forward = driveVelocity > 0;
+ 
+//  const u4 MAX = ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift;
+ 
+//  // Check if ph(ase) value is out of range
+//  if (ph > MAX) {
+//   // Fix it
+//   if (forward)
+//    ph -= MAX;
+//   else
+//    ph += MAX;
+//  }
+ 
+//  // Store new drivePhase
+//  drivePhase = ph;
+ 
+//  // Adjust output for velocity lag
+//  ph += driveVelocity * driveVelocityPhaseAdvance;
+ 
+//   // Check if ph(ase) value is out of range again
+//  if (ph > MAX) {
+//   // Fix it
+//   if (forward) ph -= MAX;
+//   else         ph += MAX;
+//  }
+ 
+//  return (ph >> drivePhaseValueShift);
+// }
+
+// void ThreePhaseController::Predictor::freshPhase(u2 phase){
+
+ 
+//  auto tempVelocity = driveVelocity;
+ 
+//  const s2 measuredPhaseChange = phase - lastMagPha; 
+ 
+//  tempVelocity = nextVelocity(tempVelocity, measuredPhaseChange);
+ 
+//  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+//   driveVelocity = tempVelocity;
+//   drivePhase = u4(phase) << drivePhaseValueShift;
+//  }
+ 
+//  static u1 tick = 0;
+
+//  Debug::SOUT
+//          << Debug::Printer::Special::Start
+//          << tick++
+//          << phase
+//          << Debug::Printer::Special::End;
+
+//  // Save the most recent magnetic position
+//  lastMagPha = phase;
+ 
+// }
+
+// s4 ThreePhaseController::Predictor::nextVelocity(tempVelocity, measuredPhaseChange){
+
+//  const s2 predictedPhaseChange = (s4(tempVelocity) * cyclesPWMPerMLX) >> drivePhaseValueShift;
+
+//  //TODO make this actually reflect max acceleration
+//  if (measuredPhaseChange > predictedPhaseChange) {
+//   tempVelocity++;
+//  } else if (measuredPhaseChange < predictedPhaseChange) {
+//   tempVelocity--;
+//  }
+
+//  return tempVelocity;
+// }
+
+// void ThreePhaseController::Predictor::init(){
+
+//  driveVelocity = 0;
+//  lastMagPha = lookupAlphaToPhase(MLX90363::getAlpha());
+//  drivePhase = lastMagPha << drivePhaseValueShift;
+// }

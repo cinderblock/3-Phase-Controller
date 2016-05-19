@@ -22,11 +22,15 @@
  */
 void init() __attribute__((constructor));
 
+u1 resetCause = MCUSR;
+
 void init() {
  wdt_reset();
  wdt_disable();
- // Debug::init();
+ Debug::init();
 
+ MCUSR = 0;
+ 
  sei();
  
  ::Clock::init();
@@ -35,8 +39,9 @@ void init() {
  
  ThreePhaseController::init();
  // ThreePhaseDriver::init();
- // ThreePhaseDriver::setAmplitude(0);
- 
+ // ThreePhaseDriver::setAmplitude(40);
+ // ThreePhaseDriver::advanceTo(100);
+
  // End of init
  Board::LED.output();
  Board::LED.off();
@@ -57,6 +62,10 @@ void main() {
  
  
  ThreePhaseController::setTorque(0);
+
+ // while(1){
+ //  ThreePhaseDriver::advance();
+ // }
  
  while(1){
   ThreePhaseController::updateDriver();
@@ -66,8 +75,8 @@ void main() {
 
     Interpreter::interpretFromMaster(TwillBotInterface::getIncomingReadBuffer());
   }
-  
-  Interpreter::sendNormalDataToMaster();
+
+  // Interpreter::sendNormalDataToMaster();
  }
 
  while(1);

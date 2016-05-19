@@ -12,6 +12,7 @@
 
 #include "ThreePhaseDriver.h"
 #include <avr/interrupt.h>
+#include "Predictor.h"
 
 using namespace AVR;
 
@@ -21,11 +22,6 @@ class ThreePhaseController {
  static inline void isr();
  friend void TIMER4_OVF_vect();
  
- static u2 lastMagPha;
- static u4 drivePhase;
- static s2 driveVelocity;
- static constexpr u1 drivePhaseValueShift = 8;
- static constexpr u1 driveVelocityPhaseAdvance = 1;
 
  static u1 magRoll;
 
@@ -39,12 +35,26 @@ class ThreePhaseController {
  static constexpr u1 cyclesPWMPerMLX = 40;
  
  static bool isForwardTorque;
- 
+
  /**
   * 90 degree phase shift
   */
  static constexpr u2 output90DegPhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
  
+ // extern class Predictor{
+
+ // public:
+ //  // static void init();
+ //  extern inline static void freshPhase(u2 phase);
+ //  extern inline static void init();
+ //  extern inline static u2 predict();
+ //  extern inline static s4 nextVelocity();
+
+ //  extern inline static u4 getPredictedPosition();//{return drivePhase;}
+ //  extern inline static u2 getMeasuredPosition() ;//{return lastMagPha;}
+ //  extern inline static s2 getVelocity()         ;//{return driveVelocity;}
+ // };
+
 public:
  static void init();
 
@@ -56,6 +66,7 @@ public:
  public:
   inline Torque(s2 const t) : forward(t >= 0), amplitude(forward ? t : -t) {};
   inline Torque(const bool fwd, u1 const ampl) : forward(fwd), amplitude(ampl) {};
+  // static Torque limitedTorque(s2 requestedTorque){return };
  };
  
  static void setTorque(const Torque t);
@@ -66,8 +77,9 @@ public:
 
  static bool updateDriver();
  
- inline static u4 getPosition() {return drivePhase;}
- inline static s2 getVelocity() {return driveVelocity;}
+ inline static u4 getPredictedPosition(){return Predictor::getPredictedPosition();};
+ inline static s2 getVelocity()         {return Predictor::getVelocity();};
+ inline static u2 getMeasuredPosition() {return Predictor::getMeasuredPosition();}
 
  inline static constexpr u1 getMaxTorque(){return MaxTorque;};
 

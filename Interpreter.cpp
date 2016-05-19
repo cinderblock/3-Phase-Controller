@@ -46,12 +46,12 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 	if (incomingData[0] == 0x40){
 		if (incomingData[1] == 0xF0){
 			//advance to next DeadTime
-			ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes()+1);
+			ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes()+0x11);
 
 		}
 		else if (incomingData[1] == 0x0F){
 			//decement to last DeadTime
-			ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes()-1);
+			ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes()-0x11);
 
 		}
 		else if (incomingData[1] == 0xFF){
@@ -68,22 +68,22 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 	}
 }
 
+//HACK ME
+extern u1 resetCause;
+
 void Interpreter::sendNormalDataToMaster(){
-	if (!streaming) return;
-	if (!MLX90363::isMeasurementReady()) return;
+	// if (!streaming) return;
+	// if (!MLX90363::isMeasurementReady()) return;
 
 	static u2 extra = 0;
 
-	MLX90363::startTransmitting();
-	while (MLX90363::isTransmitting());
+	u1 * const buff = TwillBotInterface::getOutgoingWriteBuffer();
 
-	u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
-
-	buff[0] = extra++;//MLX90363::getAlpha();
-	buff[1] = MLX90363::getAlpha();
-	buff[2] = (u2)ThreePhaseController::getVelocity();
-	buff[3] = (u2)ThreePhaseController::getTorque();
-	buff[4] = (u2)ThreePhaseController::getDeadTimes();
+	*(u2 * const)(&buff[0]) = extra++;
+	*(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
+	*(u2 * const)(&buff[4]) = ThreePhaseController::getMeasuredPosition();
+	*(u4 * const)(&buff[6]) = ThreePhaseController::getPredictedPosition();
+	// buff[4] = (u2)ThreePhaseController::getTorque();
 	
 	TwillBotInterface::getOutgoingWriteBuffer()[Config::i2cBufferOutgoingSize-1] = getCRC(TwillBotInterface::getOutgoingWriteBuffer(), Config::i2cBufferOutgoingSize-1);
 

@@ -18,9 +18,6 @@ Debug::Printer Debug::SOUT;
 static CRC8 CRC;
 
 void Debug::init() {
- LED.output();
- LED.on();
- 
  UBRR1 = 0;
  
  // Set default
@@ -64,7 +61,7 @@ void Debug::sendHeader() {
  sendByte(0xff);
  sendByte(0xff);
  sendByte(0xff);
- sendByte(0xff);
+ sendByte(0xee);
  sendByte(0xff);
  CRC.reset();
 }
