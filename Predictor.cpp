@@ -2,7 +2,7 @@
 #include "Predictor.h"
 // #include "Debug.h"
 #include <util/atomic.h>
-#include "ThreePhaseDriver.h"
+#include "DriverConstants.h"
 
 u4 Predictor::drivePhase;
 u2 Predictor::lastMagPha;
@@ -15,7 +15,7 @@ u2 Predictor::predict(){
  
  const bool forward = driveVelocity > 0;
  
- const u4 MAX = ThreePhaseDriver::StepsPerCycle << drivePhaseValueShift;
+ const u4 MAX = DriverConstants::StepsPerCycle << DriverConstants::drivePhaseValueShift;
  
  // Check if ph(ase) value is out of range
  if (ph > MAX) {
@@ -39,7 +39,7 @@ u2 Predictor::predict(){
   else         ph += MAX;
  }
  
- return (ph >> drivePhaseValueShift);
+ return (ph >> DriverConstants::drivePhaseValueShift);
 }
 
 void Predictor::freshPhase(u2 phase){
@@ -53,7 +53,7 @@ void Predictor::freshPhase(u2 phase){
  
  ATOMIC_BLOCK(ATOMIC_FORCEON) {
   driveVelocity = tempVelocity;
-  drivePhase = u4(phase) << drivePhaseValueShift;
+  drivePhase = u4(phase) << DriverConstants::drivePhaseValueShift;
  }
  
  // static u1 tick = 0;
@@ -71,7 +71,7 @@ void Predictor::freshPhase(u2 phase){
 
 s4 Predictor::nextVelocity(s4 tempVelocity, s2 measuredPhaseChange){
 
- const s2 predictedPhaseChange = (s4(tempVelocity) * PredictsPerValue) >> drivePhaseValueShift;
+ const s2 predictedPhaseChange = (s4(tempVelocity) * DriverConstants::PredictsPerValue) >> DriverConstants::drivePhaseValueShift;
 
  //TODO make this actually reflect max acceleration
  if (measuredPhaseChange > predictedPhaseChange) {
@@ -87,5 +87,5 @@ void Predictor::init(u2 magPha){
 
  driveVelocity = 0;
  lastMagPha = magPha;//lookupAlphaToPhase(MLX90363::getAlpha());
- drivePhase = lastMagPha << drivePhaseValueShift;
+ drivePhase = lastMagPha << DriverConstants::drivePhaseValueShift;
 }

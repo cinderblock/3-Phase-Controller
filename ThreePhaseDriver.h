@@ -10,6 +10,7 @@
 
 #include <AVR++/basicTypes.h>
 #include <avr/interrupt.h>
+#include "DriverConstants.h"
 
 using namespace AVR;
 
@@ -37,18 +38,18 @@ public:
  /**
   * Internal granularity of sin wave for each phase
   */
- static u2 constexpr StepsPerPhase = 256;
+ static u2 constexpr StepsPerPhase = DriverConstants::StepsPerPhase;
  
  /**
   * One for each of A, B, and C.
   */
- static u1 constexpr PhasesPerCycle = 3;
+ static u1 constexpr PhasesPerCycle = DriverConstants::PhasesPerCycle;
  
  /**
   * One Cycle is one full commutation "revolution" of the motor. This is almost
   * certainly not one actual revolution of the motor shaft.
   */
- static u2 constexpr StepsPerCycle = StepsPerPhase * PhasesPerCycle;
+ static u2 constexpr StepsPerCycle = DriverConstants::StepsPerCycle;
  
  /**
   * Highest possible timer value

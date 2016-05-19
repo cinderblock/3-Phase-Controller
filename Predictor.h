@@ -8,12 +8,11 @@
 using namespace AVR;
 
 class Predictor{
-  static constexpr u1 PredictsPerValue = 40;
+  // static constexpr u1 PredictsPerValue = 40;
 
   static u2 lastMagPha;
   static u4 drivePhase;
   static s2 driveVelocity;
-  static constexpr u1 drivePhaseValueShift = 8;
   static constexpr u1 driveVelocityPhaseAdvance = 1;
 
 public:
