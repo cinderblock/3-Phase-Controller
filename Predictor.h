@@ -13,7 +13,7 @@ class Predictor{
   static u2 lastMagPha;
   static u4 drivePhase;
   static s2 driveVelocity;
-  static constexpr u1 driveVelocityPhaseAdvance = 1;
+  static constexpr u1 driveVelocityPhaseAdvance = 0;
 
 public:
   static void freshPhase(u2 phase);
