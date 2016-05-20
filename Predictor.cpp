@@ -69,6 +69,7 @@ void Predictor::freshPhase(u2 phase){
  
 }
 
+const u1 shiftVal = 1;
 
 s4 Predictor::nextVelocity(s4 tempVelocity, s2 measuredPhaseChange){
 
@@ -76,9 +77,9 @@ s4 Predictor::nextVelocity(s4 tempVelocity, s2 measuredPhaseChange){
 
  //TODO make this actually reflect max acceleration
  if (measuredPhaseChange > predictedPhaseChange) {
-  tempVelocity++;
+  tempVelocity+=shiftVal;
  } else if (measuredPhaseChange < predictedPhaseChange) {
-  tempVelocity--;
+  tempVelocity-=shiftVal;
  }
 
  return tempVelocity;

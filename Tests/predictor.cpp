@@ -1,4 +1,7 @@
-
+/*
+This c program is testing the Predictor class used to predict 
+the motor controllers current position between position updates
+*/
 
 #include "../Predictor.h"
 #include "../DriverConstants.h"
@@ -7,19 +10,28 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+#include <string>
+#include <climits>
+#include <list>
+
+#include "SubSetTest.h"
+
 
 using namespace std;
+
+const u1 speedMultiply = 1;
+const bool WriteToFile = false;
 
 csv_parser file_parser;
 
 void setUp(){
-
+	SubSetTest::init();
 
 	/* Declare the variables to be used */
-	const char * filename = "MagData.csv";
-	const char field_terminator = ',';
-	const char line_terminator  = '\n';
-	const char enclosure_char   = '"';
+	const char * filename = "magData.tsv";
+	const char field_terminator = '\t';
+	const char line_terminator	= '\n';
+	const char enclosure_char	 = '"';
 
 
 	/* Define how many records we're gonna skip. This could be used to skip the column definitions. */
@@ -39,7 +51,7 @@ void setUp(){
 
 double max = 0;
 
-double differnecewithwrap(float a, float b){
+double differnecewithwrap(double a, double b){
 	if (abs(int(a - b)) > (DriverConstants::StepsPerCycle / 2)){
 		if ((b - a) > 0)
 			return b-a-DriverConstants::StepsPerCycle;
@@ -54,22 +66,32 @@ double differnecewithwrap(float a, float b){
 int main(){
 
 	setUp();
+
+	// if(WriteToFile)
 	ofstream output;
 
-	output.open("out.csv");
-	output <<"tick,predicted,actual (approx),error"<<endl;
+	new SubSetTest("stopped", 0, 8000);
+
+	// cout << SubSetTest::reportTests() << endl;
+	// return 0;
+
+	if(WriteToFile){
+		output.open("out.csv");
+		output <<"tick,predicted,actual (approx),error,error^2"<<endl;
+	}
 
 	csv_row previousRow = file_parser.get_row();
 	csv_row row = file_parser.get_row();
 
 	Predictor::init(stoi(previousRow[1]));
-	output <<previousRow[0]<< ","<<stoi(previousRow[1])<<"," << stoi(previousRow[1])<<','<<0<<endl;
+	// output <<previousRow[0]<< ","<<stoi(previousRow[1])<<"," << stoi(previousRow[1])<<','<<0<<endl;
 
 	// cout<< lastRow[1] << '\t';
 
+	double errorSum = 0;
+	ull num = 0;
 
 	while(file_parser.has_more_rows()){
-
 
 		// cout << stoi(row[1]) << endl;
 
@@ -77,39 +99,67 @@ int main(){
 			u2 pred = Predictor::predict();
 
 			double actual = stoi(previousRow[1]) - differnecewithwrap(stoi(row[1]), stoi(previousRow[1]))
-								       * ((double)i / DriverConstants::PredictsPerValue);
+											 * ((double)i / DriverConstants::PredictsPerValue);
 
 			if (actual < 0)
 				actual += DriverConstants::StepsPerCycle;
 			else if (actual >= DriverConstants::StepsPerCycle)
 				actual -= DriverConstants::StepsPerCycle;
 
-			output << stoi(previousRow[0]) + ((double)i / DriverConstants::PredictsPerValue) << ','
-				<<pred<<','
-				<<actual<<','
-				<<differnecewithwrap(pred, actual)
-				<<endl;
+			double error = differnecewithwrap(pred, actual);
+			double e2 = error * error;
+
+			errorSum += e2;
+			num++;
+
+			double dec = ((double)i / DriverConstants::PredictsPerValue);
+
+			SubSetTest::runTest(stoi(previousRow[0])+dec, e2);
+
+			if(WriteToFile){
+				// output << stoi(previousRow[0]) / speedMultiply
+				output << stoi(previousRow[0])
+					//adds the decimal portion as a string or the full number is not reccorded in large numbers
+					<< to_string(dec).substr(1,4) << ','
+					<<pred<<','
+					<<actual<<','
+					<<error<<','
+					<<e2
+					<<endl;
+			}
 		}
 	
 		// cout<<endl;
 		
-	    /* Get the record */
-	    previousRow = row;
-	    row = file_parser.get_row();
-		Predictor::freshPhase(stoi(previousRow[1]));
+		/* Get the record */
+	previousRow = row;
+
+	//dumb way of atifically speeding up motor
+	//this way does not keep the refrence data in between computed cycles
+	//in other words not as acurate to check again
+	for (int a = 0; a < speedMultiply; a++)
+		row = file_parser.get_row();
+
+	//double check for skipped ticks
+	if (stoi(row[0]) - stoi(previousRow[0]) != 1){
+		cout<<"skipped tick(s) ";
+		for (int i = stoi(previousRow[0])+1; i < stoi(row[0]); i++){
+			cout << i<< ' ';
+		}
+		cout << endl;
+	}
+
+	Predictor::freshPhase(stoi(previousRow[1]));
 
 		// cout << endl<< stoi(lastRow[1]) << '\t';
 		// output << previousRow[0]<< ","<<stoi(previousRow[1])<<"," << stoi(previousRow[1])<<endl;
 
 	}
+	cout << errorSum / num << endl;
 
 
+	// cout << s->report();
+	cout << SubSetTest::reportTests() << endl;
 
-
-
-	for (int j = 0; j < 100; j+=11){
-	}
-
-	cout << endl;
 }
 
