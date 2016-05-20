@@ -72,8 +72,6 @@ void Predictor::freshPhase(u2 phase){
 
 s4 Predictor::nextVelocity(s4 tempVelocity, s2 measuredPhaseChange){
 
-  return (measuredPhaseChange << DriverConstants::drivePhaseValueShift) / DriverConstants::StepsPerCycle;
-
  const s2 predictedPhaseChange = (s4(tempVelocity) * DriverConstants::PredictsPerValue) >> DriverConstants::drivePhaseValueShift;
 
  //TODO make this actually reflect max acceleration
