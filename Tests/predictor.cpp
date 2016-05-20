@@ -66,7 +66,7 @@ int main(){
 
 	// cout<< lastRow[1] << '\t';
 
-	
+
 	while(file_parser.has_more_rows()){
 
 
@@ -75,8 +75,8 @@ int main(){
 		for (int i = 0; i < DriverConstants::PredictsPerValue; i++){
 			u2 pred = Predictor::predict();
 
-			double actual = stoi(previousRow[1]) + differnecewithwrap(stoi(row[1]), stoi(previousRow[1]))
-								* ((double)i / DriverConstants::PredictsPerValue);
+			double actual = stoi(previousRow[1]) - differnecewithwrap(stoi(row[1]), stoi(previousRow[1]))
+								       * ((double)i / DriverConstants::PredictsPerValue);
 
 			if (actual < 0)
 				actual += DriverConstants::StepsPerCycle;
@@ -84,7 +84,7 @@ int main(){
 				actual -= DriverConstants::StepsPerCycle;
 
 			output << stoi(previousRow[0]) + ((double)i / DriverConstants::PredictsPerValue) << ','
-				<<pred<<',' 
+				<<pred<<','
 				<<actual<<','
 				<<differnecewithwrap(pred, actual)
 				<<endl;
