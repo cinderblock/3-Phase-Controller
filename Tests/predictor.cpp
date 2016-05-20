@@ -57,6 +57,7 @@ int main(){
 	ofstream output;
 
 	output.open("out.csv");
+	output <<"tick,predicted,actual (approx),error"<<endl;
 
 	csv_row previousRow = file_parser.get_row();
 	csv_row row = file_parser.get_row();
