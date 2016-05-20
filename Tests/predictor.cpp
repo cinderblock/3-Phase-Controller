@@ -22,6 +22,9 @@ using namespace std;
 const u1 speedMultiply = 1;
 const bool WriteToFile = false;
 
+const u1 tickCol = 0;
+const u1 phaseCol = 1;
+
 csv_parser file_parser;
 
 void setUp(){
@@ -70,7 +73,7 @@ int main(){
 	// if(WriteToFile)
 	ofstream output;
 
-	new SubSetTest("stopped", 0, 8000);
+	SubSetTest("stopped", 0, 8000);
 
 	// cout << SubSetTest::reportTests() << endl;
 	// return 0;
@@ -83,8 +86,8 @@ int main(){
 	csv_row previousRow = file_parser.get_row();
 	csv_row row = file_parser.get_row();
 
-	Predictor::init(stoi(previousRow[1]));
-	// output <<previousRow[0]<< ","<<stoi(previousRow[1])<<"," << stoi(previousRow[1])<<','<<0<<endl;
+	Predictor::init(stoi(previousRow[phaseCol]));
+	// output <<previousRow[tickCol]<< ","<<stoi(previousRow[phaseCol])<<"," << stoi(previousRow[phaseCol])<<','<<0<<endl;
 
 	// cout<< lastRow[1] << '\t';
 
@@ -98,8 +101,10 @@ int main(){
 		for (int i = 0; i < DriverConstants::PredictsPerValue; i++){
 			u2 pred = Predictor::predict();
 
-			double actual = stoi(previousRow[1]) - differnecewithwrap(stoi(row[1]), stoi(previousRow[1]))
-											 * ((double)i / DriverConstants::PredictsPerValue);
+			s2 delta = differnecewithwrap(stoi(row[1]), stoi(previousRow[phaseCol]));
+			double partialStep = ((double)i / DriverConstants::PredictsPerValue);
+
+			double actual = stoi(previousRow[phaseCol]) - delta * partialStep;
 
 			if (actual < 0)
 				actual += DriverConstants::StepsPerCycle;
@@ -112,15 +117,13 @@ int main(){
 			errorSum += e2;
 			num++;
 
-			double dec = ((double)i / DriverConstants::PredictsPerValue);
-
-			SubSetTest::runTest(stoi(previousRow[0])+dec, e2);
+			SubSetTest::runTest(stoi(previousRow[tickCol])+partialStep, e2);
 
 			if(WriteToFile){
-				// output << stoi(previousRow[0]) / speedMultiply
-				output << stoi(previousRow[0])
+				// output << stoi(previousRow[tickCol]) / speedMultiply
+				output << stoi(previousRow[tickCol])
 					//adds the decimal portion as a string or the full number is not reccorded in large numbers
-					<< to_string(dec).substr(1,4) << ','
+					<< to_string(partialStep).substr(1,4) << ','
 					<<pred<<','
 					<<actual<<','
 					<<error<<','
@@ -141,18 +144,18 @@ int main(){
 		row = file_parser.get_row();
 
 	//double check for skipped ticks
-	if (stoi(row[0]) - stoi(previousRow[0]) != 1){
+	if (stoi(row[0]) - stoi(previousRow[tickCol]) != 1){
 		cout<<"skipped tick(s) ";
-		for (int i = stoi(previousRow[0])+1; i < stoi(row[0]); i++){
+		for (int i = stoi(previousRow[tickCol])+1; i < stoi(row[0]); i++){
 			cout << i<< ' ';
 		}
 		cout << endl;
 	}
 
-	Predictor::freshPhase(stoi(previousRow[1]));
+	Predictor::freshPhase(stoi(previousRow[phaseCol]));
 
 		// cout << endl<< stoi(lastRow[1]) << '\t';
-		// output << previousRow[0]<< ","<<stoi(previousRow[1])<<"," << stoi(previousRow[1])<<endl;
+		// output << previousRow[tickCol]<< ","<<stoi(previousRow[phaseCol])<<"," << stoi(previousRow[phaseCol])<<endl;
 
 	}
 	cout << errorSum / num << endl;
