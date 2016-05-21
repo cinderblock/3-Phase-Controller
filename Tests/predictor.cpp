@@ -21,14 +21,16 @@ using namespace std;
 
 const u1 speedMultiply = 1;
 const bool WriteToFile = false;
+const bool GetMaxes = true;
 
 const u1 tickCol = 0;
 const u1 phaseCol = 1;
 
+ofstream output;
+
 csv_parser file_parser;
 
 void setUp(){
-	SubSetTest::init();
 
 	/* Declare the variables to be used */
 	const char * filename = "magData.tsv";
@@ -36,6 +38,8 @@ void setUp(){
 	const char line_terminator	= '\n';
 	const char enclosure_char	 = '"';
 
+
+	SubSetTest::init();
 
 	/* Define how many records we're gonna skip. This could be used to skip the column definitions. */
 	file_parser.set_skip_lines(1);
@@ -49,6 +53,12 @@ void setUp(){
 	file_parser.set_field_term_char(field_terminator);
 
 	file_parser.set_line_term_char(line_terminator);
+
+
+	if(WriteToFile){
+		output.open("out.csv");
+		output <<"tick,predicted,actual (approx),error,error^2"<<endl;
+	}
 
 }
 
@@ -66,42 +76,53 @@ double differnecewithwrap(double a, double b){
 	return b-a;
 }
 
+s2 maxDelta = 0;
+ull maxDeltaPos = 0;
+
+s2 maxDeltaDelta = 0;
+ull maxDeltaDeltaPos = 0;
+
 int main(){
 
 	setUp();
-
-	// if(WriteToFile)
-	ofstream output;
-
-	SubSetTest("stopped", 0, 8000);
-
-	// cout << SubSetTest::reportTests() << endl;
-	// return 0;
-
-	if(WriteToFile){
-		output.open("out.csv");
-		output <<"tick,predicted,actual (approx),error,error^2"<<endl;
-	}
+	double errorSum = 0;
+	ull num = 0;
 
 	csv_row previousRow = file_parser.get_row();
 	csv_row row = file_parser.get_row();
 
 	Predictor::init(stoi(previousRow[phaseCol]));
-	// output <<previousRow[tickCol]<< ","<<stoi(previousRow[phaseCol])<<"," << stoi(previousRow[phaseCol])<<','<<0<<endl;
 
-	// cout<< lastRow[1] << '\t';
+	new SubSetTest("stopped", 0, 8000);
+	new SubSetTest("nominal", 10000, 10100);
+	new SubSetTest("HighSpeed", 16414, 16514);
 
-	double errorSum = 0;
-	ull num = 0;
+	s2 prevDelta = 0;
 
 	while(file_parser.has_more_rows()){
 
-		// cout << stoi(row[1]) << endl;
+		// cout << stoi(row[phaseCol]) << endl;
 
 		for (int i = 0; i < DriverConstants::PredictsPerValue; i++){
 			u2 pred = Predictor::predict();
 
-			s2 delta = differnecewithwrap(stoi(row[1]), stoi(previousRow[phaseCol]));
+			s2 delta = differnecewithwrap(stoi(row[phaseCol]), stoi(previousRow[phaseCol]));
+
+			if (GetMaxes){
+				if(abs(delta) > abs(maxDelta)){
+					maxDelta = delta;
+					maxDeltaPos = stoi(previousRow[tickCol]);
+				}
+			
+				if ((delta > 0 && prevDelta < 0) || (delta < 0 && prevDelta > 0)){
+					if(abs(delta-prevDelta) > abs(maxDeltaDelta)){
+						maxDeltaDelta = delta-prevDelta;
+						maxDeltaDeltaPos = stoi(previousRow[tickCol]);
+					}
+				}
+				prevDelta = delta;
+			}
+			
 			double partialStep = ((double)i / DriverConstants::PredictsPerValue);
 
 			double actual = stoi(previousRow[phaseCol]) - delta * partialStep;
@@ -120,8 +141,7 @@ int main(){
 			SubSetTest::runTest(stoi(previousRow[tickCol])+partialStep, e2);
 
 			if(WriteToFile){
-				// output << stoi(previousRow[tickCol]) / speedMultiply
-				output << stoi(previousRow[tickCol])
+				output << stoi(previousRow[tickCol]) / speedMultiply
 					//adds the decimal portion as a string or the full number is not reccorded in large numbers
 					<< to_string(partialStep).substr(1,4) << ','
 					<<pred<<','
@@ -144,9 +164,9 @@ int main(){
 		row = file_parser.get_row();
 
 	//double check for skipped ticks
-	if (stoi(row[0]) - stoi(previousRow[tickCol]) != 1){
+	if (stoi(row[tickCol]) - stoi(previousRow[tickCol]) != 1){
 		cout<<"skipped tick(s) ";
-		for (int i = stoi(previousRow[tickCol])+1; i < stoi(row[0]); i++){
+		for (int i = stoi(previousRow[tickCol])+1; i < stoi(row[tickCol]); i++){
 			cout << i<< ' ';
 		}
 		cout << endl;
@@ -154,12 +174,16 @@ int main(){
 
 	Predictor::freshPhase(stoi(previousRow[phaseCol]));
 
-		// cout << endl<< stoi(lastRow[1]) << '\t';
+		// cout << endl<< stoi(lastrow[phaseCol]) << '\t';
 		// output << previousRow[tickCol]<< ","<<stoi(previousRow[phaseCol])<<"," << stoi(previousRow[phaseCol])<<endl;
 
 	}
 	cout << errorSum / num << endl;
 
+	if (GetMaxes){
+		cout<<"maxDelta @ " << maxDeltaPos<<endl;
+		cout<<"maxDeltaDelta @ " << maxDeltaDeltaPos<<endl;
+	}
 
 	// cout << s->report();
 	cout << SubSetTest::reportTests() << endl;

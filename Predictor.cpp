@@ -69,7 +69,7 @@ void Predictor::freshPhase(u2 phase){
  
 }
 
-const u1 shiftVal = 1;
+const u1 shiftVal = 100;
 
 s4 Predictor::nextVelocity(s4 tempVelocity, s2 measuredPhaseChange){
 
