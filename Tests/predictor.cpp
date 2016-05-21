@@ -114,10 +114,13 @@ int main(){
 					maxDeltaPos = stoi(previousRow[tickCol]);
 				}
 			
-				if ((delta > 0 && prevDelta < 0) || (delta < 0 && prevDelta > 0)){
-					if(abs(delta-prevDelta) > abs(maxDeltaDelta)){
-						maxDeltaDelta = delta-prevDelta;
-						maxDeltaDeltaPos = stoi(previousRow[tickCol]);
+				//ignore values where interpreter gets values wrong
+				if (stoi(previousRow[tickCol]) <= 16400 || stoi(previousRow[tickCol]) >= 16500){
+					if ((delta > 0 && prevDelta < 0) || (delta < 0 && prevDelta > 0)){
+						if(abs(delta-prevDelta) > abs(maxDeltaDelta)){
+							maxDeltaDelta = delta-prevDelta;
+							maxDeltaDeltaPos = stoi(previousRow[tickCol]);
+						}
 					}
 				}
 				prevDelta = delta;
