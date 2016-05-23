@@ -41,20 +41,6 @@ class ThreePhaseController {
   */
  static constexpr u2 output90DegPhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
  
- // extern class Predictor{
-
- // public:
- //  // static void init();
- //  extern inline static void freshPhase(u2 phase);
- //  extern inline static void init();
- //  extern inline static u2 predict();
- //  extern inline static s4 nextVelocity();
-
- //  extern inline static u4 getPredictedPosition();//{return drivePhase;}
- //  extern inline static u2 getMeasuredPosition() ;//{return lastMagPha;}
- //  extern inline static s2 getVelocity()         ;//{return driveVelocity;}
- // };
-
 public:
  static void init();
 
