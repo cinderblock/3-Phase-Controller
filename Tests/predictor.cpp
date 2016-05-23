@@ -21,7 +21,7 @@ using namespace std;
 
 const u1 speedMultiply = 1;
 const bool WriteToFile = false;
-const bool GetMaxes = true;
+const bool GetMaxes = false;
 
 const u1 tickCol = 0;
 const u1 phaseCol = 1;
@@ -82,6 +82,8 @@ ull maxDeltaPos = 0;
 s2 maxDeltaDelta = 0;
 ull maxDeltaDeltaPos = 0;
 
+const long long probMaxDeltaDelta = 100;
+
 int main(){
 
 	setUp();
@@ -108,6 +110,14 @@ int main(){
 
 			s2 delta = differnecewithwrap(stoi(row[phaseCol]), stoi(previousRow[phaseCol]));
 
+			if(delta - prevDelta > probMaxDeltaDelta){
+				delta -= DriverConstants::StepsPerCycle;
+			}
+			else if (delta - prevDelta < -probMaxDeltaDelta){
+				delta += DriverConstants::StepsPerCycle;
+				// cout << -probMaxDeltaDelta ;
+			}
+
 			if (GetMaxes){
 				if(abs(delta) > abs(maxDelta)){
 					maxDelta = delta;
@@ -115,16 +125,17 @@ int main(){
 				}
 			
 				//ignore values where interpreter gets values wrong
-				if (stoi(previousRow[tickCol]) <= 16400 || stoi(previousRow[tickCol]) >= 16500){
+				// if (stoi(previousRow[tickCol]) <= 16400 || stoi(previousRow[tickCol]) >= 16500){
 					if ((delta > 0 && prevDelta < 0) || (delta < 0 && prevDelta > 0)){
 						if(abs(delta-prevDelta) > abs(maxDeltaDelta)){
 							maxDeltaDelta = delta-prevDelta;
 							maxDeltaDeltaPos = stoi(previousRow[tickCol]);
 						}
 					}
-				}
-				prevDelta = delta;
+				// }
 			}
+			
+			prevDelta = delta;
 			
 			double partialStep = ((double)i / DriverConstants::PredictsPerValue);
 
@@ -155,32 +166,33 @@ int main(){
 			}
 		}
 	
+
 		// cout<<endl;
 		
 		/* Get the record */
-	previousRow = row;
+		previousRow = row;
 
-	//dumb way of atifically speeding up motor
-	//this way does not keep the refrence data in between computed cycles
-	//in other words not as acurate to check again
-	for (int a = 0; a < speedMultiply; a++)
-		row = file_parser.get_row();
+		//dumb way of atifically speeding up motor
+		//this way does not keep the refrence data in between computed cycles
+		//in other words not as acurate to check again
+		for (int a = 0; a < speedMultiply; a++)
+			row = file_parser.get_row();
 
-	//double check for skipped ticks
-	if (stoi(row[tickCol]) - stoi(previousRow[tickCol]) != 1){
-		cout<<"skipped tick(s) ";
-		for (int i = stoi(previousRow[tickCol])+1; i < stoi(row[tickCol]); i++){
-			cout << i<< ' ';
+		//double check for skipped ticks
+		if (stoi(row[tickCol]) - stoi(previousRow[tickCol]) != 1){
+			cout<<"skipped tick(s) ";
+			for (int i = stoi(previousRow[tickCol])+1; i < stoi(row[tickCol]); i++){
+				cout << i<< ' ';
+			}
+			cout << endl;
 		}
-		cout << endl;
-	}
 
-	Predictor::freshPhase(stoi(previousRow[phaseCol]));
+		Predictor::freshPhase(stoi(previousRow[phaseCol]));
 
 		// cout << endl<< stoi(lastrow[phaseCol]) << '\t';
 		// output << previousRow[tickCol]<< ","<<stoi(previousRow[phaseCol])<<"," << stoi(previousRow[phaseCol])<<endl;
-
 	}
+
 	cout << errorSum / num << endl;
 
 	if (GetMaxes){
