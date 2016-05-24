@@ -57,8 +57,9 @@ public:
 	
 	/**
 	 * Maximum change in velocity
+	 * TODO CURRENTLY A GUESS FIND OUT WHAT IT ACTUALLY IS
 	 */
-	static u2 constexpr MaxVelocityChange = 1000;
+	static u2 constexpr MaxVelocityChange = StepsPerRotation / 3;
 	
 
 
