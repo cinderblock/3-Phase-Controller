@@ -3,10 +3,14 @@
 // #include "Debug.h"
 #include <util/atomic.h>
 #include "DriverConstants.h"
+#include <cmath> 
+
+using namespace std;
 
 u4 Predictor::drivePhase;
-u2 Predictor::lastMagPha;
+u2 Predictor::lastMecPha;
 s2 Predictor::driveVelocity;
+s2 Predictor::lastMechChange;
 
 u2 Predictor::predict(){
 
@@ -39,21 +43,29 @@ u2 Predictor::predict(){
   else         ph += MAX;
  }
  
- return (ph >> DriverConstants::drivePhaseValueShift);
+ return (ph >> DriverConstants::drivePhaseValueShift) & DriverConstants::BitsForPhase;
 }
 
 void Predictor::freshPhase(u2 phase){
 
+ u2 mechanicalPhase = getMechPhase(phase);
+
+ // auto tempVelocity = driveVelocity;
  
- auto tempVelocity = driveVelocity;
  
- const s2 measuredPhaseChange = phase - lastMagPha; 
+ s2 mechChange = mechanicalPhase - lastMecPha; 
  
- tempVelocity = nextVelocity(tempVelocity, measuredPhaseChange);
+ if(abs(mechChange - lastMechChange) > DriverConstants::MaxVelocityChange){
+  mechChange = DriverConstants::StepsPerRotation - mechanicalPhase + lastMecPha;
+ }
+
+ lastMechChange = mechChange;
+
+ auto tempVelocity = nextVelocity(driveVelocity, mechChange);
  
  ATOMIC_BLOCK(ATOMIC_FORCEON) {
   driveVelocity = tempVelocity;
-  drivePhase = u4(phase) << DriverConstants::drivePhaseValueShift;
+  drivePhase = u4(phase & DriverConstants::BitsForPhase) << DriverConstants::drivePhaseValueShift;
  }
  
  // static u1 tick = 0;
@@ -61,33 +73,34 @@ void Predictor::freshPhase(u2 phase){
  // Debug::SOUT
  //         << Debug::Printer::Special::Start
  //         << tick++
- //         << phase
+ //         << mechanicalPhase
  //         << Debug::Printer::Special::End;
 
  // Save the most recent magnetic position
- lastMagPha = phase;
+ lastMecPha = mechanicalPhase;
  
 }
 
 const u1 shiftVal = 100;
 
-s4 Predictor::nextVelocity(s4 tempVelocity, s2 measuredPhaseChange){
+s4 Predictor::nextVelocity(s4 tempVelocity, s2 measuredMechChange){
 
  const s2 predictedPhaseChange = (s4(tempVelocity) * DriverConstants::PredictsPerValue) >> DriverConstants::drivePhaseValueShift;
 
  //TODO make this actually reflect max acceleration
- if (measuredPhaseChange > predictedPhaseChange) {
+ if (measuredMechChange > predictedPhaseChange) {
   tempVelocity+=shiftVal;
- } else if (measuredPhaseChange < predictedPhaseChange) {
+ } else if (measuredMechChange < predictedPhaseChange) {
   tempVelocity-=shiftVal;
  }
 
  return tempVelocity;
 }
 
-void Predictor::init(u2 magPha){
+void Predictor::init(u2 phase){
 
  driveVelocity = 0;
- lastMagPha = magPha;//lookupAlphaToPhase(MLX90363::getAlpha());
- drivePhase = lastMagPha << DriverConstants::drivePhaseValueShift;
+ lastMecPha = getMechPhase(phase);//lookupAlphaToPhase(MLX90363::getAlpha());
+ drivePhase = lastMecPha << DriverConstants::drivePhaseValueShift;
+ lastMechChange = 0;
 }

@@ -29,6 +29,11 @@ public:
 	static u2 constexpr StepsPerPhase = 256;
 	
 	/**
+	 * The bits used to define an electrical revolution
+	 */
+	static u2 constexpr BitsForPhase = 0x3FF;
+
+	/**
 	 * One for each of A, B, and C.
 	 */
 	static u1 constexpr PhasesPerCycle = 3;
@@ -39,6 +44,24 @@ public:
 	 */
 	static u2 constexpr StepsPerCycle = StepsPerPhase * PhasesPerCycle;
 	
+
+	/**
+	 * number of electrical (computational) rotation there are per mechanical one
+	 */
+	static u1 constexpr ElectricalPerMechanical = 7;
+	
+	/**
+	 * Number of steps per mechanical revolution
+	 */
+	static u2 constexpr StepsPerRotation = StepsPerCycle * ElectricalPerMechanical;
+	
+	/**
+	 * Maximum change in velocity
+	 */
+	static u2 constexpr MaxVelocityChange = 1000;
+	
+
+
 };
 
 #endif

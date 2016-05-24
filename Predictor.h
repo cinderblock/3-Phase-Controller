@@ -4,16 +4,20 @@
 
 #include "Predictor.h"
 #include <AVR++/basicTypes.h>
+#include "DriverConstants.h"
 
 using namespace AVR;
 
 class Predictor{
   // static constexpr u1 PredictsPerValue = 40;
 
-  static u2 lastMagPha;
+  static u2 lastMecPha;
   static u4 drivePhase;
   static s2 driveVelocity;
+  static s2 lastMechChange;
   static constexpr u1 driveVelocityPhaseAdvance = 0;
+
+  inline static u2 getMechPhase(u2 phase){return (phase & DriverConstants::StepsPerCycle) + (phase >> 12) * DriverConstants::StepsPerCycle;};
 
 public:
   static void freshPhase(u2 phase);
@@ -22,7 +26,7 @@ public:
   static s4 nextVelocity(s4, s2);
 
   inline static u4 getPredictedPosition(){return drivePhase;}
-  inline static u2 getMeasuredPosition() {return lastMagPha;}
+  inline static u2 getMeasuredPosition() {return lastMecPha;}
   inline static s2 getVelocity()         {return driveVelocity;}
 };
 
