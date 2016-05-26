@@ -3,7 +3,8 @@
 // #include "Debug.h"
 #include <util/atomic.h>
 #include "DriverConstants.h"
-#include <cmath> 
+// #include <iostream>
+// #include <cmath> 
 
 using namespace std;
 
@@ -11,6 +12,13 @@ u4 Predictor::drivePhase;
 u2 Predictor::lastMecPha;
 s2 Predictor::driveVelocity;
 s2 Predictor::lastMechChange;
+u2 Predictor::lastReading;
+
+
+s2 abs(s2 num){
+  if(num < 0) return -num;
+  return num;
+}
 
 u2 Predictor::predict(){
 
@@ -19,7 +27,7 @@ u2 Predictor::predict(){
  
  const bool forward = driveVelocity > 0;
  
- const u4 MAX = DriverConstants::StepsPerCycle << DriverConstants::drivePhaseValueShift;
+ static const u4 MAX = DriverConstants::StepsPerCycle << DriverConstants::drivePhaseValueShift;
  
  // Check if ph(ase) value is out of range
  if (ph > MAX) {
@@ -32,50 +40,58 @@ u2 Predictor::predict(){
  
  // Store new drivePhase
  drivePhase = ph;
+
+ // return ph;
+ // return (ph>>DriverConstants::drivePhaseValueShift)% DriverConstants::StepsPerCycle;
+
+ // // Adjust output for velocity lag
+ // ph += driveVelocity * driveVelocityPhaseAdvance;
  
- // Adjust output for velocity lag
- ph += driveVelocity * driveVelocityPhaseAdvance;
- 
-  // Check if ph(ase) value is out of range again
- if (ph > MAX) {
-  // Fix it
-  if (forward) ph -= MAX;
-  else         ph += MAX;
- }
+ //  // Check if ph(ase) value is out of range again
+ // if (ph > MAX) {
+ //  // Fix it
+ //  if (forward) ph -= MAX;
+ //  else         ph += MAX;
+ // }
  
  return (ph >> DriverConstants::drivePhaseValueShift) & DriverConstants::BitsForPhase;
 }
 
-void Predictor::freshPhase(u2 phase){
+void Predictor::freshPhase(u2 reading){
 
- u2 mechanicalPhase = getMechPhase(phase);
+ // static u1 tick = 0;
+
+ // Debug::SOUT
+ //         << Debug::Printer::Special::Start
+ //         << tick++
+ //         << reading
+ //         << Debug::Printer::Special::End;
+
+
+ u2 mechanicalPhase = getMechPhase(reading);
 
  // auto tempVelocity = driveVelocity;
  
  
  s2 mechChange = mechanicalPhase - lastMecPha; 
  
- if(abs(mechChange - lastMechChange) > DriverConstants::MaxVelocityChange){
-  mechChange = DriverConstants::StepsPerRotation - mechanicalPhase + lastMecPha;
+ //TODO ensure we are not wrapping in the wrong direction due to high speeds
+ 
+ if (mechChange > DriverConstants::StepsPerRotation/2){
+  mechChange = DriverConstants::StepsPerRotation - mechChange;
  }
-
- lastMechChange = mechChange;
+ else if (mechChange < -((s2)DriverConstants::StepsPerRotation/2)){
+  mechChange = DriverConstants::StepsPerRotation + mechChange;
+ }
 
  auto tempVelocity = nextVelocity(driveVelocity, mechChange);
- 
+
  ATOMIC_BLOCK(ATOMIC_FORCEON) {
   driveVelocity = tempVelocity;
-  drivePhase = u4(phase & DriverConstants::BitsForPhase) << DriverConstants::drivePhaseValueShift;
+  // lastReading = reading;
+  drivePhase = u4(reading & DriverConstants::BitsForPhase) << DriverConstants::drivePhaseValueShift;
  }
  
- // static u1 tick = 0;
-
- // Debug::SOUT
- //         << Debug::Printer::Special::Start
- //         << tick++
- //         << mechanicalPhase
- //         << Debug::Printer::Special::End;
-
  // Save the most recent magnetic position
  lastMecPha = mechanicalPhase;
  
@@ -101,6 +117,6 @@ void Predictor::init(u2 phase){
 
  driveVelocity = 0;
  lastMecPha = getMechPhase(phase);//lookupAlphaToPhase(MLX90363::getAlpha());
- drivePhase = lastMecPha << DriverConstants::drivePhaseValueShift;
+ drivePhase = (lastMecPha & DriverConstants::BitsForPhase) << DriverConstants::drivePhaseValueShift;
  lastMechChange = 0;
 }

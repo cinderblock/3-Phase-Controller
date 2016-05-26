@@ -15,9 +15,10 @@ class Predictor{
   static u4 drivePhase;
   static s2 driveVelocity;
   static s2 lastMechChange;
+  static u2 lastReading;
   static constexpr u1 driveVelocityPhaseAdvance = 0;
 
-  inline static u2 getMechPhase(u2 phase){return (phase & DriverConstants::StepsPerCycle) + (phase >> 12) * DriverConstants::StepsPerCycle;};
+  inline static u2 getMechPhase(u2 phase){return (phase & DriverConstants::BitsForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;};
 
 public:
   static void freshPhase(u2 phase);

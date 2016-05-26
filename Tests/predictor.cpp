@@ -20,11 +20,12 @@ the motor controllers current position between position updates
 using namespace std;
 
 const u1 speedMultiply = 1;
-const bool WriteToFile = false;
+const bool WriteToFile = true;
 const bool GetMaxes = false;
 
 const u1 tickCol = 0;
-const u1 phaseCol = 1;
+const u1 phaseCol = 2;
+const u1 mechCol = 1;
 
 ofstream output;
 
@@ -33,8 +34,8 @@ csv_parser file_parser;
 void setUp(){
 
 	/* Declare the variables to be used */
-	const char * filename = "magData.tsv";
-	const char field_terminator = '\t';
+	const char * filename = "magData2.csv";
+	const char field_terminator = ',';
 	const char line_terminator	= '\n';
 	const char enclosure_char	 = '"';
 
@@ -57,19 +58,19 @@ void setUp(){
 
 	if(WriteToFile){
 		output.open("out.csv");
-		output <<"tick,predicted,actual (approx),error,error^2"<<endl;
+		output <<"tick,predicted,actual (approx),mech,error,error^2"<<endl;
 	}
 
 }
 
 double max = 0;
 
-double differnecewithwrap(double a, double b){
-	if (abs(int(a - b)) > (DriverConstants::StepsPerCycle / 2)){
+double differnecewithwrap(double a, double b, int wrap){
+	if (abs(int(a - b)) > (wrap / 2)){
 		if ((b - a) > 0)
-			return b-a-DriverConstants::StepsPerCycle;
+			return b-a-wrap;
 		else
-			return b-a+DriverConstants::StepsPerCycle;
+			return b-a+wrap;
 
 	}
 
@@ -84,91 +85,38 @@ ull maxDeltaDeltaPos = 0;
 
 const long long probMaxDeltaDelta = 100;
 
+u2 getInput(u2 mechPhase){
+
+	u1 mech = (mechPhase/DriverConstants::StepsPerCycle);
+	u2 input = ((int)mech<<12)+mechPhase%DriverConstants::StepsPerCycle;
+	// cout<<((int)mech<<12)<<' '<<mechPhase%DriverConstants::StepsPerCycle<<' ';
+
+	return input;
+}
+
 int main(){
 
 	setUp();
 	double errorSum = 0;
 	ull num = 0;
 
-	csv_row previousRow = file_parser.get_row();
+	csv_row previousRow;// = file_parser.get_row();
 	csv_row row = file_parser.get_row();
 
-	Predictor::init(stoi(previousRow[phaseCol]));
+	{
+		u2 input = getInput(stoi(row[mechCol]));
+		// cout<<input<<endl;
+		Predictor::init(input);
+	}
 
-	new SubSetTest("stopped", 0, 8000);
-	new SubSetTest("nominal", 10000, 10100);
-	new SubSetTest("HighSpeed", 16414, 16514);
+	// new SubSetTest("stopped", 0, 8000);
+	// new SubSetTest("nominal", 10000, 10100);
+	// new SubSetTest("HighSpeed", 16414, 16514);
 
 	s2 prevDelta = 0;
 
 	while(file_parser.has_more_rows()){
 
-		// cout << stoi(row[phaseCol]) << endl;
-
-		for (int i = 0; i < DriverConstants::PredictsPerValue; i++){
-			u2 pred = Predictor::predict();
-
-			s2 delta = differnecewithwrap(stoi(row[phaseCol]), stoi(previousRow[phaseCol]));
-
-			if(delta - prevDelta > probMaxDeltaDelta){
-				delta -= DriverConstants::StepsPerCycle;
-			}
-			else if (delta - prevDelta < -probMaxDeltaDelta){
-				delta += DriverConstants::StepsPerCycle;
-				// cout << -probMaxDeltaDelta ;
-			}
-
-			if (GetMaxes){
-				if(abs(delta) > abs(maxDelta)){
-					maxDelta = delta;
-					maxDeltaPos = stoi(previousRow[tickCol]);
-				}
-			
-				//ignore values where interpreter gets values wrong
-				// if (stoi(previousRow[tickCol]) <= 16400 || stoi(previousRow[tickCol]) >= 16500){
-					if ((delta > 0 && prevDelta < 0) || (delta < 0 && prevDelta > 0)){
-						if(abs(delta-prevDelta) > abs(maxDeltaDelta)){
-							maxDeltaDelta = delta-prevDelta;
-							maxDeltaDeltaPos = stoi(previousRow[tickCol]);
-						}
-					}
-				// }
-			}
-			
-			prevDelta = delta;
-			
-			double partialStep = ((double)i / DriverConstants::PredictsPerValue);
-
-			double actual = stoi(previousRow[phaseCol]) - delta * partialStep;
-
-			if (actual < 0)
-				actual += DriverConstants::StepsPerCycle;
-			else if (actual >= DriverConstants::StepsPerCycle)
-				actual -= DriverConstants::StepsPerCycle;
-
-			double error = differnecewithwrap(pred, actual);
-			double e2 = error * error;
-
-			errorSum += e2;
-			num++;
-
-			SubSetTest::runTest(stoi(previousRow[tickCol])+partialStep, e2);
-
-			if(WriteToFile){
-				output << stoi(previousRow[tickCol]) / speedMultiply
-					//adds the decimal portion as a string or the full number is not reccorded in large numbers
-					<< to_string(partialStep).substr(1,4) << ','
-					<<pred<<','
-					<<actual<<','
-					<<error<<','
-					<<e2
-					<<endl;
-			}
-		}
-	
-
-		// cout<<endl;
-		
 		/* Get the record */
 		previousRow = row;
 
@@ -187,8 +135,82 @@ int main(){
 			cout << endl;
 		}
 
-		Predictor::freshPhase(stoi(previousRow[phaseCol]));
+		// u1 mechPhase = (stoi(previousRow[mechCol])/DriverConstants::StepsPerCycle);
+		// u2 input = mechPhase<<12+stoi(previousRow[phaseCol]);
+		u2 input = getInput(stoi(previousRow[mechCol]));
+		// cout<<input<<' ';
+		Predictor::freshPhase(input);
 
+		// cout << stoi(row[phaseCol]) << endl;
+
+		for (int i = 0; i < DriverConstants::PredictsPerValue; i++){
+			u2 pred = Predictor::predict();
+
+			s2 delta = differnecewithwrap(stoi(row[phaseCol]), stoi(previousRow[phaseCol]), DriverConstants::StepsPerRotation);
+
+			ull tick = stoi(previousRow[tickCol]) / speedMultiply;
+
+			if(delta - prevDelta > probMaxDeltaDelta){
+				delta -= DriverConstants::StepsPerCycle;
+
+			}
+			else if (delta - prevDelta < -probMaxDeltaDelta){
+				delta += DriverConstants::StepsPerCycle;
+
+				// cout << -probMaxDeltaDelta ;
+			}
+
+
+			if (GetMaxes){
+				if(abs(delta) > abs(maxDelta)){
+					maxDelta = delta;
+					maxDeltaPos = stoi(previousRow[tickCol]);
+				}
+			
+				if ((delta > 0 && prevDelta < 0) || (delta < 0 && prevDelta > 0)){
+					if(abs(delta-prevDelta) > abs(maxDeltaDelta)){
+						maxDeltaDelta = delta-prevDelta;
+						maxDeltaDeltaPos = stoi(previousRow[tickCol]);
+					}
+				}
+			}
+			
+			prevDelta = delta;
+			
+			double partialStep = ((double)i / DriverConstants::PredictsPerValue);
+
+			double actual = stoi(previousRow[phaseCol]) - delta * partialStep;
+
+			if (actual < 0)
+				actual += DriverConstants::StepsPerCycle;
+			else if (actual >= DriverConstants::StepsPerCycle)
+				actual -= DriverConstants::StepsPerCycle;
+
+
+			double error = differnecewithwrap(pred, actual, DriverConstants::StepsPerCycle);
+			double e2 = error * error;
+
+			errorSum += e2;
+			num++;
+
+			SubSetTest::runTest(stoi(previousRow[tickCol])+partialStep, e2);
+
+			if(WriteToFile){
+				output << tick
+					//adds the decimal portion as a string or the full number is not reccorded in large numbers
+					<< to_string(partialStep).substr(1,4) << ','
+					<<pred<<','
+					<<actual<<','
+					<<stoi(previousRow[mechCol])<<','
+					<<error<<','
+					<<e2
+					<<endl;
+			}
+		}
+	
+
+		// cout<<endl;
+		
 		// cout << endl<< stoi(lastrow[phaseCol]) << '\t';
 		// output << previousRow[tickCol]<< ","<<stoi(previousRow[phaseCol])<<"," << stoi(previousRow[phaseCol])<<endl;
 	}
