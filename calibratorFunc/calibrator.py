@@ -35,7 +35,7 @@ def rng(low, high):
 	return rngI
 
 l = list()
-elecToMech = 0
+elecToMech = elctricalPerMechanical-1
 
 for i in range(max(file['adj'])+1):
 
@@ -62,10 +62,10 @@ for i in range(max(file['adj'])+1):
 
 	if len(l) > 0 and abs(value - (l[len(l)-1] & 0x0FFF)) > 500:
 		print value, l[len(l)-1]
-		elecToMech = elecToMech + 1
+		elecToMech = elecToMech - 1
 
-		if elecToMech >= elctricalPerMechanical:
-			elecToMech = 0
+		if elecToMech < 0:
+			elecToMech = elctricalPerMechanical -1
 	
 	l.append(value + elecToMech * pow(2, 12))
 
