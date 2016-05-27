@@ -21,13 +21,14 @@ class Predictor{
   inline static u2 getMechPhase(u2 phase){return (phase & DriverConstants::BitsForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;};
 
 public:
-  static u2 shiftVal;
+  static u1 ratio;
+  static u2 adjustVal;
 
   static void freshPhase(u2 phase);
   static void init(u2);
 
   static u2 predict();
-  static s4 nextVelocity(s4, s2);
+  static s4 nextVelocity(s2);
 
   inline static u4 getPredictedPosition(){return drivePhase;}
   inline static u2 getMeasuredPosition() {return lastMecPha;}

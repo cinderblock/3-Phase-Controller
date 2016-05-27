@@ -22,7 +22,7 @@ using namespace std;
 const u1 speedMultiply = 1;
 const bool WriteToFile = false;
 const bool GetMaxes = false;
-const bool fullTest = true;
+const bool fullTest = false;
 
 const u1 tickCol = 0;
 const u1 phaseCol = 2;
@@ -126,7 +126,8 @@ void runTest(u2 adj = 100){
 	{
 		// cout<<input<<endl;
 		Predictor::init(getInput(stoi(row[mechCol])));
-		Predictor::shiftVal = adj;
+		Predictor::adjustVal = adj;
+		Predictor::ratio = adj;
 	}
 
 	s2 prevDelta = 0;
@@ -236,7 +237,7 @@ void runTest(u2 adj = 100){
 		cout << SubSetTest::reportTests() << endl;
 	}
 	else{
-		testOutput << (int)(Predictor::shiftVal) << ','<<(errorSum / num)<<','<<SubSetTest::reportVals()<<endl;
+		testOutput << (int)(Predictor::adjustVal) << ','<<(errorSum / num)<<','<<SubSetTest::reportVals()<<endl;
 	}
 	
 	if (GetMaxes){
@@ -257,10 +258,11 @@ int main(){
 		runTest();
 	}
 	else{
-		for(int i = 0; i < 1000; i++){
-			// SubSetTest::reset();
+		for(int i = 0; i <= ((u1)-1); i++){
+			SubSetTest::reset();
 			csvSetUp();
 
+			// cout<<i<<endl;
 			runTest(i);
 		}
 	}

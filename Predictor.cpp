@@ -13,7 +13,8 @@ u2 Predictor::lastMecPha;
 s2 Predictor::driveVelocity;
 s2 Predictor::lastMechChange;
 u2 Predictor::lastReading;
-u2 Predictor::shiftVal;
+u2 Predictor::adjustVal;
+u1 Predictor::ratio;
 
 s2 abs(s2 num){
   if(num < 0) return -num;
@@ -84,7 +85,7 @@ void Predictor::freshPhase(u2 reading){
   mechChange = DriverConstants::StepsPerRotation + mechChange;
  }
 
- auto tempVelocity = nextVelocity(driveVelocity, mechChange);
+ auto tempVelocity = nextVelocity(mechChange);
 
  ATOMIC_BLOCK(ATOMIC_FORCEON) {
   driveVelocity = tempVelocity;
@@ -99,17 +100,52 @@ void Predictor::freshPhase(u2 reading){
 
 // const u1 shiftVal = 255;
 
-s4 Predictor::nextVelocity(s4 tempVelocity, s2 measuredMechChange){
+const u1 smoothingType = 2;
 
- const s2 predictedPhaseChange = (s4(tempVelocity) * DriverConstants::PredictsPerValue) >> DriverConstants::drivePhaseValueShift;
+s4 Predictor::nextVelocity(s2 measuredMechChange){
 
- //TODO make this actually reflect max acceleration
- if (measuredMechChange > predictedPhaseChange) {
-  tempVelocity+=shiftVal;
- } else if (measuredMechChange < predictedPhaseChange) {
-  tempVelocity-=shiftVal;
+ s4 tempVelocity;
+
+ if (smoothingType == 1){
+  tempVelocity = driveVelocity;
+
+  const s2 predictedPhaseChange = (s4(tempVelocity) * DriverConstants::PredictsPerValue) >> DriverConstants::drivePhaseValueShift;
+
+  //TODO make this actually reflect max acceleration
+  if (measuredMechChange > predictedPhaseChange) {
+   tempVelocity+=adjustVal;
+  } else if (measuredMechChange < predictedPhaseChange) {
+   tempVelocity-=adjustVal;
+  }
  }
+ else if(smoothingType == 2){
+  static s4 n1 = 0;
+  static s4 n2 = 0;
+  static s4 n3 = 0;
 
+  s4 temp = (s4)measuredMechChange << DriverConstants::drivePhaseValueShift;
+
+  tempVelocity = (n3+3*n2+n1*6+temp*7)/16;
+
+  tempVelocity /= DriverConstants::PredictsPerValue;
+
+  n3 = n2;
+  n2 = n1;
+  n1 = temp;
+ }
+ else if(smoothingType == 3){
+  // static s4 last = 0;
+  // const u1 ratio = 10;
+
+  // s4 curr = ((s4)measuredMechChange << DriverConstants::drivePhaseValueShift);
+ 
+  tempVelocity = (driveVelocity>>DriverConstants::drivePhaseValueShift)*ratio+((s4)measuredMechChange)*((1<<DriverConstants::drivePhaseValueShift) - ratio);
+
+  // last = tempVelocity;
+
+  tempVelocity /= DriverConstants::PredictsPerValue;
+ }
+ 
  return tempVelocity;
 }
 
@@ -120,6 +156,7 @@ void Predictor::init(u2 phase){
  drivePhase = (lastMecPha & DriverConstants::BitsForPhase) << DriverConstants::drivePhaseValueShift;
  lastMechChange = 0;
 
- shiftVal = 100;
+ adjustVal = 100;
+ ratio = 10;
 }
 
