@@ -115,7 +115,7 @@ u2 getMechPhase(u2 phase){
 	return (phase & DriverConstants::BitsForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;
 }
 
-void runTest(u2 adj = 100){
+void runTest(u2 adj = 60){
 
 	double errorSum = 0;
 	ull num = 0;
@@ -126,8 +126,8 @@ void runTest(u2 adj = 100){
 	{
 		// cout<<input<<endl;
 		Predictor::init(getInput(stoi(row[mechCol])));
-		Predictor::adjustVal = adj;
-		Predictor::ratio = adj;
+		// Predictor::adjustVal = adj;
+		// Predictor::ratio = adj;
 	}
 
 	s2 prevDelta = 0;
@@ -237,7 +237,7 @@ void runTest(u2 adj = 100){
 		cout << SubSetTest::reportTests() << endl;
 	}
 	else{
-		testOutput << (int)(Predictor::adjustVal) << ','<<(errorSum / num)<<','<<SubSetTest::reportVals()<<endl;
+		// testOutput << (int)(Predictor::adjustVal) << ','<<(errorSum / num)<<','<<SubSetTest::reportVals()<<endl;
 	}
 	
 	if (GetMaxes){
