@@ -40,6 +40,16 @@ string SubSetTest::reportTests(){
 	return s;
 }
 
+string SubSetTest::reportVals(){
+	string s = "";
+
+	for (list<SubSetTest*>::iterator itr = testingSet->begin(); itr != testingSet->end(); itr++){
+		s += to_string((*itr)->errorSum/(*itr)->count) + ',';
+	}
+
+	return s;
+}
+
 SubSetTest::SubSetTest(string n, ull start, ull end){
 	name = n;
 
@@ -50,4 +60,21 @@ SubSetTest::SubSetTest(string n, ull start, ull end){
 	errorSum = 0;
 
 	testingSet->push_back(this);
+}
+
+string SubSetTest::getCSVNames(){
+
+	string s = "";
+
+	for (list<SubSetTest*>::iterator itr = testingSet->begin(); itr != testingSet->end(); itr++){
+		s += (*itr)->name + ',';
+	}
+
+	return s;
+}
+
+void SubSetTest::reset(){
+	for (list<SubSetTest*>::iterator itr = testingSet->begin(); itr != testingSet->end(); itr++){
+		(*itr)->resetSelf();
+	}
 }

@@ -13,7 +13,7 @@ u2 Predictor::lastMecPha;
 s2 Predictor::driveVelocity;
 s2 Predictor::lastMechChange;
 u2 Predictor::lastReading;
-
+u2 Predictor::shiftVal;
 
 s2 abs(s2 num){
   if(num < 0) return -num;
@@ -97,7 +97,7 @@ void Predictor::freshPhase(u2 reading){
  
 }
 
-const u1 shiftVal = 100;
+// const u1 shiftVal = 255;
 
 s4 Predictor::nextVelocity(s4 tempVelocity, s2 measuredMechChange){
 
@@ -119,4 +119,7 @@ void Predictor::init(u2 phase){
  lastMecPha = getMechPhase(phase);//lookupAlphaToPhase(MLX90363::getAlpha());
  drivePhase = (lastMecPha & DriverConstants::BitsForPhase) << DriverConstants::drivePhaseValueShift;
  lastMechChange = 0;
+
+ shiftVal = 100;
 }
+

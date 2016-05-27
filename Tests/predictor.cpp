@@ -20,18 +20,20 @@ the motor controllers current position between position updates
 using namespace std;
 
 const u1 speedMultiply = 1;
-const bool WriteToFile = true;
+const bool WriteToFile = false;
 const bool GetMaxes = false;
+const bool fullTest = true;
 
 const u1 tickCol = 0;
 const u1 phaseCol = 2;
 const u1 mechCol = 1;
 
 ofstream output;
+ofstream testOutput;
 
 csv_parser file_parser;
 
-void setUp(){
+void csvSetUp(){
 
 	/* Declare the variables to be used */
 	const char * filename = "magData2.csv";
@@ -40,7 +42,6 @@ void setUp(){
 	const char enclosure_char	 = '"';
 
 
-	SubSetTest::init();
 
 	/* Define how many records we're gonna skip. This could be used to skip the column definitions. */
 	file_parser.set_skip_lines(1);
@@ -56,9 +57,24 @@ void setUp(){
 	file_parser.set_line_term_char(line_terminator);
 
 
-	if(WriteToFile){
+}
+
+void setUp(){
+	if(!fullTest && WriteToFile){
 		output.open("out.csv");
 		output <<"tick,predicted,actual (approx),mech,error,error^2"<<endl;
+	}
+
+	SubSetTest::init();
+	new SubSetTest("stopped", 0, 500);
+	new SubSetTest("Reverse", 5036, 5040);
+	new SubSetTest("HighSpeed", 3650, 3900);
+	new SubSetTest("BackForth", 6500, 8400);
+
+	if(fullTest){
+		testOutput.open("test.csv");
+		testOutput <<"value,total error,"<<SubSetTest::getCSVNames()<<endl;
+
 	}
 
 }
@@ -88,15 +104,19 @@ const long long probMaxDeltaDelta = 100;
 u2 getInput(u2 mechPhase){
 
 	u1 mech = (mechPhase/DriverConstants::StepsPerCycle);
+	mech = DriverConstants::ElectricalPerMechanical-1-mech;
 	u2 input = ((int)mech<<12)+mechPhase%DriverConstants::StepsPerCycle;
 	// cout<<((int)mech<<12)<<' '<<mechPhase%DriverConstants::StepsPerCycle<<' ';
 
 	return input;
 }
 
-int main(){
+u2 getMechPhase(u2 phase){
+	return (phase & DriverConstants::BitsForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;
+}
 
-	setUp();
+void runTest(u2 adj = 100){
+
 	double errorSum = 0;
 	ull num = 0;
 
@@ -104,14 +124,10 @@ int main(){
 	csv_row row = file_parser.get_row();
 
 	{
-		u2 input = getInput(stoi(row[mechCol]));
 		// cout<<input<<endl;
-		Predictor::init(input);
+		Predictor::init(getInput(stoi(row[mechCol])));
+		Predictor::shiftVal = adj;
 	}
-
-	// new SubSetTest("stopped", 0, 8000);
-	// new SubSetTest("nominal", 10000, 10100);
-	// new SubSetTest("HighSpeed", 16414, 16514);
 
 	s2 prevDelta = 0;
 
@@ -123,17 +139,17 @@ int main(){
 		//dumb way of atifically speeding up motor
 		//this way does not keep the refrence data in between computed cycles
 		//in other words not as acurate to check again
-		for (int a = 0; a < speedMultiply; a++)
+		// for (int a = 0; a < speedMultiply; a++)
 			row = file_parser.get_row();
 
 		//double check for skipped ticks
-		if (stoi(row[tickCol]) - stoi(previousRow[tickCol]) != 1){
-			cout<<"skipped tick(s) ";
-			for (int i = stoi(previousRow[tickCol])+1; i < stoi(row[tickCol]); i++){
-				cout << i<< ' ';
-			}
-			cout << endl;
-		}
+		// if (stoi(row[tickCol]) - stoi(previousRow[tickCol]) != 1){
+		// 	cout<<"skipped tick(s) ";
+		// 	for (int i = stoi(previousRow[tickCol])+1; i < stoi(row[tickCol]); i++){
+		// 		cout << i<< ' ';
+		// 	}
+		// 	cout << endl;
+		// }
 
 		// u1 mechPhase = (stoi(previousRow[mechCol])/DriverConstants::StepsPerCycle);
 		// u2 input = mechPhase<<12+stoi(previousRow[phaseCol]);
@@ -141,14 +157,14 @@ int main(){
 		// cout<<input<<' ';
 		Predictor::freshPhase(input);
 
+		ull tick = stoi(previousRow[tickCol]) / speedMultiply;
+
 		// cout << stoi(row[phaseCol]) << endl;
 
-		for (int i = 0; i < DriverConstants::PredictsPerValue; i++){
+		for (int i = 1; i < DriverConstants::PredictsPerValue; i++){
 			u2 pred = Predictor::predict();
 
 			s2 delta = differnecewithwrap(stoi(row[phaseCol]), stoi(previousRow[phaseCol]), DriverConstants::StepsPerRotation);
-
-			ull tick = stoi(previousRow[tickCol]) / speedMultiply;
 
 			if(delta - prevDelta > probMaxDeltaDelta){
 				delta -= DriverConstants::StepsPerCycle;
@@ -201,7 +217,7 @@ int main(){
 					<< to_string(partialStep).substr(1,4) << ','
 					<<pred<<','
 					<<actual<<','
-					<<stoi(previousRow[mechCol])<<','
+					<<(getMechPhase(getInput(stoi(previousRow[mechCol]))) - delta * partialStep)<<','
 					<<error<<','
 					<<e2
 					<<endl;
@@ -215,15 +231,38 @@ int main(){
 		// output << previousRow[tickCol]<< ","<<stoi(previousRow[phaseCol])<<"," << stoi(previousRow[phaseCol])<<endl;
 	}
 
-	cout << errorSum / num << endl;
-
+	if(!fullTest){
+		cout << errorSum / num << endl;
+		cout << SubSetTest::reportTests() << endl;
+	}
+	else{
+		testOutput << (int)(Predictor::shiftVal) << ','<<(errorSum / num)<<','<<SubSetTest::reportVals()<<endl;
+	}
+	
 	if (GetMaxes){
 		cout<<"maxDelta @ " << maxDeltaPos<<endl;
 		cout<<"maxDeltaDelta @ " << maxDeltaDeltaPos<<endl;
 	}
 
-	// cout << s->report();
-	cout << SubSetTest::reportTests() << endl;
+}
 
+
+int main(){
+
+	setUp();
+
+
+	if(!fullTest){
+		csvSetUp();
+		runTest();
+	}
+	else{
+		for(int i = 0; i < 1000; i++){
+			// SubSetTest::reset();
+			csvSetUp();
+
+			runTest(i);
+		}
+	}
 }
 

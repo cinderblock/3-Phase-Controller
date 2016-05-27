@@ -24,7 +24,7 @@ class SubSetTest{
 	double errorSum;
 
 	void testSelf(double tick, double e2);
-
+	inline void resetSelf(){count = 0; errorSum = 0;};
 
 public:
 	static void init();
@@ -32,6 +32,10 @@ public:
 	static void runTest(double tick, double error);
 
 	static string reportTests();
+	static string reportVals();
+
+	static string getCSVNames();
+	static void reset();
 
 	SubSetTest(string n, ull start, ull end);
 
