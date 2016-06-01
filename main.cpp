@@ -12,7 +12,7 @@
 #include "ThreePhaseController.h"
 #include "MLX90363.h"
 #include "TwillBotInterface.h"
-#include "Debug.h"
+// #include "Debug.h"
 #include "Clock.h"
 #include "Interpreter.h"
 
@@ -27,7 +27,7 @@ u1 resetCause = MCUSR;
 void init() {
  wdt_reset();
  wdt_disable();
- Debug::init();
+ // Debug::init();
 
  MCUSR = 0;
  
@@ -76,7 +76,7 @@ void main() {
     Interpreter::interpretFromMaster(TwillBotInterface::getIncomingReadBuffer());
   }
 
-  // Interpreter::sendNormalDataToMaster();
+  Interpreter::sendNormalDataToMaster();
  }
 
  while(1);
