@@ -3,6 +3,7 @@
 #include "Config.h"
 #include "ThreePhaseController.h"
 #include "ThreePhaseDriver.h"
+#include "Predictor.h"
 // #include "MotorControl.h"
 #include "MLX90363.h"
 #include "TwillBotInterface.h"
@@ -66,6 +67,14 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 	if (incomingData[0] == 0x42){
 		ThreePhaseDriver::advanceTo((((u2)incomingData[2]) << 8) | incomingData[1]);
 	}
+
+	if (incomingData[0] == 0x43){
+		Predictor::setAdjustVal(incomingData[1]);
+	}
+
+	if (incomingData[0] == 0x44){
+		Predictor::setDriveVelocityPhaseAdvance(incomingData[1]);
+	}
 }
 
 //HACK ME
@@ -82,8 +91,10 @@ void Interpreter::sendNormalDataToMaster(){
 	*(u2 * const)(&buff[0]) = extra++;
 	*(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
 	*(u2 * const)(&buff[4]) = ThreePhaseController::getMeasuredPosition();
-	*(u4 * const)(&buff[6]) = ThreePhaseController::getPredictedPosition();
-	// buff[4] = (u2)ThreePhaseController::getTorque();
+	buff[6] = Predictor::getAdjustVal();
+	buff[7] = Predictor::getDriveVelocityPhaseAdvance();
+	buff[8] = (u1)ThreePhaseController::getTorque();
+	buff[9] = (u1)ThreePhaseController::getDeadTimes();
 	
 	TwillBotInterface::getOutgoingWriteBuffer()[Config::i2cBufferOutgoingSize-1] = getCRC(TwillBotInterface::getOutgoingWriteBuffer(), Config::i2cBufferOutgoingSize-1);
 

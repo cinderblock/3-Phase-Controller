@@ -13,7 +13,8 @@ u2 Predictor::lastMecPha;
 s2 Predictor::driveVelocity;
 s2 Predictor::lastMechChange;
 u2 Predictor::lastReading;
-// u2 Predictor::adjustVal;
+u1 Predictor::adjustVal;
+u1 Predictor::driveVelocityPhaseAdvance;
 // u1 Predictor::ratio;
 
 s2 abs(s2 num){
@@ -45,15 +46,15 @@ u2 Predictor::predict(){
  // return ph;
  // return (ph>>DriverConstants::drivePhaseValueShift)% DriverConstants::StepsPerCycle;
 
- // // Adjust output for velocity lag
- // ph += driveVelocity * driveVelocityPhaseAdvance;
+ // Adjust output for velocity lag
+ ph += driveVelocity * driveVelocityPhaseAdvance;
  
- //  // Check if ph(ase) value is out of range again
- // if (ph > MAX) {
- //  // Fix it
- //  if (forward) ph -= MAX;
- //  else         ph += MAX;
- // }
+  // Check if ph(ase) value is out of range again
+ if (ph > MAX) {
+  // Fix it
+  if (forward) ph -= MAX;
+  else         ph += MAX;
+ }
  
  return (ph >> DriverConstants::drivePhaseValueShift) & DriverConstants::BitsForPhase;
 }
@@ -156,8 +157,7 @@ void Predictor::init(u2 phase){
  lastMecPha = getMechPhase(phase);//lookupAlphaToPhase(MLX90363::getAlpha());
  drivePhase = (lastMecPha & DriverConstants::BitsForPhase) << DriverConstants::drivePhaseValueShift;
  lastMechChange = 0;
-
- // adjustVal = 60;
- // ratio = 10;
+ adjustVal = 5;
+ driveVelocityPhaseAdvance = 1;
 }
 

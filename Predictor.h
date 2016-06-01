@@ -16,7 +16,8 @@ class Predictor{
   static s2 driveVelocity;
   static s2 lastMechChange;
   static u2 lastReading;
-  static constexpr u1 driveVelocityPhaseAdvance = 0;
+  static u1 adjustVal;
+  static u1 driveVelocityPhaseAdvance;
 
   inline static u2 getMechPhase(u2 phase){return (phase & DriverConstants::BitsForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;};
 
@@ -33,6 +34,11 @@ public:
   inline static u4 getPredictedPosition(){return drivePhase;}
   inline static u2 getMeasuredPosition() {return lastMecPha;}
   inline static s2 getVelocity()         {return driveVelocity;}
+
+  inline static u1 getAdjustVal(){return adjustVal;}
+  inline static u1 getDriveVelocityPhaseAdvance(){return driveVelocityPhaseAdvance;}
+  inline static void setAdjustVal(u1 val){adjustVal = val;}
+  inline static void setDriveVelocityPhaseAdvance(u1 val){driveVelocityPhaseAdvance = val;}
 };
 
 #endif  /* PREDICTOR_H */
