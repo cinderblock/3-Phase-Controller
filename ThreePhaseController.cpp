@@ -30,14 +30,14 @@ void ThreePhaseController::isr() {
  u2 outputPhase = Predictor::predict();
 
  // Offset from current angle by 90deg for max torque
- if (isForwardTorque) outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
- else                 outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
+ if (isForwardTorque) outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
+ else                 outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
  
  // Fix outputPhase range
  if (outputPhase > ThreePhaseDriver::StepsPerCycle) {
   // Fix it
-  if (isForwardTorque) outputPhase -= ThreePhaseDriver::StepsPerCycle;
-  else                 outputPhase += ThreePhaseDriver::StepsPerCycle;
+  if (isForwardTorque) outputPhase += ThreePhaseDriver::StepsPerCycle;
+  else                 outputPhase -= ThreePhaseDriver::StepsPerCycle;
  }
  
  // Update driver outputs
