@@ -98,18 +98,9 @@ void Predictor::freshPhase(u2 reading){
  
 }
 
-const u1 adjustVal = 60;
-
-// const u1 smoothingType = 1;
-
-//With the data set we had, 60 seemed to be the optimal value for adjustments
-//however other smoothing methods were better in certain conditions. More research is required
 s4 Predictor::nextVelocity(s2 measuredMechChange){
 
- s4 tempVelocity;
-
- // if (smoothingType == 1){
- tempVelocity = driveVelocity;
+ s4 tempVelocity = driveVelocity;
 
  const s2 predictedPhaseChange = (tempVelocity * ((s4)DriverConstants::PredictsPerValue)) >> DriverConstants::drivePhaseValueShift;
 
@@ -118,35 +109,6 @@ s4 Predictor::nextVelocity(s2 measuredMechChange){
  } else if (measuredMechChange < predictedPhaseChange) {
   tempVelocity-=adjustVal;
  }
- // }
- // else if(smoothingType == 2){
- //  static s4 n1 = 0;
- //  static s4 n2 = 0;
- //  static s4 n3 = 0;
-
- //  s4 temp = (s4)measuredMechChange << DriverConstants::drivePhaseValueShift;
-
- //  tempVelocity = (n3+3*n2+n1*6+temp*7)/16;
-
- //  tempVelocity /= DriverConstants::PredictsPerValue;
-
- //  n3 = n2;
- //  n2 = n1;
- //  n1 = temp;
- // }
- // else if(smoothingType == 3){
- //  // static s4 last = 0;
- //  // const u1 ratio = 10;
-
- //  // s4 curr = ((s4)measuredMechChange << DriverConstants::drivePhaseValueShift);
- 
- //  tempVelocity = (driveVelocity>>DriverConstants::drivePhaseValueShift)*ratio+((s4)measuredMechChange)*((1<<DriverConstants::drivePhaseValueShift) - ratio);
-
- //  // last = tempVelocity;
-
- //  tempVelocity /= DriverConstants::PredictsPerValue;
- // }
- 
  return tempVelocity;
 }
 
