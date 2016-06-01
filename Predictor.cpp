@@ -75,11 +75,10 @@ void Predictor::freshPhase(u2 reading){
  // auto tempVelocity = driveVelocity;
  
  
- s2 mechChange = mechanicalPhase - lastMecPha; 
+ s2 mechChange = (s2)mechanicalPhase - (s2)lastMecPha; 
  
  //TODO ensure we are not wrapping in the wrong direction due to high speeds
- 
- if (mechChange > DriverConstants::StepsPerRotation/2){
+ if (mechChange > (s2)(DriverConstants::StepsPerRotation/2)){
   mechChange = DriverConstants::StepsPerRotation - mechChange;
  }
  else if (mechChange < -((s2)DriverConstants::StepsPerRotation/2)){
@@ -112,7 +111,7 @@ s4 Predictor::nextVelocity(s2 measuredMechChange){
  // if (smoothingType == 1){
  tempVelocity = driveVelocity;
 
- const s2 predictedPhaseChange = (s4(tempVelocity) * DriverConstants::PredictsPerValue) >> DriverConstants::drivePhaseValueShift;
+ const s2 predictedPhaseChange = (tempVelocity * ((s4)DriverConstants::PredictsPerValue)) >> DriverConstants::drivePhaseValueShift;
 
  if (measuredMechChange > predictedPhaseChange) {
   tempVelocity+=adjustVal;
