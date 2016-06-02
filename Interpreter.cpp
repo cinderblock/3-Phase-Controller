@@ -73,7 +73,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 	}
 
 	if (incomingData[0] == 0x44){
-		Predictor::setDriveVelocityPhaseAdvance(incomingData[1]);
+		Predictor::setPhaseAdvanceRatio(incomingData[1]);
 	}
 }
 
@@ -92,7 +92,7 @@ void Interpreter::sendNormalDataToMaster(){
 	*(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
 	*(u2 * const)(&buff[4]) = ThreePhaseController::getMeasuredPosition();
 	buff[6] = Predictor::getAdjustVal();
-	buff[7] = Predictor::getDriveVelocityPhaseAdvance();
+	buff[7] = Predictor::getPhaseAdvanceRatio();
 	buff[8] = (u1)ThreePhaseController::getTorque();
 	buff[9] = (u1)ThreePhaseController::getDeadTimes();
 	

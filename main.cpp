@@ -1,4 +1,4 @@
-/* 
+/**
  * File:   main.cpp
  * Author: btacklind
  *
@@ -25,60 +25,60 @@ void init() __attribute__((constructor));
 u1 resetCause = MCUSR;
 
 void init() {
- wdt_reset();
- wdt_disable();
- // Debug::init();
+	wdt_reset();
+	wdt_disable();
+	// Debug::init();
 
- MCUSR = 0;
- 
- sei();
- 
- ::Clock::init();
- 
- TwillBotInterface::init();
- 
- ThreePhaseController::init();
- // ThreePhaseDriver::init();
- // ThreePhaseDriver::setAmplitude(40);
- // ThreePhaseDriver::advanceTo(100);
+	MCUSR = 0;
+	
+	sei();
+	
+	::Clock::init();
+	
+	TwillBotInterface::init();
+	
+	ThreePhaseController::init();
+	// ThreePhaseDriver::init();
+	// ThreePhaseDriver::setAmplitude(40);
+	// ThreePhaseDriver::advanceTo(100);
 
- // End of init
- Board::LED.output();
- Board::LED.off();
+	// End of init
+	Board::LED.output();
+	Board::LED.off();
 }
 
-/*
+/**
  * 
  */
 void main() {
- 
- u2 pos = 0;
- 
- Clock::MicroTime t(0);
- Clock::MicroTime delta = 25_ms;
- Clock::MicroTime now;
- 
- Board::LED.on();
- 
- 
- ThreePhaseController::setTorque(0);
+	
+	u2 pos = 0;
+	
+	Clock::MicroTime t(0);
+	Clock::MicroTime delta = 25_ms;
+	Clock::MicroTime now;
+	
+	// Board::LED.on();
+	
+	
+	ThreePhaseController::setTorque(0);
 
- // while(1){
- //  ThreePhaseDriver::advance();
- // }
- 
- while(1){
-  ThreePhaseController::updateDriver();
+	// while(1){
+	// 	ThreePhaseDriver::advance();
+	// }
+	
+	while(1){
+		ThreePhaseController::updateDriver();
 
-  if(TwillBotInterface::hasReceivedBlock()){
-    TwillBotInterface::reserveNextReadBuffer();
+		if(TwillBotInterface::hasReceivedBlock()){
+			TwillBotInterface::reserveNextReadBuffer();
 
-    Interpreter::interpretFromMaster(TwillBotInterface::getIncomingReadBuffer());
-  }
+			Interpreter::interpretFromMaster(TwillBotInterface::getIncomingReadBuffer());
+		}
 
-  Interpreter::sendNormalDataToMaster();
- }
+		Interpreter::sendNormalDataToMaster();
+	}
 
- while(1);
+	while(1);
 }
 
