@@ -15,6 +15,7 @@ s2 Predictor::lastMechChange;
 u2 Predictor::lastReading;
 u1 Predictor::adjustVal;
 u1 Predictor::phaseAdvanceRatio;
+s4 Predictor::phaseAdvanceAmount;
 // u1 Predictor::ratio;
 
 s2 abs(s2 num){
@@ -32,7 +33,7 @@ u2 Predictor::predict(){
 	static const u4 MAX = DriverConstants::StepsPerCycle << DriverConstants::drivePhaseValueShift;
 	
 	// Check if ph(ase) value is out of range
-	if (ph > MAX) {
+	if (ph >= MAX) {
 		// Fix it
 		if (forward){
 			ph -= MAX;
@@ -46,10 +47,10 @@ u2 Predictor::predict(){
 	drivePhase = ph;
 
 	// Adjust output for velocity lag
-	ph += driveVelocity * phaseAdvanceRatio;
+	ph += phaseAdvanceAmount;
 	
 		// Check if ph(ase) value is out of range again
-	if (ph > MAX) {
+	if (ph >= MAX) {
 		// Fix it
 		if (forward) ph -= MAX;
 		else         ph += MAX;
@@ -83,11 +84,13 @@ void Predictor::freshPhase(u2 reading){
 	}
 
 	s4 tempVelocity = nextVelocity(mechChange);
+  s4 tempPhaseAdvance = tempVelocity * phaseAdvanceRatio;
 
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
 		driveVelocity = tempVelocity;
 		// lastReading = reading;
 		drivePhase = u4(reading & DriverConstants::BitsForPhase) << DriverConstants::drivePhaseValueShift;
+    phaseAdvanceAmount = tempPhaseAdvance;
 	}
 	
 	// Save the most recent magnetic position

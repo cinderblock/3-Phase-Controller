@@ -18,6 +18,7 @@ class Predictor{
 	static u2 lastReading;
 	static u1 adjustVal;
 	static u1 phaseAdvanceRatio;
+  static s4 phaseAdvanceAmount;
 
 	inline static u2 getMechPhase(u2 phase){return (phase & DriverConstants::BitsForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;};
 
