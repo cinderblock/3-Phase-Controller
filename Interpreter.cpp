@@ -88,7 +88,7 @@ void Interpreter::sendNormalDataToMaster(){
 
 	u1 * const buff = TwillBotInterface::getOutgoingWriteBuffer();
 
-	*(u2 * const)(&buff[0]) = extra++;
+	*(u2 * const)(&buff[0]) = ThreePhaseController::getRoll();
 	*(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
 	*(u2 * const)(&buff[4]) = ThreePhaseController::getMeasuredPosition();
 	buff[6] = Predictor::getAdjustVal();

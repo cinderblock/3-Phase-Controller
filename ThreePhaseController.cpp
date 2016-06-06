@@ -18,6 +18,7 @@
 
 bool ThreePhaseController::isForwardTorque;
 u1 ThreePhaseController::magRoll;
+u2 ThreePhaseController::roll;
 
 void TIMER4_OVF_vect() {
 	ThreePhaseController::isr();
@@ -305,7 +306,9 @@ void ThreePhaseController::init() {
 	while (!MLX90363::hasNewData(magRoll));
 	while (!MLX90363::hasNewData(magRoll));
 	
+	roll = 0;
 	Predictor::init(lookupAlphaToPhase(MLX90363::getAlpha()));
+	roll = 1;
 }
 
 void ThreePhaseController::setTorque(const Torque t) {
@@ -322,6 +325,8 @@ bool ThreePhaseController::updateDriver() {
 	auto const alpha = MLX90363::getAlpha();
 	auto const magPha = lookupAlphaToPhase(alpha);
 	
+	roll++;
+
 	Predictor::freshPhase(magPha);
 
 	return true;

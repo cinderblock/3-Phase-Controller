@@ -24,6 +24,7 @@ class ThreePhaseController {
 	
 
 	static u1 magRoll;
+  static u2 roll;
 
 	static const u1 MaxTorque = 40;
 	
@@ -66,6 +67,8 @@ public:
 	inline static u4 getPredictedPosition(){return Predictor::getPredictedPosition();};
 	inline static s2 getVelocity()         {return Predictor::getVelocity();};
 	inline static u2 getMeasuredPosition() {return Predictor::getMeasuredPosition();}
+
+  inline static u2 getRoll(){return roll;};
 
 	inline static constexpr u1 getMaxTorque(){return MaxTorque;};
 
