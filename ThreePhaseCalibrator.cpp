@@ -27,7 +27,7 @@ void ThreePhaseCalibrator::init(){
 }
 
 void ThreePhaseCalibrator::goTo(u2 pos){
-	if(pos <= MAX)
+	if(pos < MAX)
 		position = pos;
 	else
 		position = MAX;

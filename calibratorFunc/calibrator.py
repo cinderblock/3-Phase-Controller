@@ -40,7 +40,10 @@ elecToMech = elctricalPerMechanical-1
 for i in range(max(file['adj'])+1):
 
 	f = file[file['adj'] == i]['phase']
-	if max(f) - min(f) > 100:
+	if f.empty:
+		print i, " is missing!"
+		continue
+	elif max(f) - min(f) > 100:
 		# print list(f)
 		t = filter(rng(0, 100), f)
 		b = filter(rng(600,1000), f)
@@ -70,10 +73,18 @@ for i in range(max(file['adj'])+1):
 	l.append(value + elecToMech * pow(2, 12))
 
 numPerLine = 20
+shift = 0
 
 s = '[\n '
 for i in range(len(l)):
-	s = s+'0x{:04x},'.format(l[i])
+	
+	temp = i + shift
+	if temp >= len(l):
+		temp -= len(l)
+	elif temp < 0:
+		temp += len(l)
+
+	s = s+'0x{:04x},'.format(l[temp])
 	# s = s+'{!s:>3},'.format(l[i], '#04x')
 	if i % numPerLine is numPerLine-1:
 		s=s+'\n '
