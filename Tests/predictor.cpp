@@ -20,7 +20,7 @@ the motor controllers current position between position updates
 using namespace std;
 
 const u1 speedMultiply = 1;
-const bool WriteToFile = false;
+const bool WriteToFile = true;
 const bool GetMaxes = false;
 const bool fullTest = false;
 
@@ -36,7 +36,7 @@ csv_parser file_parser;
 void csvSetUp(){
 
 	/* Declare the variables to be used */
-	const char * filename = "magData2.csv";
+	const char * filename = "MagData3.csv";
 	const char field_terminator = ',';
 	const char line_terminator	= '\n';
 	const char enclosure_char	 = '"';
@@ -66,10 +66,10 @@ void setUp(){
 	}
 
 	SubSetTest::init();
-	new SubSetTest("stopped", 0, 500);
-	new SubSetTest("Reverse", 5036, 5040);
-	new SubSetTest("HighSpeed", 3650, 3900);
-	new SubSetTest("BackForth", 6500, 8400);
+	// new SubSetTest("stopped", 0, 500);
+	// new SubSetTest("Reverse", 5036, 5040);
+	// new SubSetTest("HighSpeed", 3650, 3900);
+	// new SubSetTest("BackForth", 6500, 8400);
 
 	if(fullTest){
 		testOutput.open("test.csv");
@@ -124,8 +124,9 @@ void runTest(u2 adj = 60){
 	csv_row row = file_parser.get_row();
 
 	{
+		auto input = getInput(stoi(row[mechCol]));
 		// cout<<input<<endl;
-		Predictor::init(getInput(stoi(row[mechCol])));
+		Predictor::init(input);
 		// Predictor::adjustVal = adj;
 		// Predictor::ratio = adj;
 	}
@@ -248,7 +249,11 @@ void runTest(u2 adj = 60){
 }
 
 
-int main(){
+int main(int argc, char* argv[]){
+
+	if(argc > 1){
+
+	}
 
 	setUp();
 

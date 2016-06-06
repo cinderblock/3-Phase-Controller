@@ -16,7 +16,6 @@ u2 Predictor::lastReading;
 u1 Predictor::adjustVal;
 u1 Predictor::phaseAdvanceRatio;
 s4 Predictor::phaseAdvanceAmount;
-// u1 Predictor::ratio;
 
 s2 abs(s2 num){
 		if(num < 0) return -num;
