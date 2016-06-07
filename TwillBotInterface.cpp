@@ -10,6 +10,7 @@
 
 #include "TwillBotInterface.h"
 #include "Board.h"
+#include "Debug.h"
 
 using namespace AVR::I2C;
 
@@ -21,7 +22,9 @@ u1 TwillBotInterface::bufferIndex;
 bool TwillBotInterface::generalCall;
 
 void TWI_vect() {
+ Debug::TwillBotInterface::ISR::enter();
  TwillBotInterface::InterruptServiceRoutine();
+ Debug::TwillBotInterface::ISR::exit();
 }
 
 void TIMER0_COMPB_vect() {
@@ -45,7 +48,7 @@ void TwillBotInterface::init() {
 
 void TwillBotInterface::timeout() {
  //i2c timeout detected
- Board::LED.on();
+ Debug::TwillBotInterface::timeout();
  TimerTimeout::stopBISR();
 
  //do something...
@@ -61,8 +64,7 @@ void TwillBotInterface::InterruptServiceRoutine() {
  sei();
  
  TimerTimeout::stopBISR();
- Board::LED.off();
- 
+
  TwillBotInterface::handleNextI2CByte();
 }
 

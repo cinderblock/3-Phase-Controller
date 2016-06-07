@@ -88,6 +88,27 @@ namespace Debug {
   
  };
  
+ namespace TwillBotInterface {
+  constexpr bool LEDs = false;
+
+  namespace ISR {
+   inline static void enter() {
+    if (!LEDs) return;
+    Board::LED.off();
+   }
+
+   inline static void exit() {
+    if (!LEDs) return;
+    Board::LED.on();
+   }
+  }
+
+  inline static void timeout() {
+   if (!LEDs) return;
+   Board::LED.off();
+  }
+ }
+ 
  extern Printer SOUT;
 };
 
