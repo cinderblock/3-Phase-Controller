@@ -32,7 +32,6 @@ void TIMER0_COMPB_vect() {
  TwillBotInterface::timeout();
 }
 
-
 void TwillBotInterface::init() {
  TimerTimeout::init();
 
@@ -66,7 +65,6 @@ void TwillBotInterface::enableAVRHardware(bool ack) {
 }
 
 void TwillBotInterface::timeout() {
- //i2c timeout detected
  Debug::TwillBotInterface::timeout();
  TimerTimeout::stopBISR();
 
@@ -116,6 +114,7 @@ void TwillBotInterface::handleNextI2CByte() {
   if (bufferIndex < incomingBufferSize) {
    incomingBuffer.getWriteBuffer()[bufferIndex++] = *DR;
   }
+
   incomingBuffer.markNewestBuffer();
 
   // ACK the next SLA+R/W
@@ -161,13 +160,13 @@ void TwillBotInterface::handleNextI2CByte() {
    // We don't have a block ready to send. Don't ACK and send a 0.
    *DR = 0;
   }
-
+  
   _delay_us(rPiI2CClockStrechUS);
  }
  
  if (s == Status::SlaveDataTransmittedAcked) {
+  
   _delay_us(rPiI2CClockStrechUS);
-
   // We told the AVR hardware to send a byte and we received an ACK as expected
   *DR = outgoingBuffer.getReadBuffer()[bufferIndex++];
   if (bufferIndex < outgoingBufferSize)
