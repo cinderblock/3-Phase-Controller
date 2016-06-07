@@ -34,6 +34,7 @@ class TwillBotInterface {
  static u1 bufferIndex;
  
  static bool generalCall;
+ static bool holdResponse;
 
  /**
   * The buffer that SLA+W writes to and that the local software reads from
@@ -82,8 +83,14 @@ public:
  /**
   * Mark the current block of data as ready to send to the master
   */
- inline static void releaseNextWriteBuffer() {outgoingBuffer.markNewestBuffer();}
+ inline static void releaseNextWriteBuffer() {outgoingBuffer.markNewestBuffer(); holdResponse = false;}
  
+ /**
+  * Mark the current block of data as ready to send to the master
+  * Set the the holdResponse variable (true to keep response until explicitly told to use next value)
+  */
+ inline static void reserveWriteSetHold(const bool b) {outgoingBuffer.markNewestBuffer(); holdResponse = b;}
+
  /**
   * Check if the master has read the most recent block of data from us
   * @return 

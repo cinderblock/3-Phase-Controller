@@ -20,6 +20,7 @@ TripleBuffer<TwillBotInterface::outgoingBufferSize, false> TwillBotInterface::ou
 u1 TwillBotInterface::bufferIndex;
 
 bool TwillBotInterface::generalCall;
+bool TwillBotInterface::holdResponse = false;
 
 void TWI_vect() {
  Debug::TwillBotInterface::ISR::enter();
@@ -129,8 +130,11 @@ void TwillBotInterface::handleNextI2CByte() {
   bufferIndex = 0;
   
   // Only iff there is new data available should we send anything
-  if (outgoingBuffer.isNewData()) {
-   outgoingBuffer.reserveNewestBufferForReading();
+  if (outgoingBuffer.isNewData() || holdResponse) {
+   
+   if (!holdResponse)
+    outgoingBuffer.reserveNewestBufferForReading();
+   
    if (bufferIndex < outgoingBufferSize) {
     *DR = outgoingBuffer.getReadBuffer()[bufferIndex++];
     ack = true;
