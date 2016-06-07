@@ -67,10 +67,11 @@ void TwillBotInterface::enableAVRHardware(bool ack) {
 void TwillBotInterface::timeout() {
  Debug::TwillBotInterface::timeout();
  TimerTimeout::stopBISR();
-
- //do something...
- const Status s = AVR::I2C::getStatus();
  
+ // Turn off TWI hardware
+ CR->byte = 1 << TWINT;
+ 
+ enableAVRHardware(true);
 }
 
 void TwillBotInterface::InterruptServiceRoutine() {
