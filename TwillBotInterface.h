@@ -53,6 +53,8 @@ class TwillBotInterface {
  static TripleBuffer<outgoingBufferSize, false> outgoingBuffer;
  
  inline static void timeout();
+ 
+ inline static void enableAVRHardware(bool ack);
 public:
  
  /**

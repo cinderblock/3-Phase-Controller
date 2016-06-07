@@ -47,6 +47,24 @@ void TwillBotInterface::init() {
          1 << TWINT;
 }
 
+void TwillBotInterface::enableAVRHardware(bool ack) {
+ // Re-enable I2C interrupt while clearing the interrupt flag (by setting it)
+ // CR->EnableAcknowledge = ack;
+ // CR->InterruptFlag = 1;
+ // CR->byte = ack ? 0b11000101 : 0b10000101;
+ CR->byte = ack ? (
+         1 << TWIE |
+         1 << TWEN |
+         1 << TWEA |
+         1 << TWINT
+         ) : (
+         1 << TWIE |
+         1 << TWEN |
+         0 << TWEA |
+         1 << TWINT
+         );
+}
+
 void TwillBotInterface::timeout() {
  //i2c timeout detected
  Debug::TwillBotInterface::timeout();
@@ -173,21 +191,7 @@ void TwillBotInterface::handleNextI2CByte() {
   ack = true;
  }
  
- // Re-enable I2C interrupt while clearing the interrupt flag (by setting it)
-// CR->EnableAcknowledge = ack;
-// CR->InterruptFlag = 1;
-// CR->byte = ack ? 0b11000101 : 0b10000101;
- CR->byte = ack ? (
-         1 << TWIE |
-         1 << TWEN |
-         1 << TWEA |
-         1 << TWINT
-         ) : (
-         1 << TWIE |
-         1 << TWEN |
-         0 << TWEA |
-         1 << TWINT
-         );
+ enableAVRHardware(ack);
  
  TimerTimeout::startB(timeoutPeriod);
 }
