@@ -77,10 +77,10 @@ void TwillBotInterface::InterruptServiceRoutine() {
  // Turn off the TWI interrupt
  CR->byte = 1 << TWEN;
  
+ TimerTimeout::stopBISR();
+
  // Enable global interrupts
  sei();
- 
- TimerTimeout::stopBISR();
 
  TwillBotInterface::handleNextI2CByte();
 }
