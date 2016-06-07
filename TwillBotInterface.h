@@ -23,10 +23,10 @@ class TwillBotInterface {
  friend void TIMER0_COMPB_vect();
  inline static void InterruptServiceRoutine();
  inline static void handleNextI2CByte();
- 
+
+ static constexpr u1 rPiI2CClockStrechUS = 3;
  static constexpr TimerTimeout::Period timeoutPeriod = 10.0_ms;
  
- static constexpr u1 rPiI2CClockStrechUS = 2;
  
  static constexpr u1 incomingBufferSize = Config::i2cBufferIncomingSize;
  static constexpr u1 outgoingBufferSize = Config::i2cBufferOutgoingSize;
