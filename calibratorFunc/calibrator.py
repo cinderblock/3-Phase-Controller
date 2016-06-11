@@ -75,7 +75,7 @@ for i in range(max(file['adj'])+1):
 numPerLine = 20
 shift = 0
 
-s = '[\n '
+s = ''
 for i in range(len(l)):
 	
 	temp = i + shift
@@ -87,8 +87,8 @@ for i in range(len(l)):
 	s = s+'0x{:04x},'.format(l[temp])
 	# s = s+'{!s:>3},'.format(l[i], '#04x')
 	if i % numPerLine is numPerLine-1:
-		s=s+'\n '
-s=s+']'
+		s=s+'\n\t'
+
 
 print len(l)
 
