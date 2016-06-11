@@ -18,8 +18,8 @@ u1 Predictor::phaseAdvanceRatio;
 s4 Predictor::phaseAdvanceAmount;
 
 s2 abs(s2 num){
-		if(num < 0) return -num;
-		return num;
+	if(num < 0) return -num;
+	return num;
 }
 
 u2 Predictor::predict(){
@@ -83,13 +83,12 @@ void Predictor::freshPhase(u2 reading){
 	}
 
 	s4 tempVelocity = nextVelocity(mechChange);
-  s4 tempPhaseAdvance = tempVelocity * phaseAdvanceRatio;
+	s4 tempPhaseAdvance = tempVelocity * phaseAdvanceRatio;
 
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
 		driveVelocity = tempVelocity;
-		// lastReading = reading;
 		drivePhase = u4(reading & DriverConstants::BitsForPhase) << DriverConstants::drivePhaseValueShift;
-    phaseAdvanceAmount = tempPhaseAdvance;
+		phaseAdvanceAmount = tempPhaseAdvance;
 	}
 	
 	// Save the most recent magnetic position
