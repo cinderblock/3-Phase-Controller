@@ -275,16 +275,16 @@ static const u2 AlphaToPhaseLookup[loop] PROGMEM = {
  */
 inline static u2 lookupAlphaToPhase(u2 alpha) {
 	// Make sure we're working with a 14-bit number
-	alpha &= 0x3fff;
+	alpha &= ((1<<14)-1);
 	
 	//divide alpha by 4 to get a feasible table size
 	alpha >>= 2;
 
 	//if somehow we get a magnetomiter reading larger then in calibration
 	//circle around to begining
-	if (alpha > loop){
-		alpha -= loop;
-	}
+	// if (alpha > loop){
+	// 	alpha -= loop;
+	// }
 
 	// Read the phase number word from the calculated place in the lookup table
 	return pgm_read_word(&AlphaToPhaseLookup[alpha]);
