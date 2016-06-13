@@ -36,7 +36,7 @@ csv_parser file_parser;
 void csvSetUp(){
 
 	/* Declare the variables to be used */
-	const char * filename = "MagData3.csv";
+	const char * filename = "MagData2.csv";
 	const char field_terminator = ',';
 	const char line_terminator	= '\n';
 	const char enclosure_char	 = '"';
@@ -112,7 +112,7 @@ u2 getInput(u2 mechPhase){
 }
 
 u2 getMechPhase(u2 phase){
-	return (phase & DriverConstants::BitsForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;
+	return (phase & DriverConstants::MaskForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;
 }
 
 void runTest(u2 adj = 60){

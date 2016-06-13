@@ -20,7 +20,7 @@ class Predictor{
 	static u1 phaseAdvanceRatio;
   static s4 phaseAdvanceAmount;
 
-	inline static u2 getMechPhase(u2 phase){return (phase & DriverConstants::BitsForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;};
+	inline static u2 getMechPhase(u2 phase){return (phase & DriverConstants::MaskForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;};
 
 public:
 	// static u1 ratio;

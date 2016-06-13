@@ -31,7 +31,7 @@ public:
 	/**
 	 * The bits used to define an electrical revolution
 	 */
-	static u2 constexpr BitsForPhase = 0x3FF;
+	static u2 constexpr MaskForPhase = 0x3FF;
 
 	/**
 	 * One for each of A, B, and C.

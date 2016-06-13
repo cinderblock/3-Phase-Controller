@@ -3,6 +3,7 @@
 // #include "Debug.h"
 #include <util/atomic.h>
 #include "DriverConstants.h"
+// #include "Board.h"
 // #include <iostream>
 // #include <cmath> 
 
@@ -55,7 +56,9 @@ u2 Predictor::predict(){
 		else         ph += MAX;
 	}
 	
-	return (ph >> DriverConstants::drivePhaseValueShift) & DriverConstants::BitsForPhase;
+	// if(ph>>DriverConstants::drivePhaseValueShift > DriverConstants::MaskForPhase) Board::LED.on();
+
+	return (ph >> DriverConstants::drivePhaseValueShift);
 }
 
 void Predictor::freshPhase(u2 reading){
@@ -71,7 +74,7 @@ void Predictor::freshPhase(u2 reading){
 
 	u2 mechanicalPhase = getMechPhase(reading);
 
-	
+	//find distance travelled in phase
 	s2 mechChange = (s2)mechanicalPhase - (s2)lastMecPha; 
 	
 	//TODO ensure we are not wrapping in the wrong direction due to high speeds
@@ -87,7 +90,7 @@ void Predictor::freshPhase(u2 reading){
 
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
 		driveVelocity = tempVelocity;
-		drivePhase = u4(reading & DriverConstants::BitsForPhase) << DriverConstants::drivePhaseValueShift;
+		drivePhase = u4(reading & DriverConstants::MaskForPhase) << DriverConstants::drivePhaseValueShift;
 		phaseAdvanceAmount = tempPhaseAdvance;
 	}
 	
@@ -114,9 +117,9 @@ void Predictor::init(u2 phase){
 
 	driveVelocity = 0;
 	lastMecPha = getMechPhase(phase);//lookupAlphaToPhase(MLX90363::getAlpha());
-	drivePhase = (lastMecPha & DriverConstants::BitsForPhase) << DriverConstants::drivePhaseValueShift;
+	drivePhase = (lastMecPha & DriverConstants::MaskForPhase) << DriverConstants::drivePhaseValueShift;
 	lastMechChange = 0;
 	adjustVal = 5;
-	phaseAdvanceRatio = 5;
+	phaseAdvanceRatio = 0;
 }
 
