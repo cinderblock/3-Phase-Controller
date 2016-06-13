@@ -10,6 +10,7 @@
 
 #include "TwillBotInterface.h"
 #include "Board.h"
+#include "Debug.h"
 
 using namespace AVR::I2C;
 
@@ -19,15 +20,17 @@ TripleBuffer<TwillBotInterface::outgoingBufferSize, false> TwillBotInterface::ou
 u1 TwillBotInterface::bufferIndex;
 
 bool TwillBotInterface::generalCall;
+bool TwillBotInterface::holdResponse = false;
 
 void TWI_vect() {
+ Debug::TwillBotInterface::ISR::enter();
  TwillBotInterface::InterruptServiceRoutine();
+ Debug::TwillBotInterface::ISR::exit();
 }
 
 void TIMER0_COMPB_vect() {
  TwillBotInterface::timeout();
 }
-
 
 void TwillBotInterface::init() {
  TimerTimeout::init();
@@ -43,20 +46,42 @@ void TwillBotInterface::init() {
          1 << TWINT;
 }
 
+void TwillBotInterface::enableAVRHardware(bool ack) {
+ // Re-enable I2C interrupt while clearing the interrupt flag (by setting it)
+ // CR->EnableAcknowledge = ack;
+ // CR->InterruptFlag = 1;
+ // CR->byte = ack ? 0b11000101 : 0b10000101;
+ CR->byte = ack ? (
+         1 << TWIE |
+         1 << TWEN |
+         1 << TWEA |
+         1 << TWINT
+         ) : (
+         1 << TWIE |
+         1 << TWEN |
+         0 << TWEA |
+         1 << TWINT
+         );
+}
+
 void TwillBotInterface::timeout() {
- // Board::LED.on();
+ Debug::TwillBotInterface::timeout();
  TimerTimeout::stopBISR();
+ 
+ // Turn off TWI hardware
+ CR->byte = 1 << TWINT;
+ 
+ enableAVRHardware(true);
 }
 
 void TwillBotInterface::InterruptServiceRoutine() {
  // Turn off the TWI interrupt
  CR->byte = 1 << TWEN;
  
+ TimerTimeout::stopBISR();
+
  // Enable global interrupts
  sei();
- 
- TimerTimeout::stopBISR();
- // Board::LED.off();
  
  TwillBotInterface::handleNextI2CByte();
 }
@@ -90,6 +115,7 @@ void TwillBotInterface::handleNextI2CByte() {
   if (bufferIndex < incomingBufferSize) {
    incomingBuffer.getWriteBuffer()[bufferIndex++] = *DR;
   }
+
   incomingBuffer.markNewestBuffer();
 
   // ACK the next SLA+R/W
@@ -122,8 +148,11 @@ void TwillBotInterface::handleNextI2CByte() {
   bufferIndex = 0;
   
   // Only iff there is new data available should we send anything
-  if (outgoingBuffer.isNewData()) {
-   outgoingBuffer.reserveNewestBufferForReading();
+  if (outgoingBuffer.isNewData() || holdResponse) {
+   
+   if (!holdResponse)
+    outgoingBuffer.reserveNewestBufferForReading();
+   
    if (bufferIndex < outgoingBufferSize) {
     *DR = outgoingBuffer.getReadBuffer()[bufferIndex++];
     ack = true;
@@ -132,13 +161,13 @@ void TwillBotInterface::handleNextI2CByte() {
    // We don't have a block ready to send. Don't ACK and send a 0.
    *DR = 0;
   }
-
+  
   _delay_us(rPiI2CClockStrechUS);
  }
  
  if (s == Status::SlaveDataTransmittedAcked) {
+  
   _delay_us(rPiI2CClockStrechUS);
-
   // We told the AVR hardware to send a byte and we received an ACK as expected
   *DR = outgoingBuffer.getReadBuffer()[bufferIndex++];
   if (bufferIndex < outgoingBufferSize)
@@ -162,21 +191,7 @@ void TwillBotInterface::handleNextI2CByte() {
   ack = true;
  }
  
- // Re-enable I2C interrupt while clearing the interrupt flag (by setting it)
-// CR->EnableAcknowledge = ack;
-// CR->InterruptFlag = 1;
-// CR->byte = ack ? 0b11000101 : 0b10000101;
- CR->byte = ack ? (
-         1 << TWIE |
-         1 << TWEN |
-         1 << TWEA |
-         1 << TWINT
-         ) : (
-         1 << TWIE |
-         1 << TWEN |
-         0 << TWEA |
-         1 << TWINT
-         );
+ enableAVRHardware(ack);
  
  TimerTimeout::startB(timeoutPeriod);
 }

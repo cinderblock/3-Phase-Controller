@@ -59,6 +59,7 @@
                    projectFiles="false"
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
+      <itemPath>local.Brix.mk</itemPath>
       <itemPath>local.mk</itemPath>
       <itemPath>local.sirius.mk</itemPath>
     </logicalFolder>

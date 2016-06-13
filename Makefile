@@ -8,7 +8,7 @@
 C = 
 
 # List of CPP file basenames to build
-CPP = main Board MLX90363 ThreePhaseDriver ThreePhaseCalibrator Debug Timer Clock Interpreter
+CPP = main Board MLX90363 ThreePhaseDriver ThreePhaseCalibrator Debug Timer Clock Interpreter Predictor
 
 CPP += TwillBotInterface TripleBuffer-impl CRC8 TimerTimeout
 

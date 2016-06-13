@@ -1,7 +1,14 @@
 
 #include "Interpreter.h"
 #include "Config.h"
+<<<<<<< HEAD
 #include "ThreePhaseCalibrator.h"
+=======
+#include "ThreePhaseController.h"
+#include "ThreePhaseDriver.h"
+#include "Predictor.h"
+// #include "MotorControl.h"
+>>>>>>> master
 #include "MLX90363.h"
 #include "TwillBotInterface.h"
 #include "ThreePhaseDriver.h"
@@ -43,24 +50,73 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 			streaming = false;
 		}
 	}
+
+	//deadtime configuration
+	if (incomingData[0] == 0x40){
+		if (incomingData[1] == 0xF0){
+			//advance to next DeadTime
+			ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes()+0x11);
+
+		}
+		else if (incomingData[1] == 0x0F){
+			//decement to last DeadTime
+			ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes()-0x11);
+
+		}
+		else if (incomingData[1] == 0xFF){
+			ThreePhaseController::setDeadTimes(incomingData[2]);
+		}
+	}
+
+	if (incomingData[0] == 0x41){
+		ThreePhaseDriver::setAmplitude(incomingData[1]);
+	}
+	
+	if (incomingData[0] == 0x42){
+		ThreePhaseDriver::advanceTo((((u2)incomingData[2]) << 8) | incomingData[1]);
+	}
+
+	if (incomingData[0] == 0x43){
+		Predictor::setAdjustVal(incomingData[1]);
+	}
+
+	if (incomingData[0] == 0x44){
+		Predictor::setPhaseAdvanceRatio(incomingData[1]);
+	}
 }
 
+//HACK ME
+extern u1 resetCause;
+
 void Interpreter::sendNormalDataToMaster(){
-	if (!streaming) return;
-	if (!MLX90363::isMeasurementReady()) return;
+	// if (!streaming) return;
+	// if (!MLX90363::isMeasurementReady()) return;
 
 	static u2 extra = 0;
+<<<<<<< HEAD
 
 	MLX90363::startTransmitting();
 	while (MLX90363::isTransmitting());
+=======
+>>>>>>> master
 
-	u2 * const buff = (u2 * const)TwillBotInterface::getOutgoingWriteBuffer();
+	u1 * const buff = TwillBotInterface::getOutgoingWriteBuffer();
 
+<<<<<<< HEAD
 	buff[0] = MLX90363::getAlpha();
 	buff[1] = ThreePhaseCalibrator::getPhasePos();
 	buff[2] = MLX90363::getRoll();
 	buff[3] = MLX90363::getErr();
 	buff[4] = extra++;
+=======
+	*(u2 * const)(&buff[0]) = ThreePhaseController::getRoll();
+	*(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
+	*(u2 * const)(&buff[4]) = ThreePhaseController::getMeasuredPosition();
+	buff[6] = Predictor::getAdjustVal();
+	buff[7] = Predictor::getPhaseAdvanceRatio();
+	buff[8] = (u1)ThreePhaseController::getTorque();
+	buff[9] = (u1)ThreePhaseController::getDeadTimes();
+>>>>>>> master
 	
 	TwillBotInterface::getOutgoingWriteBuffer()[Config::i2cBufferOutgoingSize-1] = getCRC(TwillBotInterface::getOutgoingWriteBuffer(), Config::i2cBufferOutgoingSize-1);
 
