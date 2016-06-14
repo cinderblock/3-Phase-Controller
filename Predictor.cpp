@@ -120,6 +120,6 @@ void Predictor::init(u2 phase){
 	drivePhase = (lastMecPha & DriverConstants::MaskForPhase) << DriverConstants::drivePhaseValueShift;
 	lastMechChange = 0;
 	adjustVal = 5;
-	phaseAdvanceRatio = 0;
+	phaseAdvanceRatio = 5;
 }
 
