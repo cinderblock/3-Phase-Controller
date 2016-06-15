@@ -56,21 +56,21 @@ void ServoController::update(){
 		ThreePhaseController::setTorque(torqueCommand);
 
 	}
-	else if(currentMode == Mode::VEL){
-		s2 vel = ThreePhaseController::getVelocity();
+	// else if(currentMode == Mode::VEL){
+	// 	s2 vel = ThreePhaseController::getVelocity();
 
-		if(vel < velocityCommand){
-			if(torqueCommand < ThreePhaseDriver::maxAmplitude)
-				torqueCommand += velocityAdjust;
-		}
-		else if(vel > velocityCommand){
-			if(torqueCommand > -ThreePhaseDriver::maxAmplitude)
-				torqueCommand -= velocityAdjust;
-		}
+	// 	if(vel < velocityCommand){
+	// 		if(torqueCommand < ThreePhaseDriver::maxAmplitude)
+	// 			torqueCommand += velocityAdjust;
+	// 	}
+	// 	else if(vel > velocityCommand){
+	// 		if(torqueCommand > -ThreePhaseDriver::maxAmplitude)
+	// 			torqueCommand -= velocityAdjust;
+	// 	}
 
-		ThreePhaseController::setTorque(torqueCommand);
+	// 	ThreePhaseController::setTorque(torqueCommand);
 
-	}
+	// }
 	else if(currentMode == Mode::POS){
 		s2 pos = ThreePhaseController::getMeasuredPosition();
 		s2 vel = ThreePhaseController::getVelocity();

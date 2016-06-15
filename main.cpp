@@ -64,12 +64,6 @@ void main() {
 	
 	
 	ThreePhaseController::setTorque(0);
-
-	// while(1){
-	// 	ThreePhaseDriver::advance();
-	// }
-
-	// ServoController::setVelocity(10);
 	
 	while(1){
 		// ThreePhaseController::updateDriver();
