@@ -15,6 +15,7 @@
 // #include "Debug.h"
 #include "Clock.h"
 #include "Interpreter.h"
+#include "ServoController.h"
 
 /**
  * All the init functions should go in here.
@@ -68,7 +69,8 @@ void main() {
 	// }
 	
 	while(1){
-		ThreePhaseController::updateDriver();
+		// ThreePhaseController::updateDriver();
+		ServoController::update();
 
 		if(TwillBotInterface::hasReceivedBlock()){
 			TwillBotInterface::reserveNextReadBuffer();

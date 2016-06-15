@@ -7,6 +7,7 @@
 // #include "MotorControl.h"
 #include "MLX90363.h"
 #include "TwillBotInterface.h"
+#include "ServoController.h"
 
 bool Interpreter::streaming = true;
 
@@ -23,7 +24,25 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData){
 		else if ( torque < -ThreePhaseController::getMaxTorque())
 			torque = -ThreePhaseController::getMaxTorque();
 
-		ThreePhaseController::setTorque(torque);
+		ServoController::setTorque(torque);
+
+		return;
+	}
+	
+	if (incomingData[0] == 0x21){
+		s2 velocity = *((s2*)(incomingData+1));
+		
+		ServoController::setVelocity(velocity);
+
+		return;
+	}
+	
+	if (incomingData[0] == 0x22){
+		s4 pos = *((s4*)(incomingData+1));
+		
+		ServoController::setPosition(pos);
+
+		return;
 	}
 
 	if (incomingData[0] == 0x10) {
