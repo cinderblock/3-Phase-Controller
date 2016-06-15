@@ -39,6 +39,7 @@ void init() {
 	TwillBotInterface::init();
 	
 	ThreePhaseController::init();
+	ServoController::init();
 	// ThreePhaseDriver::init();
 	// ThreePhaseDriver::setAmplitude(40);
 	// ThreePhaseDriver::advanceTo(100);
@@ -67,6 +68,8 @@ void main() {
 	// while(1){
 	// 	ThreePhaseDriver::advance();
 	// }
+
+	// ServoController::setVelocity(10);
 	
 	while(1){
 		// ThreePhaseController::updateDriver();

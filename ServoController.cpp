@@ -44,6 +44,7 @@ void ServoController::init(){
 	D = 0;
 
 	velocityAdjust = 1;
+	torqueCommand = 0;
 }
 
 void ServoController::update(){
