@@ -110,8 +110,9 @@ void Interpreter::sendNormalDataToMaster(){
 	*(u2 * const)(&buff[0]) = ThreePhaseController::getRoll();
 	*(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
 	*(u2 * const)(&buff[4]) = ThreePhaseController::getMeasuredPosition();
-	buff[6] = Predictor::getAdjustVal();
-	buff[7] = Predictor::getPhaseAdvanceRatio();
+	*(u2 * const)(&buff[6]) = ServoController::getVelocityCommand();
+	// buff[6] = Predictor::getAdjustVal();
+	// buff[7] = Predictor::getPhaseAdvanceRatio();
 	buff[8] = (u1)ThreePhaseController::getTorque();
 	buff[9] = (u1)ThreePhaseController::getDeadTimes();
 	

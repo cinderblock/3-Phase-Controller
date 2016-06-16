@@ -2,6 +2,9 @@
  * The Servo controller for turnigy driver
  */
 
+#ifndef SERVOCONTROLLER_H
+#define	SERVOCONTROLLER_H
+
 #include <AVR++/basicTypes.h>
 
 using namespace AVR;
@@ -14,16 +17,21 @@ private:
 	static Mode currentMode;
 
 	static s2 torqueCommand;
+	static s4 torqueShiftCommand;
 	static s2 velocityCommand;
 	static s4 positionCommand;
 
-	static u1 velocityAdjust;
+	static s4 shiftingLimit;
+
+	static u2 velocityAdjust;
 
 	static u1 P;
 	static u1 I;
 	static u1 D;
 
 	static u1 currentLimit;
+
+	static const u1 DeadBand = 50;
 
 public:
 	static void init();
@@ -32,6 +40,7 @@ public:
 
 	static void setTorque(s2);
 	static void setVelocity(s2);
+	inline static s2 getVelocityCommand(){return velocityCommand;};
 
 	static void setZero();
 	static void setPosition(s4);
@@ -46,4 +55,6 @@ public:
 
 
 };
+
+#endif	/* SERVOCONTROLLER_H */
 
