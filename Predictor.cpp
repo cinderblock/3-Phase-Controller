@@ -6,6 +6,7 @@
 // #include "Board.h"
 // #include <iostream>
 // #include <cmath> 
+// #include "common.h"
 
 using namespace std;
 
@@ -120,6 +121,6 @@ void Predictor::init(u2 phase){
 	drivePhase = (lastMecPha & DriverConstants::MaskForPhase) << DriverConstants::drivePhaseValueShift;
 	lastMechChange = 0;
 	adjustVal = 5;
-	phaseAdvanceRatio = 5;
+	phaseAdvanceRatio = 40;
 }
 
