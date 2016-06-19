@@ -17,7 +17,6 @@
       <itemPath>Config.h</itemPath>
       <itemPath>Debug.h</itemPath>
       <itemPath>MLX90363.h</itemPath>
-      <itemPath>MotorControl.h</itemPath>
       <itemPath>ThreePhaseController.h</itemPath>
       <itemPath>ThreePhaseDriver.h</itemPath>
       <itemPath>Timer.h</itemPath>
@@ -36,7 +35,6 @@
       <itemPath>Clock.cpp</itemPath>
       <itemPath>Debug.cpp</itemPath>
       <itemPath>MLX90363.cpp</itemPath>
-      <itemPath>MotorControl.cpp</itemPath>
       <itemPath>ThreePhaseController.cpp</itemPath>
       <itemPath>ThreePhaseDriver.cpp</itemPath>
       <itemPath>Timer.cpp</itemPath>
@@ -114,10 +112,6 @@
       <item path="MLX90363.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MLX90363.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="MotorControl.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="MotorControl.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ThreePhaseController.cpp" ex="false" tool="1" flavor2="0">
       </item>
