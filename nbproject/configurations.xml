@@ -13,7 +13,6 @@
                    projectFiles="true">
       <itemPath>AVRClock.h</itemPath>
       <itemPath>Board.h</itemPath>
-      <itemPath>CRC8.h</itemPath>
       <itemPath>Clock.h</itemPath>
       <itemPath>Config.h</itemPath>
       <itemPath>Debug.h</itemPath>
@@ -34,7 +33,6 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>Board.cpp</itemPath>
-      <itemPath>CRC8.cpp</itemPath>
       <itemPath>Clock.cpp</itemPath>
       <itemPath>Debug.cpp</itemPath>
       <itemPath>MLX90363.cpp</itemPath>
@@ -102,10 +100,6 @@
       <item path="Board.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Board.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="CRC8.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="CRC8.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Clock.cpp" ex="false" tool="1" flavor2="0">
       </item>

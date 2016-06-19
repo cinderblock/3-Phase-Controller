@@ -9,7 +9,7 @@
 #include "Clock.h"
 #include <avr/io.h>
 
-#include "CRC8.h"
+#include <AVR++/CRC8.h>
 
 IOpin& Debug::LED = Board::LED;
 
