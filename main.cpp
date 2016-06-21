@@ -63,7 +63,7 @@ void main() {
 	// Board::LED.on();
 	
 	
-	ThreePhaseController::setTorque(0);
+	ThreePhaseController::setAmplitude(0);
 	
 	while(1){
 		// ThreePhaseController::updateDriver();

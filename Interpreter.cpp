@@ -21,15 +21,15 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   // If non-zero, CRC fail
   if (crc.getCRC()) return;
 
-  if (incomingData[0] == (u1)Command::SetTorque) {
+  if (incomingData[0] == (u1)Command::SetAmplitude) {
     s2 torque = *((s2*)(incomingData + 1));
 
-    if (torque > ThreePhaseController::getMaxTorque())
-      torque = ThreePhaseController::getMaxTorque();
-    else if (torque < -ThreePhaseController::getMaxTorque())
-      torque = -ThreePhaseController::getMaxTorque();
+    if (torque > ThreePhaseController::getMaxAmplitude())
+      torque = ThreePhaseController::getMaxAmplitude();
+    else if (torque < -ThreePhaseController::getMaxAmplitude())
+      torque = -ThreePhaseController::getMaxAmplitude();
 
-    ServoController::setTorque(torque);
+    ServoController::setAmplitude(torque);
 
     return;
   }
@@ -91,7 +91,7 @@ void Interpreter::sendNormalDataToMaster() {
   *(u2 * const)(&buff[6]) = ServoController::getVelocityCommand();
   // buff[6] = Predictor::getAdjustVal();
   // buff[7] = Predictor::getPhaseAdvanceRatio();
-  buff[8] = (u1)ThreePhaseController::getTorque();
+  buff[8] = (u1)ThreePhaseController::getAmplitude();
   buff[9] = (u1)ThreePhaseController::getDeadTimes();
 
   TwillBotInterface::writeOutgoingCRC();

@@ -12,12 +12,12 @@ using namespace AVR;
 class ServoController {
 private:
 
-	enum class Mode:u1 {INIT, TOR, VEL, POS};
+	enum class Mode:u1 {Init, Amplitude, Velocity, Position};
 
 	static Mode currentMode;
 
-	static s2 torqueCommand;
-	static s4 torqueShiftCommand;
+	static s2 amplitudeCommand;
+	static s4 driveAmplitudeScaled;
 	static s2 velocityCommand;
 	static s4 positionCommand;
 
@@ -38,7 +38,7 @@ public:
 
 	static void update();
 
-	static void setTorque(s2);
+	static void setAmplitude(s2);
 	static void setVelocity(s2);
 	inline static s2 getVelocityCommand(){return velocityCommand;};
 
@@ -51,7 +51,7 @@ public:
 	static inline void setI(u1 i){I = i;};
 	static inline void setD(u1 d){D = d;};
 
-	static void setTorqueEnable(bool);
+	static void setEnable(bool);
 
 
 };

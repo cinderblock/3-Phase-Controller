@@ -8,8 +8,8 @@ using namespace AVR;
 
 ServoController::Mode ServoController::currentMode;
 
-s2 ServoController::torqueCommand;
-s4 ServoController::torqueShiftCommand;
+s2 ServoController::amplitudeCommand;
+s4 ServoController::driveAmplitudeScaled;
 s2 ServoController::velocityCommand;
 
 u2 ServoController::velocityAdjust;
@@ -44,9 +44,9 @@ s2 abs2(s2 num){
 	return num;
 }
 
-const u1 torqueLimit = 40;
+const u1 amplitudeLimit = 40;
 void ServoController::init(){
-	currentMode = Mode::INIT;
+	currentMode = Mode::Init;
 
 	P = 8;
 	I = 0;
@@ -55,51 +55,51 @@ void ServoController::init(){
 	//256 is a velocity change of 1 per update
 	velocityAdjust = 20;
 
-	shiftingLimit = (torqueLimit << DriverConstants::drivePhaseValueShift) - velocityAdjust;
+	shiftingLimit = (amplitudeLimit << DriverConstants::drivePhaseValueShift) - velocityAdjust;
 
-	torqueCommand = 0;
-	torqueShiftCommand = 0;
+	amplitudeCommand = 0;
+	driveAmplitudeScaled = 0;
 }
 
 void ServoController::update(){
 
-	if(currentMode == Mode::INIT){
+	if(currentMode == Mode::Init){
 		//DO NOTHING
 	}
-	else if(currentMode == Mode::TOR){
-		ThreePhaseController::setTorque(torqueCommand);
+	else if(currentMode == Mode::Amplitude){
+		ThreePhaseController::setAmplitude(amplitudeCommand);
 
 	}
-	else if(currentMode == Mode::VEL){
+	else if(currentMode == Mode::Velocity){
 		s2 vel = ThreePhaseController::getVelocity();
 
 		s2 delta = vel - velocityCommand;
 
 		if((delta < 0 ? -delta : delta) > DeadBand){
 			if(delta < 0){
-				if(torqueShiftCommand < shiftingLimit)
-					torqueShiftCommand += velocityAdjust;
+				if(driveAmplitudeScaled < shiftingLimit)
+					driveAmplitudeScaled += velocityAdjust;
 				else
-					torqueShiftCommand = (torqueLimit << DriverConstants::drivePhaseValueShift);
+					driveAmplitudeScaled = (amplitudeLimit << DriverConstants::drivePhaseValueShift);
 			}
 			else{
-				if(torqueShiftCommand > -(s2)shiftingLimit)
-					torqueShiftCommand -= velocityAdjust;
+				if(driveAmplitudeScaled > -(s2)shiftingLimit)
+					driveAmplitudeScaled -= velocityAdjust;
 				else
-					torqueShiftCommand = -(torqueLimit << DriverConstants::drivePhaseValueShift);
+					driveAmplitudeScaled = -(amplitudeLimit << DriverConstants::drivePhaseValueShift);
 			}
 		}
 
-		ThreePhaseController::setTorque((s2)(torqueShiftCommand >> DriverConstants::drivePhaseValueShift));
+		ThreePhaseController::setAmplitude((s2)(driveAmplitudeScaled >> DriverConstants::drivePhaseValueShift));
 
 	}
-	else if(currentMode == Mode::POS){
+	else if(currentMode == Mode::Position){
 		s2 pos = ThreePhaseController::getMeasuredPosition();
 		s2 vel = ThreePhaseController::getVelocity();
 
 		u1 command = dist(positionCommand, pos, DriverConstants::StepsPerRotation) * P + vel * D;
 
-		ThreePhaseController::setTorque(command);
+		ThreePhaseController::setAmplitude(command);
 	}
 	else{
 
@@ -111,20 +111,20 @@ void ServoController::update(){
 }
 
 
-void ServoController::setTorque(s2 torque){
-	currentMode = Mode::TOR;
+void ServoController::setAmplitude(s2 amplitude){
+	currentMode = Mode::Amplitude;
 
-	torqueCommand = torque;
+	amplitudeCommand = amplitude;
 }
 
 void ServoController::setVelocity(s2 velocity){
-	currentMode = Mode::VEL;
+	currentMode = Mode::Velocity;
 
 	velocityCommand = velocity;
 }
 
 void ServoController::setPosition(s4 position){
-	currentMode = Mode::POS;
+	currentMode = Mode::Position;
 
 	positionCommand = position;
 }
@@ -135,11 +135,10 @@ void ServoController::setCurrentLimit(u1 current){
 
 }
 
-
-void ServoController::setTorqueEnable(bool enable){
+void ServoController::setEnable(bool enable){
 
 	if(!enable)
-		currentMode = Mode::INIT;
+		currentMode = Mode::Init;
 
 
 
