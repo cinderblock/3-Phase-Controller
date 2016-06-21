@@ -7,11 +7,19 @@
 #include "MLX90363.h"
 #include "FilebotInterface/TwillBotInterface.h"
 #include "ServoController.h"
+#include <AVR++/CRC8.h>
 
 void Interpreter::interpretFromMaster(u1 const * const incomingData) {
-  if (checkCRC(incomingData)) {
-    return;
-  }
+  // Check incoming CRC for failure
+  CRC8 crc;
+
+  u1 const * data = incomingData;
+
+  for (u1 i = 0; i < TwillBotInterface::incomingBufferSize; i++)
+    crc.feed(*data++);
+
+  // If non-zero, CRC fail
+  if (crc.getCRC()) return;
 
   if (incomingData[0] == (u1)Command::SetTorque) {
     s2 torque = *((s2*)(incomingData + 1));
@@ -89,26 +97,4 @@ void Interpreter::sendNormalDataToMaster() {
 
   TwillBotInterface::writeOutgoingCRC();
   TwillBotInterface::releaseNextWriteBuffer();
-}
-
-//check the message to check if it passes CRC check
-
-bool Interpreter::checkCRC(u1 const * const mes) {
-  u1 sum = 0;
-
-  for (u1 i = 0; i < Config::i2cBufferIncomingSize; i++)
-    //sum = _crc8_ccitt_update(sum, mes[i]);
-    sum += mes[i];
-
-  return sum != 0xFF;
-}
-
-u1 Interpreter::getCRC(u1 const * const mes, u1 length) {
-  u1 sum = 0;
-
-  for (u1 i = 0; i < length; i++)
-    //sum = _crc8_ccitt_update(sum, mes[i]);
-    sum += mes[i];
-
-  return ~sum;
 }
