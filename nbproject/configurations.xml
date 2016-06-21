@@ -21,7 +21,6 @@
       <itemPath>ThreePhaseDriver.h</itemPath>
       <itemPath>Timer.h</itemPath>
       <itemPath>TimerTimeout.h</itemPath>
-      <itemPath>TripleBuffer.h</itemPath>
       <itemPath>TwillBotInterface.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -40,7 +39,6 @@
       <itemPath>Timer.cpp</itemPath>
       <itemPath>TimerTimeout.cpp</itemPath>
       <itemPath>TripleBuffer-impl.cpp</itemPath>
-      <itemPath>TripleBuffer.cpp</itemPath>
       <itemPath>TwillBotInterface.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>test.cpp</itemPath>
@@ -130,10 +128,6 @@
       <item path="TimerTimeout.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="TripleBuffer-impl.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="TripleBuffer.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="TripleBuffer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="TwillBotInterface.cpp" ex="false" tool="1" flavor2="0">
       </item>

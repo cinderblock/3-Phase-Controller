@@ -10,7 +10,7 @@
 
 #include <avr/interrupt.h>
 #include "Config.h"
-#include "TripleBuffer.h"
+#include <AVR++/TripleBuffer.h>
 #include "TimerTimeout.h"
 
 ISR(TWI_vect);
