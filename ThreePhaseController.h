@@ -29,7 +29,9 @@ class ThreePhaseController {
   static const u1 MaxAmplitude = 40;
 
   /**
-   * Number of cycles the PWM timer makes per measurement ready from MLX.
+   * Number of cycles the PWM timer makes per measurement ready from MLX. We pick
+   * a number such that we wait at least 1ms between measurements, otherwise the
+   * data won't be ready.
    *
    * = frequency(PWM) * period(MLX) = 32kHz * 1.25ms = 40;
    */
