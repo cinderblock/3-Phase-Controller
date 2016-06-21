@@ -19,58 +19,82 @@ using namespace AVR;
 ISR(TIMER4_OVF_vect);
 
 class ThreePhaseController {
-	static inline void isr();
-	friend void TIMER4_OVF_vect();
-	
+  static inline void isr();
+  friend void TIMER4_OVF_vect();
 
-	static u1 magRoll;
-	static u2 roll;
 
-	static const u1 MaxAmplitude = 40;
-	
-	/**
-	 * Number of cycles the PWM timer makes per measurement ready from MLX.
-	 * 
-	 * = frequency(PWM) * period(MLX) = 32kHz * 1.25ms = 40;
-	 */
-	static constexpr u1 cyclesPWMPerMLX = 40;
-	
-	static bool isForwardTorque;
+  static u1 magRoll;
+  static u2 roll;
 
-	/**
-	 * 90 degree phase shift
-	 */
-	static constexpr u2 output90DegPhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
-	
+  static const u1 MaxAmplitude = 40;
+
+  /**
+   * Number of cycles the PWM timer makes per measurement ready from MLX.
+   *
+   * = frequency(PWM) * period(MLX) = 32kHz * 1.25ms = 40;
+   */
+  static constexpr u1 cyclesPWMPerMLX = 40;
+
+  static bool isForwardTorque;
+
+  /**
+   * 90 degree phase shift
+   */
+  static constexpr u2 output90DegPhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
+
 public:
-	static void init();
+  static void init();
 
-	class Amplitude {
-		bool forward;
-		u1 amplitude;
-		friend class ThreePhaseController;
+  class Amplitude {
+    bool forward;
+    u1 amplitude;
+    friend class ThreePhaseController;
 
-	public:
-		inline Amplitude(s2 const t) : forward(t >= 0), amplitude(forward ? t : -t) {};
-		inline Amplitude(const bool fwd, u1 const ampl) : forward(fwd), amplitude(ampl) {};
-		// static Torque limitedTorque(s2 requestedTorque){return };
-	};
-	
-	static void setAmplitude(const Amplitude t);
-	static inline s2 getAmplitude(){return isForwardTorque ? ThreePhaseDriver::getAmplitude() : -(s2)(ThreePhaseDriver::getAmplitude());};
+  public:
 
-	static inline void setDeadTimes(u1 dt){ThreePhaseDriver::setDeadTimes(dt);};
-	static inline u1 getDeadTimes(){return ThreePhaseDriver::getDeadTimes();};
+    inline Amplitude(s2 const t) : forward(t >= 0), amplitude(forward ? t : -t) {
+    };
 
-	static bool updateDriver();
-	
-	inline static u4 getPredictedPosition(){return Predictor::getPredictedPosition();};
-	inline static s2 getVelocity()         {return Predictor::getVelocity();};
-	inline static u2 getMeasuredPosition() {return Predictor::getMeasuredPosition();}
+    inline Amplitude(const bool fwd, u1 const ampl) : forward(fwd), amplitude(ampl) {
+    };
+    // static Torque limitedTorque(s2 requestedTorque){return };
+  };
 
-	inline static u2 getRoll(){return roll;};
+  static void setAmplitude(const Amplitude t);
 
-	inline static constexpr u1 getMaxAmplitude(){return MaxAmplitude;};
+  static inline s2 getAmplitude() {
+    return isForwardTorque ? ThreePhaseDriver::getAmplitude() : -(s2) (ThreePhaseDriver::getAmplitude());
+  };
+
+  static inline void setDeadTimes(u1 dt) {
+    ThreePhaseDriver::setDeadTimes(dt);
+  };
+
+  static inline u1 getDeadTimes() {
+    return ThreePhaseDriver::getDeadTimes();
+  };
+
+  static bool updateDriver();
+
+  inline static u4 getPredictedPosition() {
+    return Predictor::getPredictedPosition();
+  };
+
+  inline static s2 getVelocity() {
+    return Predictor::getVelocity();
+  };
+
+  inline static u2 getMeasuredPosition() {
+    return Predictor::getMeasuredPosition();
+  }
+
+  inline static u2 getRoll() {
+    return roll;
+  };
+
+  inline static constexpr u1 getMaxAmplitude() {
+    return MaxAmplitude;
+  };
 
 };
 

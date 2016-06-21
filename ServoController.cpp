@@ -24,121 +24,115 @@ u1 ServoController::D;
 u1 ServoController::currentLimit;
 
 // distance function with a wrap around
-s2 dist(u2 to, u2 from, u2 wrapdist){
 
-	s2 delta = (s2)to - (s2)from; 
-	
-	if (delta > (s2)(wrapdist/2)){
-		delta = ((s2)wrapdist) - delta;
-	}
-	else if (delta < -((s2)wrapdist/2)){
-		delta = ((s2)wrapdist) + delta;
-	}
+s2 dist(u2 to, u2 from, u2 wrapdist) {
 
-	return delta;
+  s2 delta = (s2)to - (s2)from;
+
+  if (delta > (s2)(wrapdist / 2)) {
+    delta = ((s2)wrapdist) - delta;
+  } else if (delta < -((s2)wrapdist / 2)) {
+    delta = ((s2)wrapdist) + delta;
+  }
+
+  return delta;
 
 }
 
-s2 abs2(s2 num){
-	if(num < 0) return -num;
-	return num;
+s2 abs2(s2 num) {
+  if (num < 0) return -num;
+  return num;
 }
 
 const u1 amplitudeLimit = 40;
-void ServoController::init(){
-	currentMode = Mode::Init;
 
-	P = 8;
-	I = 0;
-	D = 0;
+void ServoController::init() {
+  currentMode = Mode::Init;
 
-	//256 is a velocity change of 1 per update
-	velocityAdjust = 20;
+  P = 8;
+  I = 0;
+  D = 0;
 
-	shiftingLimit = (amplitudeLimit << DriverConstants::drivePhaseValueShift) - velocityAdjust;
+  //256 is a velocity change of 1 per update
+  velocityAdjust = 20;
 
-	amplitudeCommand = 0;
-	driveAmplitudeScaled = 0;
+  shiftingLimit = (amplitudeLimit << DriverConstants::drivePhaseValueShift) - velocityAdjust;
+
+  amplitudeCommand = 0;
+  driveAmplitudeScaled = 0;
 }
 
-void ServoController::update(){
+void ServoController::update() {
 
-	if(currentMode == Mode::Init){
-		//DO NOTHING
-	}
-	else if(currentMode == Mode::Amplitude){
-		ThreePhaseController::setAmplitude(amplitudeCommand);
+  if (currentMode == Mode::Init) {
+    //DO NOTHING
+  } else if (currentMode == Mode::Amplitude) {
+    ThreePhaseController::setAmplitude(amplitudeCommand);
 
-	}
-	else if(currentMode == Mode::Velocity){
-		s2 vel = ThreePhaseController::getVelocity();
+  } else if (currentMode == Mode::Velocity) {
+    s2 vel = ThreePhaseController::getVelocity();
 
-		s2 delta = vel - velocityCommand;
+    s2 delta = vel - velocityCommand;
 
-		if((delta < 0 ? -delta : delta) > DeadBand){
-			if(delta < 0){
-				if(driveAmplitudeScaled < shiftingLimit)
-					driveAmplitudeScaled += velocityAdjust;
-				else
-					driveAmplitudeScaled = (amplitudeLimit << DriverConstants::drivePhaseValueShift);
-			}
-			else{
-				if(driveAmplitudeScaled > -(s2)shiftingLimit)
-					driveAmplitudeScaled -= velocityAdjust;
-				else
-					driveAmplitudeScaled = -(amplitudeLimit << DriverConstants::drivePhaseValueShift);
-			}
-		}
+    if ((delta < 0 ? -delta : delta) > DeadBand) {
+      if (delta < 0) {
+	if (driveAmplitudeScaled < shiftingLimit)
+	  driveAmplitudeScaled += velocityAdjust;
+	else
+	  driveAmplitudeScaled = (amplitudeLimit << DriverConstants::drivePhaseValueShift);
+      } else {
+	if (driveAmplitudeScaled > -(s2)shiftingLimit)
+	  driveAmplitudeScaled -= velocityAdjust;
+	else
+	  driveAmplitudeScaled = -(amplitudeLimit << DriverConstants::drivePhaseValueShift);
+      }
+    }
 
-		ThreePhaseController::setAmplitude((s2)(driveAmplitudeScaled >> DriverConstants::drivePhaseValueShift));
+    ThreePhaseController::setAmplitude((s2)(driveAmplitudeScaled >> DriverConstants::drivePhaseValueShift));
 
-	}
-	else if(currentMode == Mode::Position){
-		s2 pos = ThreePhaseController::getMeasuredPosition();
-		s2 vel = ThreePhaseController::getVelocity();
+  } else if (currentMode == Mode::Position) {
+    s2 pos = ThreePhaseController::getMeasuredPosition();
+    s2 vel = ThreePhaseController::getVelocity();
 
-		u1 command = dist(positionCommand, pos, DriverConstants::StepsPerRotation) * P + vel * D;
+    u1 command = dist(positionCommand, pos, DriverConstants::StepsPerRotation) * P + vel * D;
 
-		ThreePhaseController::setAmplitude(command);
-	}
-	else{
+    ThreePhaseController::setAmplitude(command);
+  } else {
 
-	}
+  }
 
-	ThreePhaseController::updateDriver();
+  ThreePhaseController::updateDriver();
 
 
 }
 
+void ServoController::setAmplitude(s2 amplitude) {
+  currentMode = Mode::Amplitude;
 
-void ServoController::setAmplitude(s2 amplitude){
-	currentMode = Mode::Amplitude;
-
-	amplitudeCommand = amplitude;
+  amplitudeCommand = amplitude;
 }
 
-void ServoController::setVelocity(s2 velocity){
-	currentMode = Mode::Velocity;
+void ServoController::setVelocity(s2 velocity) {
+  currentMode = Mode::Velocity;
 
-	velocityCommand = velocity;
+  velocityCommand = velocity;
 }
 
-void ServoController::setPosition(s4 position){
-	currentMode = Mode::Position;
+void ServoController::setPosition(s4 position) {
+  currentMode = Mode::Position;
 
-	positionCommand = position;
+  positionCommand = position;
 }
 
-
-void ServoController::setCurrentLimit(u1 current){
-	currentLimit = current;
+void ServoController::setCurrentLimit(u1 current) {
+  currentLimit = current;
 
 }
 
-void ServoController::setEnable(bool enable){
+void ServoController::setEnable(bool enable) {
 
-	if(!enable)
-		currentMode = Mode::Init;
+  if (!enable)
+    currentMode = Mode::Init;
 
 
 
