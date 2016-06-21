@@ -8,7 +8,6 @@ class Interpreter {
   static bool checkCRC(u1 const * const);
   static u1 getCRC(u1 const * const, u1);
 
-  static bool streaming;
 
 public:
   static void interpretFromMaster(u1 const * const);

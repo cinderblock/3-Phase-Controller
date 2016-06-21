@@ -8,8 +8,6 @@
 #include "FilebotInterface/TwillBotInterface.h"
 #include "ServoController.h"
 
-bool Interpreter::streaming = true;
-
 void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   if (checkCRC(incomingData)) {
     return;
@@ -44,22 +42,6 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
     return;
   }
 
-  if (incomingData[0] == 0x10) {
-    s4 go = *((s4*)(incomingData + 1));
-
-
-  }
-
-  if (incomingData[0] == 0x88) {
-    //Start Streaming
-    if (incomingData[1] == 0xF0) {
-      streaming = true;
-    }      //Stop Streaming
-    else if (incomingData[1] == 0x0F) {
-      streaming = false;
-    }
-  }
-
   //deadtime configuration
   if (incomingData[0] == 0x40) {
     if (incomingData[1] == 0xF0) {
@@ -92,14 +74,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   }
 }
 
-//HACK ME
-extern u1 resetCause;
-
 void Interpreter::sendNormalDataToMaster() {
-  // if (!streaming) return;
-  // if (!MLX90363::isMeasurementReady()) return;
-
-  static u2 extra = 0;
 
   u1 * const buff = TwillBotInterface::getOutgoingWriteBuffer();
 
