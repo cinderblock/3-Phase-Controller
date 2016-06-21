@@ -13,7 +13,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
     return;
   }
 
-  if (incomingData[0] == 0x20) {
+  if (incomingData[0] == (u1)Command::SetTorque) {
     s2 torque = *((s2*)(incomingData + 1));
 
     if (torque > ThreePhaseController::getMaxTorque())
@@ -26,7 +26,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
     return;
   }
 
-  if (incomingData[0] == 0x21) {
+  if (incomingData[0] == (u1)Command::SetVelocity) {
     s2 velocity = *((s2*)(incomingData + 1));
 
     ServoController::setVelocity(velocity);
@@ -34,7 +34,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
     return;
   }
 
-  if (incomingData[0] == 0x22) {
+  if (incomingData[0] == (u1)Command::SetPosition) {
     s4 pos = *((s4*)(incomingData + 1));
 
     ServoController::setPosition(pos);
@@ -43,7 +43,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   }
 
   //deadtime configuration
-  if (incomingData[0] == 0x40) {
+  if (incomingData[0] == (u1)Command::SetDeadtimes) {
     if (incomingData[1] == 0xF0) {
       //advance to next DeadTime
       ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes() + 0x11);
@@ -57,19 +57,19 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
     }
   }
 
-  if (incomingData[0] == 0x41) {
+  if (incomingData[0] == (u1)Command::SetDriverAmplitude) {
     ThreePhaseDriver::setAmplitude(incomingData[1]);
   }
 
-  if (incomingData[0] == 0x42) {
+  if (incomingData[0] == (u1)Command::SetDriverPosition) {
     ThreePhaseDriver::advanceTo((((u2)incomingData[2]) << 8) | incomingData[1]);
   }
 
-  if (incomingData[0] == 0x43) {
+  if (incomingData[0] == (u1)Command::SetPredictorAdjustVal) {
     Predictor::setAdjustVal(incomingData[1]);
   }
 
-  if (incomingData[0] == 0x44) {
+  if (incomingData[0] == (u1)Command::SetPredictorPhaseAdvance) {
     Predictor::setPhaseAdvanceRatio(incomingData[1]);
   }
 }
