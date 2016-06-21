@@ -83,7 +83,6 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
 }
 
 void Interpreter::sendNormalDataToMaster() {
-
   u1 * const buff = TwillBotInterface::getOutgoingWriteBuffer();
 
   *(u2 * const)(&buff[0]) = ThreePhaseController::getRoll();
