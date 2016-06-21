@@ -13,103 +13,103 @@
 #include "AVRClock.h"
 
 inline static void setUpdateLock(const bool lock) {
-	/**
-	 * TCCR4E
-	 * TLOCK4 ENHC4 OC4OE5 OC4OE4 OC4OE3 OC4OE2 OC4OE1 OC4OE0
-	 * 0b   0     1      0      0      0      0      0      0
-	 */
-	TCCR4E = ((lock ? 1 : 0) << TLOCK4) | 0b01000000;
+  /**
+   * TCCR4E
+   * TLOCK4 ENHC4 OC4OE5 OC4OE4 OC4OE3 OC4OE2 OC4OE1 OC4OE0
+   * 0b   0     1      0      0      0      0      0      0
+   */
+  TCCR4E = ((lock ? 1 : 0) << TLOCK4) | 0b01000000;
 }
 
 void ThreePhaseDriver::init() {
-	AVR::Clock::enablePLL();
-	AVR::Clock::waitForPLL();
-	
-	// Turn off interrupts just in case
-	TIMSK4 = 0;
-	
-	// Setup the timer but stopped.
-	/**
-	 * TCCR4B
-	 * PWM4X PSR4 DTPS41 DTPS40 CS43 CS42 CS41 CS40
-	 * 0b  0    1      0      0    0    0    0    0
-	 */
-	TCCR4B = 0b01000000;
-	
-	// Clear the high byte
-	TC4H = 0;
-	
-	// Clear timer counter
-	TCNT4 = 0;
-	
-	// Clear all interrupts just in case
-	TIFR4 = 0xff;
-	
-	/**
-	 * DT4:
-	 * DT4H3 DT4H2 DT4H1 DT4H0 DT4L3 DT4L2 DT4L1 DT4L0
-	 * 0b  0     0     0     0     0     0     0     0
-	 */
-	DT4 = 0x55;
+  AVR::Clock::enablePLL();
+  AVR::Clock::waitForPLL();
 
-	/**
-	 * TCCR4D
-	 * FPIE4 FPEN4 FPNC4 FPES4 FPAC4 FPF4 WGM41 WGM40
-	 * 0b  0     0     0     0     0    1     0     1
-	 */
-	TCCR4D = 0b00000101;
-	
-	/**
-	 * TCCR4A:
-	 * COM4A1 COM4A0 COM4B1 COM4B0 FOC4A FOC4B PWM4A PWM4B
-	 * 0b   0      1      0      1     0     0     1     1
-	 */
-	TCCR4A = 0b01010011;
+  // Turn off interrupts just in case
+  TIMSK4 = 0;
 
-	/**
-	 * TCCR4C
-	 * COM4A1S COM4A0S COM4B1S COMAB0S COM4D1 COM4D0 FOC4D PWM4D
-	 * 0b    0       1       0       1      0      1     0     1
-	 */
-	TCCR4C = 0b01010101;
-	
-	// TCCR4E
-	setUpdateLock(false);
-	
-	// Clear compare match registers for now
-	OCR4A = 0;
-	OCR4B = 0;
-	OCR4D = 0;
-	
-	// Set high bits needed for TOP value for 11-bit PWM
-	TC4H = 0xff;
-	
-	// Set the timer's TOP value
-	OCR4C = 0xff;
+  // Setup the timer but stopped.
+  /**
+   * TCCR4B
+   * PWM4X PSR4 DTPS41 DTPS40 CS43 CS42 CS41 CS40
+   * 0b  0    1      0      0    0    0    0    0
+   */
+  TCCR4B = 0b01000000;
 
-	// Start the timer
-	/**
-	 * TCCR4B
-	 * PWM4X PSR4 DTPS41 DTPS40 CS43 CS42 CS41 CS40
-	 * 0b  0    1      0      0    0    0    0    1
-	 */
-	TCCR4B = 0b01000001;
-	
-	// Turn everything off
-	Board::DRV::AL.off();
-	Board::DRV::BL.off();
-	Board::DRV::CL.off();
-	Board::DRV::AH.off();
-	Board::DRV::BH.off();
-	Board::DRV::CH.off();
-	
-	// Enable outputs
-	Board::DRV::AL.output();
-	Board::DRV::BL.output();
-	Board::DRV::CL.output();
-	Board::DRV::AH.output();
-	Board::DRV::BH.output();
-	Board::DRV::CH.output();
+  // Clear the high byte
+  TC4H = 0;
+
+  // Clear timer counter
+  TCNT4 = 0;
+
+  // Clear all interrupts just in case
+  TIFR4 = 0xff;
+
+  /**
+   * DT4:
+   * DT4H3 DT4H2 DT4H1 DT4H0 DT4L3 DT4L2 DT4L1 DT4L0
+   * 0b  0     0     0     0     0     0     0     0
+   */
+  DT4 = 0x55;
+
+  /**
+   * TCCR4D
+   * FPIE4 FPEN4 FPNC4 FPES4 FPAC4 FPF4 WGM41 WGM40
+   * 0b  0     0     0     0     0    1     0     1
+   */
+  TCCR4D = 0b00000101;
+
+  /**
+   * TCCR4A:
+   * COM4A1 COM4A0 COM4B1 COM4B0 FOC4A FOC4B PWM4A PWM4B
+   * 0b   0      1      0      1     0     0     1     1
+   */
+  TCCR4A = 0b01010011;
+
+  /**
+   * TCCR4C
+   * COM4A1S COM4A0S COM4B1S COMAB0S COM4D1 COM4D0 FOC4D PWM4D
+   * 0b    0       1       0       1      0      1     0     1
+   */
+  TCCR4C = 0b01010101;
+
+  // TCCR4E
+  setUpdateLock(false);
+
+  // Clear compare match registers for now
+  OCR4A = 0;
+  OCR4B = 0;
+  OCR4D = 0;
+
+  // Set high bits needed for TOP value for 11-bit PWM
+  TC4H = 0xff;
+
+  // Set the timer's TOP value
+  OCR4C = 0xff;
+
+  // Start the timer
+  /**
+   * TCCR4B
+   * PWM4X PSR4 DTPS41 DTPS40 CS43 CS42 CS41 CS40
+   * 0b  0    1      0      0    0    0    0    1
+   */
+  TCCR4B = 0b01000001;
+
+  // Turn everything off
+  Board::DRV::AL.off();
+  Board::DRV::BL.off();
+  Board::DRV::CL.off();
+  Board::DRV::AH.off();
+  Board::DRV::BH.off();
+  Board::DRV::CH.off();
+
+  // Enable outputs
+  Board::DRV::AL.output();
+  Board::DRV::BL.output();
+  Board::DRV::CL.output();
+  Board::DRV::AH.output();
+  Board::DRV::BH.output();
+  Board::DRV::CH.output();
 }
 
 static const u2 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
@@ -134,79 +134,80 @@ static const u2 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
 u1 ThreePhaseDriver::amplitude = 0;
 
 u2 ThreePhaseDriver::getPhasePWM(const u1 step) {
-	if (!amplitude) return 0;
+  if (!amplitude) return 0;
 
-	// u1 const sin = MAX * SIN(2 * PI * step / StepsPerCycle);
-	u2 const sin = pgm_read_word(&limitedSinTable[step]);
-// u2 const sin = step;
-	
-	// TODO: This product (and subsequent truncation) does not fully cover the
-	// range of the return u1. Ideally, instead of dividing by 256 (>> 8) we should
-	// be dividing by 255. We can get closer, on average, to that ideal division
-	// if we add 188 for instance. Here we add both values that are bing multiplied
-	// as a slightly better approximation at the extremes.
-	u4 const prod = (u4)sin * amplitude + sin + amplitude;
-	
-	// Ideal:
-// return prod / 255;
-	
-	// Close enough:
-	return prod >> 8;
+  // u1 const sin = MAX * SIN(2 * PI * step / StepsPerCycle);
+  u2 const sin = pgm_read_word(&limitedSinTable[step]);
+
+  // Ideal:
+  //return (u4)sin * amplitude / 255;
+
+  // u2 const sin = step;
+
+  // TODO: This product (and subsequent truncation) does not fully cover the
+  // range of the return u1. Ideally, instead of dividing by 256 (>> 8) we should
+  // be dividing by 255. We can get closer, on average, to that ideal division
+  // if we add 188 for instance. Here we add both values that are bing multiplied
+  // as a slightly better approximation at the extremes.
+  u4 const prod = (u4)sin * amplitude + sin + amplitude;
+
+  // Close enough:
+  return prod >> 8;
 }
 
 void ThreePhaseDriver::advance() {
-	static u2 step = 0;
-	advanceTo(step);
-	if (++step == 0x300) step = 0;
+  static u2 step = 0;
+  advanceTo(step);
+  if (++step == 0x300) step = 0;
 }
 
 ThreePhaseDriver::Phase ThreePhaseDriver::currentPhase = Phase::INIT;
 
 inline static void setCompareMatchA(u2 const val) {
-	TC4H = val >> 8;
-	OCR4A = val;
+  TC4H = val >> 8;
+  OCR4A = val;
 }
 
 inline static void setCompareMatchB(u2 const val) {
-	TC4H = val >> 8;
-	OCR4B = val;
+  TC4H = val >> 8;
+  OCR4B = val;
 }
 
 inline static void setCompareMatchC(u2 const val) {
-	TC4H = val >> 8;
-	OCR4D = val;
+  TC4H = val >> 8;
+  OCR4D = val;
 }
 
 void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
-	u2 const ONE = MAX - getPhasePWM(    step);
-	u2 const TWO = MAX - getPhasePWM(255-step);
-	u2 const OFF = MAX;
-	
-	setUpdateLock(true);
-	
-	if (phase == Phase::A) {
-		setCompareMatchA(OFF);
-		setCompareMatchB(TWO);
-		setCompareMatchC(ONE);
-	} else if (phase == Phase::B) {
-		setCompareMatchA(ONE);
-		setCompareMatchB(OFF);
-		setCompareMatchC(TWO);
-	} else if (phase == Phase::C) {
-		setCompareMatchA(TWO);
-		setCompareMatchB(ONE);
-		setCompareMatchC(OFF);
-	} else {
-		// Should not get here. bad phase...
-		
-		setCompareMatchA(0);
-		setCompareMatchB(0);
-		setCompareMatchC(0);
-		return;
-	}
-	
-	setUpdateLock(false);
+  u2 const ONE = MAX - getPhasePWM(step);
+  u2 const TWO = MAX - getPhasePWM(255 - step);
+  u2 const OFF = MAX;
 
-	// Save current phase
-	currentPhase = phase;
+  setUpdateLock(true);
+
+  if (phase == Phase::A) {
+    setCompareMatchA(OFF);
+    setCompareMatchB(TWO);
+    setCompareMatchC(ONE);
+  } else if (phase == Phase::B) {
+    setCompareMatchA(ONE);
+    setCompareMatchB(OFF);
+    setCompareMatchC(TWO);
+  } else if (phase == Phase::C) {
+    setCompareMatchA(TWO);
+    setCompareMatchB(ONE);
+    setCompareMatchC(OFF);
+  } else {
+    // Should not get here. bad phase...
+
+    setCompareMatchA(0);
+    setCompareMatchB(0);
+    setCompareMatchC(0);
+    return;
+  }
+
+  setUpdateLock(false);
+
+  // Save current phase
+  currentPhase = phase;
 }
