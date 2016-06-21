@@ -87,8 +87,7 @@ void Interpreter::sendNormalDataToMaster() {
   buff[8] = (u1)ThreePhaseController::getTorque();
   buff[9] = (u1)ThreePhaseController::getDeadTimes();
 
-  TwillBotInterface::getOutgoingWriteBuffer()[Config::i2cBufferOutgoingSize - 1] = getCRC(TwillBotInterface::getOutgoingWriteBuffer(), Config::i2cBufferOutgoingSize - 1);
-
+  TwillBotInterface::writeOutgoingCRC();
   TwillBotInterface::releaseNextWriteBuffer();
 }
 
