@@ -16,8 +16,11 @@
       <itemPath>Clock.h</itemPath>
       <itemPath>Config.h</itemPath>
       <itemPath>Debug.h</itemPath>
+      <itemPath>Interpreter.h</itemPath>
       <itemPath>LookupTable.h</itemPath>
       <itemPath>MLX90363.h</itemPath>
+      <itemPath>Predictor.h</itemPath>
+      <itemPath>ServoController.h</itemPath>
       <itemPath>ThreePhaseController.h</itemPath>
       <itemPath>ThreePhaseDriver.h</itemPath>
       <itemPath>Timer.h</itemPath>
@@ -35,12 +38,9 @@
       <itemPath>Clock.cpp</itemPath>
       <itemPath>Debug.cpp</itemPath>
       <itemPath>Interpreter.cpp</itemPath>
-      <itemPath>Interpreter.h</itemPath>
       <itemPath>MLX90363.cpp</itemPath>
       <itemPath>Predictor.cpp</itemPath>
-      <itemPath>Predictor.h</itemPath>
       <itemPath>ServoController.cpp</itemPath>
-      <itemPath>ServoController.h</itemPath>
       <itemPath>ThreePhaseController.cpp</itemPath>
       <itemPath>ThreePhaseDriver.cpp</itemPath>
       <itemPath>Timer.cpp</itemPath>
