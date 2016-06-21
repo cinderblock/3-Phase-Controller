@@ -34,7 +34,13 @@
       <itemPath>Board.cpp</itemPath>
       <itemPath>Clock.cpp</itemPath>
       <itemPath>Debug.cpp</itemPath>
+      <itemPath>Interpreter.cpp</itemPath>
+      <itemPath>Interpreter.h</itemPath>
       <itemPath>MLX90363.cpp</itemPath>
+      <itemPath>Predictor.cpp</itemPath>
+      <itemPath>Predictor.h</itemPath>
+      <itemPath>ServoController.cpp</itemPath>
+      <itemPath>ServoController.h</itemPath>
       <itemPath>ThreePhaseController.cpp</itemPath>
       <itemPath>ThreePhaseDriver.cpp</itemPath>
       <itemPath>Timer.cpp</itemPath>
@@ -107,6 +113,10 @@
       </item>
       <item path="Debug.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Interpreter.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Interpreter.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="LookupTable.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="LookupTable/Motor1.cpp" ex="false" tool="1" flavor2="0">
@@ -114,6 +124,14 @@
       <item path="MLX90363.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MLX90363.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Predictor.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Predictor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ServoController.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ServoController.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ThreePhaseController.cpp" ex="false" tool="1" flavor2="0">
       </item>
