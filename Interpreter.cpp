@@ -5,7 +5,7 @@
 #include "ThreePhaseDriver.h"
 #include "Predictor.h"
 #include "MLX90363.h"
-#include "TwillBotInterface.h"
+#include "FilebotInterface/TwillBotInterface.h"
 #include "ServoController.h"
 
 bool Interpreter::streaming = true;
