@@ -12,6 +12,10 @@ CPP = main Board MLX90363 ThreePhaseDriver Debug Timer Clock ThreePhaseControlle
 
 CPP += FilebotInterface/TwillBotInterface TripleBuffer-impl TimerTimeout
 
+CPP += LookupTable/$(MotorID)
+
+MotorID = Motor1
+
 AVRpp_SRC = CRC8 #ADC USART DecPrintFormatter gccGuard
 
 # Select specific LUFA source files to compile like this
