@@ -50,14 +50,14 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
     return;
   }
 
-  //deadtime configuration
+  // deadtime configuration
   if (incomingData[0] == (u1)Command::SetDeadtimes) {
     if (incomingData[1] == 0xF0) {
       //advance to next DeadTime
       ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes() + 0x11);
 
     } else if (incomingData[1] == 0x0F) {
-      //decement to last DeadTime
+      // decement to last DeadTime
       ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes() - 0x11);
 
     } else if (incomingData[1] == 0xFF) {
