@@ -35,6 +35,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>BlockBuffer-impl.cpp</itemPath>
       <itemPath>Board.cpp</itemPath>
       <itemPath>Clock.cpp</itemPath>
       <itemPath>Debug.cpp</itemPath>
@@ -100,6 +101,8 @@
       <item path=".bld/test.cpp.S" ex="false" tool="4" flavor2="0">
       </item>
       <item path="AVRClock.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="BlockBuffer-impl.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Board.cpp" ex="false" tool="1" flavor2="0">
       </item>

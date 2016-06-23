@@ -16,6 +16,7 @@ namespace Config {
  b7 constexpr i2cSlaveAddress = 50;
  u1 constexpr i2cBufferOutgoingSize = 11;
  u1 constexpr i2cBufferIncomingSize = 11;
+ u1 constexpr i2cBufferIncomingBlocks = 2;
 }
 
 #endif	/* CONFIG_H */

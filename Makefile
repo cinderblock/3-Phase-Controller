@@ -10,7 +10,7 @@ C =
 # List of CPP file basenames to build
 CPP = main Board MLX90363 ThreePhaseDriver Debug Timer Clock ThreePhaseController Interpreter Predictor ServoController
 
-CPP += FilebotInterface/TwillBotInterface TripleBuffer-impl TimerTimeout
+CPP += FilebotInterface/TwillBotInterface TripleBuffer-impl TimerTimeout BlockBuffer-impl
 
 CPP += LookupTable/$(MotorID)
 
