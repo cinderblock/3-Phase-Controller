@@ -69,8 +69,10 @@ void main() {
 		// ThreePhaseController::updateDriver();
 		ServoController::update();
 
-		if(TwillBotInterface::hasReceivedBlock()){
-			Interpreter::interpretFromMaster(TwillBotInterface::getIncomingReadBuffer());
+		u1 const * const buff = TwillBotInterface::getIncomingReadBuffer();
+
+		if (buff) {
+			Interpreter::interpretFromMaster(buff);
 
 			TwillBotInterface::reserveNextReadBuffer();
 		}
