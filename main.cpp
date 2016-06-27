@@ -70,9 +70,9 @@ void main() {
 		ServoController::update();
 
 		if(TwillBotInterface::hasReceivedBlock()){
-			TwillBotInterface::reserveNextReadBuffer();
-
 			Interpreter::interpretFromMaster(TwillBotInterface::getIncomingReadBuffer());
+
+			TwillBotInterface::reserveNextReadBuffer();
 		}
 
 		Interpreter::sendNormalDataToMaster();
