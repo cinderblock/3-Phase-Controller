@@ -50,7 +50,7 @@ void TimerTimeout::startBISR(u1 period) {
 
 void TimerTimeout::stopA() {
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
-		stopBISR();
+		stopAISR();
 	}
 }
 
@@ -65,5 +65,5 @@ void TimerTimeout::stopAISR() {
 }
 
 void TimerTimeout::stopBISR() {
-	TIMSK0 &= ~(1 << OCIE0A);
+	TIMSK0 &= ~(1 << OCIE0B);
 }
