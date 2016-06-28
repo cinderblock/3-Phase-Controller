@@ -103,6 +103,18 @@ namespace Debug {
    }
   }
 
+	namespace I2C {
+		inline static void printStatus() {
+
+		}
+		inline static void SlaveNACK() {
+
+		}
+		inline static void SlaveStopped() {
+
+		}
+	}
+
   inline static void timeout() {
    if (!LEDs) return;
    Board::LED.off();
