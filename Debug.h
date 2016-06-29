@@ -113,7 +113,7 @@ namespace Debug {
 		inline static void SlaveStopped() {
 
 		}
-		inline static void unhandledStatus() {
+		inline static void unhandledStatus(u1 s = 0) {
 			Board::LED.on();
 		}
 	}

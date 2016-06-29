@@ -92,7 +92,7 @@ void Interpreter::sendNormalDataToMaster() {
   // buff[6] = Predictor::getAdjustVal();
   // buff[7] = Predictor::getPhaseAdvanceRatio();
   buff[8] = (u1)ThreePhaseController::getAmplitude();
-  buff[9] = (u1)ThreePhaseController::getDeadTimes();
+  buff[9] = (u1)TwillBotInterface::status();
 
   TwillBotInterface::writeOutgoingCRC();
   TwillBotInterface::releaseNextWriteBuffer();
