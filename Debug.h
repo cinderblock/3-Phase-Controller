@@ -113,6 +113,9 @@ namespace Debug {
 		inline static void SlaveStopped() {
 
 		}
+		inline static void unhandledStatus() {
+			Board::LED.on();
+		}
 	}
 
   inline static void timeout() {
