@@ -23,45 +23,44 @@ s2 constexpr abs(s2 num) {
 	return num >= 0 ? num : -num;
 }
 
-u2 Predictor::predict(){
+u2 Predictor::predict() {
 
 	u4 ph = drivePhase;
 	ph += driveVelocity;
-	
+
 	const bool forward = driveVelocity > 0;
-	
+
 	static const u4 MAX = DriverConstants::StepsPerCycle << DriverConstants::drivePhaseValueShift;
-	
+
 	// Check if ph(ase) value is out of range
 	if (ph >= MAX) {
 		// Fix it
-		if (forward){
+		if (forward) {
 			ph -= MAX;
-		}
-		else{
+		} else {
 			ph += MAX;
 		}
 	}
-	
+
 	// Store new drivePhase
 	drivePhase = ph;
 
 	// Adjust output for velocity lag
 	ph += phaseAdvanceAmount;
-	
-		// Check if ph(ase) value is out of range again
+
+	// Check if ph(ase) value is out of range again
 	if (ph >= MAX) {
 		// Fix it
 		if (forward) ph -= MAX;
-		else         ph += MAX;
+		else ph += MAX;
 	}
-	
+
 	// if(ph>>DriverConstants::drivePhaseValueShift > DriverConstants::MaskForPhase) Board::LED.on();
 
 	return (ph >> DriverConstants::drivePhaseValueShift);
 }
 
-void Predictor::freshPhase(u2 reading){
+void Predictor::freshPhase(u2 reading) {
 
 	// static u1 tick = 0;
 
@@ -75,13 +74,12 @@ void Predictor::freshPhase(u2 reading){
 	u2 mechanicalPhase = getMechPhase(reading);
 
 	//find distance travelled in phase
-	s2 mechChange = (s2)mechanicalPhase - (s2)lastMecPha; 
-	
+	s2 mechChange = (s2)mechanicalPhase - (s2)lastMecPha;
+
 	//TODO ensure we are not wrapping in the wrong direction due to high speeds
-	if (mechChange > (s2)(DriverConstants::StepsPerRotation/2)){
+	if (mechChange > (s2)(DriverConstants::StepsPerRotation / 2)) {
 		mechChange = ((s2)DriverConstants::StepsPerRotation) - mechChange;
-	}
-	else if (mechChange < -((s2)DriverConstants::StepsPerRotation/2)){
+	} else if (mechChange < -((s2)DriverConstants::StepsPerRotation / 2)) {
 		mechChange = ((s2)DriverConstants::StepsPerRotation) + mechChange;
 	}
 
@@ -93,30 +91,30 @@ void Predictor::freshPhase(u2 reading){
 		drivePhase = u4(reading & DriverConstants::MaskForPhase) << DriverConstants::drivePhaseValueShift;
 		phaseAdvanceAmount = tempPhaseAdvance;
 	}
-	
+
 	// Save the most recent magnetic position
 	lastMecPha = mechanicalPhase;
-	
+
 }
 
-s4 Predictor::nextVelocity(s2 measuredMechChange){
+s4 Predictor::nextVelocity(s2 measuredMechChange) {
 
 	s4 tempVelocity = driveVelocity;
 
 	const s2 predictedPhaseChange = (tempVelocity * ((s1)DriverConstants::PredictsPerValue)) >> DriverConstants::drivePhaseValueShift;
 
 	if (measuredMechChange > predictedPhaseChange) {
-		tempVelocity+=adjustVal;
+		tempVelocity += adjustVal;
 	} else if (measuredMechChange < predictedPhaseChange) {
-		tempVelocity-=adjustVal;
+		tempVelocity -= adjustVal;
 	}
 	return tempVelocity;
 }
 
-void Predictor::init(u2 phase){
+void Predictor::init(u2 phase) {
 
 	driveVelocity = 0;
-	lastMecPha = getMechPhase(phase);//lookupAlphaToPhase(MLX90363::getAlpha());
+	lastMecPha = getMechPhase(phase); //lookupAlphaToPhase(MLX90363::getAlpha());
 	drivePhase = (lastMecPha & DriverConstants::MaskForPhase) << DriverConstants::drivePhaseValueShift;
 	lastMechChange = 0;
 	adjustVal = 5;
