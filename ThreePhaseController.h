@@ -26,8 +26,6 @@ class ThreePhaseController {
   static u1 magRoll;
   static u2 roll;
 
-  static const u1 MaxAmplitude = 40;
-
   /**
    * Number of cycles the PWM timer makes per measurement ready from MLX. We pick
    * a number such that we wait at least 1ms between measurements, otherwise the
@@ -45,6 +43,8 @@ class ThreePhaseController {
   static constexpr u2 output90DegPhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
 
 public:
+  static const u1 MaxAmplitude = 40;
+
   static void init();
 
   class Amplitude {

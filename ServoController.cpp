@@ -44,7 +44,7 @@ s2 abs2(s2 num) {
   return num;
 }
 
-const u1 amplitudeLimit = 40;
+const u1 amplitudeLimit = ThreePhaseController::MaxAmplitude;
 
 void ServoController::init() {
   currentMode = Mode::Init;
