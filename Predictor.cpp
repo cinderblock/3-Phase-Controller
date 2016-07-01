@@ -19,9 +19,8 @@ u1 Predictor::adjustVal;
 u1 Predictor::phaseAdvanceRatio;
 s4 Predictor::phaseAdvanceAmount;
 
-s2 abs(s2 num){
-	if(num < 0) return -num;
-	return num;
+s2 constexpr abs(s2 num) {
+	return num >= 0 ? num : -num;
 }
 
 u2 Predictor::predict(){
