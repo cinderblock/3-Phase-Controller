@@ -80,10 +80,10 @@ void Predictor::freshPhase(u2 reading){
 	
 	//TODO ensure we are not wrapping in the wrong direction due to high speeds
 	if (mechChange > (s2)(DriverConstants::StepsPerRotation/2)){
-		mechChange = ((s2)DriverConstants::StepsPerRotation) - mechChange;
+		mechChange = mechChange - ((s2)DriverConstants::StepsPerRotation);
 	}
 	else if (mechChange < -((s2)DriverConstants::StepsPerRotation/2)){
-		mechChange = ((s2)DriverConstants::StepsPerRotation) + mechChange;
+		mechChange = mechChange + ((s2)DriverConstants::StepsPerRotation);
 	}
 
 	s4 tempVelocity = nextVelocity(mechChange);
