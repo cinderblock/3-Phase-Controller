@@ -3,6 +3,7 @@
 // #include "Debug.h"
 #include <util/atomic.h>
 #include "DriverConstants.h"
+#include "ServoController.h"
 // #include "Board.h"
 // #include <iostream>
 // #include <cmath> 
@@ -18,6 +19,7 @@ u2 Predictor::lastReading;
 u1 Predictor::adjustVal;
 u1 Predictor::phaseAdvanceRatio;
 s4 Predictor::phaseAdvanceAmount;
+u2 Predictor::lastPredicted;
 
 s2 abs(s2 num){
 	if(num < 0) return -num;
@@ -36,12 +38,8 @@ u2 Predictor::predict(){
 	// Check if ph(ase) value is out of range
 	if (ph >= MAX) {
 		// Fix it
-		if (forward){
-			ph -= MAX;
-		}
-		else{
-			ph += MAX;
-		}
+		if (forward) ph -= MAX;
+		else         ph += MAX;
 	}
 	
 	// Store new drivePhase
@@ -50,7 +48,7 @@ u2 Predictor::predict(){
 	// Adjust output for velocity lag
 	ph += phaseAdvanceAmount;
 	
-		// Check if ph(ase) value is out of range again
+	// Check if ph(ase) value is out of range again
 	if (ph >= MAX) {
 		// Fix it
 		if (forward) ph -= MAX;
@@ -58,8 +56,8 @@ u2 Predictor::predict(){
 	}
 	
 	// if(ph>>DriverConstants::drivePhaseValueShift > DriverConstants::MaskForPhase) Board::LED.on();
-
-	return (ph >> DriverConstants::drivePhaseValueShift);
+	lastPredicted = (ph >> DriverConstants::drivePhaseValueShift);
+	return lastPredicted;
 }
 
 void Predictor::freshPhase(u2 reading){
@@ -97,7 +95,8 @@ void Predictor::freshPhase(u2 reading){
 	
 	// Save the most recent magnetic position
 	lastMecPha = mechanicalPhase;
-	
+
+	lastPredicted = lastMecPha + tempPhaseAdvance;
 }
 
 s4 Predictor::nextVelocity(s2 measuredMechChange){

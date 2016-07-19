@@ -38,7 +38,7 @@ void init() {
 	
 	TwillBotInterface::init();
 	
-	ThreePhaseController::init();
+	// ThreePhaseController::init();
 	ServoController::init();
 	// ThreePhaseDriver::init();
 	// ThreePhaseDriver::setAmplitude(40);
@@ -59,14 +59,11 @@ void main() {
 	Clock::MicroTime t(0);
 	Clock::MicroTime delta = 25_ms;
 	Clock::MicroTime now;
-	
-	// Board::LED.on();
-	
-	
+
+
 	ThreePhaseController::setAmplitude(0);
-	
+
 	while(1){
-		// ThreePhaseController::updateDriver();
 		ServoController::update();
 
 		u1 const * const buff = TwillBotInterface::getIncomingReadBuffer();

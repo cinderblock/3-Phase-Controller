@@ -22,6 +22,7 @@ class ThreePhaseController {
   static inline void isr();
   friend void TIMER4_OVF_vect();
 
+  static const u1 MaxAmplitude = 40;
 
   static u1 magRoll;
   static u2 roll;
@@ -43,8 +44,6 @@ class ThreePhaseController {
   static constexpr u2 output90DegPhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
 
 public:
-  static const u1 MaxAmplitude = 40;
-
   static void init();
 
   class Amplitude {

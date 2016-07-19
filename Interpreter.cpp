@@ -8,6 +8,7 @@
 #include "FilebotInterface/TwillBotInterface.h"
 #include "ServoController.h"
 #include <AVR++/CRC8.h>
+#include "DriverConstants.h"
 
 void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   // Check incoming CRC for failure
@@ -80,15 +81,31 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   if (incomingData[0] == (u1)Command::SetPredictorPhaseAdvance) {
     Predictor::setPhaseAdvanceRatio(incomingData[1]);
   }
+
+  if (incomingData[0] == (u1)Command::SetPDSvalues) {
+    ServoController::setP(incomingData[1]);
+    ServoController::setPshift(incomingData[2]);
+    ServoController::setD(incomingData[3]);
+    ServoController::setDshift(incomingData[4]);
+  }
 }
 
 void Interpreter::sendNormalDataToMaster() {
   u1 * const buff = TwillBotInterface::getOutgoingWriteBuffer();
 
-  *(u2 * const)(&buff[0]) = ThreePhaseController::getRoll();
-  *(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
-  *(u2 * const)(&buff[4]) = ThreePhaseController::getMeasuredPosition();
-  *(u2 * const)(&buff[6]) = ServoController::getVelocityCommand();
+  // *(u2 * const)(&buff[0]) = ThreePhaseController::getRoll();
+  // *(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
+
+  buff[0] = (u1)ServoController::getP();
+  buff[1] = (u1)ServoController::getD();
+  buff[2] = (u1)ServoController::getPshift();
+  buff[3] = (u1)ServoController::getDshift();
+  // *(s4 * const)(&buff[6]) = ServoController::getPositionCommand();
+
+
+  // *(u2 * const)(&buff[4]) = DriverConstants::MagnetometerMax - MLX90363::getAlpha();
+  // *(u2 * const)(&buff[6]) = ServoController::getRevolution();
+  *(s4 * const)(&buff[4]) = ServoController::getPosition();
   // buff[6] = Predictor::getAdjustVal();
   // buff[7] = Predictor::getPhaseAdvanceRatio();
   buff[8] = (u1)ThreePhaseController::getAmplitude();

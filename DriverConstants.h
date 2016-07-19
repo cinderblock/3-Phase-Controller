@@ -16,7 +16,7 @@ public:
 	/**
 	 * shift phase integer for additional resolution
 	 */
-  static constexpr u1 drivePhaseValueShift = 8;
+	static constexpr u1 drivePhaseValueShift = 8;
 
 	/**
 	 * Maximum torque provided by the motor
@@ -61,7 +61,20 @@ public:
 	 */
 	static u2 constexpr MaxVelocityChange = StepsPerRotation / 3;
 	
+	/**
+	 * Number of bits the magnetometer uses to give position
+	 */
+	static u1 constexpr MagnetometerBits = 14;
 
+	/**
+	 * Mask used to only grab magnetometer related bits from position
+	 */
+	static u2 constexpr MagnetometerBitsMask = (1<<MagnetometerBits)-1;
+
+	/**
+	 * Largest value the magnetometer can be
+	 */
+	static u2 constexpr MagnetometerMax = (1<<MagnetometerBits)-1;
 
 };
 

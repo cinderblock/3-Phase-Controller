@@ -37,7 +37,7 @@ void ThreePhaseController::isr() {
   // Fix outputPhase range
   if (outputPhase >= ThreePhaseDriver::StepsPerCycle) {
     // Fix it
-    if (isForwardTorque) outputPhase += ThreePhaseDriver::StepsPerCycle;
+    if (isForwardTorque)outputPhase += ThreePhaseDriver::StepsPerCycle;
     else outputPhase -= ThreePhaseDriver::StepsPerCycle;
   }
 

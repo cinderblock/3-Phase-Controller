@@ -15,6 +15,7 @@ class Interpreter {
     SetDriverPosition = 0x42,
     SetPredictorAdjustVal = 0x43,
     SetPredictorPhaseAdvance = 0x44,
+    SetPDSvalues = 0x50,
   };
 
 public:
