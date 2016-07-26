@@ -144,6 +144,8 @@ void ServoController::update() {
     //   command = -ThreePhaseController::MaxAmplitude;
 
     // ThreePhaseController::setAmplitude(command);
+  } else if(currentMode == Mode::Phase){
+	  // return;
   } else {
 
   }

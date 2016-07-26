@@ -15,7 +15,7 @@ class ServoController {
 private:
 
   enum class Mode : u1 {
-    Init, Amplitude, Velocity, Distance, Position
+    Init, Amplitude, Velocity, Distance, Position, Phase
   };
 
   static Mode currentMode;
@@ -60,6 +60,7 @@ public:
   static void setZero();
   static void setPosition(s4);
   static void setDistance(s4);
+  inline static void setPhaseMode(){currentMode = Mode::Phase;};
 
   inline static s4 getPositionCommand() {return positionCommand;};
   inline static s4 getPosition(){return ((s4)onRotation * (1 << DriverConstants::MagnetometerBits)) + (DriverConstants::MagnetometerMax - MLX90363::getAlpha());};
@@ -81,6 +82,8 @@ public:
   static inline u1 getDshift() {return Dshift;};
 
   static void setEnable(bool);
+
+  static inline bool isUpdating(){return currentMode != Mode::Init && currentMode != Mode::Phase;};
 
   inline static void incrementRotation(const bool up){onRotation += up ? 1 : -1;};
 

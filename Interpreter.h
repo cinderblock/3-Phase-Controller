@@ -6,6 +6,9 @@
 
 class Interpreter {
 
+  static constexpr u1 extraResponseLength = Config::i2cExtraResponseMaxLength;
+  static u1 extraResponse[extraResponseLength];
+
   enum class Command : u1 {
     SetAmplitude = 0x20,
     SetVelocity = 0x21,
@@ -16,6 +19,7 @@ class Interpreter {
     SetPredictorAdjustVal = 0x43,
     SetPredictorPhaseAdvance = 0x44,
     SetPDSvalues = 0x50,
+    GetPDSvalues = 0x51,
   };
 
 public:
