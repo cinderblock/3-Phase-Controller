@@ -35,6 +35,7 @@ public:
 
 	// inline static u4 getPredictedPosition(){return drivePhase;}
 	inline static u2 getPredictedPosition(){return lastPredicted;};
+	inline static s4 getPhaseAdvanceAmount(){return phaseAdvanceAmount;};
 	inline static u2 getMeasuredPosition() {return lastMecPha;}
 	inline static s2 getVelocity()         {return driveVelocity;};
 

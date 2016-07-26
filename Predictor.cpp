@@ -29,32 +29,32 @@ s2 abs(s2 num){
 u2 Predictor::predict(){
 
 	u4 ph = drivePhase;
-	ph += driveVelocity;
-	
+	ph += ((u4)driveVelocity);
+
 	const bool forward = driveVelocity > 0;
-	
-	static const u4 MAX = DriverConstants::StepsPerCycle << DriverConstants::drivePhaseValueShift;
-	
+
+	static const u4 MAX = ((u4)DriverConstants::StepsPerCycle) << DriverConstants::drivePhaseValueShift;
+
 	// Check if ph(ase) value is out of range
-	if (ph >= MAX) {
+	while (ph >= MAX) {
 		// Fix it
 		if (forward) ph -= MAX;
 		else         ph += MAX;
 	}
-	
+
 	// Store new drivePhase
 	drivePhase = ph;
 
 	// Adjust output for velocity lag
 	ph += phaseAdvanceAmount;
-	
+
 	// Check if ph(ase) value is out of range again
-	if (ph >= MAX) {
+	while (ph >= MAX) {
 		// Fix it
 		if (forward) ph -= MAX;
 		else         ph += MAX;
 	}
-	
+
 	// if(ph>>DriverConstants::drivePhaseValueShift > DriverConstants::MaskForPhase) Board::LED.on();
 	lastPredicted = (ph >> DriverConstants::drivePhaseValueShift);
 	return lastPredicted;
@@ -75,7 +75,7 @@ void Predictor::freshPhase(u2 reading){
 
 	//find distance travelled in phase
 	s2 mechChange = (s2)mechanicalPhase - (s2)lastMecPha; 
-	
+
 	//TODO ensure we are not wrapping in the wrong direction due to high speeds
 	if (mechChange > (s2)(DriverConstants::StepsPerRotation/2)){
 		mechChange = mechChange - ((s2)DriverConstants::StepsPerRotation);
@@ -86,6 +86,16 @@ void Predictor::freshPhase(u2 reading){
 
 	s4 tempVelocity = nextVelocity(mechChange);
 	s4 tempPhaseAdvance = tempVelocity * phaseAdvanceRatio;
+
+	// static const s4 MAX = ((u4)DriverConstants::StepsPerCycle) << DriverConstants::drivePhaseValueShift;
+
+	// if(tempVelocity > 0){
+	// 	if (tempPhaseAdvance > MAX) tempPhaseAdvance %= MAX;
+	// }
+	// else{
+	// 	if (-tempPhaseAdvance > MAX) tempPhaseAdvance %= MAX;
+	// }
+	// tempPhaseAdvance %= MAX;
 
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
 		driveVelocity = tempVelocity;
@@ -117,7 +127,7 @@ void Predictor::init(u2 phase){
 
 	driveVelocity = 0;
 	lastMecPha = getMechPhase(phase);//lookupAlphaToPhase(MLX90363::getAlpha());
-	drivePhase = (lastMecPha & DriverConstants::MaskForPhase) << DriverConstants::drivePhaseValueShift;
+	drivePhase = (((u4)lastMecPha) & DriverConstants::MaskForPhase) << DriverConstants::drivePhaseValueShift;
 	lastMechChange = 0;
 	adjustVal = 5;
 	phaseAdvanceRatio = 40;
