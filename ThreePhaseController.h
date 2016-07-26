@@ -37,6 +37,7 @@ class ThreePhaseController {
   static constexpr u1 cyclesPWMPerMLX = 40;
 
   static bool isForwardTorque;
+  static bool isZeroTorque;
 
   /**
    * 90 degree phase shift
@@ -48,15 +49,16 @@ public:
 
   class Amplitude {
     bool forward;
+    bool zero;
     u1 amplitude;
     friend class ThreePhaseController;
 
   public:
 
-    inline Amplitude(s2 const t) : forward(t >= 0), amplitude(forward ? t : -t) {
+    inline Amplitude(s2 const t) : forward(t >= 0), zero(t==0), amplitude(forward ? t : -t) {
     };
 
-    inline Amplitude(const bool fwd, u1 const ampl) : forward(fwd), amplitude(ampl) {
+    inline Amplitude(const bool fwd, u1 const ampl) : forward(fwd), zero(ampl==0), amplitude(ampl) {
     };
     // static Torque limitedTorque(s2 requestedTorque){return };
   };

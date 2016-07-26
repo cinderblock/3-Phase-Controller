@@ -15,8 +15,10 @@
 #include "Interpreter.h"
 #include "Predictor.h"
 #include "LookupTable.h"
+#include "ServoController.h"
 
 bool ThreePhaseController::isForwardTorque;
+bool ThreePhaseController::isZeroTorque;
 u1 ThreePhaseController::magRoll;
 u2 ThreePhaseController::roll;
 
@@ -30,20 +32,24 @@ void ThreePhaseController::isr() {
   // Scale phase to output range
   u2 outputPhase = Predictor::predict();
 
-  // Offset from current angle by 90deg for max torque
-  if (isForwardTorque) outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
-  else outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
-
-  // Fix outputPhase range
-  if (outputPhase >= ThreePhaseDriver::StepsPerCycle) {
-    // Fix it
-    if (isForwardTorque)outputPhase += ThreePhaseDriver::StepsPerCycle;
-    else outputPhase -= ThreePhaseDriver::StepsPerCycle;
+  if(ServoController::isUpdating()){ 
+    // Offset from current angle by 90deg for max torque
+    if (isZeroTorque);
+    else if (isForwardTorque) outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
+    else outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
+  
+    // Fix outputPhase range
+    if (isZeroTorque);
+    else if (outputPhase >= ThreePhaseDriver::StepsPerCycle) {
+      // Fix it
+      if (isForwardTorque)outputPhase += ThreePhaseDriver::StepsPerCycle;
+      else outputPhase -= ThreePhaseDriver::StepsPerCycle;
+    }
+  
+    // Update driver outputs
+    ThreePhaseDriver::advanceTo(outputPhase);
   }
-
-  // Update driver outputs
-  ThreePhaseDriver::advanceTo(outputPhase);
-
+  
   // Don't continue if we're not done counting down
   if (--mlx)
     return;
@@ -78,6 +84,7 @@ void ThreePhaseController::setAmplitude(const Amplitude t) {
 
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     isForwardTorque = t.forward;
+    isZeroTorque = t.zero;
     ThreePhaseDriver::setAmplitude(t.amplitude);
   }
 }
