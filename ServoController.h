@@ -39,6 +39,7 @@ private:
   static u1 D;
 
   static u1 Pshift;
+  static u1 Ishift;
   static u1 Dshift;
 
   static u1 currentLimit;
