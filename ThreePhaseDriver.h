@@ -65,13 +65,13 @@ public:
    */
   static void advance();
 
-  static u2 lastStep;
+  static u2 lastPhase;
   /**
    * Version of advanceTo() that takes a single u2 between 0 and 0x2ff inclusive
    * @param step
    */
   inline static void advanceTo(u2 const step) {
-    lastStep = step;
+    lastPhase = step;
     advanceToFullSine((Phase) (step >> 8), step);
   }
 
