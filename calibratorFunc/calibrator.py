@@ -10,9 +10,9 @@ if len(sys.argv) < 2:
 file = pd.read_csv(sys.argv[1])
 
 if (len(sys.argv) >= 3):
-	out = sys.argv[2]
+	out = '../LookupTable/'+sys.argv[2]
 else:
-	out = 'output'
+	out = '../LookupTable/'+'output.cpp'
 
 if (len(sys.argv) == 4):
 	skip = int(sys.argv[3])
@@ -76,7 +76,16 @@ numPerLine = 20
 shift = 0
 
 
-s = '[\n '
+
+s = '// File generated with python in calibratorFunc Folder'+'\n'
+s+= '#include "../LookupTable.h"'+'\n'
+s+='\n'
+s+='\n'
+s+='/**'+'\n'
+s+=' * 12-bit lookup table for magnetometer Alpha value to Phase value'+'\n'
+s+=' */'+'\n'
+s+='const u2 Lookup::table[] PROGMEM = {'+'\n\t'
+
 for i in range(len(l)):
 	temp = i + shift
 	if temp >= len(l):
@@ -89,6 +98,9 @@ for i in range(len(l)):
 	if i % numPerLine is numPerLine-1:
 		s=s+'\n\t'
 
+s+='\n'
+s+='};\n'
+s+='\n'
 print len(l)
 
 f = open(out, 'w')
