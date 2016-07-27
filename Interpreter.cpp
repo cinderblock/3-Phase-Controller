@@ -11,6 +11,11 @@
 #include "DriverConstants.h"
 
 u1 Interpreter::extraResponse[extraResponseLength];
+Interpreter::Mode Interpreter::current;
+
+void Interpreter::Init(){
+  current = Mode::Standard;
+}
 
 void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   // Check incoming CRC for failure
@@ -114,6 +119,42 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
     extraResponse[2] = ServoController::getPshift();
     extraResponse[3] = ServoController::getD();
     extraResponse[4] = ServoController::getDshift();
+
+    crc.reset();
+
+    u1 * data = extraResponse;
+
+    for (u1 i = 0; i < len + headerLen; i++) {
+      crc << *data++;
+    }
+
+    *data = crc.getCRC();
+
+    TwillBotInterface::setExtraResponse(len + headerLen + 1, extraResponse);
+
+    return;
+  }
+
+  if (incomingData[0] == (u1)Command::setMode){
+    switch(incomingData[1]){
+      case (u1)Mode::Calibration:
+        current = Mode::Calibration;
+        break;
+      case (u1)Mode::Test:
+        current = Mode::Test;
+        break;
+      default: current = Mode::Standard;
+    }
+    // current = (Mode)incomingData[1];
+    return;
+  }
+
+  if (incomingData[0] == (u1)Command::getMode){
+    u1 const headerLen = 1;
+    u1 const len = 4;
+
+    extraResponse[0] = (u1)Command::GetPDSvalues;
+    extraResponse[1] = (u1)current;
 
     crc.reset();
 
