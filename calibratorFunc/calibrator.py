@@ -1,3 +1,4 @@
+from __future__ import division
 import pandas as pd
 import numpy as np
 import sys
@@ -25,32 +26,68 @@ file = file[file['phase'] != 65535][['MagData','phase']].ix[skip:]
 # reduce mag data to a usable number of elements by dividing by 7
 file['adj'] = (file['MagData']/4).apply(round).apply(int)
 
+maxValue = 768
+elctricalPerMechanical = 7
+
 def rng(low, high):
 	def rngI(x):
 		return x >= low and x < high
 	return rngI
 
 l = list()
+elecToMech = 0#elctricalPerMechanical-1
+
 for i in range(max(file['adj'])+1):
+
 	f = file[file['adj'] == i]['phase']
-	if max(f) - min(f) > 100:
+	if f.empty:
+		print i, " is missing!"
+		continue
+	elif max(f) - min(f) > 100:
 		# print list(f)
 		t = filter(rng(0, 100), f)
 		b = filter(rng(600,1000), f)
-		if len(t) > len(b):
-			f = t
-		else:
-			f = b
-	l.append(int(round(np.mean(f))))
 
-numPerLine = 32
+		value = sum(b) + sum(t) + len(t) * maxValue
+		value = value / len(f)
+
+		value = int(round(value))
+
+		if(value >= maxValue):
+			value = value - maxValue
+
+		# if len(t) > len(b):
+		# 	f = t
+		# else:
+		# 	f = b
+	else:
+		value = int(round(np.mean(f)))
+
+	if len(l) > 0 and abs(value - (l[len(l)-1] & 0x0FFF)) > 500:
+		print value, l[len(l)-1]
+		elecToMech = elecToMech + 1
+
+		if elecToMech == elctricalPerMechanical:
+			elecToMech = 0#elctricalPerMechanical -1
+	
+	l.append(value + elecToMech * pow(2, 12))
+
+numPerLine = 20
+shift = 0
+
 
 s = '[\n '
 for i in range(len(l)):
-	s = s+'{!s:>3},'.format(l[i])
+	temp = i + shift
+	if temp >= len(l):
+		temp -= len(l)
+	elif temp < 0:
+		temp += len(l)
+
+	s = s+'0x{:04x},'.format(l[temp])
+	# s = s+'{!s:>3},'.format(l[i], '#04x')
 	if i % numPerLine is numPerLine-1:
-		s=s+'\n '
-s=s+']'
+		s=s+'\n\t'
 
 print len(l)
 
