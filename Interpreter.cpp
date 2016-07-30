@@ -176,8 +176,16 @@ void Interpreter::sendNormalDataToMaster() {
   u1 * const buff = TwillBotInterface::getOutgoingWriteBuffer();
 
   static u2 Roll = 0;
-
-  if(current == Mode::Calibration){
+  buff[9] = (u1)current;
+  //Standard message
+  if (current == Mode::Standard){
+    *(u2 * const)(&buff[0]) = Roll;
+    *(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
+    // *(s4 * const)(&buff[4]) = ServoController::getPosition();
+    *(u2 * const)(&buff[6]) = Predictor::getPredictedPosition();
+    buff[8] = (u1)ThreePhaseController::getAmplitude();
+  }
+  else if(current == Mode::Calibration){
     *(u2 * const)(&buff[0]) = Roll;
     *(u2 * const)(&buff[2]) = ThreePhaseController::getMeasuredPosition();
     // *(u4 * const)(&buff[0]) = Predictor::getPhaseAdvanceAmount();
@@ -186,7 +194,6 @@ void Interpreter::sendNormalDataToMaster() {
     // *(u2 * const)(&buff[6]) = Predictor::getPredictedPosition();
     // *(s4 * const)(&buff[4]) = ServoController::getPosition();
     buff[8] = (u1)ThreePhaseController::getAmplitude();
-    buff[9] = (u1)TwillBotInterface::status;
   }
   else if(current == Mode::Test){
     *(u2 * const)(&buff[0]) = ThreePhaseController::getMeasuredPosition();
@@ -196,16 +203,6 @@ void Interpreter::sendNormalDataToMaster() {
     *(u2 * const)(&buff[6]) = Predictor::getPredictedPosition();
     // *(s4 * const)(&buff[4]) = ServoController::getPosition();
     buff[8] = (u1)ThreePhaseController::getAmplitude();
-    buff[9] = (u1)TwillBotInterface::status;
-  }
-  //Standard message
-  else{
-    *(u2 * const)(&buff[0]) = Roll;
-    *(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
-    *(s4 * const)(&buff[4]) = ServoController::getPosition();
-    *(u2 * const)(&buff[6]) = Predictor::getPredictedPosition();
-    buff[8] = (u1)ThreePhaseController::getAmplitude();
-    buff[9] = (u1)TwillBotInterface::status;
   }
 
   Roll++;

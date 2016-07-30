@@ -37,9 +37,11 @@ void init() {
 	::Clock::init();
 	
 	TwillBotInterface::init();
+	Interpreter::Init();
 	
 	// ThreePhaseController::init();
 	ServoController::init();
+
 	// ThreePhaseDriver::init();
 	// ThreePhaseDriver::setAmplitude(40);
 	// ThreePhaseDriver::advanceTo(100);
