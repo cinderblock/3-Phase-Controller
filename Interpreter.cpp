@@ -152,9 +152,9 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
 
   if (incomingData[0] == (u1)Command::getMode){
     u1 const headerLen = 1;
-    u1 const len = 4;
+    u1 const len = 1;
 
-    extraResponse[0] = (u1)Command::GetPDSvalues;
+    extraResponse[0] = (u1)Command::getMode;
     extraResponse[1] = (u1)current;
 
     crc.reset();
