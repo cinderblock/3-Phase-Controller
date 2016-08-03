@@ -29,6 +29,8 @@ u1 ServoController::shift;
 
 u1 ServoController::currentLimit;
 
+s4 ServoController::command;
+
 // distance function with a wrap around
 
 s2 dist(u2 to, u2 from, const u2 wrapdist) {
@@ -58,6 +60,7 @@ void ServoController::init() {
   currentMode = Mode::Init;
 
   onRotation = 0;
+  command = 0;
 
   P = 10;
   I = 0;
@@ -114,23 +117,19 @@ void ServoController::update() {
     ThreePhaseController::setAmplitude((s2)(driveAmplitudeScaled >> DriverConstants::drivePhaseValueShift));
 
   } else if (currentMode == Mode::Position) {
-    const s2 vel = ThreePhaseController::getVelocity();
+		const s2 vel = ThreePhaseController::getVelocity();
 
-		s4 distance = 
-			(positionCommand & (~((u4)DriverConstants::MagnetometerBitsMask))) -
-			((s4)onRotation << DriverConstants::MagnetometerBits) +
-			(positionCommand & DriverConstants::MagnetometerBitsMask) - 
-			pos;
+		s4 distance = positionCommand - getPosition();
 
-		s4 command = (distance) * P + (vel) * D;
+		command = (distance * (s2)P);// + (vel * (s2)D);
 
-    const static s4 MAX = ThreePhaseController::getMaxAmplitude() << shift;
-    if (command > MAX)
-      command = MAX;
-    else if (command < -MAX)
-      command = -MAX;
+		const static s4 MAX = ((s4)ThreePhaseController::getMaxAmplitude()) << shift;
+		if (command > MAX)
+			command = MAX;
+		else if (distance < -MAX)
+			command = -MAX;
 
-    ThreePhaseController::setAmplitude(command >> shift);
+		ThreePhaseController::setAmplitude((s2)(command >> shift));
   } else if (currentMode == Mode::Distance) {
     // s2 pos = ThreePhaseController::getMeasuredPosition();
     // s2 vel = ThreePhaseController::getVelocity();
@@ -170,11 +169,11 @@ void ServoController::setPosition(s4 position) {
   positionCommand = position;
 }
 
-void ServoController::setDistance(s4 distance) {
+void ServoController::setDistance(s4 dist) {
   currentMode = Mode::Position;
 
   onRotation = 0;
-  positionCommand = distance - ThreePhaseController::getPredictedPosition();
+  positionCommand = dist - ThreePhaseController::getPredictedPosition();
 }
 
 void ServoController::setCurrentLimit(u1 current) {

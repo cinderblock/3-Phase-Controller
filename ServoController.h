@@ -44,6 +44,8 @@ private:
 
   static const u1 DeadBand = 50;
 
+  static s4 command;
+
 public:
   static void init();
 
@@ -64,6 +66,7 @@ public:
   inline static s4 getPositionCommand() {return positionCommand;};
   inline static s4 getPosition(){return ((s4)onRotation * (1 << DriverConstants::MagnetometerBits)) + (DriverConstants::MagnetometerMax - MLX90363::getAlpha());};
   inline static s2 getRevolution(){return onRotation;};
+  inline static s4 getShiftedCommand(){return command;};
 
   static void setCurrentLimit(u1);
 
