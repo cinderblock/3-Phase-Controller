@@ -38,7 +38,7 @@ void init() {
 	
 	TwillBotInterface::init();
 	Interpreter::Init();
-	
+
 	// ThreePhaseController::init();
 	ServoController::init();
 
@@ -77,6 +77,8 @@ void main() {
 		}
 
 		Interpreter::sendNormalDataToMaster();
+
+		TwillBotInterface::fixWriteBuffer();
 	}
 
 	while(1);
