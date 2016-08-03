@@ -3,6 +3,7 @@
 #define	INTERPRETER_H
 
 #include "Config.h"
+#include "ServoController.h"
 
 class Interpreter {
   enum class Mode : u1{
@@ -14,6 +15,7 @@ class Interpreter {
   static constexpr u1 extraResponseLength = Config::i2cExtraResponseMaxLength;
   static u1 extraResponse[extraResponseLength];
   static Mode current;
+  static u1 resolutionShifter;
 
   enum class Command : u1 {
     SetAmplitude = 0x20,
@@ -28,12 +30,16 @@ class Interpreter {
     GetPDSvalues = 0x51,
     setMode = 0x01,
     getMode = 0x02,
+    getPositionResolution = 0x60,
+    setPositionResolution = 0x61,
   };
 
 public:
   static void interpretFromMaster(u1 const * const);
 
   static void sendNormalDataToMaster();
+
+  inline static s2 getPosition(){return (s2)(ServoController::getPosition() >> resolutionShifter);};
 
   static void Init();
 };
