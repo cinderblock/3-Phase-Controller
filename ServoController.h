@@ -38,9 +38,7 @@ private:
   static u1 I;
   static u1 D;
 
-  static u1 Pshift;
-  static u1 Ishift;
-  static u1 Dshift;
+  static u1 shift;
 
   static u1 currentLimit;
 
@@ -73,14 +71,12 @@ public:
   // static inline void setI(u1 i) {I = i;};
   static inline void setD(u1 d) {D = d;};
 
-  static inline void setPshift(u1 p) {Pshift = p;};
-  static inline void setDshift(u1 d) {Dshift = d;};
+  static inline void setShift(u1 p) {shift = p;};
 
   static inline u1 getP() {return P;};
   static inline u1 getD() {return D;};
 
-  static inline u1 getPshift() {return Pshift;};
-  static inline u1 getDshift() {return Dshift;};
+  static inline u1 getShift() {return shift;};
 
   static void setEnable(bool);
 

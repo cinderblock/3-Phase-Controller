@@ -25,8 +25,7 @@ u1 ServoController::P;
 u1 ServoController::I;
 u1 ServoController::D;
 
-u1 ServoController::Pshift;
-u1 ServoController::Dshift;
+u1 ServoController::shift;
 
 u1 ServoController::currentLimit;
 
@@ -60,12 +59,11 @@ void ServoController::init() {
 
   onRotation = 0;
 
-  P = 8;
+  P = 10;
   I = 0;
-  D = 8;
+  D = 0;
 
-  Pshift = 8;
-	Dshift = 8;
+  shift = 14;
 
   //256 is a velocity change of 1 per update
   velocityAdjust = 20;
@@ -124,14 +122,15 @@ void ServoController::update() {
 			(positionCommand & DriverConstants::MagnetometerBitsMask) - 
 			pos;
 
-		s2 command = (distance >> Pshift) * P + (vel >> Dshift) * D;
+		s4 command = (distance) * P + (vel) * D;
 
-    if (command > ThreePhaseController::getMaxAmplitude())
-      command = ThreePhaseController::getMaxAmplitude();
-    else if (command < -ThreePhaseController::getMaxAmplitude())
-      command = -ThreePhaseController::getMaxAmplitude();
+    const static s4 MAX = ThreePhaseController::getMaxAmplitude() << shift;
+    if (command > MAX)
+      command = MAX;
+    else if (command < -MAX)
+      command = -MAX;
 
-    ThreePhaseController::setAmplitude(command);
+    ThreePhaseController::setAmplitude(command >> shift);
   } else if (currentMode == Mode::Distance) {
     // s2 pos = ThreePhaseController::getMeasuredPosition();
     // s2 vel = ThreePhaseController::getVelocity();
@@ -180,15 +179,10 @@ void ServoController::setDistance(s4 distance) {
 
 void ServoController::setCurrentLimit(u1 current) {
   currentLimit = current;
-
 }
 
 void ServoController::setEnable(bool enable) {
-
   if (!enable)
     currentMode = Mode::Init;
-
-
-
 }
 

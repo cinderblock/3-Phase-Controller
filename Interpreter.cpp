@@ -102,9 +102,8 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
 
   if (incomingData[0] == (u1)Command::SetPDSvalues) {
     ServoController::setP(incomingData[1]);
-    ServoController::setPshift(incomingData[2]);
-    ServoController::setD(incomingData[3]);
-    ServoController::setDshift(incomingData[4]);
+    ServoController::setD(incomingData[2]);
+    ServoController::setShift(incomingData[3]);
 
     return;
   }
@@ -112,13 +111,12 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   if (incomingData[0] == (u1)Command::GetPDSvalues){
 
     u1 const headerLen = 1;
-    u1 const len = 4;
+    u1 const len = 3;
 
     extraResponse[0] = (u1)Command::GetPDSvalues;
     extraResponse[1] = ServoController::getP();
-    extraResponse[2] = ServoController::getPshift();
-    extraResponse[3] = ServoController::getD();
-    extraResponse[4] = ServoController::getDshift();
+    extraResponse[2] = ServoController::getD();
+    extraResponse[3] = ServoController::getShift();
 
     crc.reset();
 
