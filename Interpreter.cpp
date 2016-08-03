@@ -34,11 +34,6 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   if (incomingData[0] == (u1)Command::SetAmplitude) {
     s2 torque = *((s2*)(incomingData + 1));
 
-    if (torque > ThreePhaseController::getMaxAmplitude())
-      torque = ThreePhaseController::getMaxAmplitude();
-    else if (torque < -ThreePhaseController::getMaxAmplitude())
-      torque = -ThreePhaseController::getMaxAmplitude();
-
     ServoController::setAmplitude(torque);
 
     return;

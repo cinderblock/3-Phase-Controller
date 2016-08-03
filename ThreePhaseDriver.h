@@ -86,7 +86,8 @@ public:
   /**
    * Magic number to ensure we dont miss a tick of a phase
    */
-  static constexpr u1 maxAmplitude = 0xff - 30;
+  // static constexpr u1 maxAmplitude = 0xff - 30;
+  static constexpr u1 maxAmplitude = 40;
 
   static inline void setAmplitude(u1 const a) {
     amplitude = a > maxAmplitude ? maxAmplitude : a;

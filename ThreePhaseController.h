@@ -22,8 +22,6 @@ class ThreePhaseController {
   static inline void isr();
   friend void TIMER4_OVF_vect();
 
-  static const u1 MaxAmplitude = 40;
-
   static u1 magRoll;
   static u2 roll;
 
@@ -93,10 +91,6 @@ public:
 
   inline static u2 getRoll() {
     return roll;
-  };
-
-  inline static constexpr u1 getMaxAmplitude() {
-    return MaxAmplitude;
   };
 
 };
