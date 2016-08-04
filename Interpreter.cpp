@@ -230,7 +230,7 @@ void Interpreter::sendNormalDataToMaster() {
     // *(u4 * const)(&buff[0]) = Predictor::getPhaseAdvanceAmount();
     // *(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
     *(u4 * const)(&buff[0]) = ServoController::getPosition();
-    *(u4 * const)(&buff[4]) = ServoController::getShiftedCommand();
+    *(u4 * const)(&buff[4]) = ServoController::getPositionCommand();
     // *(s1 * const)(&buff[8]) = (s1)ServoController::getRevolution();
     // *(u2 * const)(&buff[4]) = ThreePhaseDriver::lastPhase;
     // *(u2 * const)(&buff[6]) = Predictor::getPredictedPosition();
