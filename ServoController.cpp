@@ -173,7 +173,7 @@ void ServoController::setPosition(s4 position) {
 void ServoController::setDistance(s4 dist) {
   currentMode = Mode::Position;
 
-  positionCommand = dist - getPosition();
+  positionCommand = getPosition() + dist;
 }
 
 void ServoController::setCurrentLimit(u1 current) {
