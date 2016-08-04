@@ -21,6 +21,7 @@ class Interpreter {
     SetAmplitude = 0x20,
     SetVelocity = 0x21,
     SetPosition = 0x22,
+    SetDistance = 0x23,
     SetDeadtimes = 0x40,
     SetDriverAmplitude = 0x41,
     SetDriverPosition = 0x42,

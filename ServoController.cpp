@@ -173,8 +173,7 @@ void ServoController::setPosition(s4 position) {
 void ServoController::setDistance(s4 dist) {
   currentMode = Mode::Position;
 
-  onRotation = 0;
-  positionCommand = dist - ThreePhaseController::getPredictedPosition();
+  positionCommand = dist - getPosition();
 }
 
 void ServoController::setCurrentLimit(u1 current) {

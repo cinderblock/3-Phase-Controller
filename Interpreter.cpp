@@ -55,6 +55,14 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
     return;
   }
 
+  if(incomingData[0] == (u1)Command::SetDistance){
+    s4 dist = *((s4*)(incomingData + 1));
+
+    ServoController::setDistance(dist);
+
+    return;
+  }
+
   // deadtime configuration
   if (incomingData[0] == (u1)Command::SetDeadtimes) {
     if (incomingData[1] == 0xF0) {
