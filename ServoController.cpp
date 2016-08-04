@@ -62,11 +62,11 @@ void ServoController::init() {
   onRotation = 0;
   command = 0;
 
-  P = 10;
+  P = 200;
   I = 0;
   D = 0;
 
-  shift = 14;
+  shift = 12;
 
   //256 is a velocity change of 1 per update
   velocityAdjust = 20;
@@ -123,6 +123,12 @@ void ServoController::update() {
 		s4 distance = positionCommand - getPosition();
 
 		command = (distance * (s2)P);// + (vel * (s2)D);
+
+		const s4 MAX = ((s4)ThreePhaseDriver::maxAmplitude) << shift;
+		if(command > MAX)
+			command =  MAX;
+		else if (command < -MAX)
+			command = -MAX;
 
 		ThreePhaseController::setAmplitude((s2)(command >> shift));
   } else if (currentMode == Mode::Distance) {
