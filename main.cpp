@@ -32,23 +32,25 @@ void init() {
 
 	MCUSR = 0;
 	
+	//enable interupts
 	sei();
 	
 	::Clock::init();
 	
+	//i2c interface init
 	TwillBotInterface::init();
+
+	//Interpret i2c communication interface
 	Interpreter::Init();
 
-	// ThreePhaseController::init();
+	//Init for hardware interface
 	ServoController::init();
 
-	// ThreePhaseDriver::init();
-	// ThreePhaseDriver::setAmplitude(40);
-	// ThreePhaseDriver::advanceTo(100);
-
-	// End of init
+	//turn off led
 	Board::LED.output();
 	Board::LED.off();
+
+	// End of init
 }
 
 /**
@@ -63,24 +65,36 @@ void main() {
 	Clock::MicroTime now;
 
 
+	//set to drive at 0 speed
 	ThreePhaseController::setAmplitude(0);
 
+	//main loop
 	while(1){
+
+		//update hardware
 		ServoController::update();
 
+		//get any incoming communications
 		u1 const * const buff = TwillBotInterface::getIncomingReadBuffer();
 
+		//if there is a communication interpret it
 		if (buff) {
+			//interpret the new communication
 			Interpreter::interpretFromMaster(buff);
 
+			//prepare for next communication
 			TwillBotInterface::reserveNextReadBuffer();
 		}
 
+		//send whatever data we have back to master
 		Interpreter::sendNormalDataToMaster();
 
+		//silly fix in case of an error state
 		TwillBotInterface::fixWriteBuffer();
 	}
 
+	//loop in case main loop is disabled
+	//allows for interrupts to continue
 	while(1);
 }
 

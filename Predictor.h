@@ -9,8 +9,6 @@
 using namespace AVR;
 
 class Predictor{
-	// static constexpr u1 PredictsPerValue = 40;
-
 	static u2 lastMecPha;
 	static u4 drivePhase;
 	static s2 driveVelocity;
@@ -21,28 +19,42 @@ class Predictor{
 	static s4 phaseAdvanceAmount;
 	static u2 lastPredicted;
 
+	//gets the mechanical positon (in phase units, not magnetometer position)
 	inline static u2 getMechPhase(u2 phase){return (phase & DriverConstants::MaskForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;};
 
 public:
-	// static u1 ratio;
-	// static u2 adjustVal;
-
-	static void freshPhase(u2 phase);
+	//initalize predicotr with
 	static void init(u2 initialPhase);
 
-	static u2 predict();
+	//Receive a new magnetometer position
+	//happens every 40 (ThreePhaseController::cyclesPWMPerMLX) pwm cycles
+	static void freshPhase(u2 phase);
+
+	//predict phase we are currently at based on last position reading and velocity precition
+	//also updates our next prediction
+	//happens every pwm cycles
+	static u2 predictPhase();
+
+	//takes in the delta distance travelled an updated extrapolated velocity
 	static s4 nextVelocity(s2);
 
-	// inline static u4 getPredictedPosition(){return drivePhase;}
+	//get the last predicted location
 	inline static u2 getPredictedPosition(){return lastPredicted;};
-	inline static s4 getPhaseAdvanceAmount(){return phaseAdvanceAmount;};
-	inline static u2 getMeasuredPosition() {return lastMecPha;}
-	inline static s2 getVelocity()         {return driveVelocity;};
-
-	inline static u1 getAdjustVal(){return adjustVal;}
-	inline static u1 getPhaseAdvanceRatio(){return phaseAdvanceRatio;}
-	inline static void setAdjustVal(u1 val){adjustVal = val;}
+	//get the phase advance ratio
+	//estimation of delay from last magetometer reading and setting current phase
+	inline static u1 getPhaseAdvanceRatio(){return phaseAdvanceRatio;};
+	//setter
 	inline static void setPhaseAdvanceRatio(u1 val){phaseAdvanceRatio = val;}
+	//estimation of distance given there are delays in system (phaseAdvanceRatio * velocity)
+	inline static s4 getPhaseAdvanceAmount(){return phaseAdvanceAmount;};
+	//get the last measured position
+	inline static u2 getMeasuredPosition(){return lastMecPha;};
+	//get currently exrapolated velocity
+	inline static s2 getVelocity(){return driveVelocity;};
+
+	//get value the velocity may get shifted by per velocity update
+	inline static u1 getAdjustVal(){return adjustVal;}
+	inline static void setAdjustVal(u1 val){adjustVal = val;}
 };
 
 #endif  /* PREDICTOR_H */

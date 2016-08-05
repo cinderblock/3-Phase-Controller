@@ -3,6 +3,10 @@
  * Author: Cameron
  *
  * Created on October 22, 2015, 2:21 AM
+ * 
+ * Takes in an amplitude to be commanded 
+ * handles input from predictor
+ * outputs to the driver (hardware)
  */
 
 #ifndef THREEPHASECONTROLLER_H
@@ -34,7 +38,9 @@ class ThreePhaseController {
    */
   static constexpr u1 cyclesPWMPerMLX = 40;
 
+  //are we trying to go forward
   static bool isForwardTorque;
+  //are we trying to stop
   static bool isZeroTorque;
 
   /**
@@ -43,8 +49,13 @@ class ThreePhaseController {
   static constexpr u2 output90DegPhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
 
 public:
+  //initilize the controller
   static void init();
 
+  //update the driver
+  static bool updateDriver();
+
+  //class for holding amplitude commanded
   class Amplitude {
     bool forward;
     bool zero;
@@ -61,37 +72,29 @@ public:
     // static Torque limitedTorque(s2 requestedTorque){return };
   };
 
+  //uses an amplitude object to set the desired amplitude
   static void setAmplitude(const Amplitude t);
 
-  static inline s2 getAmplitude() {
-    return isForwardTorque ? ThreePhaseDriver::getAmplitude() : -(s2) (ThreePhaseDriver::getAmplitude());
-  };
+  //get the current amplitude as an s2 (range [-255, 255])
+  static inline s2 getAmplitude() {return isForwardTorque ? ThreePhaseDriver::getAmplitude() : -(s2) (ThreePhaseDriver::getAmplitude());};
 
-  static inline void setDeadTimes(u1 dt) {
-    ThreePhaseDriver::setDeadTimes(dt);
-  };
+  //set the dead times between on and off on a single half h-bridge
+  //contains 2 nibles
+  static inline void setDeadTimes(u1 dt) {ThreePhaseDriver::setDeadTimes(dt);};
+  //get the dead times between 
+  static inline u1 getDeadTimes() {return ThreePhaseDriver::getDeadTimes();};
 
-  static inline u1 getDeadTimes() {
-    return ThreePhaseDriver::getDeadTimes();
-  };
+  //get the currently predicted angular position
+  inline static u4 getPredictedPosition() {return Predictor::getPredictedPosition();};
 
-  static bool updateDriver();
+  //get the currently predicted angular velocity
+  inline static s2 getVelocity() {return Predictor::getVelocity();};
 
-  inline static u4 getPredictedPosition() {
-    return Predictor::getPredictedPosition();
-  };
+  //get the last measured position (by the magnetometer)
+  inline static u2 getMeasuredPosition() {return Predictor::getMeasuredPosition();}
 
-  inline static s2 getVelocity() {
-    return Predictor::getVelocity();
-  };
-
-  inline static u2 getMeasuredPosition() {
-    return Predictor::getMeasuredPosition();
-  }
-
-  inline static u2 getRoll() {
-    return roll;
-  };
+  //get the number of magnetometer measurments that have happened
+  inline static u2 getRoll() {return roll;};
 
 };
 

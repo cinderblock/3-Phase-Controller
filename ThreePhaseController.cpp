@@ -30,7 +30,7 @@ void ThreePhaseController::isr() {
   u1 static mlx = 1;
 
   // Scale phase to output range
-  u2 outputPhase = Predictor::predict();
+  u2 outputPhase = Predictor::predictPhase();
 
   if(ServoController::isUpdating()){ 
     // Offset from current angle by 90deg for max torque

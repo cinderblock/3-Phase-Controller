@@ -26,7 +26,7 @@ s2 abs(s2 num){
 	return num;
 }
 
-u2 Predictor::predict(){
+u2 Predictor::predictPhase(){
 
 	u4 ph = drivePhase;
 	ph += ((u4)driveVelocity);
