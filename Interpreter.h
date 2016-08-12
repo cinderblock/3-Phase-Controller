@@ -7,7 +7,7 @@
 
 class Interpreter {
   enum class Mode : u1{
-    Standard = 0x01, 
+    Standard = 0x01,
     Calibration = 0x02,
     Test = 0x03,
   };
@@ -16,6 +16,7 @@ class Interpreter {
   static u1 extraResponse[extraResponseLength];
   static Mode current;
   static u1 resolutionShifter;
+  static u2 countIncoming;
 
   enum class Command : u1 {
     SetAmplitude = 0x20,

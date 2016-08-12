@@ -13,10 +13,12 @@
 u1 Interpreter::extraResponse[extraResponseLength];
 Interpreter::Mode Interpreter::current;
 u1 Interpreter::resolutionShifter;
+u2 Interpreter::countIncoming;
 
 void Interpreter::Init(){
   current = Mode::Standard;
   resolutionShifter = 6;
+  countIncoming = 0;
 }
 
 void Interpreter::interpretFromMaster(u1 const * const incomingData) {
@@ -30,6 +32,8 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
 
   // If non-zero, CRC fail
   if (crc.getCRC()) return;
+  
+  countIncoming++;
 
   if (incomingData[0] == (u1)Command::SetAmplitude) {
     s2 torque = *((s2*)(incomingData + 1));
@@ -206,36 +210,43 @@ void Interpreter::sendNormalDataToMaster() {
   u1 * const buff = TwillBotInterface::getOutgoingWriteBuffer();
 
   static u2 Roll = 0;
-  buff[9] = (u1)current;
+  buff[0] = (u1)current;
   //Standard message
   if (current == Mode::Standard){
-    *(u2 * const)(&buff[0]) = Roll;
-    *(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
-    *(s2 * const)(&buff[4]) = getPosition();
-    *(u2 * const)(&buff[6]) = Predictor::getPredictedPosition();
-    buff[8] = (u1)ThreePhaseController::getAmplitude();
+    *(u2 * const)(&buff[1]) = Roll;
+    *(u2 * const)(&buff[3]) = ThreePhaseController::getVelocity();
+    *(s2 * const)(&buff[5]) = getPosition();
+    *(u2 * const)(&buff[7]) = countIncoming;
+    buff[9] = (u1)ThreePhaseController::getAmplitude();
+    *(u4 * const)(&buff[10]) = ServoController::getPositionCommand();
   }
   else if(current == Mode::Calibration){
-    *(u2 * const)(&buff[0]) = Roll;
-    *(u2 * const)(&buff[2]) = ThreePhaseController::getMeasuredPosition();
+    *(u2 * const)(&buff[1]) = Roll;
+    *(u2 * const)(&buff[3]) = ThreePhaseController::getMeasuredPosition();
     // *(u4 * const)(&buff[0]) = Predictor::getPhaseAdvanceAmount();
     // *(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
-    *(u2 * const)(&buff[4]) = ThreePhaseDriver::lastPhase;
+    *(u2 * const)(&buff[5]) = ThreePhaseDriver::lastPhase;
     // *(u2 * const)(&buff[6]) = Predictor::getPredictedPosition();
     // *(s4 * const)(&buff[4]) = ServoController::getPosition();
     buff[8] = (u1)ThreePhaseController::getAmplitude();
   }
   else if(current == Mode::Test){
+    *(u2 * const)(&buff[1]) = Roll;
+    *(u2 * const)(&buff[3]) = ThreePhaseController::getVelocity();
+    *(s2 * const)(&buff[5]) = getPosition();
+    *(u2 * const)(&buff[7]) = countIncoming;
+    buff[9] = (u1)ThreePhaseController::getAmplitude();
+    *(u4 * const)(&buff[10]) = ServoController::getPositionCommand();
     // *(u2 * const)(&buff[0]) = ThreePhaseController::getMeasuredPosition();
     // *(u4 * const)(&buff[0]) = Predictor::getPhaseAdvanceAmount();
     // *(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
-    *(u4 * const)(&buff[0]) = ServoController::getPosition();
-    *(u4 * const)(&buff[4]) = ServoController::getPositionCommand();
+    // *(u4 * const)(&buff[0]) = ServoController::getPosition();
+    // *(u4 * const)(&buff[4]) = ServoController::getPositionCommand();
     // *(s1 * const)(&buff[8]) = (s1)ServoController::getRevolution();
     // *(u2 * const)(&buff[4]) = ThreePhaseDriver::lastPhase;
     // *(u2 * const)(&buff[6]) = Predictor::getPredictedPosition();
     // *(s4 * const)(&buff[4]) = ServoController::getPosition();
-    buff[8] = (u1)ThreePhaseController::getAmplitude();
+    // buff[8] = (u1)ThreePhaseController::getAmplitude();
   }
 
   Roll++;

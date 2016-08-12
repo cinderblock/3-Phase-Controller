@@ -14,8 +14,10 @@ using namespace AVR;
 
 namespace Config {
  b7 constexpr i2cSlaveAddress = 50;
- u1 constexpr i2cBufferOutgoingSize = 11;
- u1 constexpr i2cBufferIncomingSize = 11;
+ u1 constexpr i2cBufferOutgoingDataSize = 14;
+ u1 constexpr i2cBufferIncomingDataSize = 10;
+ u1 constexpr i2cBufferOutgoingSize = i2cBufferOutgoingDataSize + 1;
+ u1 constexpr i2cBufferIncomingSize = i2cBufferIncomingDataSize + 1;
  u1 constexpr i2cBufferIncomingBlocks = 2;
  u1 constexpr i2cExtraResponseMaxLength = 50;
 }
