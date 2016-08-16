@@ -16,6 +16,7 @@
 #include "Predictor.h"
 #include "LookupTable.h"
 #include "ServoController.h"
+#include "Config.h"
 
 bool ThreePhaseController::isForwardTorque;
 bool ThreePhaseController::isZeroTorque;
@@ -36,15 +37,36 @@ void ThreePhaseController::isr() {
   if(ServoController::isUpdating()){ 
     // Offset from current angle by 90deg for max torque
     if (isZeroTorque);
-    else if (isForwardTorque) outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
-    else outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
-  
+    else{
+      //depending on which direction is forward shift by 90 degrees
+      if(Config::forward){
+        if (isForwardTorque) outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
+        else outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
+      }
+      else{
+        if (isForwardTorque) outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
+        else outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
+      }
+    }
+
     // Fix outputPhase range
     if (isZeroTorque);
-    else if (outputPhase >= ThreePhaseDriver::StepsPerCycle) {
-      // Fix it
-      if (isForwardTorque)outputPhase += ThreePhaseDriver::StepsPerCycle;
-      else outputPhase -= ThreePhaseDriver::StepsPerCycle;
+    else{
+      //depending on which direction is forward correct the number
+      if(Config::forward){
+        if (outputPhase >= ThreePhaseDriver::StepsPerCycle) {
+        // Fix it
+          if (isForwardTorque)outputPhase += ThreePhaseDriver::StepsPerCycle;
+          else outputPhase -= ThreePhaseDriver::StepsPerCycle;
+        }
+      }
+      else {
+        if (outputPhase >= ThreePhaseDriver::StepsPerCycle) {
+        // Fix it
+          if (isForwardTorque)outputPhase -= ThreePhaseDriver::StepsPerCycle;
+          else outputPhase += ThreePhaseDriver::StepsPerCycle;
+        }
+      }
     }
   
     // Update driver outputs

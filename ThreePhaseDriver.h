@@ -14,6 +14,8 @@
 
 using namespace AVR;
 
+u1 constexpr min(u1 const a, u1 const b){return a > b ? b : a;};
+
 class ThreePhaseDriver {
   /**
    * Read the sin table
@@ -86,8 +88,8 @@ public:
   /**
    * Magic number to ensure we dont miss a tick of a phase
    */
-  // static constexpr u1 maxAmplitude = 0xff - 30;
-  static constexpr u1 maxAmplitude = 40;
+  static constexpr u1 calcMaxAmplitude = 0xff - 30;
+  static constexpr u1 maxAmplitude = min(DriverConstants::MaxTorque, calcMaxAmplitude);
 
   static inline void setAmplitude(u1 const a) {
     amplitude = a > maxAmplitude ? maxAmplitude : a;
