@@ -18,11 +18,28 @@ class Interpreter {
   static u1 resolutionShifter;
   static u2 countIncoming;
 
+
+  enum class PreparedCommand : u1{
+    None = 0x00,
+    Amplitude = 0x01,
+    Velocity = 0x02,
+    Position = 0x03,
+    Distance = 0x04,
+  };
+
+  static PreparedCommand preparedCommand;
+  static u4 preparedValue;
+
   enum class Command : u1 {
     SetAmplitude = 0x20,
     SetVelocity = 0x21,
     SetPosition = 0x22,
     SetDistance = 0x23,
+    ExecutePrepared = 0x30,
+    PrepareAmplitude = 0x31,
+    PrepareVelocity = 0x32,
+    PreparePosition = 0x33,
+    PrepareDistance = 0x34,
     SetDeadtimes = 0x40,
     SetDriverAmplitude = 0x41,
     SetDriverPosition = 0x42,

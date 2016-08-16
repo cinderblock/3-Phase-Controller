@@ -15,10 +15,15 @@ Interpreter::Mode Interpreter::current;
 u1 Interpreter::resolutionShifter;
 u2 Interpreter::countIncoming;
 
+Interpreter::PreparedCommand Interpreter::preparedCommand;
+u4 Interpreter::preparedValue;
+
 void Interpreter::Init(){
   current = Mode::Standard;
   resolutionShifter = 6;
   countIncoming = 0;
+  preparedCommand = PreparedCommand::None;
+  preparedValue = 0;
 }
 
 void Interpreter::interpretFromMaster(u1 const * const incomingData) {
@@ -35,6 +40,25 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   
   countIncoming++;
 
+
+  if (incomingData[0] == (u1)Command::ExecutePrepared) {
+    if(preparedCommand == PreparedCommand::Amplitude){
+      ServoController::setAmplitude((s2)preparedValue);
+    }
+    else if(preparedCommand == PreparedCommand::Velocity){
+      ServoController::setVelocity((s2)preparedValue);
+    }
+    else if(preparedCommand == PreparedCommand::Position){
+      ServoController::setPosition((s4)preparedValue);
+    }
+    else if(preparedCommand == PreparedCommand::Distance){
+      ServoController::setDistance((s4)preparedValue);
+    }
+
+    return;
+  }
+
+  //Set now commands
   if (incomingData[0] == (u1)Command::SetAmplitude) {
     s2 torque = *((s2*)(incomingData + 1));
 
@@ -63,6 +87,35 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
     s4 dist = *((s4*)(incomingData + 1));
 
     ServoController::setDistance(dist);
+
+    return;
+  }
+
+  //Prepare commands
+  if (incomingData[0] == (u1)Command::PrepareAmplitude) {
+    preparedValue = (u4)(*((s2*)(incomingData + 1)));
+    preparedCommand = PreparedCommand::Amplitude;
+
+    return;
+  }
+
+  if (incomingData[0] == (u1)Command::PrepareVelocity) {
+    preparedValue = (u4)(*((s2*)(incomingData + 1)));
+    preparedCommand = PreparedCommand::Velocity;
+
+    return;
+  }
+
+  if (incomingData[0] == (u1)Command::PreparePosition) {
+    preparedValue = (u4)(*((s4*)(incomingData + 1)));
+    preparedCommand = PreparedCommand::Position;
+
+    return;
+  }
+
+  if(incomingData[0] == (u1)Command::PrepareDistance){
+    preparedValue = (u4)(*((s4*)(incomingData + 1)));
+    preparedCommand = PreparedCommand::Distance;
 
     return;
   }
