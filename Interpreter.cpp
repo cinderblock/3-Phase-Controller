@@ -222,7 +222,7 @@ void Interpreter::sendNormalDataToMaster() {
   }
   else if(current == Mode::Calibration){
     *(u2 * const)(&buff[1]) = Roll;
-    *(u2 * const)(&buff[3]) = ThreePhaseController::getMeasuredPosition();
+    *(u2 * const)(&buff[3]) = ThreePhaseController::getLastAplha();
     // *(u4 * const)(&buff[0]) = Predictor::getPhaseAdvanceAmount();
     // *(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
     *(u2 * const)(&buff[5]) = ThreePhaseDriver::lastPhase;

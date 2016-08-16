@@ -21,6 +21,7 @@ bool ThreePhaseController::isForwardTorque;
 bool ThreePhaseController::isZeroTorque;
 u1 ThreePhaseController::magRoll;
 u2 ThreePhaseController::roll;
+u2 ThreePhaseController::lastAlpha;
 
 void TIMER4_OVF_vect() {
   ThreePhaseController::isr();
@@ -93,8 +94,8 @@ bool ThreePhaseController::updateDriver() {
   if (!MLX90363::hasNewData(magRoll)) return false;
 
   // We can always grab the latest Alpha value safely here
-  auto const alpha = MLX90363::getAlpha();
-  auto const magPha = Lookup::AlphaToPhase(alpha);
+  lastAlpha = MLX90363::getAlpha();
+  auto const magPha = Lookup::AlphaToPhase(lastAlpha);
 
   roll++;
 

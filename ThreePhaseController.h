@@ -28,6 +28,7 @@ class ThreePhaseController {
 
   static u1 magRoll;
   static u2 roll;
+  static u2 lastAlpha;
 
   /**
    * Number of cycles the PWM timer makes per measurement ready from MLX. We pick
@@ -90,7 +91,10 @@ public:
   //get the currently predicted angular velocity
   inline static s2 getVelocity() {return Predictor::getVelocity();};
 
-  //get the last measured position (by the magnetometer)
+  //get the last measured angular position (by the magnetometer)
+  inline static u2 getLastAplha() {return lastAlpha;}
+
+  //get the last measured angular position (by the magnetometer & converted to phase units)
   inline static u2 getMeasuredPosition() {return Predictor::getMeasuredPosition();}
 
   //get the number of magnetometer measurments that have happened
