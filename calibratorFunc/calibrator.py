@@ -17,14 +17,17 @@ else:
 if (len(sys.argv) == 4):
 	skip = int(sys.argv[3])
 else:
-	skip = 0
+	skip = 10
 
 # file[file['phase'] != 65535][['MagData','phase']].ix[skip:].to_csv(out, index=False)
 
 file = file[file['phase'] != 65535][['MagData','phase']].ix[skip:]
 
-# reduce mag data to a usable number of elements by dividing by 7
+# reduce mag data to a usable number of elements by dividing by 4
 file['adj'] = (file['MagData']/4).apply(round).apply(int)
+
+# print file['adj']
+# exit()
 
 maxValue = 768
 elctricalPerMechanical = 7
@@ -36,13 +39,18 @@ def rng(low, high):
 
 l = list()
 elecToMech = 0#elctricalPerMechanical-1
+prevElecToMech = elecToMech
+lastValue = -1
+grace = 0
 
-for i in range(max(file['adj'])+1):
-
+for i in range(max(file['adj'])):
 	f = file[file['adj'] == i]['phase']
 	if f.empty:
-		print i, " is missing!"
-		continue
+		if lastValue == -1:
+			print "Used a bad last value"
+		value = lastValue
+		print i, "is missing! Using", value 
+		# continue
 	elif max(f) - min(f) > 100:
 		# print list(f)
 		t = filter(rng(0, 100), f)
@@ -63,13 +71,32 @@ for i in range(max(file['adj'])+1):
 	else:
 		value = int(round(np.mean(f)))
 
-	if len(l) > 0 and abs(value - (l[len(l)-1] & 0x0FFF)) > 500:
-		print value, l[len(l)-1]
-		elecToMech = elecToMech + 1
+	lastValue = value
 
-		if elecToMech == elctricalPerMechanical:
-			elecToMech = 0#elctricalPerMechanical -1
-	
+	grace -= 1
+	if len(l) > 0 and abs(value - (l[len(l)-1] & 0x0FFF)) > 500:
+		if grace < 0:
+			prevElecToMech = elecToMech
+
+			print value, l[len(l)-1]
+			elecToMech = elecToMech + 1
+			grace = 20
+
+			if elecToMech == elctricalPerMechanical:
+				elecToMech = 0#elctricalPerMechanical -1
+
+		else:
+			prevElecToMech = elecToMech
+
+			# print value, l[len(l)-1]
+			elecToMech = elecToMech - 1
+			grace = 0
+
+			if elecToMech < 0:
+				elecToMech = elctricalPerMechanical -1
+
+
+
 	l.append(value + elecToMech * pow(2, 12))
 
 numPerLine = 20
