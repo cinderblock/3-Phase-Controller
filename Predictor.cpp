@@ -4,6 +4,7 @@
 #include <util/atomic.h>
 #include "DriverConstants.h"
 #include "ServoController.h"
+#include "Config.h"
 // #include "Board.h"
 // #include <iostream>
 // #include <cmath> 
@@ -130,6 +131,6 @@ void Predictor::init(u2 phase){
 	drivePhase = (((u4)lastMecPha) & DriverConstants::MaskForPhase) << DriverConstants::drivePhaseValueShift;
 	lastMechChange = 0;
 	adjustVal = 5;
-	phaseAdvanceRatio = 40;
+	phaseAdvanceRatio = Config::DefaultPhaseAdvance;
 }
 

@@ -14,7 +14,7 @@ CPP += FilebotInterface/TwillBotInterface TripleBuffer-impl TimerTimeout BlockBu
 
 CPP += LookupTable/$(MotorID)
 
-MotorID = Motor1
+MotorID = Motor2
 
 AVRpp_SRC = CRC8 #ADC USART DecPrintFormatter gccGuard
 

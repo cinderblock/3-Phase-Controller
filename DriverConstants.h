@@ -3,6 +3,7 @@
 #define DRIVECONST
 
 #include <AVR++/basicTypes.h>
+#include "Config.h"
 
 using namespace AVR;
 
@@ -21,7 +22,7 @@ public:
 	/**
 	 * Maximum torque provided by the motor
 	 */
-	static const u1 MaxTorque = 40;
+	static const u1 MaxTorque = Config::MaxTorque;
 
 	/**
 	 * Internal granularity of sin wave for each phase
