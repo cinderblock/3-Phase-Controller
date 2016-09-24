@@ -9,7 +9,6 @@
 #include "ServoController.h"
 #include <AVR++/CRC8.h>
 #include "DriverConstants.h"
-#include "Board.h"
 
 u1 Interpreter::extraResponse[extraResponseLength];
 Interpreter::Mode Interpreter::current;
@@ -43,8 +42,6 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
 
 
   if (incomingData[0] == (u1)Command::ExecutePrepared) {
-    Board::LED.tgl();
-
     if(preparedCommand == PreparedCommand::Amplitude){
       ServoController::setAmplitude((s2)preparedValue);
     }
