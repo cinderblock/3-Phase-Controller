@@ -64,9 +64,9 @@ Since reading occur with some lag and the reading is much slower then uses we mu
 
 #### Magnetometer<a name="mlx"></a>
 
-using the [MLX90363](https://www.melexis.com/-/media/files/documents/datasheets/mlx90363-datasheet-melexis.pdf) - SOIC8 package - and communicating with it over SPI.
+Using [MLX90363](https://www.melexis.com/-/media/files/documents/datasheets/mlx90363-datasheet-melexis.pdf) - SOIC8 package - communicating over SPI.
 
-
+This device allows for 14 bit precision and is updated at a rate of ~1 kHz. Reads from the device happen at ~800 Hz. Due to maximum rps of [Turnigy 480](http://www.hobbyking.com/hobbyking/store/__19038__Turnigy_Park480_Brushless_Outrunner_1320kv.html) is 262. Allows for more then 2 readings per mechanical revolution. Therefore sufficient to determine positions and velocity at all drivable velocities. This is however an insufficant for using as exact position, therefore we must use a [predictor](#predictor).
 
 #### Back EMF<a name="emf"></a>
 
@@ -74,4 +74,6 @@ NOT YET IMPLEMENTED
 
 #### Predictor<a name="predictor"></a>
 
+Due to sensor reading lag and slow sensor reads we must attempt to predict current position and velocity when the [controller](#controller) requires it.
 
+Esimates velocity by having a current estimate (initially 0). Every [Magnetometer](#mlx) reading if the estimate was incorrect shift the esimate by a step (currently 5 [units](units.md#velocity)) in the correct dirrection. 
