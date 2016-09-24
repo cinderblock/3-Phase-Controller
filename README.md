@@ -4,6 +4,8 @@
 
 ## Current Implementation
 
+This is very much a work in progress. The following list is of currently implemented and planned features.
+
 - [ ] Sensors
   - [x] Magmentometer
   - [ ] Back EMF Sensing
