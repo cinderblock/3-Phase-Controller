@@ -4,6 +4,14 @@
 
 ## Getting Started
 
+### Board
+
+This code is ment to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-7766-8-bit-AVR-ATmega16U4-32U4_Datasheet.pdf) on [3 Phase Driver Board](https://github.com/cinderblock/3-Phase-Driver).
+
+## Motor
+
+Uses the [Turnigy 480](http://www.hobbyking.com/hobbyking/store/__19038__Turnigy_Park480_Brushless_Outrunner_1320kv.html).
+
 ### Git Submodules
 
 After cloning this repo, you'll need to get the git submodules:

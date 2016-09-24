@@ -1,7 +1,7 @@
 # Three phase motor controller
 
 The following is the documentation for the three phase motor controller, an open source project.
-Our current use case is on the "Turingy Driver board" with the Turnigy 480 
+Our current use case is on the [3 Phase Driver Board](https://github.com/cinderblock/3-Phase-Driver) with the [Turnigy 480](http://www.hobbyking.com/hobbyking/store/__19038__Turnigy_Park480_Brushless_Outrunner_1320kv.html). 
 
 ## General System
 

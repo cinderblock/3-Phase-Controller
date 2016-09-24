@@ -2,6 +2,8 @@
 
 The 3 phase motor controller has several different units in many different places
 
+-----
+
 ## Position<a name="pos"></a>
 
 #### Mechanical vs Electrical Revolution<a name="revunit"></a>
@@ -23,6 +25,8 @@ Has 14 bits of resolution (16384 steps) per Mecanical Revolution.
 ### Velocity<a name="velocity"></a>
 
 Velocity is measured in units of [phase position](#phase) change during one [pwm cycle](#pwm). This is too minimize calculations per pwm cycle.
+
+-----
 
 ## Time<a name="time"></a>
 
