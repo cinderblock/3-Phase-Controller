@@ -2,6 +2,22 @@
 
 3 Phase motor controller driver firmware.
 
+## Current Implementation
+
+- [ ] Sensors
+  - [x] Magmentometer
+  - [ ] Back EMF Sensing
+  - [ ] External Sensor
+- [x] Motor movement
+  - [ ] Full Torque
+- [x] Commands
+  - [x] Stepping function
+  - [x] Amplitude
+  - [x] Velocity
+  - [x] Position
+- [x] I2C Communication
+- [ ] USB Communication
+
 ## Getting Started
 
 ### Board
@@ -10,7 +26,7 @@ This code is ment to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-7
 
 ## Motor
 
-Uses the [Turnigy 480](http://www.hobbyking.com/hobbyking/store/__19038__Turnigy_Park480_Brushless_Outrunner_1320kv.html).
+Currently Testing with [Turnigy 480 850kv](http://www.hobbyking.com/hobbyking/store/__19037__Turnigy_Park480_Brushless_Outrunner_850kv.html) and [Turnigy 480 1320kv](http://www.hobbyking.com/hobbyking/store/__19038__Turnigy_Park480_Brushless_Outrunner_1320kv.html).
 
 ### Git Submodules
 
