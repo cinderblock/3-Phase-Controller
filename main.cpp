@@ -26,27 +26,32 @@ void init() __attribute__((constructor));
 u1 resetCause = MCUSR;
 
 void init() {
+	// Watch Dog Timer
 	wdt_reset();
 	wdt_disable();
+
+
 	// Debug::init();
 
+  // Clear the MCU Status Register.  Indicates previous reset's source.
 	MCUSR = 0;
-	
-	//enable interupts
+
+	// Set Enable Interupts.
 	sei();
-	
+
+	// Use the Clock that is outside the AVR++ namespace.
 	::Clock::init();
-	
-	//i2c interface init
+
+	// i2c interface init
 	TwillBotInterface::init();
 
-	//Interpret i2c communication interface
+	// Interpret i2c communication interface.
 	Interpreter::Init();
 
-	//Init for hardware interface
+	// Init for hardware interface.
 	ServoController::init();
 
-	//turn off led
+	// Turn off led.
 	Board::LED.output();
 	Board::LED.off();
 
@@ -54,12 +59,14 @@ void init() {
 }
 
 /**
- * 
+ *
  */
 void main() {
-	
+	// We don't need to call init() because gcc calls it for us before main() even starts.
+  //init();
+
 	u2 pos = 0;
-	
+
 	Clock::MicroTime t(0);
 	Clock::MicroTime delta = 25_ms;
 	Clock::MicroTime now;
@@ -97,4 +104,3 @@ void main() {
 	//allows for interrupts to continue
 	while(1);
 }
-
