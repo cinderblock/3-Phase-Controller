@@ -17,6 +17,10 @@ class Interpreter {
     SetPredictorPhaseAdvance = 0x44,
   };
 
+  static constexpr u1 extraResponseLength = 10;
+
+  static u1 extraResponse[extraResponseLength];
+
 public:
   static void interpretFromMaster(u1 const * const);
 
