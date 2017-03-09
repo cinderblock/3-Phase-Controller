@@ -19,7 +19,7 @@ u1 Predictor::adjustVal;
 u1 Predictor::phaseAdvanceRatio;
 s4 Predictor::phaseAdvanceAmount;
 
-s2 constexpr abs(s2 num) {
+static s2 constexpr abs(s2 num) {
 	return num >= 0 ? num : -num;
 }
 
