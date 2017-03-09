@@ -72,7 +72,7 @@ void Predictor::freshPhase(u2 reading) {
 	u2 mechanicalPhase = getMechPhase(reading);
 
 	//find distance travelled in phase
-	s2 mechChange = (s2)mechanicalPhase - (s2)lastMecPha;
+	s2 mechChange = mechanicalPhase - lastMecPha;
 
 	//TODO ensure we are not wrapping in the wrong direction due to high speeds
 	if (mechChange > (s2)(DriverConstants::StepsPerRotation / 2)) {
