@@ -23,6 +23,17 @@ static s2 constexpr abs(s2 num) {
 	return num >= 0 ? num : -num;
 }
 
+inline static void limit(u4& value, u4 MAX, bool forward) {
+	if (value >= MAX) {
+		if (forward) {
+			value -= MAX;
+		} else {
+			// Looped negative. Fix it by looping back around.
+			value += MAX;
+		}
+	}
+}
+
 u2 Predictor::predict() {
 
 	u4 ph = drivePhase;
@@ -33,14 +44,7 @@ u2 Predictor::predict() {
 	static const u4 MAX = DriverConstants::StepsPerCycle << DriverConstants::drivePhaseValueShift;
 
 	// Check if ph(ase) value is out of range
-	if (ph >= MAX) {
-		// Fix it
-		if (forward) {
-			ph -= MAX;
-		} else {
-			ph += MAX;
-		}
-	}
+	limit(ph, MAX, forward);
 
 	// Store new drivePhase
 	drivePhase = ph;
@@ -49,13 +53,7 @@ u2 Predictor::predict() {
 	ph += phaseAdvanceAmount;
 
 	// Check if ph(ase) value is out of range again
-	if (ph >= MAX) {
-		// Fix it
-		if (forward) ph -= MAX;
-		else ph += MAX;
-	}
-
-	// if(ph>>DriverConstants::drivePhaseValueShift > DriverConstants::MaskForPhase) Board::LED.on();
+	limit(ph, MAX, forward);
 
 	return (ph >> DriverConstants::drivePhaseValueShift);
 }
