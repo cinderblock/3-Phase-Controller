@@ -12,6 +12,8 @@
 #include "Debug.h"
 #include "AVRClock.h"
 
+u2 ThreePhaseDriver::lastPhase;
+
 inline static void setUpdateLock(const bool lock) {
   /**
    * TCCR4E
@@ -24,6 +26,8 @@ inline static void setUpdateLock(const bool lock) {
 void ThreePhaseDriver::init() {
   AVR::Clock::enablePLL();
   AVR::Clock::waitForPLL();
+
+  lastPhase = 0;
 
   // Turn off interrupts just in case
   TIMSK4 = 0;

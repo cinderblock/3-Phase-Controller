@@ -3,6 +3,7 @@
 #define DRIVECONST
 
 #include <AVR++/basicTypes.h>
+#include "Config.h"
 
 using namespace AVR;
 
@@ -21,7 +22,7 @@ public:
 	/**
 	 * Maximum torque provided by the motor
 	 */
-	static const u1 MaxTorque = 40;
+	static const u1 MaxTorque = Config::MaxTorque;
 
 	/**
 	 * Internal granularity of sin wave for each phase
@@ -59,6 +60,21 @@ public:
 	 * TODO CURRENTLY A GUESS FIND OUT WHAT IT ACTUALLY IS
 	 */
 	static u2 constexpr MaxVelocityChange = StepsPerRotation / 3;
+	
+	/**
+	 * Number of bits the magnetometer uses to give position
+	 */
+	static u1 constexpr MagnetometerBits = 14;
+
+	/**
+	 * Mask used to only grab magnetometer related bits from position
+	 */
+	static u2 constexpr MagnetometerBitsMask = (1<<MagnetometerBits)-1;
+
+	/**
+	 * Largest value the magnetometer can be
+	 */
+	static u2 constexpr MagnetometerMax = (1<<MagnetometerBits)-1;
 
 };
 

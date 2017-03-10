@@ -118,6 +118,8 @@
       </item>
       <item path="Debug.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="DriverConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="FilebotInterface/TwillBotInterface.cpp"
             ex="false"
             tool="1"
