@@ -8,7 +8,9 @@
 C = 
 
 # List of CPP file basenames to build
-CPP = main Board MLX90363 ThreePhaseDriver Debug Timer Clock ThreePhaseController Interpreter Predictor ServoController
+CPP = main Board ThreePhaseDriver Debug Timer Clock ThreePhaseController Interpreter Predictor ServoController
+
+CPP += MLX90363/MLX90363
 
 CPP += FilebotInterface/TwillBotInterface TripleBuffer-impl TimerTimeout BlockBuffer-impl
 
@@ -32,6 +34,8 @@ BLD_FLAGS_EXTRA=-ffixed-2 -ffixed-3 -ffixed-4 -ffixed-5 -ffixed-6
 TARGET = turnigy
 
 MCU = atmega32u4
+
+INCLUDES = . MLX90363
 
 all: build-lss asm run
 run: dfu-erase dfu-flash dfu-reset
