@@ -5,7 +5,7 @@
 #include "ThreePhaseDriver.h"
 #include "Predictor.h"
 #include "MLX90363.h"
-#include "FilebotInterface/TwillBotInterface.h"
+#include "FilebotInterface.h"
 #include "ServoController.h"
 #include <AVR++/CRC8.h>
 #include "DriverConstants.h"
@@ -34,7 +34,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
 
   u1 const * data = incomingData;
 
-  for (u1 i = 0; i < TwillBotInterface::incomingBufferSize; i++)
+  for (u1 i = 0; i < CommInterface::incomingBufferSize; i++)
     crc.feed(*data++);
 
   // If non-zero, CRC fail
@@ -193,7 +193,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
 
     *data = crc.getCRC();
 
-    TwillBotInterface::setExtraResponse(len + headerLen + 1, extraResponse);
+    CommInterface::setExtraResponse(len + headerLen + 1, extraResponse);
 
     return;
   }
@@ -229,7 +229,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
 
     *data = crc.getCRC();
 
-    TwillBotInterface::setExtraResponse(len + headerLen + 1, extraResponse);
+    CommInterface::setExtraResponse(len + headerLen + 1, extraResponse);
 
     return;
   }
@@ -255,14 +255,14 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
 
     *data = crc.getCRC();
 
-    TwillBotInterface::setExtraResponse(len + headerLen + 1, extraResponse);
+    CommInterface::setExtraResponse(len + headerLen + 1, extraResponse);
 
     return;
   }
 }
 
 void Interpreter::sendNormalDataToMaster() {
-  u1 * const buff = TwillBotInterface::getOutgoingWriteBuffer();
+  u1 * const buff = CommInterface::getOutgoingWriteBuffer();
 
   static u2 Roll = 0;
   buff[0] = (u1)current;
@@ -305,6 +305,6 @@ void Interpreter::sendNormalDataToMaster() {
   }
 
   Roll++;
-  TwillBotInterface::writeOutgoingCRC();
-  TwillBotInterface::releaseNextWriteBuffer();
+  CommInterface::writeOutgoingCRC();
+  CommInterface::releaseNextWriteBuffer();
 }

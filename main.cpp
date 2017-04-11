@@ -11,7 +11,7 @@
 
 #include "ThreePhaseController.h"
 #include "MLX90363.h"
-#include "FilebotInterface/TwillBotInterface.h"
+#include "FilebotInterface.h"
 // #include "Debug.h"
 #include "Clock.h"
 #include "Interpreter.h"
@@ -27,8 +27,6 @@ using namespace ThreePhaseControllerNamespace;
 void init() __attribute__((constructor));
 
 u1 resetCause = MCUSR;
-
-FileBotInterface::TwillBotInterface<Config::i2cSlaveAddress, Config::i2cBufferIncomingSize, Config::i2cBufferOutgoingSize, Config::i2cBufferIncomingBlocks, 3> fileBotInterface;
 
 void init() {
 	// Watch Dog Timer
@@ -48,7 +46,7 @@ void init() {
 	::Clock::init();
 
 	// i2c interface init
-	fileBotInterface.init();
+	CommInterface::init();
 
 	// Interpret i2c communication interface.
 	Interpreter::Init();
@@ -87,7 +85,7 @@ void main() {
 		ServoController::update();
 
 		//get any incoming communications
-		u1 const * const buff = fileBotInterface.getIncomingReadBuffer();
+		u1 const * const buff = CommInterface::getIncomingReadBuffer();
 
 		//if there is a communication interpret it
 		if (buff) {
@@ -95,14 +93,14 @@ void main() {
 			Interpreter::interpretFromMaster(buff);
 
 			//prepare for next communication
-			fileBotInterface.reserveNextReadBuffer();
+			CommInterface::reserveNextReadBuffer();
 		}
 
 		//send whatever data we have back to master
 		Interpreter::sendNormalDataToMaster();
 
 		//silly fix in case of an error state
-		fileBotInterface.fixWriteBuffer();
+		CommInterface::fixWriteBuffer();
 	}
 
 	//loop in case main loop is disabled

@@ -1,6 +1,8 @@
 // File generated with python in calibratorFunc Folder
 #include "../LookupTable.h"
 
+using namespace AVR;
+using namespace ThreePhaseControllerNamespace;
 
 /**
  * 12-bit lookup table for magnetometer Alpha value to Phase value
