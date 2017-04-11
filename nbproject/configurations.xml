@@ -16,6 +16,7 @@
       <itemPath>Clock.h</itemPath>
       <itemPath>Config.h</itemPath>
       <itemPath>Debug.h</itemPath>
+      <itemPath>DriverConstants.h</itemPath>
       <itemPath>FilebotInterface.h</itemPath>
       <itemPath>Interpreter.h</itemPath>
       <itemPath>LookupTable.h</itemPath>
