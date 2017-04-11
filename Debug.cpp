@@ -9,10 +9,11 @@
 #include "Clock.h"
 #include <avr/io.h>
 
-#include <AVR++/CRC8.h>
+#include <CRC8.h>
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
+using libCameron::CRC8;
 
 IOpin& Debug::LED = Board::LED;
 

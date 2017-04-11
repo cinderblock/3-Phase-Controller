@@ -90,6 +90,7 @@
           <standard>8</standard>
           <incDir>
             <pElem>AVR++</pElem>
+            <pElem>libCameron/src</pElem>
           </incDir>
           <preprocessorList>
             <Elem>F_CPU=16000000UL</Elem>

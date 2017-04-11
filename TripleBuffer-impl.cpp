@@ -1,4 +1,4 @@
-#include <AVR++/TripleBuffer.cpp>
+#include <TripleBuffer.cpp>
 #include "Config.h"
 
 using namespace ThreePhaseControllerNamespace;

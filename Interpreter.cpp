@@ -7,7 +7,7 @@
 #include "MLX90363.h"
 #include "FilebotInterface.h"
 #include "ServoController.h"
-#include <AVR++/CRC8.h>
+#include <CRC8.h>
 #include "DriverConstants.h"
 
 using namespace ThreePhaseControllerNamespace;
@@ -29,6 +29,8 @@ void Interpreter::Init(){
 }
 
 void Interpreter::interpretFromMaster(u1 const * const incomingData) {
+  using libCameron::CRC8;
+
   // Check incoming CRC for failure
   CRC8 crc;
 
