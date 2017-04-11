@@ -11,6 +11,8 @@
 #include <avr/pgmspace.h>
 #include <AVR++/basicTypes.h>
 
+namespace ThreePhaseControllerNamespace {
+
 using namespace AVR;
 
 class Lookup {
@@ -56,5 +58,6 @@ private:
   static const u2 table[Size] PROGMEM;
 };
 
-#endif	/* LOOKUPTABLE_H */
+};
 
+#endif	/* LOOKUPTABLE_H */

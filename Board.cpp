@@ -7,6 +7,9 @@
 
 #include "Board.h"
 
+using namespace AVR;
+using namespace ThreePhaseControllerNamespace;
+
 // LED - indicator
 IOpin Board::LED        = IOpin(&PORTB, 7);
 

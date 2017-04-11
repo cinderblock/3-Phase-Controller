@@ -12,6 +12,8 @@
 #include <avr/interrupt.h>
 #include "DriverConstants.h"
 
+namespace ThreePhaseControllerNamespace {
+
 using namespace AVR;
 
 u1 constexpr min(u1 const a, u1 const b){return a > b ? b : a;};
@@ -108,6 +110,8 @@ public:
   };
 
   static void advanceToBackEMF(Phase const phase, u1 const step);
+};
+
 };
 
 #endif	/* THREEPHASEDRIVER_H */

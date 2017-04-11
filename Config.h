@@ -16,6 +16,7 @@
 	#include "Config-Motor2.h"
 #endif
 
+namespace ThreePhaseControllerNamespace {
 
 using namespace AVR;
 
@@ -32,5 +33,6 @@ namespace Config {
  u1 constexpr i2cExtraResponseMaxLength = 50;
 };
 
-#endif	/* CONFIG_H */
+};
 
+#endif	/* CONFIG_H */

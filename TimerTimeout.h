@@ -10,6 +10,8 @@
 
 #include <AVR++/basicTypes.h>
 
+namespace ThreePhaseControllerNamespace {
+
 using namespace AVR;
 
 class TimerTimeout {
@@ -66,5 +68,6 @@ inline constexpr TimerTimeout::Period operator "" _s(long double s) {
 	return TimerTimeout::Period(s);
 }
 
-#endif	/* TIMERTIMEOUT_H */
+};
 
+#endif	/* TIMERTIMEOUT_H */

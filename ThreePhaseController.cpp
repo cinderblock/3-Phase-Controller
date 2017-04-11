@@ -18,6 +18,9 @@
 #include "ServoController.h"
 #include "Config.h"
 
+using namespace AVR;
+using namespace ThreePhaseControllerNamespace;
+
 bool ThreePhaseController::isForwardTorque;
 bool ThreePhaseController::isZeroTorque;
 u1 ThreePhaseController::magRoll;

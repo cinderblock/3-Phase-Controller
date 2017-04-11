@@ -11,6 +11,8 @@
 #include "Board.h"
 
 
+namespace ThreePhaseControllerNamespace {
+
 namespace Debug {
  extern IOpin &LED;
 
@@ -127,5 +129,6 @@ namespace Debug {
  extern Printer SOUT;
 };
 
-#endif	/* DEBUG_H */
+};
 
+#endif	/* DEBUG_H */

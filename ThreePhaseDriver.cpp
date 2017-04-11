@@ -12,6 +12,9 @@
 #include "Debug.h"
 #include "AVRClock.h"
 
+using namespace AVR;
+using namespace ThreePhaseControllerNamespace;
+
 u2 ThreePhaseDriver::lastPhase;
 
 inline static void setUpdateLock(const bool lock) {

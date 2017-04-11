@@ -10,6 +10,8 @@
 
 #include "TimerTimeout.h"
 
+using namespace ThreePhaseControllerNamespace;
+
 void TimerTimeout::init() {
 	static bool initted = false;
 	if (initted) return;

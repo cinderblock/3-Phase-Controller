@@ -6,6 +6,8 @@
 #include <AVR++/basicTypes.h>
 #include "DriverConstants.h"
 
+namespace ThreePhaseControllerNamespace {
+
 using namespace AVR;
 
 class Predictor{
@@ -55,6 +57,8 @@ public:
 	//get value the velocity may get shifted by per velocity update
 	inline static u1 getAdjustVal(){return adjustVal;}
 	inline static void setAdjustVal(u1 val){adjustVal = val;}
+};
+
 };
 
 #endif  /* PREDICTOR_H */

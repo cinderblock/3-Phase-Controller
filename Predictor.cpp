@@ -11,6 +11,8 @@
 // #include "common.h"
 
 using namespace std;
+using namespace AVR;
+using namespace ThreePhaseControllerNamespace;
 
 u4 Predictor::drivePhase;
 u2 Predictor::lastMecPha;
@@ -133,4 +135,3 @@ void Predictor::init(u2 phase) {
 	adjustVal = 5;
 	phaseAdvanceRatio = Config::DefaultPhaseAdvance;
 }
-

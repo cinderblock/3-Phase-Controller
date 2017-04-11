@@ -16,7 +16,7 @@ namespace AVR {
  namespace Clock {
   inline void enablePLL(u1 const PLL = 10, u1 const timerDiv = 2, bool const useEXT = true) {
    PLLFRQ = ((useEXT ? 0 : 1) << PINMUX) | (timerDiv << PLLTM0) | (1 << PLLUSB) | PLL;
-   bool const divideClock = useEXT && (Board::ClockSpeed == 16000000UL);
+   bool const divideClock = useEXT && (F_CPU == 16000000UL);
    PLLCSR = ((divideClock ? 1 : 0) << PINDIV) | (1 << PLLE);
   }
 

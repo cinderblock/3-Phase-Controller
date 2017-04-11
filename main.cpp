@@ -17,6 +17,9 @@
 #include "Interpreter.h"
 #include "ServoController.h"
 
+using namespace AVR;
+using namespace ThreePhaseControllerNamespace;
+
 /**
  * All the init functions should go in here.
  * gcc will automatically call it for us because of the constructor attribute.
@@ -24,6 +27,8 @@
 void init() __attribute__((constructor));
 
 u1 resetCause = MCUSR;
+
+FileBotInterface::TwillBotInterface<Config::i2cSlaveAddress, Config::i2cBufferIncomingSize, Config::i2cBufferOutgoingSize, Config::i2cBufferIncomingBlocks, 3> fileBotInterface;
 
 void init() {
 	// Watch Dog Timer
@@ -43,7 +48,7 @@ void init() {
 	::Clock::init();
 
 	// i2c interface init
-	TwillBotInterface::init();
+	fileBotInterface.init();
 
 	// Interpret i2c communication interface.
 	Interpreter::Init();
@@ -82,7 +87,7 @@ void main() {
 		ServoController::update();
 
 		//get any incoming communications
-		u1 const * const buff = TwillBotInterface::getIncomingReadBuffer();
+		u1 const * const buff = fileBotInterface.getIncomingReadBuffer();
 
 		//if there is a communication interpret it
 		if (buff) {
@@ -90,14 +95,14 @@ void main() {
 			Interpreter::interpretFromMaster(buff);
 
 			//prepare for next communication
-			TwillBotInterface::reserveNextReadBuffer();
+			fileBotInterface.reserveNextReadBuffer();
 		}
 
 		//send whatever data we have back to master
 		Interpreter::sendNormalDataToMaster();
 
 		//silly fix in case of an error state
-		TwillBotInterface::fixWriteBuffer();
+		fileBotInterface.fixWriteBuffer();
 	}
 
 	//loop in case main loop is disabled

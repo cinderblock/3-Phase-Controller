@@ -10,6 +10,8 @@
 #include <AVR++/CRC8.h>
 #include "DriverConstants.h"
 
+using namespace ThreePhaseControllerNamespace;
+
 u1 Interpreter::extraResponse[extraResponseLength];
 Interpreter::Mode Interpreter::current;
 u1 Interpreter::resolutionShifter;

@@ -5,6 +5,7 @@
 // #include "common.h"
 
 using namespace AVR;
+using namespace ThreePhaseControllerNamespace;
 
 ServoController::Mode ServoController::currentMode;
 
@@ -184,4 +185,3 @@ void ServoController::setEnable(bool enable) {
   if (!enable)
     currentMode = Mode::Init;
 }
-

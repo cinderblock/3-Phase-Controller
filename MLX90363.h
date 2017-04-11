@@ -17,8 +17,10 @@
 
 ISR(SPI_STC_vect);
 
+namespace ThreePhaseControllerNamespace {
+
 class MLX90363 {
- friend void SPI_STC_vect();
+ friend void ::SPI_STC_vect();
  static inline void isr();
  
  /**
@@ -42,7 +44,7 @@ class MLX90363 {
   */
  static u1 bufferPosition;
  
- static ::Clock::MicroTime dataReadyTime;
+ static Clock::MicroTime dataReadyTime;
  
  enum class ResponseState : u1;
  
@@ -220,5 +222,6 @@ public:
 
 };
 
-#endif	/* MLX90363_H */
+};
 
+#endif	/* MLX90363_H */

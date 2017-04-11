@@ -13,6 +13,8 @@
 #include "DriverConstants.h"
 #include "MLX90363.h"
 
+namespace ThreePhaseControllerNamespace {
+
 using namespace AVR;
 
 /*
@@ -128,5 +130,6 @@ public:
 
 };
 
-#endif	/* SERVOCONTROLLER_H */
+};
 
+#endif	/* SERVOCONTROLLER_H */

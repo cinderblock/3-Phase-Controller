@@ -5,6 +5,8 @@
 #include <AVR++/basicTypes.h>
 #include "Config.h"
 
+namespace ThreePhaseControllerNamespace {
+
 using namespace AVR;
 
 class DriverConstants {
@@ -78,5 +80,6 @@ public:
 
 };
 
-#endif
+};
 
+#endif

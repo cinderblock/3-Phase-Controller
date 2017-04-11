@@ -18,13 +18,15 @@
 #include <avr/interrupt.h>
 #include "Predictor.h"
 
-using namespace AVR;
-
 ISR(TIMER4_OVF_vect);
+
+namespace ThreePhaseControllerNamespace {
+
+using namespace AVR;
 
 class ThreePhaseController {
   static inline void isr();
-  friend void TIMER4_OVF_vect();
+  friend void ::TIMER4_OVF_vect();
 
   static u1 magRoll;
   static u2 roll;
@@ -102,5 +104,6 @@ public:
 
 };
 
-#endif	/* THREEPHASECONTROLLER_H */
+};
 
+#endif	/* THREEPHASECONTROLLER_H */

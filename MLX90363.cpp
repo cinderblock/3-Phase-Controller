@@ -13,14 +13,17 @@
 #include <AVR++/SPI.h>
 #include "Clock.h"
 
+using namespace AVR;
+using namespace ThreePhaseControllerNamespace;
+
 ::Clock::MicroTime MLX90363::dataReadyTime(0);
 
 static inline void sendSPI(u1 const b) {
- *AVR::SPI::DR = b;
+ *SPI::DR = b;
 }
 
 static inline u1 receiveSPI() {
- return *AVR::SPI::DR;
+ return *SPI::DR;
 }
 
 ISR (SPI_STC_vect) {

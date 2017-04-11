@@ -12,6 +12,8 @@
 #include "Config.h"
 #include <avr/io.h>
 
+namespace ThreePhaseControllerNamespace {
+
 using namespace AVR;
 
 namespace Board {
@@ -66,6 +68,8 @@ namespace Board {
  }
  
  constexpr u4 ClockSpeed = F_CPU;
+};
+
 };
 
 #endif	/* BOARD_H */

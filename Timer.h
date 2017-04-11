@@ -11,6 +11,8 @@
 #include <AVR++/basicTypes.h>
 #include <avr/io.h>
 
+namespace ThreePhaseControllerNamespace {
+
 using namespace AVR;
 
 class Timer {
@@ -53,6 +55,8 @@ public:
 	 * Difference between an old time and now
 	 */
 	static u2 getSince(const u2 time);
+
+};
 
 };
 

@@ -5,6 +5,8 @@
 #include "Config.h"
 #include "ServoController.h"
 
+namespace ThreePhaseControllerNamespace {
+
 class Interpreter {
   enum class Mode : u1{
     Standard = 0x01,
@@ -61,6 +63,8 @@ public:
   inline static s2 getPosition(){return (s2)(ServoController::getPosition() >> resolutionShifter);};
 
   static void Init();
+};
+
 };
 
 #endif	/* INTERPRETER_H */

@@ -11,6 +11,9 @@
 
 #include <AVR++/CRC8.h>
 
+using namespace AVR;
+using namespace ThreePhaseControllerNamespace;
+
 IOpin& Debug::LED = Board::LED;
 
 Debug::Printer Debug::SOUT;

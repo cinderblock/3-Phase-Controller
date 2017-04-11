@@ -7,6 +7,9 @@
 
 #include "Timer.h"
 
+using namespace AVR;
+using namespace ThreePhaseControllerNamespace;
+
 void Timer::init() {
 	/*
 	 * COM3A1  COM3A0  COM3B1  COM3B0  COM3C1  COM3C0    WGM31   WGM30

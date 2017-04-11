@@ -1,5 +1,8 @@
 
 #include <AVR++/bitTypes.h>
+
+namespace ThreePhaseControllerNamespace {
+
 using namespace AVR;
 
 namespace Config {
@@ -8,3 +11,5 @@ namespace Config {
 	u1 constexpr MaxTorque = 30;
 	u1 constexpr DefaultPhaseAdvance = 50;
 }
+
+};

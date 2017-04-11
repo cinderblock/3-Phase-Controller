@@ -14,6 +14,8 @@
 
 #include "Timer.h"
 
+namespace ThreePhaseControllerNamespace {
+
 using namespace AVR;
 
 ISR(TIMER3_COMPA_vect);
@@ -124,13 +126,14 @@ public:
 
 };
 
-inline static ::Clock::MicroTime operator"" _ms(unsigned long long i) {
+inline static Clock::MicroTime operator"" _ms(unsigned long long i) {
  return {(u4)i,0};
 }
 
-inline static ::Clock::MicroTime operator"" _us(unsigned long long i) {
+inline static Clock::MicroTime operator"" _us(unsigned long long i) {
  return {(u4)(i/1000),((u2)i % 1000) * (Timer::CountsPerClear / 1000)};
 }
 
-#endif	/* CLOCK_H */
+};
 
+#endif	/* CLOCK_H */

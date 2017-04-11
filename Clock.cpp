@@ -8,6 +8,10 @@
 #include "Clock.h"
 #include "Timer.h"
 
+using namespace AVR;
+
+namespace ThreePhaseControllerNamespace {
+
 void TIMER3_COMPA_vect() {
  Clock::tick();
 }
@@ -73,3 +77,5 @@ void Clock::readTimeISR(MicroTime& dest) {
  // Copy the times to the destination
  dest.setTimerCount(micro).setTicksCount(t);
 }
+
+};
