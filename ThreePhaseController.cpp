@@ -34,6 +34,12 @@ void TIMER4_OVF_vect() {
 void ThreePhaseController::isr() {
   u1 static mlx = 1;
 
+  // Automatically start MLX communications every few ISRs.
+  if (!--mlx) {
+    MLX90363::startTransmitting();
+    mlx = cyclesPWMPerMLX;
+  }
+  
   // Scale phase to output range
   u2 outputPhase = Predictor::predictPhase();
 
@@ -73,14 +79,6 @@ void ThreePhaseController::isr() {
     // Update driver outputs
     ThreePhaseDriver::advanceTo(outputPhase);
   }
-
-  // Don't continue if we're not done counting down
-  if (--mlx)
-    return;
-
-  MLX90363::startTransmitting();
-
-  mlx = cyclesPWMPerMLX;
 }
 
 void ThreePhaseController::init() {
