@@ -16,7 +16,9 @@ namespace ThreePhaseControllerNamespace {
 
 using namespace AVR;
 
-u1 constexpr min(u1 const a, u1 const b){return a > b ? b : a;};
+/**
+ */
+static inline u1 constexpr min(u1 const a, u1 const b){return a > b ? b : a;};
 
 /**
  * This static class handles controlling the low level TIMER4 registers.
@@ -37,22 +39,126 @@ class ThreePhaseDriver {
    */
   static u1 amplitude;
 
-  // static u1 cacheA;
-  // static register u1 cacheB asm("r11");
-  // static register u1 cacheC asm("r12");
 public:
 
   /**
    * The outputs can be in one of 3 phases
    */
   enum class Phase : u1 {
-    A = 0, B = 1, C = 2, INIT
+    A = 0, B = 1, C = 2, Invalid
   };
 
-protected:
-  static Phase currentPhase;
+  /**
+   * class to store and work with all possible output "angles"
+   */
+  class PhasePosition {
+   /**
+    * Internal byte + 2 bits that fully describe an output angle
+    */
+   u2 commutation;
 
-public:
+   /**
+    * The maximum valid value commutation can have
+    */
+   static constexpr u2 MAX = 0x2ff;
+   
+   friend class ThreePhaseDriver;
+
+   /**
+    * Get the current subphase angle
+    * @return
+    */
+   inline u1 getPosition() const {
+    return (u1)commutation;
+   }
+
+   /**
+    * Get the current Phase
+    * @return
+    */
+   inline Phase getPhase() const {
+    return (Phase)(commutation >> 8);
+   }
+
+  public:
+   /**
+    * Initialize a commutation angle with some current angle
+    * @param commutation
+    */
+   inline PhasePosition(u2 const commutation) : commutation(commutation % (MAX + 1)) {}
+
+   /**
+    * Initialize a commutation angle with a subPhase angle and phase
+    * @param phase
+    * @param commutation
+    */
+   inline PhasePosition(Phase const phase, u1 const commutation) : commutation(((u1)phase << 8) | commutation) {}
+
+   inline PhasePosition& operator+=(u1 const steps) {
+    commutation += steps;
+    if (commutation > MAX) commutation -= MAX;
+
+    return *this;
+   }
+
+   inline PhasePosition& operator-=(u1 const steps) {
+    commutation -= steps;
+    if (commutation > MAX) commutation += MAX;
+
+    return *this;
+   }
+
+   inline PhasePosition& operator+=(u2 const steps) {
+    commutation += steps;
+    commutation %= MAX + 1;
+
+    return *this;
+   }
+
+   inline PhasePosition& operator-=(u2 const steps) {
+    commutation -= steps;
+    commutation %= MAX + 1;
+
+    return *this;
+   }
+
+   inline PhasePosition& operator++() {
+    if (commutation == MAX) {
+     commutation = 0;
+    } else {
+     commutation++;
+    }
+
+    return *this;
+   }
+
+   inline PhasePosition& operator--() {
+    if (commutation == 0) {
+     commutation = MAX;
+    } else {
+     commutation--;
+    }
+
+    return *this;
+   }
+
+   inline PhasePosition operator++(int) {
+    PhasePosition ret(commutation);
+
+    ++*this;
+
+    return ret;
+   }
+
+   inline PhasePosition operator--(int) {
+    PhasePosition ret(commutation);
+
+    --*this;
+
+    return ret;
+   }
+  };
+
   /**
    * Internal granularity of sin wave for each phase
    */
@@ -74,22 +180,10 @@ public:
    */
   static u2 constexpr MAX = 0x7ff;
 
+  /**
+   * Initialize the AVR hardware
+   */
   static void init();
-
-  /**
-   * Convenience function with its own internal step counter
-   */
-  static void advance();
-
-  static u2 lastPhase;
-  /**
-   * Version of advanceTo() that takes a single u2 between 0 and 0x2ff inclusive
-   * @param step
-   */
-  inline static void advanceTo(u2 const step) {
-    lastPhase = step;
-    advanceToFullSine((Phase) (step >> 8), step);
-  }
 
   /**
    * Advance the pwm outputs to a new commutation angle
@@ -97,7 +191,7 @@ public:
    * @param phase
    * @param step
    */
-  static void advanceToFullSine(Phase const phase, u1 const step);
+  static void advanceTo(PhasePosition const phase);
 
   /**
    * Magic number to ensure we don't miss a tick of a phase
@@ -120,8 +214,6 @@ public:
   static inline u1 getDeadTimes() {
     return DT4;
   };
-
-  static void advanceToBackEMF(Phase const phase, u1 const step);
 };
 
 };

@@ -15,8 +15,6 @@
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
-u2 ThreePhaseDriver::lastPhase;
-
 inline static void setUpdateLock(const bool lock) {
   /**
    * TCCR4E
@@ -29,8 +27,6 @@ inline static void setUpdateLock(const bool lock) {
 void ThreePhaseDriver::init() {
   AVR::Clock::enablePLL();
   AVR::Clock::waitForPLL();
-
-  lastPhase = 0;
 
   // Turn off interrupts just in case
   TIMSK4 = 0;
@@ -162,14 +158,6 @@ u2 ThreePhaseDriver::getPhasePWM(const u1 step) {
   return prod >> 8;
 }
 
-void ThreePhaseDriver::advance() {
-  static u2 step = 0;
-  advanceTo(step);
-  if (++step == 0x300) step = 0;
-}
-
-ThreePhaseDriver::Phase ThreePhaseDriver::currentPhase = Phase::INIT;
-
 inline static void setCompareMatchA(u2 const val) {
   TC4H = val >> 8;
   OCR4A = val;
@@ -185,7 +173,10 @@ inline static void setCompareMatchC(u2 const val) {
   OCR4D = val;
 }
 
-void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
+void ThreePhaseDriver::advanceTo(const PhasePosition pp) {
+  auto const step = pp.getPosition();
+  auto const phase = pp.getPhase();
+
   u2 const ONE = MAX - getPhasePWM(step);
   u2 const TWO = MAX - getPhasePWM(255 - step);
   u2 const OFF = MAX;
@@ -214,7 +205,4 @@ void ThreePhaseDriver::advanceToFullSine(const Phase phase, const u1 step) {
   }
 
   setUpdateLock(false);
-
-  // Save current phase
-  currentPhase = phase;
 }
