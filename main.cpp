@@ -29,81 +29,70 @@ void init() __attribute__((constructor));
 u1 resetCause = MCUSR;
 
 void init() {
-	// Watch Dog Timer
-	wdt_reset();
-	wdt_disable();
+  // Watch Dog Timer
+  wdt_reset();
+  wdt_disable();
 
 
-	// Debug::init();
+  // Debug::init();
 
   // Clear the MCU Status Register.  Indicates previous reset's source.
-	MCUSR = 0;
+  MCUSR = 0;
 
-	// Set Enable Interupts.
-	sei();
+  // Set Enable Interupts.
+  sei();
 
-	// Use the Clock that is outside the AVR++ namespace.
-	::Clock::init();
+  // Use the Clock that is outside the AVR++ namespace.
+  ::Clock::init();
 
-	// i2c interface init
-	CommInterface::init();
+  // i2c interface init
+  CommInterface::init();
 
-	// Interpret i2c communication interface.
-	Interpreter::Init();
+  // Interpret i2c communication interface.
+  Interpreter::Init();
 
-	// Init for hardware interface.
-	ServoController::init();
+  // Init for hardware interface.
+  ServoController::init();
 
-	// Turn off led.
-	Board::LED.output();
-	Board::LED.off();
+  // Turn off led.
+  Board::LED.output();
+  Board::LED.off();
 
-	// End of init
+  // End of init
 }
 
 /**
  *
  */
 void main() {
-	// We don't need to call init() because gcc calls it for us before main() even starts.
-  //init();
+  
 
-	u2 pos = 0;
+  //main loop
+  while (1) {
 
-	Clock::MicroTime t(0);
-	Clock::MicroTime delta = 25_ms;
-	Clock::MicroTime now;
+    //update hardware
+    ServoController::update();
 
+    //get any incoming communications
+    u1 const * const buff = CommInterface::getIncomingReadBuffer();
 
-	//set to drive at 0 speed
-	ThreePhaseController::setAmplitude(0);
+    //if there is a communication interpret it
+    if (buff) {
+      //interpret the new communication
+      Interpreter::interpretFromMaster(buff);
 
-	//main loop
-	while(1){
+      //prepare for next communication
+      CommInterface::reserveNextReadBuffer();
+    }
 
-		//update hardware
-		ServoController::update();
+    //send whatever data we have back to master
+    Interpreter::sendNormalDataToMaster();
 
-		//get any incoming communications
-		u1 const * const buff = CommInterface::getIncomingReadBuffer();
+    //silly fix in case of an error state
+    CommInterface::fixWriteBuffer();
+  }
 
-		//if there is a communication interpret it
-		if (buff) {
-			//interpret the new communication
-			Interpreter::interpretFromMaster(buff);
-
-			//prepare for next communication
-			CommInterface::reserveNextReadBuffer();
-		}
-
-		//send whatever data we have back to master
-		Interpreter::sendNormalDataToMaster();
-
-		//silly fix in case of an error state
-		CommInterface::fixWriteBuffer();
-	}
-
-	//loop in case main loop is disabled
-	//allows for interrupts to continue
-	while(1);
+  //loop in case main loop is disabled
+  //allows for interrupts to continue
+  while (1);
 }
