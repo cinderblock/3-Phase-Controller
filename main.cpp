@@ -67,36 +67,36 @@ void init() {
  *
  */
 void main() {
-  
+
   if (Demo::enabled) Demo::main();
-  else if (Calibration::enabled)  Calibration::main();
+  else if (Calibration::enabled) Calibration::main();
   else {
     ThreePhaseController::enable();
 
-  //main loop
-  while (1) {
+    //main loop
+    while (1) {
 
-    //update hardware
-    ServoController::update();
+      //update hardware
+      ServoController::update();
 
-    //get any incoming communications
-    u1 const * const buff = CommInterface::getIncomingReadBuffer();
+      //get any incoming communications
+      u1 const * const buff = CommInterface::getIncomingReadBuffer();
 
-    //if there is a communication interpret it
-    if (buff) {
-      //interpret the new communication
-      Interpreter::interpretFromMaster(buff);
+      //if there is a communication interpret it
+      if (buff) {
+        //interpret the new communication
+        Interpreter::interpretFromMaster(buff);
 
-      //prepare for next communication
-      CommInterface::reserveNextReadBuffer();
+        //prepare for next communication
+        CommInterface::reserveNextReadBuffer();
+      }
+
+      //send whatever data we have back to master
+      Interpreter::sendNormalDataToMaster();
+
+      //silly fix in case of an error state
+      CommInterface::fixWriteBuffer();
     }
-
-    //send whatever data we have back to master
-    Interpreter::sendNormalDataToMaster();
-
-    //silly fix in case of an error state
-    CommInterface::fixWriteBuffer();
-  }
   }
 
   //loop in case main loop is disabled
