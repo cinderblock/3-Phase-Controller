@@ -18,14 +18,23 @@ using namespace AVR;
 
 u1 constexpr min(u1 const a, u1 const b){return a > b ? b : a;};
 
+/**
+ * This static class handles controlling the low level TIMER4 registers.
+ *
+ * It has one main interface, advanceTo(PhasePosition), that calculates the correct
+ * PWM values for the outputs and switches them all to their new values atomically.
+ */
 class ThreePhaseDriver {
   /**
-   * Read the sin table
+   * Read the specialized sine lookup table
    * @param phase
    * @return
    */
   static inline u2 getPhasePWM(u1 const phase) __attribute__((const));
 
+  /**
+   * The current PWM amplitude
+   */
   static u1 amplitude;
 
   // static u1 cacheA;
@@ -33,6 +42,9 @@ class ThreePhaseDriver {
   // static register u1 cacheC asm("r12");
 public:
 
+  /**
+   * The outputs can be in one of 3 phases
+   */
   enum class Phase : u1 {
     A = 0, B = 1, C = 2, INIT
   };
@@ -52,8 +64,8 @@ public:
   static u1 constexpr PhasesPerCycle = DriverConstants::PhasesPerCycle;
 
   /**
-   * One Cycle is one full commutation "revolution" of the motor. This is almost
-   * certainly not one actual revolution of the motor shaft.
+   * One Cycle is one full commutation (aka electrical revolution) of the motor.
+   * This is almost certainly not one actual revolution of the motor shaft.
    */
   static u2 constexpr StepsPerCycle = DriverConstants::StepsPerCycle;
 
@@ -80,7 +92,7 @@ public:
   }
 
   /**
-   * Advance the pwm outputs to a new commutation
+   * Advance the pwm outputs to a new commutation angle
    *
    * @param phase
    * @param step
@@ -88,7 +100,7 @@ public:
   static void advanceToFullSine(Phase const phase, u1 const step);
 
   /**
-   * Magic number to ensure we dont miss a tick of a phase
+   * Magic number to ensure we don't miss a tick of a phase
    */
   static constexpr u1 calcMaxAmplitude = 0xff - 30;
   static constexpr u1 maxAmplitude = min(DriverConstants::MaxTorque, calcMaxAmplitude);

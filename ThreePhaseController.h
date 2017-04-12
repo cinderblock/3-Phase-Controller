@@ -24,7 +24,19 @@ namespace ThreePhaseControllerNamespace {
 
 using namespace AVR;
 
+/**
+ * This static class wraps around the ThreePhaseDriver and some position estimation
+ * to continuously tell the Driver what phase to drive at for some constant amplitude drive.
+ *
+ * This presents the minimal interface that all "motors" should have:
+ *  - Amplitude control of PWM
+ *  - Position (and velocity) feedback estimations
+ *
+ * "Servos" for position, velocity, current, power, whatever are outside the scope
+ * of this class. See ServoController for more.
+ */
 class ThreePhaseController {
+
   static inline void isr();
   friend void ::TIMER4_OVF_vect();
 
