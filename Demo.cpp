@@ -96,7 +96,7 @@ void Demo::dumbSpin::timeout() {
 void Demo::ManualConstantTorque::main() {
   ThreePhaseDriver::setAmplitude(20);
   
-  u1 magRoll;
+  u1 magRoll = -1;
   
   while (1) {
     while (!MLX90363::hasNewData(magRoll));
