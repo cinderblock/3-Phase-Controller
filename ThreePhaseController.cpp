@@ -21,6 +21,7 @@
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
+bool ThreePhaseController::enabled = false;
 bool ThreePhaseController::isForwardTorque;
 bool ThreePhaseController::isZeroTorque;
 u1 ThreePhaseController::magRoll;
@@ -40,6 +41,11 @@ void ThreePhaseController::isr() {
     mlx = cyclesPWMPerMLX;
   }
   
+  // Only if the controller is enabled will we update the outputs
+  if (enabled) updatePhaseAngle();
+}
+
+void ThreePhaseController::updatePhaseAngle() {
   // Scale phase to output range
   u2 outputPhase = Predictor::predictPhase();
 

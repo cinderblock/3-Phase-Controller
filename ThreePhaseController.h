@@ -43,6 +43,8 @@ class ThreePhaseController {
   static u1 magRoll;
   static u2 roll;
   static u2 lastAlpha;
+  
+  static bool enabled;
 
   /**
    * Number of cycles the PWM timer makes per measurement ready from MLX. We pick
@@ -62,6 +64,13 @@ class ThreePhaseController {
    * 90 degree phase shift
    */
   static constexpr u2 output90DegPhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
+  
+  /**
+   * Update the current driver phase angle
+   * 
+   * Called from the ISR (at ~31kHz) if the controller is enabled
+   */
+  static void updatePhaseAngle();
 
 public:
   //initilize the controller
@@ -69,6 +78,20 @@ public:
 
   //update the driver
   static bool updateDriver();
+  
+  /**
+   * Enable the controller
+   */
+  inline static void enable() {
+    enabled = true;
+  }
+  
+  /**
+   * Disable the controller
+   */
+  inline static void disable() {
+    enabled = false;
+  }
 
   //class for holding amplitude commanded
   class Amplitude {
