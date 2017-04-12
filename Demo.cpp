@@ -12,9 +12,80 @@
  */
 
 #include "Demo.h"
+#include "ThreePhaseDriver.h"
+#include "MLX90363.h"
+#include <AVR++/TimerTimeout.h>
+#include <util/atomic.h>
+#include <avr/eeprom.h>
 
 using namespace ThreePhaseControllerNamespace;
 
+/**
+ * 
+ */
+void TIMER0_COMPA_vect() {
+	Demo::timeout();
+}
+
 void Demo::main() {
   if (!enabled) return;
+  
+  u1 mode = eeprom_read_byte(modeLocation) + 1;
+  
+  if (mode > modesMax) mode = 0;
+  
+  // Save the EEPROM!
+  if (modesMax) eeprom_write_byte(modeLocation, mode);
+  
+  if (mode == 0) dumbSpin::main();
+  
+  while(1);
+}
+
+void Demo::timeout() {
+  if (timeoutFunc) timeoutFunc();
+}
+
+void(*Demo::timeoutFunc)() = nullptr;
+
+void Demo::setTimeoutFunc(void(*tf)()) {
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    timeoutFunc = tf;
+  }
+}
+
+bool Demo::dumbSpin::go = false;
+
+void Demo::dumbSpin::main() {
+  ThreePhaseDriver::PhasePosition p;
+  
+  ThreePhaseDriver::setAmplitude(20);
+  
+  setTimeoutFunc(&timeout);
+  
+  // Get things started
+  timeout();
+  
+  constexpr u1 shift = 10;
+  static_assert(shift < MLX90363::resolutionBits, "Need at least one bit of data from MLX");
+  constexpr u2 iMax = (1 << (MLX90363::resolutionBits - shift)) - 2;
+  u2 i = iMax;
+  
+  while (1) {
+    const u2 alpha = MLX90363::getAlpha() >> shift;
+    while (!go) {
+      if (i > iMax) i = iMax;
+      do {
+        Board::LED = i < alpha;
+      } while (i-- && !go);
+    }
+    go = false;
+    ThreePhaseDriver::advanceTo(++p);
+  }
+}
+
+void Demo::dumbSpin::timeout() {
+  constexpr TimerTimeout::Period delayPeriod((long double)2.0 / 0x300);
+  TimerTimeout::startA(delayPeriod);
+  go = true;
 }

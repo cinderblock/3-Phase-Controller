@@ -14,12 +14,31 @@
 #ifndef DEMO_H
 #define DEMO_H
 
+#include <AVR++/basicTypes.h>
+
 namespace ThreePhaseControllerNamespace {
+  
+  using namespace AVR;
 
 namespace Demo {
-  constexpr bool enabled = false;
+  constexpr bool enabled = true;
+  
+  constexpr u1 * const modeLocation = 0;
+  constexpr u1 modesMax = 0;
 
   void main();
+  
+  void timeout();
+  
+  extern void(*timeoutFunc)();
+  
+  void setTimeoutFunc(void(*tf)());
+  
+  namespace dumbSpin {
+    void main();
+    void timeout();
+    extern bool go;
+  };
 };
 
 };
