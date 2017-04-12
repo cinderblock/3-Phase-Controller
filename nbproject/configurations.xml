@@ -13,9 +13,11 @@
                    projectFiles="true">
       <itemPath>AVRClock.h</itemPath>
       <itemPath>Board.h</itemPath>
+      <itemPath>Calibration.h</itemPath>
       <itemPath>Clock.h</itemPath>
       <itemPath>Config.h</itemPath>
       <itemPath>Debug.h</itemPath>
+      <itemPath>Demo.h</itemPath>
       <itemPath>DriverConstants.h</itemPath>
       <itemPath>FilebotInterface.h</itemPath>
       <itemPath>Interpreter.h</itemPath>
@@ -38,8 +40,10 @@
                    projectFiles="true">
       <itemPath>BlockBuffer-impl.cpp</itemPath>
       <itemPath>Board.cpp</itemPath>
+      <itemPath>Calibration.cpp</itemPath>
       <itemPath>Clock.cpp</itemPath>
       <itemPath>Debug.cpp</itemPath>
+      <itemPath>Demo.cpp</itemPath>
       <itemPath>FilebotInterface.cpp</itemPath>
       <itemPath>Interpreter.cpp</itemPath>
       <itemPath>MLX90363.cpp</itemPath>
@@ -110,6 +114,10 @@
       </item>
       <item path="Board.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="Calibration.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Calibration.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Clock.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Clock.h" ex="false" tool="3" flavor2="0">
@@ -119,6 +127,10 @@
       <item path="Debug.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Debug.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Demo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Demo.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="DriverConstants.h" ex="false" tool="3" flavor2="0">
       </item>

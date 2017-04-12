@@ -12,6 +12,9 @@ CPP = main Board MLX90363 ThreePhaseDriver Debug Timer Clock ThreePhaseControlle
 
 CPP += FilebotInterface TripleBuffer-impl BlockBuffer-impl
 
+CPP += Demo
+CPP += Calibration
+
 CPP += LookupTable/$(MotorID)
 
 MotorID = Motor1

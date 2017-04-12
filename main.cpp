@@ -16,6 +16,8 @@
 #include "Clock.h"
 #include "Interpreter.h"
 #include "ServoController.h"
+#include "Demo.h"
+#include "Calibration.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
@@ -66,6 +68,9 @@ void init() {
  */
 void main() {
   
+  if (Demo::enabled) Demo::main();
+  else if (Calibration::enabled)  Calibration::main();
+  else
 
   //main loop
   while (1) {
