@@ -220,6 +220,7 @@ public:
   */
  static void prepareGET1Message(MessageType const type, const u2 timeout = 0xffff, bool const resetRoll = false);
 
+ static constexpr u1 resolutionBits = 14;
 };
 
 };
