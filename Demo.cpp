@@ -14,6 +14,7 @@
 #include "Demo.h"
 #include "ThreePhaseDriver.h"
 #include "MLX90363.h"
+#include "ThreePhaseController.h"
 #include <AVR++/TimerTimeout.h>
 #include <util/atomic.h>
 #include <avr/eeprom.h>
@@ -38,6 +39,7 @@ void Demo::main() {
   if (modesMax) eeprom_write_byte(modeLocation, mode);
   
   if (mode == 0) dumbSpin::main();
+  if (mode == 1) ManualConstantTorque::main();
   
   while(1);
 }
@@ -88,4 +90,20 @@ void Demo::dumbSpin::timeout() {
   constexpr TimerTimeout::Period delayPeriod((long double)2.0 / 0x300);
   TimerTimeout::startA(delayPeriod);
   go = true;
+}
+
+void Demo::ManualConstantTorque::main() {
+  ThreePhaseDriver::setAmplitude(20);
+  
+  u1 magRoll;
+  
+  while (1) {
+    while (!MLX90363::hasNewData(magRoll));
+    
+    ThreePhaseDriver::PhasePosition phase(Lookup::AlphaToPhase(MLX90363::getAlpha()) & DriverConstants::MaskForPhase);
+    
+    phase += ThreePhaseDriver::StepsPerCycle / 4;
+    
+    ThreePhaseDriver::advanceTo(phase);
+  }
 }
