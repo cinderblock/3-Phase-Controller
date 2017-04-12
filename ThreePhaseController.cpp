@@ -37,45 +37,43 @@ void ThreePhaseController::isr() {
   // Scale phase to output range
   u2 outputPhase = Predictor::predictPhase();
 
-  if(ServoController::isUpdating()){ 
+  if (ServoController::isUpdating()) {
     // Offset from current angle by 90deg for max torque
-    if (isZeroTorque);
-    else{
+
+    if (!isZeroTorque) {
+
       //depending on which direction is forward shift by 90 degrees
-      if(Config::forward){
+      if (Config::forward) {
         if (isForwardTorque) outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
         else outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
-      }
-      else{
+      } else {
         if (isForwardTorque) outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
         else outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
       }
-    }
 
-    // Fix outputPhase range
-    if (isZeroTorque);
-    else{
+      // Fix outputPhase range
+
       //depending on which direction is forward correct the number
-      if(Config::forward){
+      if (Config::forward) {
         if (outputPhase >= ThreePhaseDriver::StepsPerCycle) {
-        // Fix it
+          // Fix it
           if (isForwardTorque)outputPhase += ThreePhaseDriver::StepsPerCycle;
           else outputPhase -= ThreePhaseDriver::StepsPerCycle;
         }
-      }
-      else {
+      } else {
         if (outputPhase >= ThreePhaseDriver::StepsPerCycle) {
-        // Fix it
+          // Fix it
           if (isForwardTorque)outputPhase -= ThreePhaseDriver::StepsPerCycle;
           else outputPhase += ThreePhaseDriver::StepsPerCycle;
         }
       }
+
     }
-  
+
     // Update driver outputs
     ThreePhaseDriver::advanceTo(outputPhase);
   }
-  
+
   // Don't continue if we're not done counting down
   if (--mlx)
     return;
