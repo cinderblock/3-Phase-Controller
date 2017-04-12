@@ -70,7 +70,8 @@ void main() {
   
   if (Demo::enabled) Demo::main();
   else if (Calibration::enabled)  Calibration::main();
-  else
+  else {
+    ThreePhaseController::enable();
 
   //main loop
   while (1) {
@@ -95,6 +96,7 @@ void main() {
 
     //silly fix in case of an error state
     CommInterface::fixWriteBuffer();
+  }
   }
 
   //loop in case main loop is disabled
