@@ -36,8 +36,7 @@ void Demo::main() {
   
   if (mode > modesMax) mode = 0;
   
-  // Save the EEPROM!
-  if (modesMax) eeprom_write_byte(modeLocation, mode);
+  eeprom_update_byte(modeLocation, mode);
   
   if (mode == 0) dumbSpin::main();
   if (mode == 1) ManualConstantTorque::main();
