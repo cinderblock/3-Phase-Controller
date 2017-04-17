@@ -21,7 +21,7 @@
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
-bool ThreePhaseController::enabled = false;
+volatile bool ThreePhaseController::enabled = false;
 bool ThreePhaseController::isForwardTorque;
 bool ThreePhaseController::isZeroTorque;
 u1 ThreePhaseController::magRoll;

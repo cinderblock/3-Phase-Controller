@@ -44,7 +44,7 @@ class ThreePhaseController {
   static u2 roll;
   static u2 lastAlpha;
   
-  static bool enabled;
+  volatile static bool enabled;
 
   /**
    * Number of cycles the PWM timer makes per measurement ready from MLX. We pick
