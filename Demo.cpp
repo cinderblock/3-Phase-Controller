@@ -61,7 +61,7 @@ bool Demo::dumbSpin::go = false;
 void Demo::dumbSpin::main() {
   ThreePhaseDriver::PhasePosition p;
   
-  ThreePhaseDriver::setAmplitude(20);
+  ThreePhaseDriver::setAmplitude(10);
   
   setTimeoutFunc(&timeout);
   
@@ -93,7 +93,7 @@ void Demo::dumbSpin::timeout() {
 }
 
 void Demo::ManualConstantTorque::main() {
-  ThreePhaseDriver::setAmplitude(20);
+  ThreePhaseDriver::setAmplitude(10);
   
   u1 magRoll = -1;
   
