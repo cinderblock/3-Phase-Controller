@@ -38,8 +38,8 @@ void Demo::main() {
   
   eeprom_update_byte(modeLocation, mode);
   
-  if (mode == 0) dumbSpin::main();
-  if (mode == 1) ManualConstantTorque::main();
+//  if (mode == 0) dumbSpin::main();
+  if (mode == 0) ManualConstantTorque::main();
   
   while(1);
 }

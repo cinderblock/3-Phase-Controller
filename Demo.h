@@ -24,7 +24,7 @@ namespace Demo {
   constexpr bool enabled = true;
   
   constexpr u1 * const modeLocation = 0;
-  constexpr u1 modesMax = 1;
+  constexpr u1 modesMax = 0;
 
   void main();
   
