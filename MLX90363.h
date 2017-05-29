@@ -29,8 +29,8 @@ class MLX90363 {
  static constexpr u1 messageLength = 8;
  
  /**
-  * Staged transmit buffer. Will be sent automatically by the interrupt routine
-  * if properly started and left alone so that repeat messages are trivial.
+  * Staged transmit buffer. Will be sent automatically by the interrupt routine.
+  * If properly started and left alone, repeat messages are trivial.
   */
  static u1 TxBuffer[messageLength];
  
