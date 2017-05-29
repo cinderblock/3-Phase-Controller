@@ -44,8 +44,6 @@ class MLX90363 {
   */
  static u1 bufferPosition;
  
- static Clock::MicroTime dataReadyTime;
- 
  enum class ResponseState : u1;
  
  static ResponseState responseState;
@@ -118,13 +116,6 @@ class MLX90363 {
  static void handleXYZ();
  
 public:
- 
- /**
-  * MLX requires a time between data checks.
-  * This function returns true when the required time has passed
-  * as well as not currently transmitting
-  */
- static bool isMeasurementReady();
  
  enum class ResponseState: u1 {
   Init, Ready, Receiving, Received, failedCRC, TypeA, TypeAB, TypeXYZ, Other
