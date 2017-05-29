@@ -99,20 +99,20 @@ void ThreePhaseDriver::init() {
   TCCR4B = 0b01000001;
 
   // Turn everything off
-  Board::DRV::AL.off();
-  Board::DRV::BL.off();
-  Board::DRV::CL.off();
-  Board::DRV::AH.off();
-  Board::DRV::BH.off();
-  Board::DRV::CH.off();
+  Board::DRV::AL::off();
+  Board::DRV::BL::off();
+  Board::DRV::CL::off();
+  Board::DRV::AH::off();
+  Board::DRV::BH::off();
+  Board::DRV::CH::off();
 
   // Enable outputs
-  Board::DRV::AL.output();
-  Board::DRV::BL.output();
-  Board::DRV::CL.output();
-  Board::DRV::AH.output();
-  Board::DRV::BH.output();
-  Board::DRV::CH.output();
+  Board::DRV::AL::output();
+  Board::DRV::BL::output();
+  Board::DRV::CL::output();
+  Board::DRV::AH::output();
+  Board::DRV::BH::output();
+  Board::DRV::CH::output();
 }
 
 static const u2 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {

@@ -14,7 +14,7 @@
 namespace ThreePhaseControllerNamespace {
 
 namespace Debug {
- extern IOpin &LED;
+ using LED = Board::LED;
 
  void init();
  
@@ -96,12 +96,12 @@ namespace Debug {
   namespace ISR {
    inline static void enter() {
     if (!LEDs) return;
-    Board::LED.off();
+    Board::LED::off();
    }
 
    inline static void exit() {
     if (!LEDs) return;
-    Board::LED.on();
+    Board::LED::on();
    }
   }
 
@@ -116,13 +116,13 @@ namespace Debug {
 
 		}
 		inline static void unhandledStatus(u1 s = 0) {
-			Board::LED.on();
+			Board::LED::on();
 		}
 	}
 
   inline static void timeout() {
    if (!LEDs) return;
-   Board::LED.off();
+   Board::LED::off();
   }
  }
  

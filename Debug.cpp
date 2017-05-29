@@ -15,8 +15,6 @@ using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 using libCameron::CRC8;
 
-IOpin& Debug::LED = Board::LED;
-
 Debug::Printer Debug::SOUT;
 
 static CRC8 CRC;

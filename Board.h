@@ -17,48 +17,67 @@ namespace ThreePhaseControllerNamespace {
 using namespace AVR;
 
 namespace Board {
- extern IOpin LED;
- extern IOpin VBATS;
- extern IOpin AIN0;
- extern IOpin MagSel;
+ using LED = IOpin<Ports::B, 7>;
+ using VBATS = IOpin<Ports::F, 5>;
+ using AIN0 = IOpin<Ports::E, 6>;
+ 
+ using MagSel = IOpin<Ports::D, 2>;
+
  namespace I2C {
-  extern IOpin SCL;
-  extern IOpin SDA;
+  using SCL = IOpin<Ports::D, 0>;
+  using SDA = IOpin<Ports::D, 1>;
  };
  namespace SPI {
-  extern IOpin SCLK;
-  extern IOpin MOSI;
-  extern IOpin MISO;
+  using SCLK = IOpin<Ports::B, 1>;
+  using MOSI = IOpin<Ports::B, 2>;
+  using MISO = IOpin<Ports::B, 3>;
+  using AVRss = IOpin<Ports::B, 0>;
 
-  inline void slaveSelectSetup() {MagSel.output(); AIN0.output();}
-  inline void slaveDeselect() {PORTD |=  (1<<2); PORTE |=  (1<<6);}
-  inline void slaveSelect  () {PORTD &= ~(1<<2); PORTE &= ~(1<<6);}
+  inline void setupIO() {
+    MagSel::output(); AIN0::output();
+    
+    // Setup "User Defined" hardware lines
+    SCLK::output();
+    MOSI::output();
+
+    // Don't forget the AVR's hardware SS line!
+    // If the AVR's SS is left as an input and it transitions low, SPI hardware
+    // kicked out of master mode.
+    AVRss::on();
+    AVRss::output();
+
+    // SPI hardware does this for us, but do it anyway
+    SCLK::off();
+    MISO::input();
+    MISO::on();
+  }
+  inline void slaveDeselect() {MagSel::on(); AIN0::on();}
+  inline void slaveSelect  () {MagSel::off(); AIN0::off();}
 
   /**
    * Check if we're still talking on the SPI bus
    * @return 
    */
   inline bool isSlaveSelected() {
-   //return !SS.isHigh();
-   return !(PORTD & (1<<2));
+   return !MagSel::isHigh();
   }
  };
  namespace SER {
-  extern IOpin Rx;
-  extern IOpin Tx;
+  using Rx = IOpin<Ports::D, 2>;
+  using Tx = IOpin<Ports::D, 3>;
  };
  namespace DRV {
-  extern IOpin AH;
-  extern IOpin BH;
-  extern IOpin CH;
-  extern IOpin AL;
-  extern IOpin BL;
-  extern IOpin CL;
+  using AH = IOpin<Ports::C, 7>;
+  using BH = IOpin<Ports::B, 6>;
+  using CH = IOpin<Ports::D, 7>;
+  using AL = IOpin<Ports::C, 6>;
+  using BL = IOpin<Ports::B, 5>;
+  using CL = IOpin<Ports::D, 6>;
  };
  namespace SEN {
-  extern IOpin AS;
-  extern IOpin BS;
-  extern IOpin CS;
+  using AS = IOpin<Ports::B, 4>;
+  using BS = IOpin<Ports::F, 4>;
+  using CS = IOpin<Ports::D, 4>;
  };
  namespace MUX {
   extern u1 AS;

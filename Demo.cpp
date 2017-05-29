@@ -78,7 +78,7 @@ void Demo::dumbSpin::main() {
     while (!go) {
       if (i > iMax) i = iMax;
       do {
-        Board::LED = i < alpha;
+        Board::LED::set(i < alpha);
       } while (i-- && !go);
     }
     go = false;

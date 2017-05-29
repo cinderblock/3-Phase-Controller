@@ -73,20 +73,7 @@ volatile u1 MLX90363::ROLL = 0xff;
 void MLX90363::init() {
  // Setup Slave Select line
  Board::SPI::slaveDeselect();
- Board::SPI::slaveSelectSetup();
-
- // Setup "User Defined" hardware lines
- SCLK.output();
- MOSI.output();
- 
- // Don't forget the AVR's hardware SS line!
- PORTB &= ~1;
- DDRB  |= 1;
-
- // SPI hardware does this for us, but do it anyway
- SCLK.off();
- MISO.input();
- MISO.on();
+ Board::SPI::setupIO();
 
  // Setup control registers
  

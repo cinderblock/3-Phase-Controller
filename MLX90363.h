@@ -78,14 +78,6 @@ class MLX90363 {
  static bool checkRxBufferCRC();
  
  /**
-  * The slave select line
-  */
- static constexpr IOpin &SS = Board::MagSel;
- static constexpr IOpin &MISO = Board::SPI::MISO;
- static constexpr IOpin &MOSI = Board::SPI::MOSI;
- static constexpr IOpin &SCLK = Board::SPI::SCLK;
- 
- /**
   * OpCodes from the MLX90363 datasheet.
   * 
   */

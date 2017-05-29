@@ -57,8 +57,8 @@ void init() {
   ServoController::init();
 
   // Turn off led.
-  Board::LED.output();
-  Board::LED.off();
+  Board::LED::output();
+  Board::LED::off();
 
   // End of init
 }
