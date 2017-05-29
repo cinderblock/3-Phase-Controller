@@ -115,6 +115,10 @@ void ThreePhaseDriver::init() {
   Board::DRV::CH::output();
 }
 
+/**
+ * This table is used to generate the two PWM values needed to generate 3-phase
+ * sine waves. See "3 Phase sin waves" document.
+ */
 static const u2 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
 	   0,  17,  33,  50,  67,  84, 100, 117, 134, 151, 167, 184, 201, 217, 234, 251,
 	 267, 284, 300, 317, 333, 350, 366, 383, 399, 416, 432, 449, 465, 481, 497, 514,
