@@ -80,10 +80,10 @@ namespace Board {
   using CS = IOpin<Ports::D, 4>;
  };
  namespace MUX {
-  extern u1 AS;
-  extern u1 BS;
-  extern u1 CS;
-  extern u1 VBATS;
+  constexpr u1 AS = 0b100011; // ADC11
+  constexpr u1 BS = 0b000100; // ADC4
+  constexpr u1 CS = 0b100000; // ADC8
+  constexpr u1 VBATS = 0b000101; // ADC5
  }
  
  constexpr u4 ClockSpeed = F_CPU;
