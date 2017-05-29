@@ -2,7 +2,7 @@
 #ifndef PREDICTOR_H
 #define PREDICTOR_H
 
-#include "Predictor.h"
+#include "ThreePhasePositionEstimator.h"
 #include <AVR++/basicTypes.h>
 #include "DriverConstants.h"
 
@@ -10,7 +10,7 @@ namespace ThreePhaseControllerNamespace {
 
 using namespace AVR;
 
-class Predictor{
+class ThreePhasePositionEstimator{
 	static u2 lastMecPha;
 	static u4 drivePhase;
 	static s2 driveVelocity;

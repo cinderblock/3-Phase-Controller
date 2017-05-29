@@ -3,7 +3,7 @@
 #include "Config.h"
 #include "ThreePhaseController.h"
 #include "ThreePhaseDriver.h"
-#include "Predictor.h"
+#include "ThreePhasePositionEstimator.h"
 #include "MLX90363.h"
 #include "FilebotInterface.h"
 #include "ServoController.h"
@@ -155,13 +155,13 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   }
 
   if (incomingData[0] == (u1)Command::SetPredictorAdjustVal) {
-    Predictor::setAdjustVal(incomingData[1]);
+    ThreePhasePositionEstimator::setAdjustVal(incomingData[1]);
 
     return;
   }
 
   if (incomingData[0] == (u1)Command::SetPredictorPhaseAdvance) {
-    Predictor::setPhaseAdvanceRatio(incomingData[1]);
+    ThreePhasePositionEstimator::setPhaseAdvanceRatio(incomingData[1]);
 
     return;
   }

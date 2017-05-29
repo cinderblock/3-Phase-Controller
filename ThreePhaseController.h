@@ -16,7 +16,7 @@
 
 #include "ThreePhaseDriver.h"
 #include <avr/interrupt.h>
-#include "Predictor.h"
+#include "ThreePhasePositionEstimator.h"
 
 ISR(TIMER4_OVF_vect);
 
@@ -123,16 +123,16 @@ public:
   static inline u1 getDeadTimes() {return ThreePhaseDriver::getDeadTimes();};
 
   //get the currently predicted angular position
-  inline static u4 getPredictedPosition() {return Predictor::getPredictedPosition();};
+  inline static u4 getPredictedPosition() {return ThreePhasePositionEstimator::getPredictedPosition();};
 
   //get the currently predicted angular velocity
-  inline static s2 getVelocity() {return Predictor::getVelocity();};
+  inline static s2 getVelocity() {return ThreePhasePositionEstimator::getVelocity();};
 
   //get the last measured angular position (by the magnetometer)
   inline static u2 getLastAplha() {return lastAlpha;}
 
   //get the last measured angular position (by the magnetometer & converted to phase units)
-  inline static u2 getMeasuredPosition() {return Predictor::getMeasuredPosition();}
+  inline static u2 getMeasuredPosition() {return ThreePhasePositionEstimator::getMeasuredPosition();}
 
   //get the number of magnetometer measurments that have happened
   inline static u2 getRoll() {return roll;};

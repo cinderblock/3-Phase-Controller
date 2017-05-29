@@ -13,7 +13,7 @@
 #include "ThreePhaseDriver.h"
 #include "Debug.h"
 #include "Interpreter.h"
-#include "Predictor.h"
+#include "ThreePhasePositionEstimator.h"
 #include "LookupTable.h"
 #include "ServoController.h"
 #include "Config.h"
@@ -47,7 +47,7 @@ void ThreePhaseController::isr() {
 
 void ThreePhaseController::updatePhaseAngle() {
   // Scale phase to output range
-  u2 outputPhase = Predictor::predictPhase();
+  u2 outputPhase = ThreePhasePositionEstimator::predictPhase();
 
   if (ServoController::isUpdating()) {
     // Offset from current angle by 90deg for max torque
@@ -104,7 +104,7 @@ void ThreePhaseController::init() {
   while (!MLX90363::hasNewData(magRoll));
 
   roll = 0;
-  Predictor::init(Lookup::AlphaToPhase(MLX90363::getAlpha()));
+  ThreePhasePositionEstimator::init(Lookup::AlphaToPhase(MLX90363::getAlpha()));
   roll = 1;
 }
 
@@ -126,7 +126,7 @@ bool ThreePhaseController::updateDriver() {
 
   roll++;
 
-  Predictor::freshPhase(magPha);
+  ThreePhasePositionEstimator::freshPhase(magPha);
 
   return true;
 }

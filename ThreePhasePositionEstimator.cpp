@@ -1,5 +1,5 @@
 
-#include "Predictor.h"
+#include "ThreePhasePositionEstimator.h"
 // #include "Debug.h"
 #include <util/atomic.h>
 #include "DriverConstants.h"
@@ -14,17 +14,17 @@ using namespace std;
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
-u4 Predictor::drivePhase;
-u2 Predictor::lastMecPha;
-s2 Predictor::driveVelocity;
-s2 Predictor::lastMechChange;
-u2 Predictor::lastReading;
-u1 Predictor::adjustVal;
-u1 Predictor::phaseAdvanceRatio;
-s4 Predictor::phaseAdvanceAmount;
-u2 Predictor::lastPredicted;
+u4 ThreePhasePositionEstimator::drivePhase;
+u2 ThreePhasePositionEstimator::lastMecPha;
+s2 ThreePhasePositionEstimator::driveVelocity;
+s2 ThreePhasePositionEstimator::lastMechChange;
+u2 ThreePhasePositionEstimator::lastReading;
+u1 ThreePhasePositionEstimator::adjustVal;
+u1 ThreePhasePositionEstimator::phaseAdvanceRatio;
+s4 ThreePhasePositionEstimator::phaseAdvanceAmount;
+u2 ThreePhasePositionEstimator::lastPredicted;
 
-static s2 constexpr abs(s2 num) {
+inline static s2 constexpr abs(s2 num) {
 	return num >= 0 ? num : -num;
 }
 
@@ -39,7 +39,7 @@ inline static void limit(u4& value, u4 MAX, bool forward) {
 	}
 }
 
-u2 Predictor::predictPhase() {
+u2 ThreePhasePositionEstimator::predictPhase() {
 
 	u4 ph = drivePhase;
 	ph += driveVelocity;
@@ -65,7 +65,7 @@ u2 Predictor::predictPhase() {
 	return lastPredicted;
 }
 
-void Predictor::freshPhase(u2 reading) {
+void ThreePhasePositionEstimator::freshPhase(u2 reading) {
 
 	// static u1 tick = 0;
 
@@ -112,7 +112,7 @@ void Predictor::freshPhase(u2 reading) {
 	lastMecPha = mechanicalPhase;
 }
 
-s4 Predictor::nextVelocity(s2 measuredMechChange) {
+s4 ThreePhasePositionEstimator::nextVelocity(s2 measuredMechChange) {
 
 	s4 tempVelocity = driveVelocity;
 
@@ -126,7 +126,7 @@ s4 Predictor::nextVelocity(s2 measuredMechChange) {
 	return tempVelocity;
 }
 
-void Predictor::init(u2 phase) {
+void ThreePhasePositionEstimator::init(u2 phase) {
 
 	driveVelocity = 0;
 	lastMecPha = getMechPhase(phase);//lookupAlphaToPhase(MLX90363::getAlpha());
