@@ -137,25 +137,19 @@ static const u2 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
 u1 ThreePhaseDriver::amplitude = 0;
 
 u2 ThreePhaseDriver::getPhasePWM(const u1 step) {
+  // Make sure we get 0 out if amplitude is set to 0.
   if (!amplitude) return 0;
 
-  // u1 const sin = MAX * SIN(2 * PI * step / StepsPerCycle);
+  // u1 const sin = MAXpwm * SIN(2 * PI * step / StepsPerCycle);
   u2 const sin = pgm_read_word(&limitedSinTable[step]);
 
-  // Ideal:
+  // Ideally, we'd use this math.
   //return (u4)sin * amplitude / 255;
 
-  // u2 const sin = step;
+  // However /255 is slow
 
-  // TODO: This product (and subsequent truncation) does not fully cover the
-  // range of the return u1. Ideally, instead of dividing by 256 (>> 8) we should
-  // be dividing by 255. We can get closer, on average, to that ideal division
-  // if we add 188 for instance. Here we add both values that are bing multiplied
-  // as a slightly better approximation at the extremes.
-  u4 const prod = (u4)sin * amplitude + sin + amplitude;
-
-  // Close enough:
-  return prod >> 8;
+  // Let's approximate that, but faster by about 20 instructions:
+  return ((u4)sin * amplitude + sin + amplitude) >> 8;
 }
 
 inline static void setCompareMatchA(u2 const val) {
