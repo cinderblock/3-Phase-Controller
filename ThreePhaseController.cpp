@@ -28,6 +28,14 @@ u1 ThreePhaseController::magRoll;
 u2 ThreePhaseController::roll;
 u2 ThreePhaseController::lastAlpha;
 
+
+/**
+ * This interrupt is triggered on TIMER4 (PWM6) overflow. This happens at the BOTTOM
+ * of the dual slope timer. New OCR values are latched at BOTTOM as well.
+ *
+ * We use this to calculate new PWM values on a periodic interval. We also use
+ * a multiple of this interval to trigger new MLX readings.
+ */
 void TIMER4_OVF_vect() {
   ThreePhaseController::isr();
 }
