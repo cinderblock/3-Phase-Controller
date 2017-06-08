@@ -1,64 +1,138 @@
 
-#ifndef PREDICTOR_H
-#define PREDICTOR_H
+#ifndef THREEPHASEPOSITIONESTIMATOR_H
+#define THREEPHASEPOSITIONESTIMATOR_H
 
-#include "ThreePhasePositionEstimator.h"
 #include <AVR++/basicTypes.h>
 #include "DriverConstants.h"
+#include "ThreePhaseDriver.h"
+#include "MotorPosition.h"
 
 namespace ThreePhaseControllerNamespace {
 
-using namespace AVR;
+  using namespace AVR;
 
-class ThreePhasePositionEstimator{
-	static u2 lastMecPha;
-	static u4 drivePhase;
-	static s2 driveVelocity;
-	static s2 lastMechChange;
-	static u2 lastReading;
-	static u1 adjustVal;
-	static u1 phaseAdvanceRatio;
-	static s4 phaseAdvanceAmount;
-	static u2 lastPredicted;
+  /**
+   * This class wraps around a rotor position estimate. At some regular interval,
+   * we update our position estimate based on an estimate of our current velocity.
+   * As some slower regular interval, we get real position readings. Those are used
+   * to update our velocity estimates.
+   */
+  class ThreePhasePositionEstimator {
+    /**
+     * Last magnetometer reading
+     */
+    static u2 lastMecPha;
 
-	//gets the mechanical positon (in phase units, not magnetometer position)
-	inline static u2 getMechPhase(u2 phase){return (phase & DriverConstants::MaskForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;};
+    /**
+     * The current position estimate. Higher resolution than output phase angle
+     */
+    static u4 drivePhase;
 
-public:
-	//initalize predicotr with
-	static void init(u2 initialPhase);
+    /**
+     * The current velocity estimate. Used to advance drivePhase position estimate
+     */
+    static s2 driveVelocity;
 
-	//Receive a new magnetometer position
-	//happens every 40 (ThreePhaseController::cyclesPWMPerMLX) pwm cycles
-	static void freshPhase(u2 phase);
+    /**
+     * Amount to adjust the velocity by. The smaller this number is, the more
+     * the velocity is filtered
+     */
+    static u1 adjustVal;
 
-	//predict phase we are currently at based on last position reading and velocity precition
-	//also updates our next prediction
-	//happens every pwm cycles
-	static u2 predictPhase();
+    /**
+     * Multiplier on velocity to advance our velocity estimate by
+     */
+    static u1 phaseAdvanceRatio;
 
-	//takes in the delta distance travelled an updated extrapolated velocity
-	static s4 nextVelocity(s2);
+    /**
+     * cached constant amount of phase advance for our current velocity
+     */
+    static s4 phaseAdvanceAmount;
 
-	//get the last predicted location
-	inline static u2 getPredictedPosition(){return lastPredicted;};
-	//get the phase advance ratio
-	//estimation of delay from last magetometer reading and setting current phase
-	inline static u1 getPhaseAdvanceRatio(){return phaseAdvanceRatio;};
-	//setter
-	inline static void setPhaseAdvanceRatio(u1 val){phaseAdvanceRatio = val;}
-	//estimation of distance given there are delays in system (phaseAdvanceRatio * velocity)
-	inline static s4 getPhaseAdvanceAmount(){return phaseAdvanceAmount;};
-	//get the last measured position
-	inline static u2 getMeasuredPosition(){return lastMecPha;};
-	//get currently exrapolated velocity
-	inline static s2 getVelocity(){return driveVelocity;};
+    /**
+     * Converts from magnetometer lookup table numbers to linear numbers
+     */
+    inline static u2 getMechPhase(u2 phase) {
+      return (phase & DriverConstants::MaskForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;
+    };
 
-	//get value the velocity may get shifted by per velocity update
-	inline static u1 getAdjustVal(){return adjustVal;}
-	inline static void setAdjustVal(u1 val){adjustVal = val;}
+  public:
+    /**
+     * Initialize private PositionEstimator members
+     *
+     * @param initialPhase
+     */
+    static void init(MotorPosition initialPhase);
+
+    /**
+     * Handle new position reading from MLX system
+     *
+     * @param alpha raw reading from MLX
+     */
+    static void handleNewPositionReading(u2 alpha);
+
+    /**
+     * Advance our prediction of where we currently are by one dt.
+     *
+     * @return current estimate of PhasePosition
+     */
+    static ThreePhaseDriver::PhasePosition advance();
+
+    /**
+     * Uses a delta distance to calculate a new velocity
+     */
+    static s4 nextVelocity(s2);
+
+    /**
+     * Get the phase advance ratio
+     *
+     * Estimation of delay from last magnetometer reading and setting current phase
+     */
+    inline static u1 getPhaseAdvanceRatio() {
+      return phaseAdvanceRatio;
+    };
+
+    /**
+     * Set phase advance ratio
+     * @param val
+     */
+    inline static void setPhaseAdvanceRatio(u1 val) {
+      phaseAdvanceRatio = val;
+    }
+
+    /**
+     * Estimation of distance given there are delays in system (phaseAdvanceRatio * velocity)
+     */
+    inline static s4 getPhaseAdvanceAmount() {
+      return phaseAdvanceAmount;
+    };
+
+    /**
+     * Get the last measured position
+     */
+    inline static u2 getMeasuredPosition() {
+      return lastMecPha;
+    };
+
+    /**
+     * Get currently extrapolated velocity
+     */
+    inline static s2 getVelocity() {
+      return driveVelocity;
+    };
+
+    /**
+     * Get value the velocity may get shifted by per velocity update
+     */
+    inline static u1 getAdjustVal() {
+      return adjustVal;
+    }
+
+    inline static void setAdjustVal(u1 val) {
+      adjustVal = val;
+    }
+  };
+
 };
 
-};
-
-#endif  /* PREDICTOR_H */
+#endif  /* THREEPHASEPOSITIONESTIMATOR_H */

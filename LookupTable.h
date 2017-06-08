@@ -11,16 +11,25 @@
 #include <avr/pgmspace.h>
 #include <AVR++/basicTypes.h>
 
+#include "ThreePhaseDriver.h"
+#include "MotorPosition.h"
+
 namespace ThreePhaseControllerNamespace {
 
 using namespace AVR;
 
 class Lookup {
 public:
+
   /**
    * Number of bits used by input
    */
   static constexpr u1 InputBits = 14;
+
+  /**
+   * Number of bits used by input
+   */
+  static constexpr u2 InputMask = (1 << InputBits) - 1;
 
   /**
    * Number of bits we reduce the input by
@@ -42,15 +51,15 @@ public:
    * @param alpha 14-bit value from magnetometer
    * @return phase upperNibble: mechanical pos. Rest: value (0 - 0x2ff inclusive)
    */
-  inline static u2 AlphaToPhase(u2 alpha) {
+  inline static MotorPosition AlphaToPhase(u2 alpha) {
     // Make sure we're working with a 14-bit number
-    alpha &= ((1 << InputBits) - 1);
+    alpha &= InputMask;
 
     //divide alpha by 4 to get a reasonable table size
     alpha >>= ResolutionReductionBits;
 
     // Read the phase number word from the calculated place in the lookup table
-    return pgm_read_word(&Lookup::table[alpha]);
+    return (MotorPosition)pgm_read_word(&Lookup::table[alpha]);
   }
 
 

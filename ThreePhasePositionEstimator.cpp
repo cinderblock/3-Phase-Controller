@@ -5,6 +5,7 @@
 #include "DriverConstants.h"
 #include "ServoController.h"
 #include "Config.h"
+#include "LookupTable.h"
 // #include "Board.h"
 // #include <iostream>
 // #include <cmath> 
@@ -17,12 +18,9 @@ using namespace ThreePhaseControllerNamespace;
 u4 ThreePhasePositionEstimator::drivePhase;
 u2 ThreePhasePositionEstimator::lastMecPha;
 s2 ThreePhasePositionEstimator::driveVelocity;
-s2 ThreePhasePositionEstimator::lastMechChange;
-u2 ThreePhasePositionEstimator::lastReading;
 u1 ThreePhasePositionEstimator::adjustVal;
 u1 ThreePhasePositionEstimator::phaseAdvanceRatio;
 s4 ThreePhasePositionEstimator::phaseAdvanceAmount;
-u2 ThreePhasePositionEstimator::lastPredicted;
 
 inline static s2 constexpr abs(s2 num) {
 	return num >= 0 ? num : -num;
@@ -39,7 +37,7 @@ inline static void limit(u4& value, u4 MAX, bool forward) {
 	}
 }
 
-u2 ThreePhasePositionEstimator::predictPhase() {
+ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
 
 	u4 ph = drivePhase;
 	ph += driveVelocity;
@@ -61,11 +59,17 @@ u2 ThreePhasePositionEstimator::predictPhase() {
 	limit(ph, MAX, forward);
 
 	// if(ph>>DriverConstants::drivePhaseValueShift > DriverConstants::MaskForPhase) Board::LED.on();
-	lastPredicted = (ph >> DriverConstants::drivePhaseValueShift);
-	return lastPredicted;
+	return (ph >> DriverConstants::drivePhaseValueShift);
 }
 
-void ThreePhasePositionEstimator::freshPhase(u2 reading) {
+void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
+  // Here, we are receiving a new position reading from the magnetometer.
+  // We need to take this new reading, update our running estimates, and be done.
+  // This is called by the magnetometer software after a new reading has been received
+  // and validated with CRC. We will need to handle issues like missing a count.
+
+  // While this is technically called from inside an ISR, interrupts have been
+  // re-enabled. Therefore, main() code will be paused if this is running.
 
 	// static u1 tick = 0;
 
@@ -75,10 +79,11 @@ void ThreePhasePositionEstimator::freshPhase(u2 reading) {
 	//         << reading
 	//         << Debug::Printer::Special::End;
 
+  const auto position = Lookup::AlphaToPhase(alpha);
 
-	u2 mechanicalPhase = getMechPhase(reading);
+	u2 mechanicalPhase = position.getMechanicalPosition();
 
-	//find distance travelled in phase
+	//find distance traveled in phase
 	s2 mechChange = mechanicalPhase - lastMecPha;
 
 	//TODO ensure we are not wrapping in the wrong direction due to high speeds
@@ -104,7 +109,7 @@ void ThreePhasePositionEstimator::freshPhase(u2 reading) {
 
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
 		driveVelocity = tempVelocity;
-		drivePhase = u4(reading & DriverConstants::MaskForPhase) << DriverConstants::drivePhaseValueShift;
+		drivePhase = u4(position.getPhasePosition()) << DriverConstants::drivePhaseValueShift;
 		phaseAdvanceAmount = tempPhaseAdvance;
 	}
 
@@ -126,12 +131,11 @@ s4 ThreePhasePositionEstimator::nextVelocity(s2 measuredMechChange) {
 	return tempVelocity;
 }
 
-void ThreePhasePositionEstimator::init(u2 phase) {
+void ThreePhasePositionEstimator::init(MotorPosition phase) {
 
 	driveVelocity = 0;
-	lastMecPha = getMechPhase(phase);//lookupAlphaToPhase(MLX90363::getAlpha());
+	lastMecPha = phase.getMechanicalPosition();
 	drivePhase = (u4)(lastMecPha & DriverConstants::MaskForPhase) << DriverConstants::drivePhaseValueShift;
-	lastMechChange = 0;
 	adjustVal = 5;
 	phaseAdvanceRatio = Config::DefaultPhaseAdvance;
 }

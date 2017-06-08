@@ -40,7 +40,8 @@ void Demo::main() {
   
 //  if (mode == 0) dumbSpin::main();
   if (mode == 0) ManualConstantTorque::main();
-  
+  if (mode == 1) PositionHold::main();
+
   while(1);
 }
 
@@ -100,10 +101,17 @@ void Demo::ManualConstantTorque::main() {
   while (1) {
     while (!MLX90363::hasNewData(magRoll));
     
-    ThreePhaseDriver::PhasePosition phase(Lookup::AlphaToPhase(MLX90363::getAlpha()) & DriverConstants::MaskForPhase);
+    ThreePhaseDriver::PhasePosition phase(Lookup::AlphaToPhase(MLX90363::getAlpha()).getPhasePosition());
     
     phase += ThreePhaseDriver::StepsPerCycle / 4;
     
     ThreePhaseDriver::advanceTo(phase);
+  }
+}
+
+void Demo::PositionHold::main() {
+
+  while (1) {
+
   }
 }

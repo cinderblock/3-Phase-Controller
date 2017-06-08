@@ -24,7 +24,7 @@ namespace Demo {
   constexpr bool enabled = true;
   
   constexpr u1 * const modeLocation = 0;
-  constexpr u1 modesMax = 0;
+  constexpr u1 modesMax = 1;
 
   void main();
   
@@ -43,6 +43,10 @@ namespace Demo {
   namespace ManualConstantTorque {
     void main();
   };
+
+  namespace PositionHold {
+    void main();
+  }
 };
 
 };

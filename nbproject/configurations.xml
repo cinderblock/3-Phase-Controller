@@ -23,6 +23,7 @@
       <itemPath>Interpreter.h</itemPath>
       <itemPath>LookupTable.h</itemPath>
       <itemPath>MLX90363.h</itemPath>
+      <itemPath>MotorPosition.h</itemPath>
       <itemPath>ServoController.h</itemPath>
       <itemPath>ThreePhaseController.h</itemPath>
       <itemPath>ThreePhaseDriver.h</itemPath>
@@ -159,6 +160,8 @@
       <item path="MLX90363.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MLX90363.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MotorPosition.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ServoController.cpp" ex="false" tool="1" flavor2="0">
       </item>

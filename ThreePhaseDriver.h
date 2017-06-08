@@ -157,6 +157,10 @@ public:
 
     return ret;
    }
+
+   inline operator u4() {
+     return commutation;
+   }
   };
 
   /**
@@ -207,12 +211,37 @@ public:
     return amplitude;
   };
 
-  static inline void setDeadTimes(u1 dt) {
-    DT4 = dt;
+  using DeadTimes = union DT {
+    /**
+     * Two raw nibbles used by low level 3 phase outputs
+     */
+    u1 combined;
+    struct {
+      /**
+       * Leading dead time
+       */
+      u1 leading  :4;
+
+      /**
+       * Trailing dead time
+       */
+      u1 trailing :4;
+    };
+    DT (u1 c) : combined(c) {}
+    union DT operator+ (u1 b) {
+      return combined + b;
+    }
+    union DT operator- (u1 b) {
+      return combined - b;
+    }
   };
 
-  static inline u1 getDeadTimes() {
-    return DT4;
+  static inline void setDeadTimes(DeadTimes dt) {
+    DT4 = dt.combined;
+  };
+
+  static inline DeadTimes getDeadTimes() {
+    return (DeadTimes)DT4;
   };
 };
 

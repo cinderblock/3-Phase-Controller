@@ -26,7 +26,6 @@ bool ThreePhaseController::isForwardTorque;
 bool ThreePhaseController::isZeroTorque;
 u1 ThreePhaseController::magRoll;
 u2 ThreePhaseController::roll;
-u2 ThreePhaseController::lastAlpha;
 
 
 /**
@@ -37,10 +36,10 @@ u2 ThreePhaseController::lastAlpha;
  * a multiple of this interval to trigger new MLX readings.
  */
 void TIMER4_OVF_vect() {
-  ThreePhaseController::isr();
+  ThreePhaseController::controlLoop();
 }
 
-void ThreePhaseController::isr() {
+void ThreePhaseController::controlLoop() {
   u1 static mlx = 1;
 
   // Automatically start MLX communications every few ISRs.
@@ -48,51 +47,27 @@ void ThreePhaseController::isr() {
     MLX90363::startTransmitting();
     mlx = cyclesPWMPerMLX;
   }
-  
-  // Only if the controller is enabled will we update the outputs
-  if (enabled) updatePhaseAngle();
-}
 
-void ThreePhaseController::updatePhaseAngle() {
-  // Scale phase to output range
-  u2 outputPhase = ThreePhasePositionEstimator::predictPhase();
+  // Advance our position estimate on step in time
+  ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance();
 
-  if (ServoController::isUpdating()) {
-    // Offset from current angle by 90deg for max torque
+  // Let ServoController calculate new amplitude command
+  ServoController::update();
 
-    if (!isZeroTorque) {
-
-      //depending on which direction is forward shift by 90 degrees
-      if (Config::forward) {
-        if (isForwardTorque) outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
-        else outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
-      } else {
-        if (isForwardTorque) outputPhase += ThreePhaseDriver::StepsPerCycle / 4;
-        else outputPhase -= ThreePhaseDriver::StepsPerCycle / 4;
-      }
-
-      // Fix outputPhase range
-
-      //depending on which direction is forward correct the number
-      if (Config::forward) {
-        if (outputPhase >= ThreePhaseDriver::StepsPerCycle) {
-          // Fix it
-          if (isForwardTorque)outputPhase += ThreePhaseDriver::StepsPerCycle;
-          else outputPhase -= ThreePhaseDriver::StepsPerCycle;
-        }
-      } else {
-        if (outputPhase >= ThreePhaseDriver::StepsPerCycle) {
-          // Fix it
-          if (isForwardTorque)outputPhase -= ThreePhaseDriver::StepsPerCycle;
-          else outputPhase += ThreePhaseDriver::StepsPerCycle;
-        }
-      }
-
-    }
-
-    // Update driver outputs
-    ThreePhaseDriver::advanceTo(outputPhase);
+  // If we're doing nothing, make sure the outputs are off
+  if (isZeroTorque) {
+    // TODO: turn off outputs
+    return;
   }
+
+  // TODO: more phase advance at higher speeds. Aka FOC.
+  if (isForwardTorque == Config::forward) {
+    p += u1(ThreePhaseDriver::StepsPerCycle / 4);
+  } else {
+    p -= u1(ThreePhaseDriver::StepsPerCycle / 4);
+  }
+
+  ThreePhaseDriver::advanceTo(p);
 }
 
 void ThreePhaseController::init() {
@@ -123,18 +98,4 @@ void ThreePhaseController::setAmplitude(const Amplitude t) {
     isZeroTorque = t.zero;
     ThreePhaseDriver::setAmplitude(t.amplitude);
   }
-}
-
-bool ThreePhaseController::updateDriver() {
-  if (!MLX90363::hasNewData(magRoll)) return false;
-
-  // We can always grab the latest Alpha value safely here
-  lastAlpha = MLX90363::getAlpha();
-  auto const magPha = Lookup::AlphaToPhase(lastAlpha);
-
-  roll++;
-
-  ThreePhasePositionEstimator::freshPhase(magPha);
-
-  return true;
 }

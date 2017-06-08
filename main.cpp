@@ -76,9 +76,6 @@ void main() {
     //main loop
     while (1) {
 
-      //update hardware
-      ServoController::update();
-
       //get any incoming communications
       u1 const * const buff = CommInterface::getIncomingReadBuffer();
 

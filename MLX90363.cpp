@@ -12,6 +12,7 @@
 
 #include <AVR++/SPI.h>
 #include "Clock.h"
+#include "ThreePhasePositionEstimator.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
@@ -163,6 +164,9 @@ void MLX90363::handleResponse() {
  if (marker == 0) {
   handleAlpha();
   responseState = ResponseState::TypeA;
+
+  ThreePhasePositionEstimator::handleNewPositionReading(alpha);
+
   return;
  }
  

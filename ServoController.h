@@ -7,129 +7,212 @@
  */
 
 #ifndef SERVOCONTROLLER_H
-#define	SERVOCONTROLLER_H
+#define SERVOCONTROLLER_H
 
 #include <AVR++/basicTypes.h>
 #include "DriverConstants.h"
 #include "MLX90363.h"
+#include "ThreePhaseDriver.h"
+#include "ThreePhaseController.h"
 
 namespace ThreePhaseControllerNamespace {
 
-using namespace AVR;
+  using namespace AVR;
 
-/*
- * Static class for handling the manger
- */
-class ServoController {
-private:
+  /*
+   * Static class for handling the manger
+   */
+  class ServoController {
+  private:
+    /**
+     * The different modes that we can use to servo
+     */
+    enum class Mode : u1 {
+      Init, Amplitude, Velocity, Distance, Position, Phase
+    };
 
-  enum class Mode : u1 {
-    Init, Amplitude, Velocity, Distance, Position, Phase
+    /**
+     * Which mode are we currently in
+     */
+    static Mode currentMode;
+    static s2 amplitudeCommand;
+    static s4 driveAmplitudeScaled;
+    static s2 velocityCommand;
+    static s4 positionCommand;
+    static s4 distanceCommand;
+
+    /**
+     * Number of full motor mechanical revolutions we've been through
+     */
+    static s2 onRotation;
+
+    static u2 lastPosition;
+
+    static s4 shiftingLimit;
+
+    static u2 velocityAdjust;
+
+    static u1 P;
+    static u1 I;
+    static u1 D;
+
+    static u1 shift;
+
+    static const u1 DeadBand = 50;
+
+    /**
+     * Update amplitude command in ThreePhaseController based on current servo target parameters.
+     *
+     * This function is called at ~31.25 kHz by the ThreePhaseController's main update cycle.
+     */
+    static void update();
+
+    /**
+     * Make ThreePhaseController a friend so that it can
+     */
+    friend class ThreePhaseController;
+
+  public:
+    /**
+     * Initialize all the hardware. Also run init() functions of lower level software.
+     */
+    static void init();
+
+    /**
+     * Set the controller into constant amplitude mode with some amplitude
+     */
+    static void setAmplitude(s2);
+
+    /**
+     * Puts the controller into constant velocity mode and sets the target
+     * @param
+     */
+    static void setVelocity(s2);
+
+    /**
+     * Get the commanded velocity
+     * @return
+     */
+    inline static s2 getVelocityCommand() {
+      return velocityCommand;
+    };
+
+
+    //////////// angular position commands ////////////////
+
+    /**
+     * Put controller into position mode and sets the target
+     * @param
+     */
+    static void setPosition(s4);
+
+    /**
+     * Put controller into position mode and sets the target as a delta from current
+     * @param
+     */
+    static void setDistance(s4);
+
+    /**
+     * Get our current position
+     * @return
+     */
+    inline static s4 getPosition() {
+      return ((s4) onRotation * (1 << DriverConstants::MagnetometerBits)) + (DriverConstants::MagnetometerMax - MLX90363::getAlpha());
+    };
+
+    /**
+     * Get the commanded position
+     * @return
+     */
+    inline static s4 getPositionCommand() {
+      return positionCommand;
+    };
+
+    /**
+     * Get the current number of revolutions
+     * @return 
+     */
+    inline static s2 getRevolution() {
+      return onRotation;
+    };
+
+    /**
+     * Put servo into phase mode (treat motor like a stepper)
+     */
+    inline static void setPhaseMode() {
+      currentMode = Mode::Phase;
+    };
+
+
+    /**
+     * Set P of position PID
+     * @param p
+     */
+    static inline void setP(u1 p) {
+      P = p;
+    };
+
+    /**
+     * Get P of position PID
+     * @return
+     */
+    static inline u1 getP() {
+      return P;
+    };
+
+    /**
+     * Set I of position PID
+     * @param i
+     */
+    static inline void setI(u1 i) {
+      I = i;
+    };
+
+    /**
+     * Get I of position PID
+     * @return
+     */
+    static inline u1 getI() {
+      return I;
+    };
+
+    /**
+     * Set D of position PID
+     * @param d
+     */
+    static inline void setD(u1 d) {
+      D = d;
+    };
+
+    /**
+     * Get D of position PID
+     * @return
+     */
+    static inline u1 getD() {
+      return D;
+    };
+
+    /**
+     * Set the shifted amount for scaling the position to be set
+     */
+    static inline void setShift(u1 p) {
+      shift = p;
+    };
+    
+    /**
+     * Get the shift amount
+     */
+    static inline u1 getShift() {
+      return shift;
+    };
+
+    /**
+     * Enable or disable servo controller
+     */
+    static void setEnable(bool);
+
   };
-
-  static Mode currentMode;
-
-  static s2 amplitudeCommand;
-  static s4 driveAmplitudeScaled;
-  static s2 velocityCommand;
-  static s4 positionCommand;
-  static s4 distanceCommand;
-  static s2 onRotation;
-  static u2 zeroOffset;
-
-  static u2 lastPosition;
-
-  static s4 shiftingLimit;
-
-  static u2 velocityAdjust;
-
-  static u1 P;
-  static u1 I;
-  static u1 D;
-
-  static u1 shift;
-
-  static u1 currentLimit;
-
-  static const u1 DeadBand = 50;
-
-  static s4 command;
-
-public:
-	//initializer
-  static void init();
-
-  //main loop updater
-  static void update();
-
- /*
-  * control hardware
-	*/
-
-  //set an amplitude
-  static void setAmplitude(s2);
-
-  //set a velocity
-  static void setVelocity(s2);
-  //get the current velocity command
-  inline static s2 getVelocityCommand() {
-    return velocityCommand;
-  };
-
-
-  //angular position commands
-
-  //set an angular position 
-  static void setPosition(s4);
-  //tell it to go a distance in rotational counts
-  static void setDistance(s4);
-	//get the current angular position
-  inline static s4 getPosition(){return ((s4)onRotation * (1 << DriverConstants::MagnetometerBits)) + (DriverConstants::MagnetometerMax - MLX90363::getAlpha());};
-  //get the current angular position commanded
-	inline static s4 getPositionCommand() {return positionCommand;};
-
-  //get current revolution count
-  inline static s2 getRevolution(){return onRotation;};
-
-
-  //set the current angular position as the zero
-  static void setZero();
-  
-
-  //set to command a phase (stepper motor)
-  inline static void setPhaseMode(){currentMode = Mode::Phase;};
-
-  //set current limit
-  static void setCurrentLimit(u1);
-
-  //set the P value for the position command
-  static inline void setP(u1 p) {P = p;};
-  //get P for position command
-  static inline u1 getP() {return P;};
-  //set the I value for the position command (currently unused)
-  // static inline void setI(u1 i) {I = i;};
-  //set the D value for the position command (currently unused)
-  static inline void setD(u1 d) {D = d;};
-  //get D for position command
-  static inline u1 getD() {return D;};
-  //scaled up value for higher resolution in command 
-  inline static s4 getShiftedCommand(){return command;};
-  //set the shifted amount for scalling the position to be set
-  static inline void setShift(u1 p) {shift = p;};
-  //get the shift ammount
-  static inline u1 getShift() {return shift;};
-
-  //enable or disable servo controller
-  static void setEnable(bool);
-
-  //check if we are actully using the servo controller updates
-  static inline bool isUpdating(){return currentMode != Mode::Init && currentMode != Mode::Phase;};
-
-  //increment or decrement the rotation the servo is on
-  inline static void incrementRotation(const bool up){onRotation += up ? 1 : -1;};
 
 };
 
-};
-
-#endif	/* SERVOCONTROLLER_H */
+#endif /* SERVOCONTROLLER_H */

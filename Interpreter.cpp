@@ -128,14 +128,14 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   if (incomingData[0] == (u1)Command::SetDeadtimes) {
     if (incomingData[1] == 0xF0) {
       //advance to next DeadTime
-      ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes() + 0x11);
+      ThreePhaseDriver::setDeadTimes(ThreePhaseDriver::getDeadTimes() + 0x11);
 
     } else if (incomingData[1] == 0x0F) {
       // decement to last DeadTime
-      ThreePhaseController::setDeadTimes(ThreePhaseController::getDeadTimes() - 0x11);
+      ThreePhaseDriver::setDeadTimes(ThreePhaseDriver::getDeadTimes() - 0x11);
 
     } else if (incomingData[1] == 0xFF) {
-      ThreePhaseController::setDeadTimes(incomingData[2]);
+      ThreePhaseDriver::setDeadTimes(incomingData[2]);
     }
 
     return;
@@ -271,7 +271,7 @@ void Interpreter::sendNormalDataToMaster() {
   //Standard message
   if (current == Mode::Standard){
     *(u2 * const)(&buff[1]) = Roll;
-    *(u2 * const)(&buff[3]) = ThreePhaseController::getVelocity();
+    *(u2 * const)(&buff[3]) = ThreePhasePositionEstimator::getVelocity();
     *(s2 * const)(&buff[5]) = getPosition();
     *(u2 * const)(&buff[7]) = countIncoming;
     buff[9] = (u1)ThreePhaseController::getAmplitude();
@@ -279,7 +279,7 @@ void Interpreter::sendNormalDataToMaster() {
   }
   else if(current == Mode::Calibration){
     *(u2 * const)(&buff[1]) = Roll;
-    *(u2 * const)(&buff[3]) = ThreePhaseController::getLastAplha();
+//    *(u2 * const)(&buff[3]) = ThreePhaseController::getLastAplha();
     // *(u4 * const)(&buff[0]) = Predictor::getPhaseAdvanceAmount();
     // *(u2 * const)(&buff[2]) = ThreePhaseController::getVelocity();
 //    *(u2 * const)(&buff[5]) = ThreePhaseDriver::lastPhase;
@@ -289,7 +289,7 @@ void Interpreter::sendNormalDataToMaster() {
   }
   else if(current == Mode::Test){
     *(u2 * const)(&buff[1]) = Roll;
-    *(u2 * const)(&buff[3]) = ThreePhaseController::getVelocity();
+    *(u2 * const)(&buff[3]) = ThreePhasePositionEstimator::getVelocity();
     *(s2 * const)(&buff[5]) = getPosition();
     *(u2 * const)(&buff[7]) = countIncoming;
     buff[9] = (u1)ThreePhaseController::getAmplitude();
