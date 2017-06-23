@@ -76,7 +76,7 @@ namespace ThreePhaseControllerNamespace {
      *
      * @return current estimate of PhasePosition
      */
-    static ThreePhaseDriver::PhasePosition advance();
+    static ThreePhaseDriver::PhasePosition advance() __attribute__((hot));
 
     /**
      * Uses a delta distance to calculate a new velocity

@@ -195,7 +195,7 @@ public:
    * @param phase
    * @param step
    */
-  static void advanceTo(PhasePosition const phase);
+  static void advanceTo(PhasePosition const phase) __attribute__((hot));
 
   /**
    * Magic number to ensure we don't miss a tick of a phase

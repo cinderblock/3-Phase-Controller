@@ -26,6 +26,7 @@ inline static s2 constexpr abs(s2 num) {
 	return num >= 0 ? num : -num;
 }
 
+inline static void limit(u4& value, u4 MAX, bool forward) __attribute__((hot));
 inline static void limit(u4& value, u4 MAX, bool forward) {
 	while (value >= MAX) {
 		if (forward) {

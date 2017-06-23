@@ -39,7 +39,7 @@ namespace ThreePhaseControllerNamespace {
     /**
      * Called periodically (nominally 31.25kHz) by TIMER 4 ISR
      */
-    static inline void controlLoop();
+    static inline void controlLoop() __attribute__((hot));
     friend void ::TIMER4_OVF_vect();
 
     static u1 magRoll;

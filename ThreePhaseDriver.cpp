@@ -156,6 +156,10 @@ u2 ThreePhaseDriver::getPhasePWM(const u1 step) {
   return ((u4)sin * amplitude + sin + amplitude) >> 8;
 }
 
+inline static void setCompareMatchA(u2 const val) __attribute__((always_inline, hot));
+inline static void setCompareMatchB(u2 const val) __attribute__((always_inline, hot));
+inline static void setCompareMatchC(u2 const val) __attribute__((always_inline, hot));
+
 inline static void setCompareMatchA(u2 const val) {
   TC4H = val >> 8;
   OCR4A = val;
