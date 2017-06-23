@@ -168,6 +168,7 @@ inline static void setCompareMatchB(u2 const val) {
 
 inline static void setCompareMatchC(u2 const val) {
   TC4H = val >> 8;
+  // For some reason, the TIMER4 hardware skips C...
   OCR4D = val;
 }
 

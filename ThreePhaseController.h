@@ -37,7 +37,7 @@ namespace ThreePhaseControllerNamespace {
    */
   class ThreePhaseController {
     /**
-     * Called periodically (nom 31.25kHz) by TIMER 4 ISR
+     * Called periodically (nominally 31.25kHz) by TIMER 4 ISR
      */
     static inline void controlLoop();
     friend void ::TIMER4_OVF_vect();

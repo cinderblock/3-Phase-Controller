@@ -20,7 +20,7 @@ namespace ThreePhaseControllerNamespace {
   using namespace AVR;
 
   /*
-   * Static class for handling the manger
+   * Static class for handling the various servo modes
    */
   class ServoController {
   private:
@@ -35,9 +35,25 @@ namespace ThreePhaseControllerNamespace {
      * Which mode are we currently in
      */
     static Mode currentMode;
+
+    /**
+     * Current command for simple amplitude control
+     */
     static s2 amplitudeCommand;
+
+    /**
+     * Current drive amplitude in higher resolution than we can actually use
+     */
     static s4 driveAmplitudeScaled;
+
+    /**
+     * The current target velocity
+     */
     static s2 velocityCommand;
+
+    /**
+     * The current target position
+     */
     static s4 positionCommand;
 
     /**
@@ -45,6 +61,9 @@ namespace ThreePhaseControllerNamespace {
      */
     static s2 onRotation;
 
+    /**
+     * Used to prevent drive amplitude from going above this number
+     */
     static s4 shiftingLimit;
 
     static u1 P;

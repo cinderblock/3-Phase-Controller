@@ -57,7 +57,7 @@ void ThreePhaseController::controlLoop() {
     return;
   }
 
-  // TODO: more phase advance at higher speeds. Aka FOC.
+  // TODO: more phase advance at higher speeds
   if (isForwardTorque == Config::forward) {
     p += u1(ThreePhaseDriver::StepsPerCycle / 4);
   } else {
