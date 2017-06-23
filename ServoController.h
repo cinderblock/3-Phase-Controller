@@ -39,18 +39,13 @@ namespace ThreePhaseControllerNamespace {
     static s4 driveAmplitudeScaled;
     static s2 velocityCommand;
     static s4 positionCommand;
-    static s4 distanceCommand;
 
     /**
      * Number of full motor mechanical revolutions we've been through
      */
     static s2 onRotation;
 
-    static u2 lastPosition;
-
     static s4 shiftingLimit;
-
-    static u2 velocityAdjust;
 
     static u1 P;
     static u1 I;

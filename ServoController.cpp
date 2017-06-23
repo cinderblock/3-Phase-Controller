@@ -12,15 +12,10 @@ ServoController::Mode ServoController::currentMode;
 s2 ServoController::amplitudeCommand;
 s4 ServoController::driveAmplitudeScaled;
 s2 ServoController::velocityCommand;
-s4 ServoController::distanceCommand;
-
 u2 ServoController::velocityAdjust;
-
 s4 ServoController::positionCommand;
 s4 ServoController::shiftingLimit;
 s2 ServoController::onRotation;
-
-u2 ServoController::lastPosition;
 
 u1 ServoController::P;
 u1 ServoController::I;
@@ -53,8 +48,6 @@ s2 abs2(s2 num) {
 void ServoController::init() {
   ThreePhaseController::init();
 
-  lastPosition = MLX90363::getAlpha();
-
   currentMode = Mode::Init;
 
   onRotation = 0;
@@ -75,19 +68,8 @@ void ServoController::init() {
 }
 
 void ServoController::update() {
-  // This function is called every controlLoop(). It looks at its immediately available
-  // data and calculates a signed amplitude to pass back to the ThreePhaseController.
-
-  //figure out new current position
-  const s2 pos = (s2)MLX90363::getAlpha();
-  s2 delta = (s2)pos - (s2)lastPosition;
-  lastPosition = pos;
-
-  if (delta > (s2)(DriverConstants::MagnetometerMax / 2)) {
-    onRotation++;
-  } else if (delta < -((s2)DriverConstants::MagnetometerMax / 2)) {
-    onRotation--;
-  }
+  // This function is called as often as possible in the main loop.
+  // It looks at its currently available data and calculates a signed amplitude to pass back to the ThreePhaseController
 
   if (currentMode == Mode::Init) {
     // DO NOTHING
