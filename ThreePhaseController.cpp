@@ -51,9 +51,6 @@ void ThreePhaseController::controlLoop() {
   // Advance our position estimate on step in time
   ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance();
 
-  // Let ServoController calculate new amplitude command
-  ServoController::update();
-
   // If we're doing nothing, make sure the outputs are off
   if (isZeroTorque) {
     // TODO: turn off outputs

@@ -75,6 +75,8 @@ void main() {
 
     //main loop
     while (1) {
+      // Let ServoController calculate new amplitude command
+      ServoController::update();
 
       //get any incoming communications
       u1 const * const buff = CommInterface::getIncomingReadBuffer();

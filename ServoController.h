@@ -60,19 +60,13 @@ namespace ThreePhaseControllerNamespace {
 
     static const u1 DeadBand = 50;
 
+  public:
+
     /**
      * Update amplitude command in ThreePhaseController based on current servo target parameters.
-     *
-     * This function is called at ~31.25 kHz by the ThreePhaseController's main update cycle.
      */
     static void update();
 
-    /**
-     * Make ThreePhaseController a friend so that it can
-     */
-    friend class ThreePhaseController;
-
-  public:
     /**
      * Initialize all the hardware. Also run init() functions of lower level software.
      */
