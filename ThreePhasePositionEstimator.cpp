@@ -28,6 +28,7 @@ s2 ThreePhasePositionEstimator::driveVelocity = 0;
 u1 ThreePhasePositionEstimator::adjustVal;
 u1 ThreePhasePositionEstimator::phaseAdvanceRatio;
 s4 ThreePhasePositionEstimator::phaseAdvanceAmount;
+u1 ThreePhasePositionEstimator::mlxReadingsStarted = 0;
 
 inline static s2 constexpr abs(s2 num) {
 	return num >= 0 ? num : -num;
@@ -53,6 +54,7 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
   // Automatically start MLX communications every few ticks
   if (!--mlx) {
     MLX90363::startTransmitting();
+    mlxReadingsStarted++;
     mlx = cyclesPWMPerMLX;
   }
 
@@ -96,6 +98,9 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
 	//         << reading
 	//         << Debug::Printer::Special::End;
 
+  u1 const numberOfCycles = mlxReadingsStarted;
+  mlxReadingsStarted = 0;
+
   const auto position = Lookup::AlphaToPhase(alpha);
 
 	u2 mechanicalPhase = position.getMechanicalPosition();
@@ -119,7 +124,8 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   // it took to get here, we predict how far we would have gone if our estimate was
   // accurate and then directly compare that to the actual mechanical distance travelled.
   // If we're too fast, adjust down. If we're too slow, adjust up.
-	const s2 predictedPhaseChange = (tempVelocity * DriverConstants::PredictsPerValue) >> predictionResolutionShift;
+  // Also handle if we missed data from the MLX because of CRC error or something
+	const s2 predictedPhaseChange = (tempVelocity * DriverConstants::PredictsPerValue * numberOfCycles) >> predictionResolutionShift;
 
 	if (mechChange > predictedPhaseChange) {
 		tempVelocity += adjustVal;
