@@ -54,6 +54,7 @@ void ThreePhaseController::init() {
 
   ThreePhasePositionEstimator::init();
 
+  // Let the controlLoop() run
   enable();
 }
 
