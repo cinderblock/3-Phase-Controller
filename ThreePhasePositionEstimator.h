@@ -56,6 +56,25 @@ namespace ThreePhaseControllerNamespace {
     static s4 phaseAdvanceAmount;
 
     /**
+     * For out internal estimate of position, increase the resolution by some number of bits
+     */
+    constexpr static u1 predictionResolutionShift = 8;
+
+    /**
+     * Number of MLX readings started since last estimate
+     */
+    static u1 mlxReadingsStarted;
+
+    /**
+     * Number of cycles the PWM timer makes per measurement ready from MLX. We pick
+     * a number such that we wait at least 1ms between measurements, otherwise the
+     * data won't be ready.
+     *
+     * = frequency(PWM) * period(MLX) = 32kHz * 1.25ms = 40;
+     */
+    static constexpr u1 cyclesPWMPerMLX = 40;
+
+    /**
      * Converts from magnetometer lookup table numbers to linear numbers
      */
     inline static u2 getMechPhase(u2 phase) {
@@ -83,11 +102,6 @@ namespace ThreePhaseControllerNamespace {
      * @return current estimate of PhasePosition
      */
     static ThreePhaseDriver::PhasePosition advance() __attribute__((hot));
-
-    /**
-     * Uses a delta distance to calculate a new velocity
-     */
-    static s4 nextVelocity(s2);
 
     /**
      * Get the phase advance ratio

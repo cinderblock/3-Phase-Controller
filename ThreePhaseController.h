@@ -42,32 +42,17 @@ namespace ThreePhaseControllerNamespace {
     static inline void controlLoop() __attribute__((hot));
     friend void ::TIMER4_OVF_vect();
 
-    static u1 magRoll;
-    static u2 roll;
-
     volatile static bool enabled;
 
     /**
-     * Number of cycles the PWM timer makes per measurement ready from MLX. We pick
-     * a number such that we wait at least 1ms between measurements, otherwise the
-     * data won't be ready.
-     *
-     * = frequency(PWM) * period(MLX) = 32kHz * 1.25ms = 40;
+     * Are we trying to go forward
      */
-    static constexpr u1 cyclesPWMPerMLX = 40;
-
-    //are we trying to go forward
     static bool isForwardTorque;
-
-    /**
-     * Redundant variable for if amplitude == 0
-     */
-    static bool isZeroTorque;
 
     /**
      * 90 degree phase shift
      */
-    static constexpr u2 output90DegPhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
+    static constexpr u1 output90DegPhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
 
   public:
     /**
@@ -79,14 +64,18 @@ namespace ThreePhaseControllerNamespace {
      * Enable the controller
      */
     inline static void enable() {
-      enabled = true;
+      // Enable Timer4 Overflow Interrupt so that controlLoop runs
+      // Also disables any other Timer4 interrupts but they aren't being used.
+      TIMSK4 = 1 << TOIE4;
     }
 
     /**
      * Disable the controller
      */
     inline static void disable() {
-      enabled = false;
+      // Disable Timer4 Overflow Interrupt
+      // and all the other Timer4 interrupts because none of them are being used
+      TIMSK4 = 0;
     }
 
     /**
@@ -98,16 +87,15 @@ namespace ThreePhaseControllerNamespace {
      */
     class Amplitude {
       bool forward;
-      bool zero;
       u1 amplitude;
       friend class ThreePhaseController;
 
     public:
 
-      inline Amplitude(s2 const t) : forward(t >= 0), zero(t == 0), amplitude(forward ? t : -t) {
+      inline Amplitude(s2 const t) : forward(t >= 0), amplitude(forward ? t : -t) {
       };
 
-      inline Amplitude(const bool fwd, u1 const ampl) : forward(fwd), zero(ampl == 0), amplitude(ampl) {
+      inline Amplitude(const bool fwd, u1 const ampl) : forward(fwd), amplitude(ampl) {
       };
     };
 
@@ -124,12 +112,6 @@ namespace ThreePhaseControllerNamespace {
     static inline s2 getAmplitude() {
       return isForwardTorque ? ThreePhaseDriver::getAmplitude() : -(s2) (ThreePhaseDriver::getAmplitude());
     };
-
-    //get the last measured angular position (by the magnetometer & converted to phase units)
-
-    inline static u2 getMeasuredPosition() {
-      return ThreePhasePositionEstimator::getMeasuredPosition();
-    }
 
   };
 

@@ -6,6 +6,9 @@
 #include "ServoController.h"
 #include "Config.h"
 #include "LookupTable.h"
+#include <MLX90363.h>
+#include <util/delay.h>
+
 // #include "Board.h"
 // #include <iostream>
 // #include <cmath> 
@@ -43,13 +46,22 @@ inline static void limit(u4& value, u4 MAX, bool forward) {
 }
 
 ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
+  // Start at cyclesPWMPerMLX so that we have a whole period before the second reading.
+  // The first reading was started in init();
+  u1 static mlx = cyclesPWMPerMLX;
+
+  // Automatically start MLX communications every few ticks
+  if (!--mlx) {
+    MLX90363::startTransmitting();
+    mlx = cyclesPWMPerMLX;
+  }
 
 	u4 ph = drivePhase;
 	ph += driveVelocity;
 
 	const bool forward = driveVelocity > 0;
 
-	static const u4 MAX = ((u4)DriverConstants::StepsPerCycle) << DriverConstants::drivePhaseValueShift;
+	static constexpr u4 MAX = ((u4)DriverConstants::StepsPerCycle) << predictionResolutionShift;
 
 	// Check if ph(ase) value is out of range
 	limit(ph, MAX, forward);
@@ -63,8 +75,8 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
 	// Check if ph(ase) value is out of range again
 	limit(ph, MAX, forward);
 
-	// if(ph>>DriverConstants::drivePhaseValueShift > DriverConstants::MaskForPhase) Board::LED.on();
-	return (ph >> DriverConstants::drivePhaseValueShift);
+	// if(ph>>predictionResolutionShift > DriverConstants::MaskForPhase) Board::LED.on();
+	return (ph >> predictionResolutionShift);
 }
 
 void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
@@ -99,22 +111,33 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
 		mechChange = mechChange + ((s2)DriverConstants::StepsPerRotation);
 	}
 
-	s4 tempVelocity = nextVelocity(mechChange);
+  // Now we figure out how much to adjust our velocity estimate by to get back in lock
+
+	s4 tempVelocity = driveVelocity;
+
+  // Here, instead of measuring how far we went and dividing by the number of steps
+  // it took to get here, we predict how far we would have gone if our estimate was
+  // accurate and then directly compare that to the actual mechanical distance travelled.
+  // If we're too fast, adjust down. If we're too slow, adjust up.
+	const s2 predictedPhaseChange = (tempVelocity * DriverConstants::PredictsPerValue) >> predictionResolutionShift;
+
+	if (mechChange > predictedPhaseChange) {
+		tempVelocity += adjustVal;
+	} else if (mechChange < predictedPhaseChange) {
+		tempVelocity -= adjustVal;
+	}
+
+  // Since we know these readings are old, do a simple approximation of the needed
+  // phase advance to compensate for the delayed readings and store this value for
+  // direct usage in advance()
+  // (NOTE: This is different from the phase advance achieved with FOC)
 	s4 tempPhaseAdvance = tempVelocity * phaseAdvanceRatio;
 
-	// static const s4 MAX = ((u4)DriverConstants::StepsPerCycle) << DriverConstants::drivePhaseValueShift;
-
-	// if(tempVelocity > 0){
-	// 	if (tempPhaseAdvance > MAX) tempPhaseAdvance %= MAX;
-	// }
-	// else{
-	// 	if (-tempPhaseAdvance > MAX) tempPhaseAdvance %= MAX;
-	// }
-	// tempPhaseAdvance %= MAX;
-
+  // These values are accessed by other parts on interrupts. Turn off interrupts
+  // so that the prediction steps are delayed until the new values are copied over.
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
 		driveVelocity = tempVelocity;
-		drivePhase = u4(position.getPhasePosition()) << DriverConstants::drivePhaseValueShift;
+		drivePhase = u4(position.getPhasePosition()) << predictionResolutionShift;
 		phaseAdvanceAmount = tempPhaseAdvance;
 	}
 
@@ -122,25 +145,25 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
 	lastMecPha = mechanicalPhase;
 }
 
-s4 ThreePhasePositionEstimator::nextVelocity(s2 measuredMechChange) {
+void ThreePhasePositionEstimator::init() {
+  MLX90363::init();
+  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
 
-	s4 tempVelocity = driveVelocity;
+  auto magRoll = MLX90363::getRoll();
 
-	const s2 predictedPhaseChange = (tempVelocity * ((s1)DriverConstants::PredictsPerValue)) >> DriverConstants::drivePhaseValueShift;
+  do {
+    MLX90363::startTransmitting();
+    // Delay long enough to guarantee data is ready
+    _delay_ms(2);
 
-	if (measuredMechChange > predictedPhaseChange) {
-		tempVelocity += adjustVal;
-	} else if (measuredMechChange < predictedPhaseChange) {
-		tempVelocity -= adjustVal;
-	}
-	return tempVelocity;
-}
+    // Loop until we actually receive real data
+  } while (!MLX90363::hasNewData(magRoll));
 
-void ThreePhasePositionEstimator::init(MotorPosition phase) {
+  const auto phase = Lookup::AlphaToPhase(MLX90363::getAlpha());
 
 	driveVelocity = 0;
 	lastMecPha = phase.getMechanicalPosition();
-	drivePhase = (u4)(lastMecPha & DriverConstants::MaskForPhase) << DriverConstants::drivePhaseValueShift;
+	drivePhase = (u4)(phase.getPhasePosition()) << predictionResolutionShift;
 	adjustVal = 5;
 	phaseAdvanceRatio = Config::DefaultPhaseAdvance;
 }
