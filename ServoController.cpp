@@ -7,21 +7,24 @@
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
-ServoController::Mode ServoController::currentMode;
+ServoController::Mode ServoController::servoMode = Mode::Init;
 
 s2 ServoController::amplitudeCommand;
 s4 ServoController::driveAmplitudeScaled;
 s2 ServoController::velocityCommand;
-u2 ServoController::velocityAdjust;
 s4 ServoController::positionCommand;
-s4 ServoController::shiftingLimit;
 s2 ServoController::onRotation;
 
-u1 ServoController::P;
-u1 ServoController::I;
-u1 ServoController::D;
+u1 ServoController::positionP;
+u1 ServoController::positionI;
+u1 ServoController::positionD;
 
-u1 ServoController::shift;
+u1 ServoController::velocityP;
+u1 ServoController::velocityI;
+u1 ServoController::velocityD;
+
+u1 ServoController::positionShift;
+u1 ServoController::velocityShift;
 
 /**
  * Distance function with a wrap around
@@ -48,20 +51,15 @@ s2 abs2(s2 num) {
 void ServoController::init() {
   ThreePhaseController::init();
 
-  currentMode = Mode::Init;
+  servoMode = Mode::Init;
 
   onRotation = 0;
 
-  P = 200;
-  I = 0;
-  D = 0;
+  positionP = 200;
+  positionI = 0;
+  positionD = 0;
 
-  shift = 12;
-
-  //256 is a velocity change of 1 per update
-  velocityAdjust = 20;
-
-  shiftingLimit = (ThreePhaseDriver::maxAmplitude << DriverConstants::drivePhaseValueShift) - velocityAdjust;
+  positionShift = 12;
 
   amplitudeCommand = 0;
   driveAmplitudeScaled = 0;
@@ -71,93 +69,79 @@ void ServoController::update() {
   // This function is called as often as possible in the main loop.
   // It looks at its currently available data and calculates a signed amplitude to pass back to the ThreePhaseController
 
-  if (currentMode == Mode::Init) {
+  if (servoMode == Mode::Init) {
     // DO NOTHING
-  } else if (currentMode == Mode::Amplitude) {
+  } else if (servoMode == Mode::Amplitude) {
     ThreePhaseController::setAmplitude(amplitudeCommand);
 
-  } else if (currentMode == Mode::Velocity) {
+  } else if (servoMode == Mode::Velocity) {
+    static s2 lastVel = 0;
     const s2 vel = ThreePhasePositionEstimator::getVelocity();
 
-    s2 delta = vel - velocityCommand;
+    const s2 velocityDelta = vel - lastVel;
 
-    if ((delta < 0 ? -delta : delta) > DeadBand) {
-      if (delta < 0) {
-        if (driveAmplitudeScaled < shiftingLimit) {
-          driveAmplitudeScaled += velocityAdjust;
-        } else {
-          driveAmplitudeScaled = (ThreePhaseDriver::maxAmplitude << DriverConstants::drivePhaseValueShift);
-        }
-      } else {
-        if (driveAmplitudeScaled > -(s2)shiftingLimit) {
-          driveAmplitudeScaled -= velocityAdjust;
-        } else {
-          driveAmplitudeScaled = -(ThreePhaseDriver::maxAmplitude << DriverConstants::drivePhaseValueShift);
-        }
-      }
-    }
+    const s2 velocityError = vel - velocityCommand;
 
-    ThreePhaseController::setAmplitude((s2)(driveAmplitudeScaled >> DriverConstants::drivePhaseValueShift));
+    s4 command = ThreePhaseController::getAmplitude() + ((velocityError * velocityP + velocityDelta * velocityD) >> velocityShift);
 
-  } else if (currentMode == Mode::Position) {
-//    const s2 vel = ThreePhasePositionEstimator::getVelocity();
-
-    s4 distance = positionCommand - getPosition();
-
-    s4 command = (distance * (s2)P); // + (vel * (s2)D);
-
-    const s4 MAX = ((s4)ThreePhaseDriver::maxAmplitude) << shift;
+    constexpr s4 MAX = ThreePhaseDriver::maxAmplitude;
     if (command > MAX) {
       command = MAX;
     } else if (command < -MAX) {
       command = -MAX;
     }
 
-    ThreePhaseController::setAmplitude((s2)(command >> shift));
-  } else if (currentMode == Mode::Distance) {
-    // s2 pos = ThreePhaseController::getMeasuredPosition();
-    // s2 vel = ThreePhaseController::getVelocity();
+    ThreePhaseController::setAmplitude((s2)command);
 
-    // u1 command = dist(distanceCommand, pos, DriverConstants::StepsPerRotation) * P + vel * D;
+    lastVel = vel;
 
-    // if (command > ThreePhaseController::MaxAmplitude)
-    //   command = ThreePhaseController::MaxAmplitude;
-    // else if (command < -ThreePhaseController::MaxAmplitude)
-    //   command = -ThreePhaseController::MaxAmplitude;
+  } else if (servoMode == Mode::Position) {
 
-    // ThreePhaseController::setAmplitude(command);
-  } else if (currentMode == Mode::Phase) {
-    // return;
+    const s2 vel = ThreePhasePositionEstimator::getVelocity();
+
+    const s4 distance = positionCommand - getPosition();
+
+    s4 command = (distance * positionP + vel * positionD) >> positionShift;
+
+    constexpr s4 MAX = ThreePhaseDriver::maxAmplitude;
+    if (command > MAX) {
+      command = MAX;
+    } else if (command < -MAX) {
+      command = -MAX;
+    }
+
+    ThreePhaseController::setAmplitude((s2)command);
+
   } else {
 
   }
 }
 
 void ServoController::setAmplitude(s2 amplitude) {
-  currentMode = Mode::Amplitude;
+  servoMode = Mode::Amplitude;
 
   amplitudeCommand = amplitude;
 }
 
 void ServoController::setVelocity(s2 velocity) {
-  currentMode = Mode::Velocity;
+  servoMode = Mode::Velocity;
 
   velocityCommand = velocity;
 }
 
 void ServoController::setPosition(s4 position) {
-  currentMode = Mode::Position;
+  servoMode = Mode::Position;
 
   positionCommand = position;
 }
 
 void ServoController::setDistance(s4 dist) {
-  currentMode = Mode::Position;
+  servoMode = Mode::Position;
 
   positionCommand = getPosition() + dist;
 }
 
 void ServoController::setEnable(bool enable) {
   if (!enable)
-    currentMode = Mode::Init;
+    servoMode = Mode::Init;
 }

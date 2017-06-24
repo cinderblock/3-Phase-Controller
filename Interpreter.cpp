@@ -142,15 +142,15 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   }
 
   if (incomingData[0] == (u1)Command::SetDriverAmplitude) {
-    ServoController::setPhaseMode();
-    ThreePhaseDriver::setAmplitude(incomingData[1]);
+//    ServoController::setPhaseMode();
+//    ThreePhaseDriver::setAmplitude(incomingData[1]);
 
     return;
   }
 
   if (incomingData[0] == (u1)Command::SetDriverPosition) {
-    ServoController::setPhaseMode();
-    ThreePhaseDriver::advanceTo((((u2)incomingData[2]) << 8) | (u2)incomingData[1]);
+//    ServoController::setPhaseMode();
+//    ThreePhaseDriver::advanceTo((((u2)incomingData[2]) << 8) | (u2)incomingData[1]);
     return;
   }
 
@@ -166,23 +166,23 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
     return;
   }
 
-  if (incomingData[0] == (u1)Command::SetPDSvalues) {
-    ServoController::setP(incomingData[1]);
-    ServoController::setD(incomingData[2]);
-    ServoController::setShift(incomingData[3]);
+  if (incomingData[0] == (u1)Command::SetPositionPDSvalues) {
+    ServoController::setPositionP(incomingData[1]);
+    ServoController::setPositionD(incomingData[2]);
+    ServoController::setPositionShift(incomingData[3]);
 
     return;
   }
 
-  if (incomingData[0] == (u1)Command::GetPDSvalues){
+  if (incomingData[0] == (u1)Command::GetPositionPDSvalues){
 
     u1 const headerLen = 1;
     u1 const len = 4;
 
-    extraResponse[0] = (u1)Command::GetPDSvalues;
-    extraResponse[1] = ServoController::getP();
-    extraResponse[2] = ServoController::getD();
-    extraResponse[3] = ServoController::getShift();
+    extraResponse[0] = (u1)Command::GetPositionPDSvalues;
+    extraResponse[1] = ServoController::getPositionP();
+    extraResponse[2] = ServoController::getPositionD();
+    extraResponse[3] = ServoController::getPositionShift();
     extraResponse[4] = resolutionShifter;
 
     crc.reset();
