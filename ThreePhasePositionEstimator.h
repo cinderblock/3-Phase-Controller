@@ -16,6 +16,12 @@ namespace ThreePhaseControllerNamespace {
    * we update our position estimate based on an estimate of our current velocity.
    * As some slower regular interval, we get real position readings. Those are used
    * to update our velocity estimates.
+   *
+   * This can be thought of as a software PLL. We're trying to interpolate positions
+   * between actual readings from the magnetometer. If we're running to fast, slow
+   * down our "period". If we're running too slow, speed up our "period". In this
+   * case however, we have a fixed time based and we need to adjust how large our
+   * steps are to match how fast we're really spinning.
    */
   class ThreePhasePositionEstimator {
     /**

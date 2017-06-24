@@ -62,6 +62,8 @@ volatile u2 MLX90363::Z;
 
 volatile u1 MLX90363::err;
 volatile u1 MLX90363::VG;
+
+// Set ROLL to a number that the MLX could never set it to so that handling first roll is easy
 volatile u1 MLX90363::ROLL = 0xff;
 
 

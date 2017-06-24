@@ -17,7 +17,11 @@ using namespace ThreePhaseControllerNamespace;
 
 u4 ThreePhasePositionEstimator::drivePhase;
 u2 ThreePhasePositionEstimator::lastMecPha;
-s2 ThreePhasePositionEstimator::driveVelocity;
+
+// Assume we start at 0 velocity
+s2 ThreePhasePositionEstimator::driveVelocity = 0;
+
+
 u1 ThreePhasePositionEstimator::adjustVal;
 u1 ThreePhasePositionEstimator::phaseAdvanceRatio;
 s4 ThreePhasePositionEstimator::phaseAdvanceAmount;
@@ -84,10 +88,10 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
 
 	u2 mechanicalPhase = position.getMechanicalPosition();
 
-	//find distance traveled in phase
+	// Find distance traveled in phase
 	s2 mechChange = mechanicalPhase - lastMecPha;
 
-	//TODO ensure we are not wrapping in the wrong direction due to high speeds
+	// TODO: ensure we are not wrapping in the wrong direction due to high speeds
 	if (mechChange > (s2)(DriverConstants::StepsPerRotation/2)){
 		mechChange = mechChange - ((s2)DriverConstants::StepsPerRotation);
 	}
