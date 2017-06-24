@@ -34,10 +34,9 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   // Check incoming CRC for failure
   CRC8 crc;
 
-  u1 const * data = incomingData;
-
-  for (u1 i = 0; i < CommInterface::incomingBufferSize; i++)
-    crc.feed(*data++);
+  for (u1 i = 0; i < CommInterface::incomingBufferSize; i++) {
+    crc.feed(incomingData[i]);
+  }
 
   // If non-zero, CRC fail
   if (crc.getCRC()) return;
