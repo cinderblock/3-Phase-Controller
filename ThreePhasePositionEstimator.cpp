@@ -122,7 +122,7 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
 
   // Here, instead of measuring how far we went and dividing by the number of steps
   // it took to get here, we predict how far we would have gone if our estimate was
-  // accurate and then directly compare that to the actual mechanical distance travelled.
+  // accurate and then directly compare that to the actual mechanical distance traveled.
   // If we're too fast, adjust down. If we're too slow, adjust up.
   // Also handle if we missed data from the MLX because of CRC error or something
 	const s2 predictedPhaseChange = (tempVelocity * DriverConstants::PredictsPerValue * numberOfCycles) >> predictionResolutionShift;
