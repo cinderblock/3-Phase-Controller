@@ -34,7 +34,7 @@ namespace Board {
   using AVRss = IOpin<Ports::B, 0>;
 
   inline void setupIO() {
-    MagSel::output(); AIN0::output();
+    MagSel::output();
     
     // Setup "User Defined" hardware lines
     SCLK::output();
@@ -51,8 +51,8 @@ namespace Board {
     MISO::input();
     MISO::on();
   }
-  inline void slaveDeselect() {MagSel::on(); AIN0::on();}
-  inline void slaveSelect  () {MagSel::off(); AIN0::off();}
+  inline void slaveDeselect() {MagSel::on();}
+  inline void slaveSelect  () {MagSel::off();}
 
   /**
    * Check if we're still talking on the SPI bus
