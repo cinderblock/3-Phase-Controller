@@ -18,6 +18,7 @@
 #include "ServoController.h"
 #include "Demo.h"
 #include "Calibration.h"
+#include "Debug.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
@@ -35,13 +36,12 @@ void init() {
   wdt_reset();
   wdt_disable();
 
-
-  // Debug::init();
+  Debug::init();
 
   // Clear the MCU Status Register.  Indicates previous reset's source.
   MCUSR = 0;
 
-  // Set Enable Interupts.
+  // Set Enable Interrupts.
   sei();
 
   // Use the Clock that is outside the AVR++ namespace.
@@ -53,9 +53,6 @@ void init() {
   // Interpret i2c communication interface.
   Interpreter::Init();
 
-  // Init for hardware interface.
-  ServoController::init();
-
   // Turn off led.
   Board::LED::output();
   Board::LED::off();
@@ -66,12 +63,17 @@ void init() {
 /**
  *
  */
-void main() {
-
-  if (Demo::enabled) Demo::main();
-  else if (Calibration::enabled) Calibration::main();
+int main() {
+  if (Calibration::enabled) {
+    Calibration::main();
+  }
+  else
+  if (Demo::enabled) {
+    Demo::main();
+  }
   else {
-    ThreePhaseController::enable();
+    // Init for hardware interface.
+    ServoController::init();
 
     //main loop
     while (1) {

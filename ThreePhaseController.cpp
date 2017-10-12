@@ -31,7 +31,9 @@ bool ThreePhaseController::isForwardTorque;
  * a multiple of this interval to trigger new MLX readings.
  */
 void TIMER4_OVF_vect() {
+  Board::SER::Tx::on();
   ThreePhaseController::controlLoop();
+  Board::SER::Tx::off();
 }
 
 void ThreePhaseController::controlLoop() {

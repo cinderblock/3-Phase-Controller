@@ -21,7 +21,7 @@ namespace ThreePhaseControllerNamespace {
   using namespace AVR;
 
 namespace Demo {
-  constexpr bool enabled = true;
+  constexpr bool enabled = false;
   
   constexpr u1 * const modeLocation = 0;
   constexpr u1 modesMax = 1;

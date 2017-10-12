@@ -83,11 +83,9 @@ namespace ThreePhaseControllerNamespace {
 
   public:
     /**
-     * Initialize private PositionEstimator members
-     *
-     * @param initialPhase
+     * Initialize hardware and internal variables to match initial hardware state
      */
-    static void init(MotorPosition initialPhase);
+    static void init();
 
     /**
      * Handle new position reading from MLX system

@@ -22,6 +22,8 @@ namespace ThreePhaseControllerNamespace {
 class MLX90363 {
  friend void ::SPI_STC_vect();
  static inline void isr();
+
+ static void (*alphaHandler)(u2 const alpha);
  
  /**
   * The fixed message length that the MLX90363 sends
@@ -204,6 +206,10 @@ public:
  static void prepareGET1Message(MessageType const type, const u2 timeout = 0xffff, bool const resetRoll = false);
 
  static constexpr u1 resolutionBits = 14;
+
+ static inline void setAlphaHandler(void (*handler)(u2 const)) {
+   alphaHandler = handler;
+ }
 };
 
 };

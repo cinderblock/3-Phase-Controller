@@ -45,7 +45,7 @@ MCU = atmega32u4
 all: build-lss asm run
 run: dfu-erase dfu-flash dfu-reset
 	
-ASM = #$(CPP:%=%.cpp.S)
+#ASM = $(CPP:%=%.cpp.S)
 
 # Load local settings
 -include local.mk
@@ -54,7 +54,7 @@ uMakerPath ?= uMaker/
 AVRpp_BASEDIR ?= AVR++/
 
 # Force setting certain make flags
-include $(uMakerPath)tools/makeflags.mk
+#include $(uMakerPath)tools/makeflags.mk
 
 # Optional configuration testing for development
 include $(uMakerPath)tools/checks.mk

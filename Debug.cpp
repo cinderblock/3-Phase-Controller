@@ -33,6 +33,8 @@ void Debug::init() {
  
  // Enable transmitter
  UCSR1B = 0b00001000;
+
+ Board::SER::Tx::output();
 }
 
 void Debug::sendByte(const u1 c) {
@@ -61,9 +63,9 @@ void Debug::reportClock() {
 
 void Debug::sendHeader() {
  sendByte(0xff);
+ sendByte(0x00);
  sendByte(0xff);
- sendByte(0xff);
- sendByte(0xee);
+ sendByte(0xA5);
  sendByte(0xff);
  CRC.reset();
 }

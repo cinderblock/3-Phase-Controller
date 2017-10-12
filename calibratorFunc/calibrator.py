@@ -99,7 +99,7 @@ for i in range(max(file['adj'])):
 
 	l.append(value + elecToMech * pow(2, 12))
 
-numPerLine = 20
+numPerLine = 16
 shift = 0
 
 

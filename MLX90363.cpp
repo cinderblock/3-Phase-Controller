@@ -51,6 +51,8 @@ u1 MLX90363::TxBuffer[messageLength];
 u1 MLX90363::RxBuffer[messageLength];
 u1 MLX90363::bufferPosition = messageLength;
 
+void (*MLX90363::alphaHandler)(u2 const alpha) = nullptr;
+
 MLX90363::ResponseState MLX90363::responseState = MLX90363::ResponseState::Init;
 
 
@@ -167,7 +169,7 @@ void MLX90363::handleResponse() {
   handleAlpha();
   responseState = ResponseState::TypeA;
 
-  ThreePhasePositionEstimator::handleNewPositionReading(alpha);
+  if (alphaHandler) alphaHandler(alpha);
 
   return;
  }
