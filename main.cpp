@@ -53,10 +53,6 @@ void init() {
   // Interpret i2c communication interface.
   Interpreter::Init();
 
-  // Turn off led.
-  Board::LED::output();
-  Board::LED::off();
-
   // End of init
 }
 

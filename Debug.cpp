@@ -33,8 +33,6 @@ void Debug::init() {
  
  // Enable transmitter
  UCSR1B = 0b00001000;
-
- Board::SER::Tx::output();
 }
 
 void Debug::sendByte(const u1 c) {

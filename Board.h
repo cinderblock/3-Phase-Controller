@@ -17,76 +17,63 @@ namespace ThreePhaseControllerNamespace {
 using namespace AVR;
 
 namespace Board {
- using LED = IOpin<Ports::B, 7>;
- using VBATS = IOpin<Ports::F, 5>;
- using AIN0 = IOpin<Ports::E, 6>;
+ using LED0 = Output<Ports::F, 4>; // On breakout
+ using LED1 = Output<Ports::D, 5>; // On Simple Controller
+ using VBATS = Input<Ports::D, 4, false>;
+
+ using MagSel = Output<Ports::B, 0, true>;
+
+ using H1 = Input<Ports::E, 6>;
+ using H2 = Input<Ports::B, 7>;
+ using H3 = Input<Ports::B, 4>;
  
- using MagSel = IOpin<Ports::D, 2>;
-
- namespace I2C {
-  using SCL = IOpin<Ports::D, 0>;
-  using SDA = IOpin<Ports::D, 1>;
- };
  namespace SPI {
-  using SCLK = IOpin<Ports::B, 1>;
-  using MOSI = IOpin<Ports::B, 2>;
-  using MISO = IOpin<Ports::B, 3>;
-  using AVRss = IOpin<Ports::B, 0>;
+  using SCLK = Output<Ports::B, 1>;
+  using MOSI = Output<Ports::B, 2>;
+  using MISO = Input<Ports::B, 3>;
 
-  inline void setupIO() {
-    MagSel::output();
-    
-    // Setup "User Defined" hardware lines
-    SCLK::output();
-    MOSI::output();
-
-    // Don't forget the AVR's hardware SS line!
-    // If the AVR's SS is left as an input and it transitions low, SPI hardware
-    // kicked out of master mode.
-    AVRss::on();
-    AVRss::output();
-
-    // SPI hardware does this for us, but do it anyway
-    SCLK::off();
-    MISO::input();
-    MISO::on();
-  }
-  inline void slaveDeselect() {MagSel::on();}
-  inline void slaveSelect  () {MagSel::off();}
+  inline void slaveDeselect() {MagSel::off();}
+  inline void slaveSelect  () {MagSel::on();}
 
   /**
    * Check if we're still talking on the SPI bus
    * @return 
    */
   inline bool isSlaveSelected() {
-   return !MagSel::isHigh();
+   return MagSel::isOn();
   }
  };
+
+ namespace I2C {
+  using SCL = Input<Ports::D, 0>;
+  using SDA = Input<Ports::D, 1>;
+ };
+ 
  namespace SER {
-  using Rx = IOpin<Ports::D, 2>;
-  using Tx = IOpin<Ports::D, 3>;
+  using Rx = Input<Ports::D, 2>;
+  using Tx = Output<Ports::D, 3>;
  };
  namespace DRV {
-  using AH = IOpin<Ports::C, 7>;
-  using BH = IOpin<Ports::B, 6>;
-  using CH = IOpin<Ports::D, 7>;
-  using AL = IOpin<Ports::C, 6>;
-  using BL = IOpin<Ports::B, 5>;
-  using CL = IOpin<Ports::D, 6>;
+  using AH = Output<Ports::C, 7>;
+  using AL = Output<Ports::C, 6>;
+  using BH = Output<Ports::B, 6>;
+  using BL = Output<Ports::B, 5>;
+  using CH = Output<Ports::D, 7>;
+  using CL = Output<Ports::D, 6>;
  };
  namespace SEN {
-  using AS = IOpin<Ports::B, 4>;
-  using BS = IOpin<Ports::F, 4>;
-  using CS = IOpin<Ports::D, 4>;
+  using AS = Input<Ports::F, 5, false>;
+  using BS = Input<Ports::F, 6, false>;
+  using CS = Input<Ports::F, 7, false>;
  };
  namespace MUX {
-  constexpr u1 AS = 0b100011; // ADC11
-  constexpr u1 BS = 0b000100; // ADC4
-  constexpr u1 CS = 0b100000; // ADC8
-  constexpr u1 VBATS = 0b000101; // ADC5
+  constexpr u1 AS = 0b000101; // ADC5
+  constexpr u1 BS = 0b000110; // ADC6
+  constexpr u1 CS = 0b000111; // ADC7
+  constexpr u1 VBATS = 0b100000; // ADC8
  }
  
- constexpr u4 ClockSpeed = F_CPU;
+ constexpr u4 ClockFrequency = F_CPU;
 };
 
 };

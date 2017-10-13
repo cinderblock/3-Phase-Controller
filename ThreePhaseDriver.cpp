@@ -105,14 +105,6 @@ void ThreePhaseDriver::init() {
   Board::DRV::AH::off();
   Board::DRV::BH::off();
   Board::DRV::CH::off();
-
-  // Enable outputs
-  Board::DRV::AL::output();
-  Board::DRV::BL::output();
-  Board::DRV::CL::output();
-  Board::DRV::AH::output();
-  Board::DRV::BH::output();
-  Board::DRV::CH::output();
 }
 
 /**

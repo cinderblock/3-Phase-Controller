@@ -72,7 +72,6 @@ volatile u1 MLX90363::ROLL = 0xff;
 void MLX90363::init() {
  // Setup Slave Select line
  Board::SPI::slaveDeselect();
- Board::SPI::setupIO();
 
  // Setup control registers
  
