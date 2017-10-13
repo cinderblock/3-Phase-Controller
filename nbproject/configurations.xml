@@ -20,6 +20,7 @@
       <itemPath>Demo.h</itemPath>
       <itemPath>DriverConstants.h</itemPath>
       <itemPath>FilebotInterface.h</itemPath>
+      <itemPath>HallWatcher.h</itemPath>
       <itemPath>Interpreter.h</itemPath>
       <itemPath>LookupTable.h</itemPath>
       <itemPath>MLX90363.h</itemPath>
@@ -46,6 +47,7 @@
       <itemPath>Debug.cpp</itemPath>
       <itemPath>Demo.cpp</itemPath>
       <itemPath>FilebotInterface.cpp</itemPath>
+      <itemPath>HallWatcher.cpp</itemPath>
       <itemPath>Interpreter.cpp</itemPath>
       <itemPath>MLX90363.cpp</itemPath>
       <itemPath>ServoController.cpp</itemPath>
@@ -148,6 +150,10 @@
             ex="false"
             tool="1"
             flavor2="0">
+      </item>
+      <item path="HallWatcher.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="HallWatcher.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Interpreter.cpp" ex="false" tool="1" flavor2="0">
       </item>

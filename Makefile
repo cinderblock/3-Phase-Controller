@@ -20,6 +20,8 @@ CPP += FilebotInterface TripleBuffer-impl BlockBuffer-impl
 CPP += Demo
 CPP += Calibration
 
+CPP += HallWatcher
+
 CPP += LookupTable/$(MotorID)
 
 MotorID = Motor1
