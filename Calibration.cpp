@@ -17,6 +17,7 @@
 #include "ThreePhaseDriver.h"
 #include "MLX90363.h"
 #include "Debug.h"
+#include "HallWatcher.h"
 
 using namespace ThreePhaseControllerNamespace;
 using namespace Calibration;
@@ -26,6 +27,7 @@ void Calibration::main() {
   MLX90363::init();
   MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
   ThreePhaseDriver::setAmplitude(amplitude);
+  ThreePhaseDriver::setDeadTimes({1, 1});
 
   auto magRoll = MLX90363::getRoll();
 
@@ -71,7 +73,7 @@ void Calibration::main() {
     // Send data via debug serial port
     SOUT
         << Printer::Special::Start
-        << i << MLX90363::getAlpha()
+        << i << MLX90363::getAlpha() << HallWatcher::getState()
         << Printer::Special::End;
   }
 
