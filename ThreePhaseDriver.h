@@ -227,7 +227,7 @@ public:
        */
       u1 trailing :4;
     };
-    DT (u1 c) : combined(c) {}
+    inline DT (u1 c) : combined(c) {}
     inline DT (u1 lead, u1 trail) : leading(lead), trailing(trail) {}
     union DT operator+ (u1 b) {
       return combined + b;
