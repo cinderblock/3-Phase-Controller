@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   HallWatcher.h
  * Author: Cameron
  *
@@ -20,6 +20,19 @@
 
 ISR(INT6_vect);
 ISR(PCINT0_vect);
+
+/*  this macro call of "ISR"
+ISR(PCINT0_vect) {
+  blah blah blah
+}
+
+...is the same as ...
+
+void __vector_6() __attribute__((interrupt, used));
+void __vector_6() {
+  blah blah blah
+}
+*/
 
 namespace ThreePhaseControllerNamespace {
 
@@ -69,4 +82,3 @@ namespace ThreePhaseControllerNamespace {
 };
 
 #endif /* HALLWATCHER_H */
-

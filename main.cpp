@@ -46,6 +46,7 @@ void init() {
   // Use the Clock that is outside the AVR++ namespace.
   ::Clock::init();
 
+  Board::LED0::on();
   // End of init
 }
 
@@ -53,25 +54,31 @@ void init() {
  *
  */
 int main() {
-  if (Calibration::enabled) {
-    Calibration::main();
-  }
-  else
-  if (Demo::enabled) {
-    Demo::main();
-  }
-  else {
-    // Init for hardware interface.
-    ServoController::init();
+  // if (Calibration::enabled) {
+  //   Calibration::main();
+  // }
+  // else
+  // if (Demo::enabled) {
+  //   Demo::main();
+  // }
+  // else {
+  //   // Init for hardware interface.
+  //   ServoController::init();
+  //
+  //   //main loop
+  //   while (1) {
+  //     // Let ServoController calculate new amplitude command
+  //     ServoController::update();
+  //
+  //
+  //   }
+  // }
 
-    //main loop
-    while (1) {
-      // Let ServoController calculate new amplitude command
-      ServoController::update();
-      
-      
-    }
-  }
+
+  // while (1) {
+  //
+  //
+  // };
 
   //loop in case main loop is disabled
   //allows for interrupts to continue
