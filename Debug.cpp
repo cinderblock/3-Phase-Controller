@@ -16,6 +16,7 @@ using namespace ThreePhaseControllerNamespace;
 using libCameron::CRC8;
 
 Debug::Printer Debug::SOUT;
+libCameron::DecPrintFormatter Debug::dout(&sendByte);
 
 static CRC8 CRC;
 

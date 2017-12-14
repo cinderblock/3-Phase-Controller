@@ -53,6 +53,8 @@ void init() {
  *
  */
 int main() {
+  Debug::dout << "Hello world!\n";
+
   if (Calibration::enabled) {
     Calibration::main();
   }

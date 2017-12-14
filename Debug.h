@@ -9,7 +9,7 @@
 #define	DEBUG_H
 
 #include "Board.h"
-
+#include "DecPrintFormatter.h"
 
 namespace ThreePhaseControllerNamespace {
 
@@ -127,6 +127,7 @@ namespace Debug {
  }
  
  extern Printer SOUT;
+ extern libCameron::DecPrintFormatter dout;
 };
 
 };
