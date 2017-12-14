@@ -11,7 +11,6 @@
 
 #include "ThreePhaseController.h"
 #include "MLX90363.h"
-#include "FilebotInterface.h"
 // #include "Debug.h"
 #include "Clock.h"
 #include "Interpreter.h"
@@ -47,12 +46,6 @@ void init() {
   // Use the Clock that is outside the AVR++ namespace.
   ::Clock::init();
 
-  // i2c interface init
-  CommInterface::init();
-
-  // Interpret i2c communication interface.
-  Interpreter::Init();
-
   // End of init
 }
 
@@ -75,24 +68,8 @@ int main() {
     while (1) {
       // Let ServoController calculate new amplitude command
       ServoController::update();
-
-      //get any incoming communications
-      u1 const * const buff = CommInterface::getIncomingReadBuffer();
-
-      //if there is a communication interpret it
-      if (buff) {
-        //interpret the new communication
-        Interpreter::interpretFromMaster(buff);
-
-        //prepare for next communication
-        CommInterface::reserveNextReadBuffer();
-      }
-
-      //send whatever data we have back to master
-      Interpreter::sendNormalDataToMaster();
-
-      //silly fix in case of an error state
-      CommInterface::fixWriteBuffer();
+      
+      
     }
   }
 

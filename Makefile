@@ -8,14 +8,14 @@
 C = 
 
 # List of CPP file basenames to build
-CPP = main Board Debug Timer Clock Interpreter
+CPP = main Board Debug Timer Clock
 
 CPP += ThreePhaseDriver
 CPP += MLX90363 ThreePhasePositionEstimator ThreePhaseController
 
 CPP += ServoController
 
-CPP += FilebotInterface TripleBuffer-impl BlockBuffer-impl
+CPP += TripleBuffer-impl BlockBuffer-impl
 
 CPP += Demo
 CPP += Calibration
