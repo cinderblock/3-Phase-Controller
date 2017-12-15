@@ -44,7 +44,7 @@ namespace ThreePhaseControllerNamespace {
     using H3 = Board::H3; // PCINT4
 
     // state is the three bits representing the three hall sensor state
-    static u1 state;
+    static volatile u1 state;
 
     static inline void checkH1() {
       if (H1::isActive())

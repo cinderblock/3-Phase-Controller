@@ -18,9 +18,12 @@
 #include "Demo.h"
 #include "Calibration.h"
 #include "Debug.h"
+#include "HallWatcher.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
+
+#include "mainHelper.inc"
 
 /**
  * All the init functions should go in here.
@@ -40,6 +43,9 @@ void init() {
   // Clear the MCU Status Register.  Indicates previous reset's source.
   MCUSR = 0;
 
+  // Set up the hall sensor interrupts
+  HallWatcher::init();
+
   // Set Enable Interrupts.
   sei();
 
@@ -47,8 +53,12 @@ void init() {
   ::Clock::init();
 
   Board::LED0::on();
+
+  Debug::dout << 12345 << PSTR("Hello World!!\r\n");
   // End of init
 }
+
+Clock::MicroTime nextTime;
 
 /**
  *
@@ -74,11 +84,16 @@ int main() {
   //   }
   // }
 
+  Clock::readTime(nextTime);
 
-  // while (1) {
-  //
-  //
-  // };
+  displayHallState();
+
+  while (1) {
+    nextTime += 1000_ms;
+    while (!nextTime.isInPast());
+
+    Debug::dout << HallWatcher::getState() << PSTR(" is hall state\r\n");
+  }
 
   //loop in case main loop is disabled
   //allows for interrupts to continue
