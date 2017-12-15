@@ -26,8 +26,8 @@ CPP += LookupTable/$(MotorID)
 
 MotorID = Motor1
 
-AVRpp_SRC = TimerTimeout #ADC USART DecPrintFormatter gccGuard
-libCameron_SRC = CRC8
+AVRpp_SRC = TimerTimeout #ADC USART  gccGuard
+libCameron_SRC = CRC8 DecPrintFormatter
 
 # Select specific LUFA source files to compile like this
 #LUFA_SRC = LUFA/Drivers/USB/Class/Common/HIDParser.c
