@@ -64,33 +64,20 @@ Clock::MicroTime nextTime;
  *
  */
 int main() {
-  // if (Calibration::enabled) {
-  //   Calibration::main();
-  // }
-  // else
-  // if (Demo::enabled) {
-  //   Demo::main();
-  // }
-  // else {
-  //   // Init for hardware interface.
-  //   ServoController::init();
-  //
-  //   //main loop
-  //   while (1) {
-  //     // Let ServoController calculate new amplitude command
-  //     ServoController::update();
-  //
-  //
-  //   }
-  // }
+
+  // displayHallState();
+
+
+  signed int command = 10;
+
 
   Clock::readTime(nextTime);
-
-  displayHallState();
-
   while (1) {
-    nextTime += 1000_ms;
-    while (!nextTime.isInPast());
+
+    nextTime += 1_ms;
+    while (!nextTime.isInPast()) {
+
+    }
 
     Debug::dout << HallWatcher::getState() << PSTR(" is hall state\r\n");
   }

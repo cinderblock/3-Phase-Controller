@@ -15,3 +15,24 @@ void displayHallState() {
     Debug::dout << lastState << PSTR(" is hall state\r\n");
   }
 }
+
+
+// if (Calibration::enabled) {
+//   Calibration::main();
+// }
+// else
+// if (Demo::enabled) {
+//   Demo::main();
+// }
+// else {
+//   // Init for hardware interface.
+//   ServoController::init();
+//
+//   //main loop
+//   while (1) {
+//     // Let ServoController calculate new amplitude command
+//     ServoController::update();
+//
+//
+//   }
+// }
