@@ -66,9 +66,9 @@ Clock::MicroTime nextTime;
 int main() {
 
   // displayHallState();
+  Debug::dout << PSTR("Main loop\r\n");
 
-
-  signed int command = 10;
+  // signed int command = 10;
 
 
   Clock::readTime(nextTime);
@@ -77,9 +77,13 @@ int main() {
     nextTime += 1_ms;
     while (!nextTime.isInPast()) {
 
+      // int state = HallWatcher::getState();
+      Debug::dout << HallWatcher::getState() << PSTR(" is hall state\r\n");
+
+      // Board::DRV::AH::on();
+      // Board::DRV::BL::off();
     }
 
-    Debug::dout << HallWatcher::getState() << PSTR(" is hall state\r\n");
   }
 
   //loop in case main loop is disabled

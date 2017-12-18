@@ -22,7 +22,7 @@ volatile u1 HallWatcher::state = 0b111;
 
 void INT6_vect() {
   HallWatcher::checkH1();
-  
+
 }
 
 void PCINT0_vect() {

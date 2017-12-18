@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   Board.h
  * Author: bztacklind
  *
@@ -26,7 +26,7 @@ namespace Board {
  using H1 = Input<Ports::E, 6>;
  using H2 = Input<Ports::B, 7>;
  using H3 = Input<Ports::B, 4>;
- 
+
  namespace SPI {
   using SCLK = Output<Ports::B, 1>;
   using MOSI = Output<Ports::B, 2>;
@@ -37,7 +37,7 @@ namespace Board {
 
   /**
    * Check if we're still talking on the SPI bus
-   * @return 
+   * @return
    */
   inline bool isSlaveSelected() {
    return MagSel::isOn();
@@ -48,11 +48,12 @@ namespace Board {
   using SCL = Input<Ports::D, 0>;
   using SDA = Input<Ports::D, 1>;
  };
- 
+
  namespace SER {
   using Rx = Input<Ports::D, 2>;
   using Tx = Output<Ports::D, 3>;
  };
+
  namespace DRV {
   using AH = Output<Ports::C, 7>;
   using AL = Output<Ports::C, 6>;
@@ -61,18 +62,20 @@ namespace Board {
   using CH = Output<Ports::D, 7>;
   using CL = Output<Ports::D, 6>;
  };
+
  namespace SEN {
   using AS = Input<Ports::F, 5, false>;
   using BS = Input<Ports::F, 6, false>;
   using CS = Input<Ports::F, 7, false>;
  };
+
  namespace MUX {
   constexpr u1 AS = 0b000101; // ADC5
   constexpr u1 BS = 0b000110; // ADC6
   constexpr u1 CS = 0b000111; // ADC7
   constexpr u1 VBATS = 0b100000; // ADC8
  }
- 
+
  constexpr u4 ClockFrequency = F_CPU;
 };
 
