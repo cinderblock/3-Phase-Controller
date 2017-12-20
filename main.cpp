@@ -52,7 +52,7 @@ void init() {
   // Use the Clock that is outside the AVR++ namespace.
   ::Clock::init();
 
-  Board::LED0::on();
+  Board::LED0::off(); // lED0 is used in debug routines.
 
   Debug::dout << 12345 << PSTR("Hello World!!\r\n");
   // End of init
@@ -77,8 +77,19 @@ int main() {
     nextTime += 1_ms;
     while (!nextTime.isInPast()) {
 
-      // int state = HallWatcher::getState();
-      Debug::dout << HallWatcher::getState() << PSTR(" is hall state\r\n");
+      int state = HallWatcher::getState();
+
+      if (state % 2 == 0){ //even
+        Board::LED1::on();
+        Debug::dout << state << PSTR(" is even\r\n");
+        Board::DRV::AH::on();
+        Board::DRV::BL::off();
+      }else{
+        Board::LED1::off();
+        Debug::dout << state  << PSTR(" is odd\r\n");
+      }
+
+      // Debug::dout << state << PSTR(" is hall state\r\n");
 
       // Board::DRV::AH::on();
       // Board::DRV::BL::off();

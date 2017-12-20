@@ -17,6 +17,17 @@ void displayHallState() {
 }
 
 
+
+//
+// if (state % 2 == 0){ //even
+//   Board::LED1::on();
+//   Debug::dout << state << PSTR(" is even\r\n");
+// }else{
+//   Board::LED1::off();
+//   Debug::dout << state  << PSTR(" is odd\r\n");
+// }
+
+
 // if (Calibration::enabled) {
 //   Calibration::main();
 // }
