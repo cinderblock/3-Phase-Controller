@@ -24,6 +24,9 @@ CPP += HallWatcher
 
 CPP += LookupTable/$(MotorID)
 
+# This should be compiled by AVR++ but it's a little broken so do this instead.
+CPP += AVR++/gccGuard
+
 MotorID = Motor1
 
 AVRpp_SRC = TimerTimeout #ADC USART  gccGuard
