@@ -5,15 +5,15 @@
 ## here. Just variables, or overrides, that the included helper makefiles will use.
 
 # List of C file basenames to build
-C = 
+C =
 
 # List of CPP file basenames to build
-CPP = main Board Debug Timer Clock
+CPP = main Board Debug Timer Clock commutation
 
 CPP += ThreePhaseDriver
-CPP += MLX90363 ThreePhasePositionEstimator ThreePhaseController
+CPP += MLX90363 ThreePhasePositionEstimator #ThreePhaseController
 
-CPP += ServoController
+CPP += #ServoController
 
 CPP += TripleBuffer-impl BlockBuffer-impl
 
@@ -49,7 +49,7 @@ MCU = atmega32u4
 
 all: build-lss run
 run: dfu-erase dfu-flash dfu-reset
-	
+
 #ASM = $(CPP:%=%.cpp.S)
 
 # Load local settings

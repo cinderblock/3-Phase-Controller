@@ -76,6 +76,7 @@ namespace ThreePhaseControllerNamespace {
     inline static u1 getState() {
       return state;
     }
+
   private:
 
   };

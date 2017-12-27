@@ -1,10 +1,10 @@
-/* 
+/*
  * File:   ThreePhaseController.h
  * Author: Cameron
  *
  * Created on October 22, 2015, 2:21 AM
- * 
- * Takes in an amplitude to be commanded 
+ *
+ * Takes in an amplitude to be commanded
  * handles input from predictor
  * outputs to the driver (hardware)
  */
@@ -80,9 +80,9 @@ namespace ThreePhaseControllerNamespace {
 
     /**
      * Abstraction around possible amplitude values.
-     * 
+     *
      * Amplitude is an 8-bit number + a direction.
-     * 
+     *
      * We also store zero for speed. (Maybe this should not be done)
      */
     class Amplitude {

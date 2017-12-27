@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   ThreePhaseController.cpp
  * Author: Cameron
- * 
+ *
  * Created on October 22, 2015, 2:21 AM
  */
 
@@ -19,6 +19,7 @@
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
+#error 2
 
 volatile bool ThreePhaseController::enabled = false;
 bool ThreePhaseController::isForwardTorque;

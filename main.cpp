@@ -19,11 +19,18 @@
 #include "Calibration.h"
 #include "Debug.h"
 #include "HallWatcher.h"
+#include "commutation.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
 #include "mainHelper.inc"
+
+// timer overflow interrupt for generating debug trigger
+void TIMER4_OVF_vect() {
+  Board::LED1::on();
+  Board::LED1::off();
+}
 
 /**
  * All the init functions should go in here.
@@ -40,11 +47,17 @@ void init() {
 
   Debug::init();
 
+  // Set up the driver pins
+  ThreePhaseDriver::init();
+
   // Clear the MCU Status Register.  Indicates previous reset's source.
   MCUSR = 0;
 
   // Set up the hall sensor interrupts
   HallWatcher::init();
+
+  // Temporary enable timer overflow interrupt for generating debug trigger
+  TIMSK4 = 1 << TOIE4;
 
   // Set Enable Interrupts.
   sei();
@@ -60,6 +73,7 @@ void init() {
 
 Clock::MicroTime nextTime;
 
+
 /**
  *
  */
@@ -72,30 +86,24 @@ int main() {
 
 
   Clock::readTime(nextTime);
+  setPWM(16);
   while (1) {
 
+  // asSoonasButtonPushed
+
+
     nextTime += 1_ms;
+
     while (!nextTime.isInPast()) {
+      // Do things here while we're waiting for the 1kHz tick
 
-      int state = HallWatcher::getState();
-
-      if (state % 2 == 0){ //even
-        Board::LED1::on();
-        Debug::dout << state << PSTR(" is even\r\n");
-        Board::DRV::AH::on();
-        Board::DRV::BL::off();
-      }else{
-        Board::LED1::off();
-        Debug::dout << state  << PSTR(" is odd\r\n");
-      }
-
-      // Debug::dout << state << PSTR(" is hall state\r\n");
-
-      // Board::DRV::AH::on();
-      // Board::DRV::BL::off();
+      // Cameron added this for clarity
+      printHallStateIfChanged();
     }
 
-  }
+    // Do things here at 1Khz
+
+  } // end main loop
 
   //loop in case main loop is disabled
   //allows for interrupts to continue
