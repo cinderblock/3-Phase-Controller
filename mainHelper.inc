@@ -1,5 +1,6 @@
 
 
+
 void printHallStateIfChanged();
 
 // Use this to test the operation of the Hall sensors.
@@ -22,6 +23,17 @@ void printHallStateIfChanged() {
 
   lastState = state;
   Debug::dout << PSTR("New Hall State: ") << state << '\r' << '\n';
+}
+
+void holdForButton(){
+  Debug::dout << PSTR("Holding until button is pressed.\r\n");
+
+  while (Board::Sw1::isActive());  // hang here
+  while (!Board::Sw1::isActive());  // hang here
+  // Debug::dout << PSTR("Armed, release button to file.\r\n");
+
+  Debug::dout << PSTR("done.\r\n");
+
 }
 
 

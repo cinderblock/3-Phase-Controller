@@ -82,11 +82,14 @@ int main() {
   // displayHallState();
   Debug::dout << PSTR("Main loop\r\n");
 
+  holdForButton();
+  //doSquarePulse();
+
   // signed int command = 10;
 
 
   Clock::readTime(nextTime);
-  setPWM(16);
+  setPWM(255);
   while (1) {
 
   // asSoonasButtonPushed
