@@ -21,6 +21,9 @@ namespace Board {
  using LED1 = Output<Ports::D, 5>; // On Simple Controller
  using VBATS = Input<Ports::D, 4, false>;
 
+ using Sw1 = Input<Ports::F, 1>; // start switch pin
+
+
  using MagSel = Output<Ports::B, 0, true>;
 
  using H1 = Input<Ports::E, 6>;
