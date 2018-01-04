@@ -91,13 +91,22 @@ void ThreePhaseDriver::init() {
   OCR4C = 0xff;
 
   // Start the timer
+
   /**
    * TCCR4B
    * PWM4X PSR4 DTPS41 DTPS40 CS43 CS42 CS41 CS40
    * 0b  0    1      0      0    0    0    0    1
+   * The CS4n bits set the clock divider and start the timer.
+   * A value of "1" in CS4x equates to ~31kHz PWM frequency
+   * A value of "3" (0b11) equates to ~7.8kHz PWM frequency
    */
 
+  // 31kHz
   TCCR4B = 0b01000001;
+
+  // 7.8kHz
+  // TCCR4B = 0b01000011;
+
   // Turn everything off
   Board::DRV::AL::off();
   Board::DRV::BL::off();
