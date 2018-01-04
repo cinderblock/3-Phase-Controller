@@ -34,9 +34,18 @@ void setPWM(signed int amplitude) {
   updateCommutation();
 }
 
+volatile u1 overrideHallState = 0;
+
+void setOverrideHallState(u1 state) {
+  overrideHallState = state;
+}
 
 void updateCommutation() {
   unsigned int hallState = HallWatcher::getState();
+
+  if (overrideHallState) {
+    hallState = overrideHallState;
+  }
 
   // Bail if bad hall state
   if (hallState == 0 || hallState >= 7) return;
