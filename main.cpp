@@ -74,6 +74,18 @@ void init() {
 Clock::MicroTime nextTime;
 
 
+
+void printHallStateAndNumberIfHallChanged(u2 number) {
+  u1 static lastState = HallWatcher::getState();
+
+  const u1 state = HallWatcher::getState();
+
+  if (state == lastState) return;
+
+  lastState = state;
+  Debug::dout << PSTR("New Hall State: ") << state << ',' << number << '\r' << '\n';
+}
+
 /**
  *
  */
@@ -82,27 +94,37 @@ int main() {
   // displayHallState();
   Debug::dout << PSTR("Main loop\r\n");
 
-  holdForButton();
+  // holdForButton();
   //doSquarePulse();
 
   // signed int command = 10;
 
 
   Clock::readTime(nextTime);
-  setPWM(255);
+  ThreePhaseDriver::setDeadTimes(0xff);
+  setPWM(80);
+
+  u2 hallTest = ThreePhaseDriver::StepsPerCycle / 4;
+
   while (1) {
-
-  // asSoonasButtonPushed
-
-
-    nextTime += 1_ms;
+    nextTime += 500_us;
 
     while (!nextTime.isInPast()) {
       // Do things here while we're waiting for the 1kHz tick
 
       // Cameron added this for clarity
-      printHallStateIfChanged();
+      // printHallStateIfChanged();
+      printHallStateAndNumberIfHallChanged(hallTest);
+      // Debug::dout << PSTR("Testing hall state: ") << hallTest << PSTR("\r\n");
     }
+
+    // setOverrideHallState(hallTest);
+    ThreePhaseDriver::advanceTo(hallTest);
+    updateCommutation();
+    // holdForButton();
+    // _delay_ms(4);
+    hallTest += 3;
+    while (hallTest >= 768) hallTest -= 768;
 
     // Do things here at 1Khz
 
