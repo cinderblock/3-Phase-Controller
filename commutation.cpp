@@ -43,6 +43,7 @@ void updateCommutation() {
 
   //Debug::dout << PSTR("at updateCommutation\r\n");
   ThreePhaseDriver::PhasePosition angle = command[hallState];
+  //angle = 256;  // force to a fixed value for testing.
 
   Debug::dout << PSTR("angleBDC is ") << angle << PSTR("\n\r");
 
