@@ -28,6 +28,9 @@ void printHallStateIfChanged() {
 void holdForButton(){
   Debug::dout << PSTR("Holding until button is pressed.\r\n");
 
+  while (!Board::Sw1::isActive());  // hang here
+  _delay_ms(100);
+  while (!Board::Sw1::isActive());  // hang here
   while (Board::Sw1::isActive());  // hang here
   while (!Board::Sw1::isActive());  // hang here
   // Debug::dout << PSTR("Armed, release button to file.\r\n");
