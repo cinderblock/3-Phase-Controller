@@ -48,9 +48,9 @@ namespace ThreePhaseControllerNamespace {
 
     static inline void checkH1() {
       if (H1::isActive())
-        state |= 1 << 0;
+        state |= 1 << 2;
       else
-        state &= ~(1 << 0);
+        state &= ~(1 << 2);
     }
 
     static inline void checkH2() {
@@ -62,9 +62,9 @@ namespace ThreePhaseControllerNamespace {
 
     static inline void checkH3() {
       if (H3::isActive())
-        state |= 1 << 2;
+        state |= 1 << 0;
       else
-        state &= ~(1 << 2);
+        state &= ~(1 << 0);
     }
 
     friend void ::INT6_vect();
