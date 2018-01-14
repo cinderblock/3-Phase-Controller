@@ -26,9 +26,9 @@ namespace Board {
 
  using MagSel = Output<Ports::B, 0, true>;
 
- using H1 = Input<Ports::E, 6>;
- using H2 = Input<Ports::B, 7>;
- using H3 = Input<Ports::B, 4>;
+ using H1 = Input<Ports::E, 6, false, true>;
+ using H2 = Input<Ports::B, 7, false, true>;
+ using H3 = Input<Ports::B, 4, false, true>;
 
  namespace SPI {
   using SCLK = Output<Ports::B, 1>;
