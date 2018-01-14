@@ -1,4 +1,4 @@
-/**
+ /**
  * File:   main.cpp
  * Author: btacklind
  *
@@ -102,9 +102,13 @@ int main() {
 
   Clock::readTime(nextTime);
   ThreePhaseDriver::setDeadTimes(0xff);
-  setPWM(80);
+  // ThreePhaseDriver::setAmplitude(255); // out of 0 to 255
+  setPWM(-255);  // out of +/- 255
+
 
   u2 hallTest = ThreePhaseDriver::StepsPerCycle / 4;
+  u2 constexpr fixedAngle = 704;
+  hallTest = fixedAngle;
 
   while (1) {
     nextTime += 500_us;
@@ -113,18 +117,29 @@ int main() {
       // Do things here while we're waiting for the 1kHz tick
 
       // Cameron added this for clarity
-      // printHallStateIfChanged();
-      printHallStateAndNumberIfHallChanged(hallTest);
+      printHallStateIfChanged();
+      // printHallStateAndNumberIfHallChanged(hallTest);
       // Debug::dout << PSTR("Testing hall state: ") << hallTest << PSTR("\r\n");
     }
 
     // setOverrideHallState(hallTest);
-    ThreePhaseDriver::advanceTo(hallTest);
-    updateCommutation();
-    // holdForButton();
+    Debug::dout << hallTest << PSTR("\r\n");
+    // ThreePhaseDriver::advanceTo(hallTest);
+    //updateCommutation();
+    holdForButton();
+
+    // hallTest = ((hallTest != 704) ? 704 : 576);
+
     // _delay_ms(4);
-    hallTest += 3;
+
+
+    hallTest += 128;
     while (hallTest >= 768) hallTest -= 768;
+
+    // hallTest += 3;
+    // while (hallTest >= 768) hallTest -= 768;
+    //hallTest -= 3;
+    //while (hallTest <= 0) hallTest += 768;
 
     // Do things here at 1Khz
 

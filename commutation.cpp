@@ -42,7 +42,7 @@ void setOverrideHallState(u1 state) {
 
 void updateCommutation() {
   // disable this function for now to test other things
-  return;
+  // return;
 
 
 
