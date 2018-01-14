@@ -3,6 +3,8 @@
 
 void printHallStateIfChanged();
 
+
+
 // Use this to test the operation of the Hall sensors.
 // It will get stuck here.
 // state 7 and 0 are invalid.
@@ -13,6 +15,8 @@ void displayHallState() {
     printHallStateIfChanged();
   }
 }
+
+
 
 void printHallStateIfChanged() {
   u1 static lastState = HallWatcher::getState();
@@ -25,14 +29,16 @@ void printHallStateIfChanged() {
   Debug::dout << PSTR("New Hall State: ") << state << '\r' << '\n';
 }
 
-void holdForButton(){
-  Debug::dout << PSTR("Holding until button is pressed.\r\n");
 
-  while (!Board::Sw1::isActive());  // hang here
+
+void holdForButton(){
+  // Debug::dout << PSTR("Holding .\r\n");
+
+  while (!Board::Sw1::isActive()) printHallStateIfChanged();  // hang here
   _delay_ms(100);
-  while (!Board::Sw1::isActive());  // hang here
-  while (Board::Sw1::isActive());  // hang here
-  while (!Board::Sw1::isActive());  // hang here
+  while (!Board::Sw1::isActive()) printHallStateIfChanged();  // hang here
+  while (Board::Sw1::isActive()) printHallStateIfChanged();  // hang here
+  while (!Board::Sw1::isActive()) printHallStateIfChanged();  // hang here
   // Debug::dout << PSTR("Armed, release button to file.\r\n");
 
   Debug::dout << PSTR("done.\r\n");
