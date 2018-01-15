@@ -1,5 +1,5 @@
 
-
+#include "Clock.h"
 
 void printHallStateIfChanged();
 
@@ -30,19 +30,36 @@ void printHallStateIfChanged() {
 }
 
 
+// Get stuck here waiting for a button press.
+// Make sure you keep outputting Hall state chanes (if thast is needed).
+// Once a button presss is detected, wait a bit to make sure it is real.
+// Then you can go back to let the next thing happen.
+void holdUntilButtonIsStateForPeriodAndDoThing(bool active, Clock::MicroTime const debounce = 20_ms, void (*thingToDoWhileWeWait)() = &printHallStateIfChanged) {
 
-void holdForButton(){
-  // Debug::dout << PSTR("Holding .\r\n");
+  Clock::MicroTime returnTime;
 
-  while (!Board::Sw1::isActive()) printHallStateIfChanged();  // hang here
-  _delay_ms(100);
-  while (!Board::Sw1::isActive()) printHallStateIfChanged();  // hang here
-  while (Board::Sw1::isActive()) printHallStateIfChanged();  // hang here
-  while (!Board::Sw1::isActive()) printHallStateIfChanged();  // hang here
-  // Debug::dout << PSTR("Armed, release button to file.\r\n");
+  while(true) {
 
-  Debug::dout << PSTR("done.\r\n");
+    // button has not been pressed yet
+    while (Board::Sw1::isActive() != active) thingToDoWhileWeWait();  // hang here but keep checking halls
+    // whoo hoo something has happened on the button.
 
+    Clock::readTime(returnTime);
+    returnTime += debounce;
+
+    do {
+      if (returnTime.isInPast()) return;  //  all done
+      thingToDoWhileWeWait();
+    } while (Board::Sw1::isActive() == active);
+
+    //  If we get here, that means button was released before debounce period. Loop
+  }
+
+}
+
+void holdUntilButtonFallingEdge() {
+  holdUntilButtonIsStateForPeriodAndDoThing(false, 50_ms, &printHallStateIfChanged);
+  holdUntilButtonIsStateForPeriodAndDoThing(true, 50_ms, &printHallStateIfChanged);  // down time
 }
 
 
