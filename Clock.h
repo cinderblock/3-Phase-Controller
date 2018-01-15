@@ -102,6 +102,12 @@ public:
    return *this < now;
   }
 
+  inline bool isInFuture() const {
+   MicroTime now;
+   readTime(now);
+   return *this > now;
+  }
+
  };
 
  /**
