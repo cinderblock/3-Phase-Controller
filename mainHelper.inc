@@ -10,6 +10,11 @@ void doSinePulse();
 
 // This ditty commands a sequence of outputs to make a demo pulse to the bed
 void doSinePulse(s2 amplitude){
+  constexpr float freq = 2;
+  constexpr float maxTime = 1 * 1000; //
+  constexpr float PI = 3.14159;
+  constexpr float omegaTerm = 1000 / (2*PI*freq);
+
   constexpr u2 maxAmpl = 255 - 30;
 
   if (amplitude >  maxAmpl) amplitude =  maxAmpl;
@@ -19,8 +24,7 @@ void doSinePulse(s2 amplitude){
   Clock::readTime(nextTime);
 
   u2 step = 0;
-  constexpr float omegaTerm = 318.3099;
-  
+
 
   do {
     nextTime += 1_ms;
@@ -32,7 +36,7 @@ void doSinePulse(s2 amplitude){
 
     ThreePhaseDriver::setAmplitude(bang);
 
-  } while (step < 2000);
+  } while (step < maxTime);
 
 } // sin test
 
