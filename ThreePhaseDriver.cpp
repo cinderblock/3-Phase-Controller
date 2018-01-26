@@ -28,7 +28,7 @@ void ThreePhaseDriver::init() {
   AVR::Clock::enablePLL();
   AVR::Clock::waitForPLL();
 
-  // Turn off interrupts just in case
+  // Turn off all timer 4 interrupts just in case
   TIMSK4 = 0;
 
   // Setup the timer but stopped.
