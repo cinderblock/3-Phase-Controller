@@ -43,6 +43,10 @@ void HallWatcher::init() {
   // Enable pin change interupts in general
   PCICR = 0b00000001;
 
+  checkAndUpdate();
+}
+
+void HallWatcher::checkAndUpdate() {
   checkH1();
   checkH2();
   checkH3();

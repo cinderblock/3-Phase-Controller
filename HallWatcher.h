@@ -72,6 +72,7 @@ namespace ThreePhaseControllerNamespace {
 
   public:
     static void init();
+    static void checkAndUpdate();
 
     inline static u1 getState() {
       return state;
