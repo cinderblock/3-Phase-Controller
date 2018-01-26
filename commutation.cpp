@@ -59,14 +59,14 @@ void updateCommutation() {
   ThreePhaseDriver::PhasePosition angle = command[hallState];
   //angle = 256;  // force to a fixed value for testing.
 
-  Debug::dout << PSTR("Converted hall state is angle: ") << angle << PSTR("\r\n");
+  // Debug::dout << PSTR("Converted hall state is angle: ") << angle << PSTR("\r\n");
 
   if (forward) {
     angle += ThreePhaseDriver::StepsPerCycle / 4;
   } else {
     angle -= ThreePhaseDriver::StepsPerCycle / 4;
   }
-  Debug::dout << PSTR("Angle with 90deg phase shift:  ") << angle << PSTR("\r\n");
+  // Debug::dout << PSTR("Angle with 90deg phase shift:  ") << angle << PSTR("\r\n");
   // Debug::dout << PSTR("angle is ") << ThreePhaseDriver::StepsPerCycle / 4 << PSTR("\r\n");
 
   ThreePhaseDriver::advanceTo(angle);
