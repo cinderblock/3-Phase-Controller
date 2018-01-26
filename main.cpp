@@ -26,12 +26,6 @@ using namespace ThreePhaseControllerNamespace;
 
 #include "mainHelper.inc"
 
-// timer overflow interrupt for generating debug trigger
-void TIMER4_OVF_vect() {
-  Board::LED1::on();
-  Board::LED1::off();
-}
-
 /**
  * All the init functions should go in here.
  * gcc will automatically call it for us because of the constructor attribute.
@@ -56,11 +50,24 @@ void init() {
   // Set up the hall sensor interrupts
   HallWatcher::init();
 
-  // Temporary enable timer overflow interrupt for generating debug trigger
-  TIMSK4 = 1 << TOIE4;
-
   // Set Enable Interrupts.
   sei();
+
+  // MLX90363::init();
+  // MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
+  //
+  // auto magRoll = MLX90363::getRoll();
+  //
+  // do {
+  //   MLX90363::startTransmitting();
+  //   // Delay long enough to guarantee data is ready
+  //   _delay_ms(2);
+  //
+  //   // Loop until we actually receive real data
+  // } while (!MLX90363::hasNewData(magRoll));
+
+  // Enable timer overflow interrupt to use for automatically reading MLX
+  TIMSK4 = 1 << TOIE4;
 
   // Use the Clock that is outside the AVR++ namespace.
   ::Clock::init();
@@ -69,6 +76,26 @@ void init() {
 
   Debug::dout << 12345 << PSTR("Hello World!!\r\n");
   // End of init
+}
+
+constexpr u1 cyclesPWMPerMLX = 40;
+
+void TIMER4_OVF_vect() {
+  // Debug Trigger
+  Board::LED1::on();
+  Board::LED1::off();
+
+
+
+  return;
+  //
+  u1 static mlx = cyclesPWMPerMLX;
+
+  // Automatically start MLX communications every few ticks
+  if (!--mlx) {
+    MLX90363::startTransmitting();
+    mlx = cyclesPWMPerMLX;
+  }
 }
 
 Clock::MicroTime nextTime;
