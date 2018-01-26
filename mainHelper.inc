@@ -1,7 +1,40 @@
 
 #include "Clock.h"
+#include <math.h>
 
 void printHallStateIfChanged();
+void doSinePulse();
+
+
+
+
+// This ditty commands a sequence of outputs to make a demo pulse to the bed
+void doSinePulse(s2 amplitude){
+  constexpr u2 maxAmpl = 255 - 30;
+
+  if (amplitude >  maxAmpl) amplitude =  maxAmpl;
+  if (amplitude < -maxAmpl) amplitude = -maxAmpl;
+
+  Clock::MicroTime nextTime;
+  Clock::readTime(nextTime);
+
+  u2 step = 0;
+  constexpr float omegaTerm = 318.3099;
+  
+
+  do {
+    nextTime += 1_ms;
+    while (!nextTime.isInPast()) {}
+    //   // Do things here while we're waiting for the 1kHz tick
+    step += 1;
+    int bang = amplitude * sin (step/omegaTerm);
+    Debug::dout << bang << PSTR("\r\n");
+
+    ThreePhaseDriver::setAmplitude(bang);
+
+  } while (step < 2000);
+
+} // sin test
 
 
 
@@ -26,7 +59,7 @@ void printHallStateIfChanged() {
   if (state == lastState) return;
 
   lastState = state;
-  Debug::dout << PSTR("New Hall State: ") << state << '\r' << '\n';
+  Debug::dout << PSTR("New Hall State: ") << state << ' ' << MLX90363::getAlpha() << '\r' << '\n';
 }
 
 
@@ -63,6 +96,49 @@ void holdUntilButtonFallingEdge() {
 }
 
 
+// here is a buch of fragments used when we were debugging the halls:
+
+
+// holdUntilButtonIsState();
+//doSquarePulse();
+
+// signed int command = 10;
+
+
+// ThreePhaseDriver::setDeadTimes(0xff);
+// ThreePhaseDriver::setAmplitude(255); // out of -255 to 255
+
+
+
+// u2 hallTest = ThreePhaseDriver::StepsPerCycle / 4;
+// ThreePhaseDriver::advanceTo(704);  // go to this particular output state
+// u1 deadTest = 0;
+// u2 constexpr fixedAngle = 704;
+// hallTest = fixedAngle;
+
+
+// setOverrideHallState(hallTest);
+// Debug::dout << hallTest << PSTR("\r\n");
+// ThreePhaseDriver::advanceTo(hallTest);  // go to this particular output state
+
+// hallTest -= 128/4;
+// while (hallTest >= 768) hallTest += 768;
+
+//updateCommutation();
+
+// Debug::dout << (deadTest & 0xf) << PSTR("\r\n");
+// ThreePhaseDriver::setDeadTimes(deadTest);
+// deadTest += 0x11;  // increment both nibbles
+
+// hallTest = ((hallTest != 704) ? 704 : 576);
+
+// _delay_ms(4);
+
+
+// hallTest += 3;
+// while (hallTest >= 768) hallTest -= 768;
+//hallTest -= 3;
+//while (hallTest <= 0) hallTest += 768;
 
 //
 // if (state % 2 == 0){ //even

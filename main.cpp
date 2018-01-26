@@ -74,8 +74,8 @@ void init() {
 
   Board::LED0::off(); // lED0 is used in debug routines.
 
-  Debug::dout << 12345 << PSTR("Hello World!!\r\n");
   // End of init
+  Debug::dout << PSTR("Hello World!!\r\n");
 }
 
 constexpr u1 cyclesPWMPerMLX = 40;
@@ -115,64 +115,19 @@ void printHallStateAndNumberIfHallChanged(u2 number) {
 
 /**
  *
- */
+ **/
 int main() {
 
-  // displayHallState();
-  Debug::dout << PSTR("Main loop\r\n");
-
-  // holdUntilButtonIsState();
-  //doSquarePulse();
-
-  // signed int command = 10;
-
-
-  Clock::readTime(nextTime);
-  ThreePhaseDriver::setDeadTimes(0xff);
-  // ThreePhaseDriver::setAmplitude(255); // out of 0 to 255
-  setPWM(255);  // out of +/- 255
-
-
-  u2 hallTest = ThreePhaseDriver::StepsPerCycle / 4;
-  // u2 constexpr fixedAngle = 704;
-  // hallTest = fixedAngle;
-
   while (1) {
-    // nextTime += 500_us;
-    //
-    // while (!nextTime.isInPast()) {
-    //   // Do things here while we're waiting for the 1kHz tick
-    //
-    //   // Cameron added this for clarity
-    //   printHallStateIfChanged();
-    //   // printHallStateAndNumberIfHallChanged(hallTest);
-    //   // Debug::dout << PSTR("Testing hall state: ") << hallTest << PSTR("\r\n");
-    // }
+    printHallStateIfChanged();
+    HallWatcher::checkAndUpdate();
 
-
-
-    // setOverrideHallState(hallTest);
-    Debug::dout << hallTest << PSTR("\r\n");
-    ThreePhaseDriver::advanceTo(hallTest);  // go to this particular output state
-    //updateCommutation();
+    Debug::dout << PSTR("Holding for button press \r\n");
     holdUntilButtonFallingEdge();
 
-    // hallTest = ((hallTest != 704) ? 704 : 576);
+    doSinePulse(64);
+  }
 
-    // _delay_ms(4);
-
-
-    hallTest -= 128;
-    while (hallTest >= 768) hallTest += 768;
-
-    // hallTest += 3;
-    // while (hallTest >= 768) hallTest -= 768;
-    //hallTest -= 3;
-    //while (hallTest <= 0) hallTest += 768;
-
-    // Do things here at 1Khz
-
-  } // end main loop
 
   //loop in case main loop is disabled
   //allows for interrupts to continue
