@@ -17,14 +17,12 @@ namespace ThreePhaseControllerNamespace {
 using namespace AVR;
 
 namespace Board {
- using LED0 = Output<Ports::F, 4>; // On breakout
- using LED1 = Output<Ports::D, 5>; // On Simple Controller
- using VBATS = Input<Ports::D, 4, false>;
+ using LED = Output<Ports::B, 7>;
 
  using MagSel = Output<Ports::B, 0, true>;
 
- using H1 = Input<Ports::E, 6>;
- using H2 = Input<Ports::B, 7>;
+ using H1 = Input<Ports::D, 0>;
+ using H2 = Input<Ports::D, 1>;
  using H3 = Input<Ports::B, 4>;
  
  namespace SPI {
@@ -43,11 +41,6 @@ namespace Board {
    return MagSel::isOn();
   }
  };
-
- namespace I2C {
-  using SCL = Input<Ports::D, 0>;
-  using SDA = Input<Ports::D, 1>;
- };
  
  namespace SER {
   using Rx = Input<Ports::D, 2>;
@@ -62,15 +55,16 @@ namespace Board {
   using CL = Output<Ports::D, 6>;
  };
  namespace SEN {
-  using AS = Input<Ports::F, 5, false>;
-  using BS = Input<Ports::F, 6, false>;
-  using CS = Input<Ports::F, 7, false>;
+  using AS = Input<Ports::D, 4, false>;
+  using BS = Input<Ports::F, 4, false>;
+  using CS = Input<Ports::F, 1, false>;
+  using VBATS = Input<Ports::F, 0, false>;
  };
  namespace MUX {
-  constexpr u1 AS = 0b000101; // ADC5
-  constexpr u1 BS = 0b000110; // ADC6
-  constexpr u1 CS = 0b000111; // ADC7
-  constexpr u1 VBATS = 0b100000; // ADC8
+  constexpr u1 AS = 0b100000; // ADC8
+  constexpr u1 BS = 4; // ADC4
+  constexpr u1 CS = 1; // ADC1
+  constexpr u1 VBATS = 0; // ADC0
  }
  
  constexpr u4 ClockFrequency = F_CPU;
