@@ -32,7 +32,6 @@ void doSinePulse(u2 amplitude){
     }
     step += 1;
     int bang = amplitude * sin (step/omegaTerm);
-    Debug::dout << bang << PSTR("\r\n");
 
     setPWM(bang);
 
