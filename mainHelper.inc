@@ -18,7 +18,6 @@ void doSinePulse(s2 amplitude){
   constexpr u2 maxAmpl = 255 - 30;
 
   if (amplitude >  maxAmpl) amplitude =  maxAmpl;
-  if (amplitude < -maxAmpl) amplitude = -maxAmpl;
 
   Clock::MicroTime nextTime;
   Clock::readTime(nextTime);
