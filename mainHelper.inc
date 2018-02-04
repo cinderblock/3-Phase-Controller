@@ -9,7 +9,7 @@ void doSinePulse();
 
 
 // This ditty commands a sequence of outputs to make a demo pulse to the bed
-void doSinePulse(s2 amplitude){
+void doSinePulse(u2 amplitude){
   constexpr float freq = 2;
   constexpr float maxTime = 1 * 1000; //
   constexpr float PI = 3.14159;
