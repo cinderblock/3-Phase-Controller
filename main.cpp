@@ -40,6 +40,7 @@ void init() {
   wdt_disable();
 
   Debug::init();
+  Debug::dout << PSTR("Beginning Inits \r\n");
 
   // Set up the driver pins
   ThreePhaseDriver::init();
@@ -75,7 +76,7 @@ void init() {
   Board::LED0::off(); // lED0 is used in debug routines.
 
   // End of init
-  Debug::dout << PSTR("Hello World!!\r\n");
+  Debug::dout << PSTR("End of Inits \r\n");
 }
 
 constexpr u1 cyclesPWMPerMLX = 40;
