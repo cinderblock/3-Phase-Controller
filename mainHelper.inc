@@ -27,8 +27,9 @@ void doSinePulse(u2 amplitude){
 
   do {
     nextTime += 1_ms;
-    while (!nextTime.isInPast()) {}
-    //   // Do things here while we're waiting for the 1kHz tick
+    while (!nextTime.isInPast()) {
+      // Do things here while we're waiting for the 1kHz tick
+    }
     step += 1;
     int bang = amplitude * sin (step/omegaTerm);
     Debug::dout << bang << PSTR("\r\n");
