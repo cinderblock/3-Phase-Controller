@@ -5,6 +5,8 @@ Our current use case is on the [3 Phase Driver Board](https://github.com/cinderb
 
 ## General System
 
+[Software Map](Three Phase Control.html)
+
 The motor controller has:
 - [Output](#output)
   - [Servo](#servo)
