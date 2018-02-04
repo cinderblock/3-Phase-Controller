@@ -34,24 +34,27 @@ namespace ThreePhaseControllerNamespace {
     static u1 state;
 
     static inline void checkH1() {
+      constexpr u1 pos = 0;
       if (H1::isActive())
-        state |= 1 << 0;
+        state |= 1 << pos;
       else
-        state &= ~(1 << 0);
+        state &= ~(1 << pos);
     }
 
     static inline void checkH2() {
+      constexpr u1 pos = 1;
       if (H2::isActive())
-        state |= 1 << 1;
+        state |= 1 << pos;
       else
-        state &= ~(1 << 1);
+        state &= ~(1 << pos);
     }
 
     static inline void checkH3() {
+      constexpr u1 pos = 2;
       if (H3::isActive())
-        state |= 1 << 2;
+        state |= 1 << pos;
       else
-        state &= ~(1 << 2);
+        state &= ~(1 << pos);
     }
 
     friend void ::INT0_vect();
