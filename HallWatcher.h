@@ -18,16 +18,17 @@
 
 #include "Board.h"
 
-ISR(INT6_vect);
-ISR(PCINT0_vect);
+ISR(INT0_vect); // H1
+ISR(INT1_vect); // H2
+ISR(PCINT0_vect); // H3 (PCINT4 in group PCINT0)
 
 namespace ThreePhaseControllerNamespace {
 
   using namespace AVR;
 
   class HallWatcher {
-    using H1 = Board::H1; // INT6
-    using H2 = Board::H2; // PCINT7
+    using H1 = Board::H1; // INT0
+    using H2 = Board::H2; // INT1
     using H3 = Board::H3; // PCINT4
 
     static u1 state;
@@ -53,7 +54,8 @@ namespace ThreePhaseControllerNamespace {
         state &= ~(1 << 2);
     }
 
-    friend void ::INT6_vect();
+    friend void ::INT0_vect();
+    friend void ::INT1_vect();
     friend void ::PCINT0_vect();
 
   public:

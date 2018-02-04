@@ -18,11 +18,13 @@ using namespace ThreePhaseControllerNamespace;
 
 u1 HallWatcher::state = 0b111;
 
-void INT6_vect() {
+void INT0_vect() {
   HallWatcher::checkH1();
 }
-void PCINT0_vect() {
+void INT1_vect() {
   HallWatcher::checkH2();
+}
+void PCINT0_vect() {
   HallWatcher::checkH3();
 }
 
