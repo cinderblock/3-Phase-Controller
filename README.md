@@ -28,7 +28,7 @@ This code is meant to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-
 
 ## Motor
 
-Currently Testing with [Turnigy 480 850kv](http://www.hobbyking.com/hobbyking/store/__19037__Turnigy_Park480_Brushless_Outrunner_850kv.html) and [Turnigy 480 1320kv](http://www.hobbyking.com/hobbyking/store/__19038__Turnigy_Park480_Brushless_Outrunner_1320kv.html).
+Currently Testing with [Quanum MT5206](https://hobbyking.com/en_us/quanum-mt-series-5206-320kv-brushless-multirotor-motor-built-by-dys.html).
 
 ### Git Submodules
 
