@@ -18,9 +18,12 @@
 #include "Demo.h"
 #include "Calibration.h"
 #include "Debug.h"
+#include "commutation.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
+
+#include "mainHelper.inc"
 
 /**
  * All the init functions should go in here.
@@ -36,6 +39,7 @@ void init() {
   wdt_disable();
 
   Debug::init();
+  Debug::dout << PSTR("Beginning Inits \r\n");
 
   // Clear the MCU Status Register.  Indicates previous reset's source.
   MCUSR = 0;
@@ -47,6 +51,7 @@ void init() {
   ::Clock::init();
 
   // End of init
+  Debug::dout << PSTR("End of Inits \r\n");
 }
 
 /**

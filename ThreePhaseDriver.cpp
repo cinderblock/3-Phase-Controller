@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   ThreePhaseDriver.cpp
  * Author: Cameron
- * 
+ *
  * Created on December 17, 2014, 3:20 PM
  */
 
@@ -28,7 +28,7 @@ void ThreePhaseDriver::init() {
   AVR::Clock::enablePLL();
   AVR::Clock::waitForPLL();
 
-  // Turn off interrupts just in case
+  // Turn off all timer 4 interrupts just in case
   TIMSK4 = 0;
 
   // Setup the timer but stopped.
@@ -53,7 +53,7 @@ void ThreePhaseDriver::init() {
    * DT4H3 DT4H2 DT4H1 DT4H0 DT4L3 DT4L2 DT4L1 DT4L0
    * 0b  0     0     0     0     0     0     0     0
    */
-  DT4 = 0x66;
+  DT4 = 0xFF;
 
   /**
    * TCCR4D
@@ -91,12 +91,21 @@ void ThreePhaseDriver::init() {
   OCR4C = 0xff;
 
   // Start the timer
+
   /**
    * TCCR4B
    * PWM4X PSR4 DTPS41 DTPS40 CS43 CS42 CS41 CS40
    * 0b  0    1      0      0    0    0    0    1
+   * The CS4n bits set the clock divider and start the timer.
+   * A value of "1" in CS4x equates to ~31kHz PWM frequency
+   * A value of "3" (0b11) equates to ~7.8kHz PWM frequency
    */
+
+  // 31kHz
   TCCR4B = 0b01000001;
+
+  // 7.8kHz
+  // TCCR4B = 0b01000011;
 
   // Turn everything off
   Board::DRV::AL::off();
@@ -172,9 +181,9 @@ void ThreePhaseDriver::advanceTo(const PhasePosition pp) {
   auto const step = pp.getPosition();
   auto const phase = pp.getPhase();
 
-  u2 const ONE = MAX - getPhasePWM(step);
-  u2 const TWO = MAX - getPhasePWM(255 - step);
-  u2 const OFF = MAX;
+  u2 const ONE = getPhasePWM(step);
+  u2 const TWO = getPhasePWM(255 - step);
+  u2 const OFF = 0;
 
   setUpdateLock(true);
 

@@ -24,6 +24,9 @@ CPP += HallWatcher
 
 CPP += LookupTable/$(MotorID)
 
+# This should be compiled by AVR++ but it's a little broken so do this instead.
+CPP += AVR++/gccGuard
+
 MotorID = Motor1
 
 AVRpp_SRC = TimerTimeout #ADC USART  gccGuard
@@ -44,9 +47,9 @@ TARGET = turnigy
 
 MCU = atmega32u4
 
-all: build-lss asm run
+all: build-lss run
 run: dfu-erase dfu-flash dfu-reset
-	
+
 #ASM = $(CPP:%=%.cpp.S)
 
 # Load local settings

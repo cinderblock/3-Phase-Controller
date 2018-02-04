@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   ThreePhaseDriver.h
  * Author: Cameron
  *
@@ -61,7 +61,7 @@ public:
     * The maximum valid value commutation can have
     */
    static constexpr u2 MAX = 0x2ff;
-   
+
    friend class ThreePhaseDriver;
 
    /**
@@ -109,6 +109,7 @@ public:
    }
 
    inline PhasePosition& operator+=(u2 const steps) {
+     // TODO: This is broken if steps is very large and overflows commutation
     commutation += steps;
     commutation %= MAX + 1;
 
@@ -117,7 +118,8 @@ public:
 
    inline PhasePosition& operator-=(u2 const steps) {
     commutation -= steps;
-    commutation %= MAX + 1;
+    // TODO: Better & faster math here
+    while (commutation > MAX) commutation += MAX;
 
     return *this;
    }
@@ -249,4 +251,3 @@ public:
 };
 
 #endif	/* THREEPHASEDRIVER_H */
-

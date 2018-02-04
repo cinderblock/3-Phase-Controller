@@ -181,6 +181,8 @@ void ThreePhasePositionEstimator::init() {
 
   const auto phase = Lookup::AlphaToPhase(MLX90363::getAlpha());
 
+  // Set up the hall sensor interrupts
+  HallWatcher::init();
   HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
 
 	lastMecPha = phase.getMechanicalPosition();

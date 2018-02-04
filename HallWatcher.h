@@ -31,11 +31,11 @@ namespace ThreePhaseControllerNamespace {
     using H2 = Board::H2; // INT1
     using H3 = Board::H3; // PCINT4
 
-    static u1 state;
+    static u1 volatile state;
     static void (*stateChangeReceiver)();
 
     static inline void checkH1() {
-      constexpr u1 pos = 0;
+      constexpr u1 pos = 2;
 
       u1 oldState = state;
 
@@ -65,7 +65,7 @@ namespace ThreePhaseControllerNamespace {
     }
 
     static inline void checkH3() {
-      constexpr u1 pos = 2;
+      constexpr u1 pos = 0;
 
       u1 oldState = state;
 
@@ -100,4 +100,3 @@ namespace ThreePhaseControllerNamespace {
 };
 
 #endif /* HALLWATCHER_H */
-
