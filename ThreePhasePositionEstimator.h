@@ -81,6 +81,8 @@ namespace ThreePhaseControllerNamespace {
       return (phase & DriverConstants::MaskForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;
     };
 
+    static void getAndProcessNewHallState();
+
   public:
     /**
      * Initialize hardware and internal variables to match initial hardware state

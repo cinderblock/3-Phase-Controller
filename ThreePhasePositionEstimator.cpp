@@ -7,6 +7,7 @@
 #include "Config.h"
 #include "LookupTable.h"
 #include "MLX90363.h"
+#include "HallWatcher.h"
 #include <util/delay.h>
 
 // #include "Board.h"
@@ -80,6 +81,13 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
 	// if(ph>>predictionResolutionShift > DriverConstants::MaskForPhase) Board::LED.on();
 	return (ph >> predictionResolutionShift);
 }
+
+void ThreePhasePositionEstimator::getAndProcessNewHallState() {
+  u1 const state = HallWatcher::getState();
+
+  
+}
+
 
 void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   // Here, we are receiving a new position reading from the magnetometer.
@@ -172,6 +180,8 @@ void ThreePhasePositionEstimator::init() {
   MLX90363::setAlphaHandler(&handleNewPositionReading);
 
   const auto phase = Lookup::AlphaToPhase(MLX90363::getAlpha());
+
+  HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
 
 	lastMecPha = phase.getMechanicalPosition();
 	drivePhase = (u4)(phase.getPhasePosition()) << predictionResolutionShift;
