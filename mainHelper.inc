@@ -31,7 +31,7 @@ void doSinePulse(u2 amplitude){
       // Do things here while we're waiting for the 1kHz tick
     }
     step += 1;
-    int bang = amplitude * sin (step/omegaTerm);
+    int bang = amplitude * sin(step/omegaTerm);
 
     setPWM(bang);
 
