@@ -31,7 +31,8 @@ void setPWM(signed int amplitude) {
     ThreePhaseDriver::setAmplitude(amplitude);
     forward = true;
   }
-  updateCommutation();
+  // HallWatcher::checkAndUpdate();
+  updateCommutation(true);
 }
 
 volatile u1 overrideHallState = 0;
@@ -40,13 +41,18 @@ void setOverrideHallState(u1 state) {
   overrideHallState = state;
 }
 
-void updateCommutation() {
+void updateCommutation(bool force) {
   // disable this function for now to test other things
   // return;
 
+  static u1 lastHall = 0xff;
 
 
   u1 hallState = HallWatcher::getState();
+
+  if (!force && hallState == lastHall) return;
+
+  lastHall = hallState;
 
   if (overrideHallState) {
     hallState = overrideHallState;

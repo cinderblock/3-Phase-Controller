@@ -50,5 +50,5 @@ void HallWatcher::checkAndUpdate() {
   checkH1();
   checkH2();
   checkH3();
-  updateCommutation();
+  updateCommutation(true);
 }
