@@ -54,18 +54,36 @@ void init() {
   // Set Enable Interrupts.
   sei();
 
-  // MLX90363::init();
-  // MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
-  //
-  // auto magRoll = MLX90363::getRoll();
-  //
-  // do {
-  //   MLX90363::startTransmitting();
-  //   // Delay long enough to guarantee data is ready
-  //   _delay_ms(2);
-  //
-  //   // Loop until we actually receive real data
-  // } while (!MLX90363::hasNewData(magRoll));
+  // holdUntilButtonFallingEdge();
+
+  Debug::dout << PSTR("I");
+
+  Debug::dout << initializeLIS331();
+
+  Debug::dout << '\r' << '\n';
+
+  Board::SPI::SCLK::off();
+  Board::SPI::MISO::enablePullUp();
+  Board::SPI::MOSI::off();
+
+  MLX90363::init();
+
+  MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
+
+  auto magRoll = MLX90363::getRoll();
+
+  Debug::dout << PSTR("Starting MLX readings\r\n");
+
+  do {
+    Board::LED1::on();
+    Board::LED1::off();
+    MLX90363::startTransmitting();
+    // while (1);
+    // Delay long enough to guarantee data is ready
+    _delay_ms(3);
+    // Loop until we actually receive real data
+    break;
+  } while (!MLX90363::hasNewData(magRoll));
 
   // Enable timer overflow interrupt to use for automatically reading MLX
   TIMSK4 = 1 << TOIE4;
