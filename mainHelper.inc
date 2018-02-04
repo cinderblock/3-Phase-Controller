@@ -33,7 +33,7 @@ void doSinePulse(s2 amplitude){
     int bang = amplitude * sin (step/omegaTerm);
     Debug::dout << bang << PSTR("\r\n");
 
-    ThreePhaseDriver::setAmplitude(bang);
+    setPWM(bang);
 
   } while (step < maxTime);
 
