@@ -46,7 +46,7 @@ void updateCommutation() {
 
 
 
-  unsigned int hallState = HallWatcher::getState();
+  u1 hallState = HallWatcher::getState();
 
   if (overrideHallState) {
     hallState = overrideHallState;
