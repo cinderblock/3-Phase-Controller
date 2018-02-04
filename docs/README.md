@@ -14,7 +14,6 @@ The motor controller has:
   - [Magnetometer](#mlx)
   - [Predictor](#predictor)
   - [Back EMF Sensing](#emf)
-- I2C communication (independently supported)
 
 ------
 
