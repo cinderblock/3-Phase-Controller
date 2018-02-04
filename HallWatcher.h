@@ -32,29 +32,51 @@ namespace ThreePhaseControllerNamespace {
     using H3 = Board::H3; // PCINT4
 
     static u1 state;
+    static void (*stateChangeReceiver)();
 
     static inline void checkH1() {
       constexpr u1 pos = 0;
+
+      u1 oldState = state;
+
       if (H1::isActive())
         state |= 1 << pos;
       else
         state &= ~(1 << pos);
+
+      if (stateChangeReceiver && state != oldState) {
+        stateChangeReceiver();
+      }
     }
 
     static inline void checkH2() {
       constexpr u1 pos = 1;
+
+      u1 oldState = state;
+
       if (H2::isActive())
         state |= 1 << pos;
       else
         state &= ~(1 << pos);
+
+      if (stateChangeReceiver && state != oldState) {
+        stateChangeReceiver();
+      }
     }
 
     static inline void checkH3() {
       constexpr u1 pos = 2;
+
+      u1 oldState = state;
+
       if (H3::isActive())
         state |= 1 << pos;
       else
         state &= ~(1 << pos);
+
+      if (stateChangeReceiver && state != oldState) {
+        stateChangeReceiver();
+      }
     }
 
     friend void ::INT0_vect();
@@ -63,6 +85,10 @@ namespace ThreePhaseControllerNamespace {
 
   public:
     static void init();
+
+    static inline void setStateChangeReceiver(void (*receiver)()) {
+      stateChangeReceiver = receiver;
+    }
 
     inline static u1 getState() {
       return state;

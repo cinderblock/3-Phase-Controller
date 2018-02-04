@@ -17,6 +17,7 @@ using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
 u1 HallWatcher::state = 0b111;
+void (*HallWatcher::stateChangeReceiver)() = nullptr;
 
 void INT0_vect() {
   HallWatcher::checkH1();
