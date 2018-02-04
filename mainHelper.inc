@@ -11,7 +11,7 @@ void doSinePulse();
 // This ditty commands a sequence of outputs to make a demo pulse to the bed
 void doSinePulse(u2 amplitude){
   constexpr float freq = 2;
-  constexpr float maxTime = 1 * 1000; //
+  constexpr float STEPS = 1 * 1000; //
   constexpr float PI = 3.14159;
   constexpr float omegaTerm = 1000 / (2*PI*freq);
 
@@ -35,7 +35,7 @@ void doSinePulse(u2 amplitude){
 
     setPWM(bang);
 
-  } while (step < maxTime);
+  } while (step < STEPS);
 
 } // sin test
 
