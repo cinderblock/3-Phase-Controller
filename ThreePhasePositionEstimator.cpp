@@ -47,13 +47,13 @@ inline static void limit(u4 &value, u4 MAX, bool forward) {
 ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
   // Start at cyclesPWMPerMLX so that we have a whole period before the second
   // reading. The first reading was started in init();
-  u1 static mlx = cyclesPWMPerMLX;
+  u1 static mlxPeriodCounter = cyclesPWMPerMLX;
 
   // Automatically start MLX communications every few ticks
-  if (!--mlx) {
+  if (!--mlxPeriodCounter) {
     MLX90363::startTransmitting();
     mlxReadingsStarted++;
-    mlx = cyclesPWMPerMLX;
+    mlxPeriodCounter = cyclesPWMPerMLX;
   }
 
   u4 ph = drivePhaseMagEstimate;
