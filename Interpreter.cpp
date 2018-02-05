@@ -160,7 +160,7 @@ void Interpreter::interpretFromMaster(u1 const * const incomingData) {
   }
 
   if (incomingData[0] == (u1)Command::SetPredictorPhaseAdvance) {
-    ThreePhasePositionEstimator::setPhaseAdvanceRatio(incomingData[1]);
+    ThreePhasePositionEstimator::setMagnetometorPhaseAdvanceRatio(incomingData[1]);
 
     return;
   }
@@ -270,7 +270,7 @@ void Interpreter::sendNormalDataToMaster() {
   //Standard message
   if (current == Mode::Standard){
     *(u2 * const)(&buff[1]) = Roll;
-    *(u2 * const)(&buff[3]) = ThreePhasePositionEstimator::getVelocity();
+    *(u2 * const)(&buff[3]) = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
     *(s2 * const)(&buff[5]) = getPosition();
     *(u2 * const)(&buff[7]) = countIncoming;
     buff[9] = (u1)ThreePhaseController::getAmplitude();
@@ -288,7 +288,7 @@ void Interpreter::sendNormalDataToMaster() {
   }
   else if(current == Mode::Test){
     *(u2 * const)(&buff[1]) = Roll;
-    *(u2 * const)(&buff[3]) = ThreePhasePositionEstimator::getVelocity();
+    *(u2 * const)(&buff[3]) = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
     *(s2 * const)(&buff[5]) = getPosition();
     *(u2 * const)(&buff[7]) = countIncoming;
     buff[9] = (u1)ThreePhaseController::getAmplitude();

@@ -27,38 +27,32 @@ namespace ThreePhaseControllerNamespace {
     /**
      * Last magnetometer reading
      */
-    static u2 lastMecPha;
+    static u2 lastMagPhase;
 
     /**
      * The current position estimate. Higher resolution than output phase angle
      */
-    static u4 drivePhase;
-
-    /**
-     * The current velocity estimate. Used to advance drivePhase position estimate
-     */
-    static s2 driveVelocity;
-
-    /**
-     * Amount to adjust the velocity by. The smaller this number is, the more
-     * the velocity is filtered
-     */
-    static u1 adjustVal;
-
-    /**
-     * Multiplier on velocity to advance our velocity estimate by
-     */
-    static u1 phaseAdvanceRatio;
-
-    /**
-     * cached constant amount of phase advance for our current velocity
-     */
-    static s4 phaseAdvanceAmount;
+    static u4 drivePhaseMagEstimate;
 
     /**
      * For out internal estimate of position, increase the resolution by some number of bits
      */
-    constexpr static u1 predictionResolutionShift = 8;
+    constexpr static u1 drivePhaseMagSubResolution = 8;
+
+    /**
+     * The current velocity estimate. Used to advance drivePhaseMagEstimate position estimate
+     */
+    static s2 driveVelocityMagEstimate;
+
+    /**
+     * Multiplier on velocity to advance our velocity estimate by
+     */
+    static u1 phaseAdvanceMagRatio;
+
+    /**
+     * cached constant amount of phase advance for our current velocity
+     */
+    static s4 phaseAdvanceMagCachedAmount;
 
     /**
      * Number of MLX readings started since last estimate
@@ -67,27 +61,32 @@ namespace ThreePhaseControllerNamespace {
 
     /**
      * Number of cycles the PWM timer makes per measurement ready from MLX. We pick
-     * a number such that we wait at least 1ms between measurements, otherwise the
+     * a number such that we wait at least 920us between SS rising and falling edges, otherwise the
      * data won't be ready.
      *
-     * = frequency(PWM) * period(MLX) = 32kHz * 1.25ms = 40;
+     * min(cyclesPWMPerMLX) = frequency(PWM) * period(MLX);
+     * 
+     * period(MLX) = 920us + SPI transfer time
+     * 
+     * SPI transfer time = 8 bytes * (10 bits / byte) / BAUD
+     * 
+     * BAUD = 2MHz
+     * 
+     * 10 bits / byte to account for interrupt service length variations
+     * 
+     * SPI transfer time = 40us
+     * 
+     * period(MLX) = 960us
+     * 
+     * min(cyclesPWMPerMLX) = 31.25kHz * 960us = 30;
      */
-    static constexpr u1 cyclesPWMPerMLX = 40;
+    static constexpr u1 cyclesPWMPerMLX = 32;
 
     /**
-     * Converts from magnetometer lookup table numbers to linear numbers
+     * Handle new position reading from Hall system
+     *
      */
-    inline static u2 getMechPhase(u2 phase) {
-      return (phase & DriverConstants::MaskForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;
-    };
-
     static void getAndProcessNewHallState();
-
-  public:
-    /**
-     * Initialize hardware and internal variables to match initial hardware state
-     */
-    static void init();
 
     /**
      * Handle new position reading from MLX system
@@ -95,6 +94,12 @@ namespace ThreePhaseControllerNamespace {
      * @param alpha raw reading from MLX
      */
     static void handleNewPositionReading(u2 alpha);
+
+  public:
+    /**
+     * Initialize hardware and internal variables to match initial hardware state
+     */
+    static void init();
 
     /**
      * Advance our prediction of where we currently are by one dt.
@@ -108,49 +113,38 @@ namespace ThreePhaseControllerNamespace {
      *
      * Estimation of delay from last magnetometer reading and setting current phase
      */
-    inline static u1 getPhaseAdvanceRatio() {
-      return phaseAdvanceRatio;
+    inline static u1 getMagnetometerPhaseAdvanceRatio() {
+      return phaseAdvanceMagRatio;
     };
 
     /**
      * Set phase advance ratio
      * @param val
      */
-    inline static void setPhaseAdvanceRatio(u1 val) {
-      phaseAdvanceRatio = val;
+    inline static void setMagnetometorPhaseAdvanceRatio(u1 val) {
+      phaseAdvanceMagRatio = val;
     }
 
     /**
      * Estimation of distance given there are delays in system (phaseAdvanceRatio * velocity)
      */
-    inline static s4 getPhaseAdvanceAmount() {
-      return phaseAdvanceAmount;
+    inline static s4 getCachedMagnetometerPhaseAdvanceAmount() {
+      return phaseAdvanceMagCachedAmount;
     };
 
     /**
      * Get the last measured position
      */
-    inline static u2 getMeasuredPosition() {
-      return lastMecPha;
+    inline static u2 getLastMagnetometerPhase() {
+      return lastMagPhase;
     };
 
     /**
      * Get currently extrapolated velocity
      */
-    inline static s2 getVelocity() {
-      return driveVelocity;
+    inline static s2 getMagnetometerVelocityEstimate() {
+      return driveVelocityMagEstimate;
     };
-
-    /**
-     * Get value the velocity may get shifted by per velocity update
-     */
-    inline static u1 getAdjustVal() {
-      return adjustVal;
-    }
-
-    inline static void setAdjustVal(u1 val) {
-      adjustVal = val;
-    }
   };
 
 };
