@@ -72,7 +72,7 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
   //	ph += phaseAdvanceAmount;
 
   // Check if ph(ase) value is out of range again
-  limit(ph, MAX, forward);
+  // limit(ph, MAX, forward);
 
   // if(ph>>predictionResolutionShift > DriverConstants::MaskForPhase)
   // Board::LED.on();
