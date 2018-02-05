@@ -47,6 +47,7 @@ inline static void limit(u4 &value, u4 MAX, bool forward) {
 ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
   // Start at cyclesPWMPerMLX so that we have a whole period before the second
   // reading. The first reading was started in init();
+  // If cyclesPWMPerMLX is 1, will try to communicate over SPI every time this function is called.
   u1 static mlxPeriodCounter = cyclesPWMPerMLX;
 
   // Automatically start MLX communications every few ticks
