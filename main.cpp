@@ -5,19 +5,19 @@
  * Created on Nov 28, 2014, 2:02 PM
  */
 
-#include <util/delay.h>
-#include <avr/wdt.h>
 #include "Board.h"
+#include <avr/wdt.h>
+#include <util/delay.h>
 
-#include "ThreePhaseController.h"
 #include "MLX90363.h"
+#include "ThreePhaseController.h"
 // #include "Debug.h"
+#include "Calibration.h"
 #include "Clock.h"
+#include "Debug.h"
+#include "Demo.h"
 #include "Interpreter.h"
 #include "ServoController.h"
-#include "Demo.h"
-#include "Calibration.h"
-#include "Debug.h"
 #include "commutation.h"
 
 using namespace AVR;
@@ -62,25 +62,21 @@ int main() {
 
   if (Calibration::enabled) {
     Calibration::main();
-  }
-  else
-  if (Demo::enabled) {
+  } else if (Demo::enabled) {
     Demo::main();
-  }
-  else {
+  } else {
     // Init for hardware interface.
     ServoController::init();
 
-    //main loop
+    // main loop
     while (1) {
       // Let ServoController calculate new amplitude command
       ServoController::update();
-      
-      
     }
   }
 
-  //loop in case main loop is disabled
-  //allows for interrupts to continue
-  while (1);
+  // loop in case main loop is disabled
+  // allows for interrupts to continue
+  while (1)
+    ;
 }
