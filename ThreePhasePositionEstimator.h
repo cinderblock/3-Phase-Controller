@@ -116,25 +116,19 @@ public:
    * Estimation of delay from last magnetometer reading and setting current
    * phase
    */
-  inline static u1 getMagnetometerPhaseAdvanceRatio() {
-    return phaseAdvanceMagRatio;
-  };
+  inline static u1 getMagnetometerPhaseAdvanceRatio() { return phaseAdvanceMagRatio; };
 
   /**
    * Set phase advance ratio
    * @param val
    */
-  inline static void setMagnetometorPhaseAdvanceRatio(u1 val) {
-    phaseAdvanceMagRatio = val;
-  }
+  inline static void setMagnetometorPhaseAdvanceRatio(u1 val) { phaseAdvanceMagRatio = val; }
 
   /**
    * Estimation of distance given there are delays in system (phaseAdvanceRatio
    * * velocity)
    */
-  inline static s4 getCachedMagnetometerPhaseAdvanceAmount() {
-    return phaseAdvanceMagCachedAmount;
-  };
+  inline static s4 getCachedMagnetometerPhaseAdvanceAmount() { return phaseAdvanceMagCachedAmount; };
 
   /**
    * Get the last measured position
@@ -144,9 +138,7 @@ public:
   /**
    * Get currently extrapolated velocity
    */
-  inline static s2 getMagnetometerVelocityEstimate() {
-    return driveVelocityMagEstimate;
-  };
+  inline static s2 getMagnetometerVelocityEstimate() { return driveVelocityMagEstimate; };
 };
 
 }; // namespace ThreePhaseControllerNamespace

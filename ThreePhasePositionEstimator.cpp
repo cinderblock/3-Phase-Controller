@@ -25,8 +25,7 @@ u2 ThreePhasePositionEstimator::lastMagPhase;
 // Assume we start at 0 velocity
 s2 ThreePhasePositionEstimator::driveVelocityMagEstimate = 0;
 
-u1 ThreePhasePositionEstimator::phaseAdvanceMagRatio =
-    Config::DefaultPhaseAdvance;
+u1 ThreePhasePositionEstimator::phaseAdvanceMagRatio = Config::DefaultPhaseAdvance;
 s4 ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount = 0;
 u1 ThreePhasePositionEstimator::mlxReadingsStarted = 0;
 
@@ -61,8 +60,7 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
 
   const bool forward = driveVelocityMagEstimate > 0;
 
-  static constexpr u4 MAX = ((u4)DriverConstants::StepsPerCycle)
-                            << drivePhaseMagSubResolution;
+  static constexpr u4 MAX = ((u4)DriverConstants::StepsPerCycle) << drivePhaseMagSubResolution;
 
   // Check if ph(ase) value is out of range
   limit(ph, MAX, forward);
@@ -81,9 +79,7 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
   return (ph >> drivePhaseMagSubResolution);
 }
 
-void ThreePhasePositionEstimator::getAndProcessNewHallState() {
-  u1 const state = HallWatcher::getState();
-}
+void ThreePhasePositionEstimator::getAndProcessNewHallState() { u1 const state = HallWatcher::getState(); }
 
 void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   // Here, we are receiving a new position reading from the magnetometer.
@@ -132,8 +128,7 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   // slow, adjust up. Also handle if we missed data from the MLX because of CRC
   // error or something
   const s2 predictedPhaseChange =
-      (tempVelocity * DriverConstants::PredictsPerValue * numberOfCycles) >>
-      drivePhaseMagSubResolution;
+      (tempVelocity * DriverConstants::PredictsPerValue * numberOfCycles) >> drivePhaseMagSubResolution;
 
   const s2 phaseError = mechChange - predictedPhaseChange;
 
@@ -156,8 +151,7 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   // over.
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     driveVelocityMagEstimate = tempVelocity;
-    drivePhaseMagEstimate = u4(position.getPhasePosition())
-                            << drivePhaseMagSubResolution;
+    drivePhaseMagEstimate = u4(position.getPhasePosition()) << drivePhaseMagSubResolution;
     phaseAdvanceMagCachedAmount = tempPhaseAdvance;
   }
 
@@ -188,6 +182,5 @@ void ThreePhasePositionEstimator::init() {
   HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
 
   lastMagPhase = phase.getMechanicalPosition();
-  drivePhaseMagEstimate = (u4)(phase.getPhasePosition())
-                          << drivePhaseMagSubResolution;
+  drivePhaseMagEstimate = (u4)(phase.getPhasePosition()) << drivePhaseMagSubResolution;
 }
