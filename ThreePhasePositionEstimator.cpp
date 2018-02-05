@@ -71,7 +71,7 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
   drivePhaseMagEstimate = ph;
 
   // Adjust output for velocity lag
-  //	ph += phaseAdvanceAmount;
+  // ph += phaseAdvanceMagCachedAmount;
 
   // Check if ph(ase) value is out of range again
   // limit(ph, MAX, forward);
