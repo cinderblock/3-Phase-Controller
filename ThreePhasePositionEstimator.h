@@ -62,19 +62,18 @@ class ThreePhasePositionEstimator {
   static u1 mlxReadingsStarted;
 
   /**
-   * Number of cycles the PWM timer makes per measurement ready from MLX. We
-   * pick a number such that we wait at least 920us between SS rising and
-   * falling edges, otherwise the data won't be ready.
+   * Number of cycles the PWM timer makes per measurement ready from MLX. We pick a number such that we wait at least
+   * 920us (tReady_mod1) between SS rising and falling edges, otherwise the data won't be ready.
    *
    * min(cyclesPWMPerMLX) = frequency(PWM) * period(MLX);
    *
    * period(MLX) = 920us + SPI transfer time
    *
-   * SPI transfer time = 8 bytes * (10 bits / byte) / BAUD
+   * SPI transfer time = 8 bytes * (10 / byte) / BAUD
    *
    * BAUD = 2MHz
    *
-   * 10 bits / byte to account for interrupt service length variations
+   * 10 bit time periods per byte to account for interrupt service length variations
    *
    * SPI transfer time = 40us
    *
