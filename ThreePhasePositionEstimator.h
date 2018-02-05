@@ -84,6 +84,21 @@ class ThreePhasePositionEstimator {
   static constexpr u1 cyclesPWMPerMLX = 32;
 
   /**
+   * Number indicating the quality of our magnetometer based position estimate. Lower is worse.
+   */
+  static u1 qualityMagEstimate;
+
+  /**
+   * Most recent hall watcher state
+   */
+  static u1 lastHallState;
+
+  /**
+   *
+   */
+  static ThreePhaseDriver::PhasePosition drivePhaseHallEstimate;
+
+  /**
    * Handle new position reading from Hall system
    *
    */

@@ -28,6 +28,7 @@ s2 ThreePhasePositionEstimator::driveVelocityMagEstimate = 0;
 u1 ThreePhasePositionEstimator::phaseAdvanceMagRatio = Config::DefaultPhaseAdvance;
 s4 ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount = 0;
 u1 ThreePhasePositionEstimator::mlxReadingsStarted = 0;
+u1 ThreePhasePositionEstimator::qualityMagEstimate = 0;
 
 inline static s2 constexpr abs(s2 num) { return num >= 0 ? num : -num; }
 
@@ -74,10 +75,30 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
   // Check if ph(ase) value is out of range again
   // limit(ph, MAX, forward);
 
+  // If we're going fast, use Hall position readings directly
+  if (qualityMagEstimate < 100) {
+    return drivePhaseHallEstimate;
+  }
+
   return (ph >> drivePhaseMagSubResolution);
 }
 
-void ThreePhasePositionEstimator::getAndProcessNewHallState() { u1 const state = HallWatcher::getState(); }
+void ThreePhasePositionEstimator::getAndProcessNewHallState() {
+  u1 const state = HallWatcher::getState();
+
+  if (state == 1)
+    drivePhaseHallEstimate = 256;
+  if (state == 2)
+    drivePhaseHallEstimate = 0;
+  if (state == 3)
+    drivePhaseHallEstimate = 128;
+  if (state == 4)
+    drivePhaseHallEstimate = 512;
+  if (state == 5)
+    drivePhaseHallEstimate = 384;
+  if (state == 6)
+    drivePhaseHallEstimate = 640;
+}
 
 void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   // Here, we are receiving a new position reading from the magnetometer.
