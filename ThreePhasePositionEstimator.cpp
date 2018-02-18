@@ -57,21 +57,21 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
     mlxPeriodCounter = cyclesPWMPerMLX;
   }
 
-  u4 ph = drivePhaseMagEstimate;
-  ph += driveVelocityMagEstimate;
+  u4 newPhaseEstimate = drivePhaseMagEstimate;
+  newPhaseEstimate += driveVelocityMagEstimate;
 
   const bool forward = driveVelocityMagEstimate > 0;
 
   static constexpr u4 MAX = ((u4)DriverConstants::StepsPerCycle) << drivePhaseMagSubResolution;
 
   // Check if ph(ase) value is out of range
-  limit(ph, MAX, forward);
+  limit(newPhaseEstimate, MAX, forward);
 
   // Store new drivePhase
-  drivePhaseMagEstimate = ph;
+  drivePhaseMagEstimate = newPhaseEstimate;
 
   // Adjust output for velocity lag
-  // ph += phaseAdvanceMagCachedAmount;
+  // newPhaseEstimate += phaseAdvanceMagCachedAmount;
 
   // Check if ph(ase) value is out of range again
   // limit(ph, MAX, forward);
@@ -81,7 +81,7 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
     return drivePhaseHallEstimate;
   }
 
-  return (ph >> drivePhaseMagSubResolution);
+  return (newPhaseEstimate >> drivePhaseMagSubResolution);
 }
 
 void ThreePhasePositionEstimator::getAndProcessNewHallState() {
