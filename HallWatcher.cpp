@@ -30,14 +30,14 @@ void PCINT0_vect() {
 }
 
 void HallWatcher::init() {
-  // set edge detecction INT6
-  EICRB = 0b00010000;
-  // Enable INT6
-  EIMSK = 0b01000000;
+  // set edge detection INT0 & INT1
+  EICRA = 0b00000101;
+  // Enable INT0 & INT1
+  EIMSK = 0b00000011;
 
-  // Enable PCINT7 & PCINT4
-  PCMSK0 = 0b10010000;
-  // Enable pin change interupts in general
+  // Enable PCINT4
+  PCMSK0 = 0b00010000;
+  // Enable pin change interrupts in general
   PCICR = 0b00000001;
 
   checkH1();

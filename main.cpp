@@ -18,12 +18,10 @@
 #include "Demo.h"
 #include "Interpreter.h"
 #include "ServoController.h"
-#include "commutation.h"
+#include "MLXDebug.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
-
-#include "mainHelper.inc"
 
 /**
  * All the init functions should go in here.
@@ -31,7 +29,8 @@ using namespace ThreePhaseControllerNamespace;
  */
 void init() __attribute__((constructor));
 
-u1 resetCause = MCUSR;
+// Save reset cause
+u1 resetCause;
 
 void init() {
   // Watch Dog Timer
@@ -41,7 +40,8 @@ void init() {
   Debug::init();
   Debug::dout << PSTR("Beginning Inits \r\n");
 
-  // Clear the MCU Status Register.  Indicates previous reset's source.
+  // Save and Clear the MCU Status Register. Indicates previous reset's source.
+  resetCause = MCUSR;
   MCUSR = 0;
 
   // Set Enable Interrupts.
@@ -58,25 +58,22 @@ void init() {
  *
  */
 int main() {
-  Debug::dout << "Hello world!\n";
+  // Each of these does nothing if they're not enabled
+  MLXDebug::main();
+  Calibration::main();
+  Demo::main();
+    
+  
+  // Init for hardware interface.
+  ServoController::init();
 
-  if (Calibration::enabled) {
-    Calibration::main();
-  } else if (Demo::enabled) {
-    Demo::main();
-  } else {
-    // Init for hardware interface.
-    ServoController::init();
-
-    // main loop
-    while (1) {
-      // Let ServoController calculate new amplitude command
-      ServoController::update();
-    }
+  // main loop
+  while (1) {
+    // Let ServoController calculate new amplitude command
+    ServoController::update();
   }
 
   // loop in case main loop is disabled
   // allows for interrupts to continue
-  while (1)
-    ;
+  while (1);
 }

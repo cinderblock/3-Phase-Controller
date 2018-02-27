@@ -15,6 +15,8 @@ CPP += MLX90363 ThreePhasePositionEstimator ThreePhaseController
 
 CPP += ServoController
 
+CPP += MLXDebug
+
 CPP += TripleBuffer-impl BlockBuffer-impl
 
 CPP += Demo
@@ -25,7 +27,7 @@ CPP += HallWatcher
 CPP += LookupTable/$(MotorID)
 
 # This should be compiled by AVR++ but it's a little broken so do this instead.
-CPP += AVR++/gccGuard
+CPP += AVR++/gccGuard AVR++/USART
 
 MotorID = Motor1
 

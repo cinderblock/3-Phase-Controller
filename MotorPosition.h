@@ -16,6 +16,8 @@
 
 #include <AVR++/basicTypes.h>
 
+#include "ThreePhaseDriver.h"
+
 namespace ThreePhaseControllerNamespace {
 
   using namespace AVR;

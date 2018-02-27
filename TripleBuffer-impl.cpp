@@ -3,4 +3,4 @@
 
 using namespace ThreePhaseControllerNamespace;
 
-template class TripleBuffer<Config::i2cBufferOutgoingSize, false>;
+//template class TripleBuffer<Config::i2cBufferOutgoingSize, false>;

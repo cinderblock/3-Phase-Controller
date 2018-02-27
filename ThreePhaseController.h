@@ -59,6 +59,8 @@ namespace ThreePhaseControllerNamespace {
      * Initialize the controller
      */
     static void init();
+    
+    static void run();
 
     /**
      * Enable the controller

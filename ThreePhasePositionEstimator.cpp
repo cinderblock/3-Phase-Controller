@@ -19,6 +19,8 @@ using namespace std;
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
+ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::drivePhaseHallEstimate;
+
 u4 ThreePhasePositionEstimator::drivePhaseMagEstimate;
 u2 ThreePhasePositionEstimator::lastMagPhase;
 
@@ -45,6 +47,12 @@ inline static void limit(u4 &value, u4 MAX, bool forward) {
 }
 
 ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
+  HallWatcher::checkH1();
+  HallWatcher::checkH2();
+  HallWatcher::checkH3();
+  getAndProcessNewHallState();
+  return drivePhaseHallEstimate;
+
   // Start at cyclesPWMPerMLX so that we have a whole period before the second
   // reading. The first reading was started in init();
   // If cyclesPWMPerMLX is 1, will try to communicate over SPI every time this function is called.
@@ -180,6 +188,11 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
 }
 
 void ThreePhasePositionEstimator::init() {
+  // Just use halls for now
+  HallWatcher::init();
+  HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
+  return;
+
   MLX90363::init();
   MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
 

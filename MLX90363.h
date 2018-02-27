@@ -15,7 +15,8 @@
 #include "Board.h"
 #include "Clock.h"
 
-ISR(SPI_STC_vect);
+// Declare interrupt. Doesn't need to block others.
+ISR(SPI_STC_vect, ISR_NOBLOCK);
 
 namespace ThreePhaseControllerNamespace {
 
@@ -45,8 +46,9 @@ class MLX90363 {
   * Where we are while sending/reading the data in the SPI interrupt
   */
  static u1 bufferPosition;
- 
+public:
  enum class ResponseState : u1;
+private:
  
  static ResponseState responseState;
  
@@ -210,6 +212,13 @@ public:
  static inline void setAlphaHandler(void (*handler)(u2 const)) {
    alphaHandler = handler;
  }
+ 
+ static inline ResponseState getResponseState() {
+   return responseState;
+ }
+ 
+ static inline u1 const * const getTxBuffer() {return TxBuffer;}
+ static inline u1 const * const getRxBuffer() {return RxBuffer;}
 };
 
 };

@@ -33,18 +33,22 @@ namespace ThreePhaseControllerNamespace {
 
     static u1 volatile state;
     static void (*stateChangeReceiver)();
+    
+  public:
 
     static inline void checkH1() {
       constexpr u1 pos = 2;
 
       u1 oldState = state;
+      u1 newState = oldState;
 
       if (H1::isActive())
-        state |= 1 << pos;
+        newState |= 1 << pos;
       else
-        state &= ~(1 << pos);
+        newState &= ~(1 << pos);
+      state = newState;
 
-      if (stateChangeReceiver && state != oldState) {
+      if (newState != oldState && stateChangeReceiver) {
         stateChangeReceiver();
       }
     }
@@ -53,13 +57,15 @@ namespace ThreePhaseControllerNamespace {
       constexpr u1 pos = 1;
 
       u1 oldState = state;
+      u1 newState = oldState;
 
       if (H2::isActive())
-        state |= 1 << pos;
+        newState |= 1 << pos;
       else
-        state &= ~(1 << pos);
+        newState &= ~(1 << pos);
+      state = newState;
 
-      if (stateChangeReceiver && state != oldState) {
+      if (newState != oldState && stateChangeReceiver) {
         stateChangeReceiver();
       }
     }
@@ -68,13 +74,15 @@ namespace ThreePhaseControllerNamespace {
       constexpr u1 pos = 0;
 
       u1 oldState = state;
+      u1 newState = oldState;
 
       if (H3::isActive())
-        state |= 1 << pos;
+        newState |= 1 << pos;
       else
-        state &= ~(1 << pos);
+        newState &= ~(1 << pos);
+      state = newState;
 
-      if (stateChangeReceiver && state != oldState) {
+      if (newState != oldState && stateChangeReceiver) {
         stateChangeReceiver();
       }
     }

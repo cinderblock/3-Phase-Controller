@@ -50,6 +50,11 @@ void ThreePhaseController::controlLoop() {
   ThreePhaseDriver::advanceTo(p);
 }
 
+void ThreePhaseController::run() {
+  controlLoop();
+}
+
+
 void ThreePhaseController::init() {
   ThreePhaseDriver::init();
   ThreePhaseDriver::setAmplitude(0);

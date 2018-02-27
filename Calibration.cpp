@@ -23,13 +23,18 @@ using namespace ThreePhaseControllerNamespace;
 using namespace Calibration;
 
 void Calibration::main() {
+  if (!enabled) return;
+  
   ThreePhaseDriver::init();
+  HallWatcher::init();
   MLX90363::init();
   MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
   ThreePhaseDriver::setAmplitude(amplitude);
-  ThreePhaseDriver::setDeadTimes({1, 1});
+  ThreePhaseDriver::setDeadTimes({15, 15});
 
   auto magRoll = MLX90363::getRoll();
+  
+  Board::LED::on();
 
   do {
     MLX90363::startTransmitting();

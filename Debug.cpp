@@ -32,22 +32,14 @@ void Debug::init() {
   // Set default
   UCSR1A = 0b00000000;
 
-  // Enable transmitter
-  UCSR1B = 0b00001000;
+  // Enable transmitter and Receiver
+  UCSR1B = (1 << TXEN1) | (1 << RXEN1);
 }
 
 void Debug::sendByte(const u1 c) {
   while (!(UCSR1A & (1 << UDRE1)))
     ;
   UDR1 = c;
-}
-
-u1 nibToHex(u1 const nib) {
-  if (nib < 10)
-    return '0' + nib;
-  if (nib < 16)
-    return 'A' - 10 + nib;
-  return '*';
 }
 
 void Debug::reportU1(const u1 b) {

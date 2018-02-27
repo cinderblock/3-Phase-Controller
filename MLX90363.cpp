@@ -25,7 +25,7 @@ static inline u1 receiveSPI() {
  return *SPI::DR;
 }
 
-ISR (SPI_STC_vect) {
+void SPI_STC_vect() {
  MLX90363::isr();
 }
 
