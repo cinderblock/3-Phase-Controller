@@ -17,7 +17,7 @@
 namespace ThreePhaseControllerNamespace {
   
 class MLXDebug {
-  static bool constexpr enabled = true;
+  static bool constexpr enabled = false;
 public:
   static void main();
 
