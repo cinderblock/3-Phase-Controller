@@ -63,7 +63,7 @@ void Calibration::main() {
     ThreePhaseDriver::advanceTo(i);
 
     // Give the motor some time to move
-    _delay_ms(1);
+    _delay_ms(2);
     // Start the ADC sample on the MLX. We're going to throw away the data from this reading
     MLX90363::startTransmitting();
     
