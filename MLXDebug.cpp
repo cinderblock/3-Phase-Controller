@@ -72,6 +72,8 @@ void MLXDebug::main() {
   
   Board::LED::on();
 
+  u1 i = 0;
+
   do {
     
     Debug::dout << PSTR("Tx: ");
@@ -88,11 +90,9 @@ void MLXDebug::main() {
     
     Debug::dout << PSTR("State: ") << MLX90363::getResponseState() << '\r' << '\n';
     
-    // Just get a byte, any byte for now
-    usart.get();
-    
-    // Always loop for now.
-    continue;
+    _delay_ms(2);
+
+    if (i++ == 5) while (1);
 
     // Loop until we actually receive real data
   } while (!MLX90363::hasNewData(magRoll));
