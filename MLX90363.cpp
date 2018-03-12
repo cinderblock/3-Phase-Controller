@@ -73,6 +73,10 @@ void MLX90363::init() {
  // Setup Slave Select line
  Board::SPI::slaveDeselect();
 
+ Board::SPI::MOSI::on();
+ Board::SPI::SCLK::on();
+ Board::MagSel::off();
+
  // Setup control registers
  
  // Enable SPI2X
