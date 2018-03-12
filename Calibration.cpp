@@ -57,8 +57,17 @@ void Calibration::main() {
       << Printer::Special::Start
       << steps << (u2)0 << (u1)0xff
       << Printer::Special::End;
+
+
   
   for (u2 i = 0; i < steps; i += 3) {
+
+    if (i < rampSteps) {
+      ThreePhaseDriver::setAmplitude(i * amplitude / rampSteps);
+    } else {
+      ThreePhaseDriver::setAmplitude(amplitude);
+    }
+
     // Move to next position
     ThreePhaseDriver::advanceTo(i);
 
