@@ -38,6 +38,10 @@ void Calibration::main() {
 
   do {
     MLX90363::startTransmitting();
+
+    // Hang while transmitting
+    while (MLX90363::isTransmitting());
+
     // Delay long enough to guarantee data is ready
     _delay_ms(2);
 
@@ -63,6 +67,9 @@ void Calibration::main() {
     // Start the ADC sample on the MLX. We're going to throw away the data from this reading
     MLX90363::startTransmitting();
     
+    // Hang while transmitting
+    while (MLX90363::isTransmitting());
+    
     // Wait for a reading to be ready
     _delay_ms(2);
     // Record current roll value
@@ -70,6 +77,9 @@ void Calibration::main() {
     
     // Start SPI sequence
     MLX90363::startTransmitting();
+
+    // Hang while transmitting
+    while (MLX90363::isTransmitting());
     
     // Wait for SPI sequence to finish
     // TODO: check in case crc fails and we'd be sitting here forever
