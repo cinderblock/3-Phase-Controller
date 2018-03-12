@@ -38,7 +38,7 @@ void init() {
   wdt_disable();
 
   Debug::init();
-  Debug::dout << PSTR("Beginning Inits \r\n");
+//  Debug::dout << PSTR("Beginning Inits\r\n");
 
   // Save and Clear the MCU Status Register. Indicates previous reset's source.
   resetCause = MCUSR;
@@ -51,7 +51,7 @@ void init() {
   ::Clock::init();
 
   // End of init
-  Debug::dout << PSTR("End of Inits \r\n");
+//  Debug::dout << PSTR("End of Inits\r\n");
 }
 
 /**
