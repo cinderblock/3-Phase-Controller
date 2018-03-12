@@ -62,8 +62,8 @@ int main() {
   MLXDebug::main();
   Calibration::main();
   Demo::main();
-    
-  
+
+
   // Init for hardware interface.
   ServoController::init();
 
