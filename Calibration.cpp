@@ -29,7 +29,7 @@ void Calibration::main() {
   HallWatcher::init();
   MLX90363::init();
   MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
-  ThreePhaseDriver::setAmplitude(amplitude);
+  ThreePhaseDriver::setAmplitude(0);
   ThreePhaseDriver::setDeadTimes({15, 15});
 
   auto magRoll = MLX90363::getRoll();
