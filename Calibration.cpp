@@ -58,7 +58,7 @@ void Calibration::main() {
       << steps << (u2)0 << (u1)0xff
       << Printer::Special::End;
   
-  for (u2 i = 0; i < steps; i++) {
+  for (u2 i = 0; i < steps; i += 3) {
     // Move to next position
     ThreePhaseDriver::advanceTo(i);
 
