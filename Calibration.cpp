@@ -55,7 +55,7 @@ void Calibration::main() {
 
   SOUT
       << Printer::Special::Start
-      << steps
+      << steps << (u2)0 << (u1)0xff
       << Printer::Special::End;
   
   for (u2 i = 0; i < steps; i++) {
