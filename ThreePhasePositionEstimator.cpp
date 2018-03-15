@@ -117,7 +117,9 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   // missing a count.
 
   // While this is technically called from inside an ISR, interrupts have been
-  // re-enabled. Therefore, main() code will be paused if this is running.
+  // re-enabled. Therefore we need to consider the interplay between the 3 phase
+  // ISR and this position estimator.
+
 
   // static u1 tick = 0;
 
