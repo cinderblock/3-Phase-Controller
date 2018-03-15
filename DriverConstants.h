@@ -11,15 +11,6 @@ using namespace AVR;
 
 class DriverConstants {
 public:
-	/**
-	 * Number of predictions made between each magnetometer update
-	 */
-	static constexpr u1 PredictsPerValue = 40;
-
-	/**
-	 * shift phase integer for additional resolution
-	 */
-	static constexpr u1 drivePhaseValueShift = 8;
 
 	/**
 	 * Maximum torque provided by the motor
