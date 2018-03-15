@@ -60,17 +60,17 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
   }
 
   u4 newPhaseEstimate = drivePhaseMagEstimate;
-  newPhaseEstimate += driveVelocityMagEstimate;
-
-  const bool forward = driveVelocityMagEstimate > 0;
-
-  static constexpr u4 MAX = ((u4)DriverConstants::StepsPerCycle) << drivePhaseMagSubResolution;
-
-  // Check if ph(ase) value is out of range
-  limit(newPhaseEstimate, MAX, forward);
-
-  // Store new drivePhase
-  drivePhaseMagEstimate = newPhaseEstimate;
+//  newPhaseEstimate += driveVelocityMagEstimate;
+//
+//  const bool forward = driveVelocityMagEstimate > 0;
+//
+//  static constexpr u4 MAX = ((u4)DriverConstants::StepsPerCycle) << drivePhaseMagSubResolution;
+//
+//  // Check if ph(ase) value is out of range
+//  limit(newPhaseEstimate, MAX, forward);
+//
+//  // Store new drivePhase
+//  drivePhaseMagEstimate = newPhaseEstimate;
 
   // Adjust output for velocity lag
   // newPhaseEstimate += phaseAdvanceMagCachedAmount;
@@ -79,9 +79,9 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
   // limit(ph, MAX, forward);
 
   // If we're going fast, use Hall position readings directly
-  if (qualityMagEstimate < 100) {
-    return drivePhaseHallEstimate;
-  }
+//  if (qualityMagEstimate < 100) {
+//    return drivePhaseHallEstimate;
+//  }
 
   return (newPhaseEstimate >> drivePhaseMagSubResolution);
 }
@@ -199,6 +199,6 @@ void ThreePhasePositionEstimator::init() {
   HallWatcher::init();
   HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
 
-  lastMagPhase = phase.getMechanicalPosition();
-  drivePhaseMagEstimate = (u4)(phase.getPhasePosition()) << drivePhaseMagSubResolution;
+//  lastMagPhase = phase.getMechanicalPosition();
+  drivePhaseMagEstimate = u4(phase) << drivePhaseMagSubResolution;
 }
