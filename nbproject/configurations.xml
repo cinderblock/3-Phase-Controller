@@ -47,6 +47,7 @@
       <itemPath>Demo.cpp</itemPath>
       <itemPath>HallWatcher.cpp</itemPath>
       <itemPath>Interpreter.cpp</itemPath>
+      <itemPath>LookupTable.cpp</itemPath>
       <itemPath>MLX90363.cpp</itemPath>
       <itemPath>MLXDebug.cpp</itemPath>
       <itemPath>ServoController.cpp</itemPath>
@@ -142,6 +143,8 @@
       <item path="Interpreter.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Interpreter.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="LookupTable.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="LookupTable.h" ex="false" tool="3" flavor2="0">
       </item>

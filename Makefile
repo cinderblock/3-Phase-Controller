@@ -24,12 +24,14 @@ CPP += Calibration
 
 CPP += HallWatcher
 
-CPP += LookupTable/$(MotorID)
+#CPP += LookupTable/$(MotorID)
+
+CPP += LookupTable
 
 # This should be compiled by AVR++ but it's a little broken so do this instead.
 CPP += AVR++/gccGuard AVR++/USART
 
-MotorID = Motor1
+#MotorID = Motor1
 
 AVRpp_SRC = TimerTimeout #ADC USART  gccGuard
 libCameron_SRC = CRC8 DecPrintFormatter
