@@ -71,7 +71,7 @@ class ThreePhasePositionEstimator {
    *
    * SPI transfer time = 8 bytes * (10 / byte) / BAUD
    *
-   * BAUD = 2MHz
+   * BAUD = F_CPU / SPI Divider
    *
    * 10 bit time periods per byte to account for interrupt service length variations
    *
