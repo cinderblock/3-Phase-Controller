@@ -19,7 +19,6 @@
       <itemPath>Debug.h</itemPath>
       <itemPath>Demo.h</itemPath>
       <itemPath>DriverConstants.h</itemPath>
-      <itemPath>FilebotInterface.h</itemPath>
       <itemPath>HallWatcher.h</itemPath>
       <itemPath>Interpreter.h</itemPath>
       <itemPath>LookupTable.h</itemPath>
@@ -31,7 +30,6 @@
       <itemPath>ThreePhaseDriver.h</itemPath>
       <itemPath>ThreePhasePositionEstimator.h</itemPath>
       <itemPath>Timer.h</itemPath>
-      <itemPath>FilebotInterface/TwillBotInterface.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -47,7 +45,6 @@
       <itemPath>Clock.cpp</itemPath>
       <itemPath>Debug.cpp</itemPath>
       <itemPath>Demo.cpp</itemPath>
-      <itemPath>FilebotInterface.cpp</itemPath>
       <itemPath>HallWatcher.cpp</itemPath>
       <itemPath>Interpreter.cpp</itemPath>
       <itemPath>MLX90363.cpp</itemPath>
@@ -58,7 +55,6 @@
       <itemPath>ThreePhasePositionEstimator.cpp</itemPath>
       <itemPath>Timer.cpp</itemPath>
       <itemPath>TripleBuffer-impl.cpp</itemPath>
-      <itemPath>FilebotInterface/TwillBotInterface.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>test.cpp</itemPath>
     </logicalFolder>
@@ -138,20 +134,6 @@
       <item path="Demo.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="DriverConstants.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="FilebotInterface.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FilebotInterface.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="FilebotInterface/TwillBotInterface.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="FilebotInterface/TwillBotInterface.h"
-            ex="false"
-            tool="1"
-            flavor2="0">
       </item>
       <item path="HallWatcher.cpp" ex="false" tool="1" flavor2="0">
       </item>
