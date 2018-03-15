@@ -51,54 +51,41 @@ void Calibration::main() {
   // If numberOfSpins is too large, we should get a compile time overflow error
   constexpr u2 steps = DriverConstants::StepsPerRotation * numberOfSpins;
 
+  constexpr u1 stepSize = 1;
+
   using namespace Debug;
 
-  SOUT
-      << Printer::Special::Start
-      << steps << (u2)0 << (u1)0xff
-      << Printer::Special::End;
+  u2 i = 0;
 
+  for (; i < DriverConstants::StepsPerCycle; i += stepSize) {
+    ThreePhaseDriver::setAmplitude(i * amplitude / rampSteps);
+    step(i);
+  }
 
+  ThreePhaseDriver::setAmplitude(amplitude);
   
-  for (u2 i = 0; i < steps; i += 3) {
-
-    if (i < rampSteps) {
-      ThreePhaseDriver::setAmplitude(i * amplitude / rampSteps);
-    } else {
-      ThreePhaseDriver::setAmplitude(amplitude);
-    }
-
-    // Move to next position
-    ThreePhaseDriver::advanceTo(i);
-
-    // Give the motor some time to move
-    _delay_ms(2);
-    // Start the ADC sample on the MLX. We're going to throw away the data from this reading
-    MLX90363::startTransmitting();
-    
-    // Hang while transmitting
-    while (MLX90363::isTransmitting());
-    
-    // Wait for a reading to be ready
-    _delay_ms(2);
-    // Record current roll value
-    magRoll = MLX90363::getRoll();
-    
-    // Start SPI sequence
-    MLX90363::startTransmitting();
-
-    // Hang while transmitting
-    while (MLX90363::isTransmitting());
-    
-    // Wait for SPI sequence to finish
-    // TODO: check in case crc fails and we'd be sitting here forever
-    while (!MLX90363::hasNewData(magRoll));
-
+  for (; i < steps + DriverConstants::StepsPerCycle; i += stepSize) {
+    step(i);
     // Send data via debug serial port
     SOUT
-        << Printer::Special::Start
-        << i << MLX90363::getAlpha() << HallWatcher::getState()
-        << Printer::Special::End;
+      << Printer::Special::Start
+      << i << MLX90363::getAlpha() << HallWatcher::getState()
+      << Printer::Special::End;
+  }
+
+
+  for (; i > steps; i -= stepSize) {
+    step(i);
+  }
+  
+  
+  for (; i; i -= stepSize) {
+    step(i);
+    // Send data via debug serial port
+    SOUT
+      << Printer::Special::Start
+      << i << MLX90363::getAlpha() << HallWatcher::getState()
+      << Printer::Special::End;
   }
 
   ThreePhaseDriver::setAmplitude(0);
@@ -106,4 +93,32 @@ void Calibration::main() {
 
   // Don't continue
   while (1);
+}
+
+void Calibration::step(uint16_t i) {
+  // Move to next position
+  ThreePhaseDriver::advanceTo(i);
+
+  // Give the motor some time to move
+  _delay_ms(2);
+  // Start the ADC sample on the MLX. We're going to throw away the data from this reading
+  MLX90363::startTransmitting();
+
+  // Hang while transmitting
+  while (MLX90363::isTransmitting());
+
+  // Wait for a reading to be ready
+  _delay_ms(2);
+  // Record current roll value
+  auto magRoll = MLX90363::getRoll();
+
+  // Start SPI sequence
+  MLX90363::startTransmitting();
+
+  // Hang while transmitting
+  while (MLX90363::isTransmitting());
+
+  // Wait for SPI sequence to finish
+  // TODO: check in case crc fails and we'd be sitting here forever
+  while (!MLX90363::hasNewData(magRoll));
 }

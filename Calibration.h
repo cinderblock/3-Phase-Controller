@@ -22,6 +22,8 @@ namespace Calibration {
   constexpr uint8_t amplitude = 40;
   constexpr uint16_t rampSteps = 0x300;
   void main();
+  
+  void step(uint16_t i);
 };
 
 };
