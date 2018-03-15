@@ -160,7 +160,7 @@ public:
     return ret;
    }
 
-   inline operator u4() {
+   inline operator u4() const {
      return commutation;
    }
   };
