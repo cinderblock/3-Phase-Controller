@@ -80,9 +80,9 @@ void MLX90363::init() {
  // Setup control registers
  
  // Enable SPI2X
- AVR::SPI::SR->byte = 1 << SPI2X;
+ AVR::SPI::SR->byte = 0 << SPI2X;
  // F_CPU/8
- AVR::SPI::CR->byte = 0b11010101;
+ AVR::SPI::CR->byte = 0b11010111;
 
  responseState = ResponseState::Ready;
 }

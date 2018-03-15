@@ -73,15 +73,17 @@ class ThreePhasePositionEstimator {
    *
    * BAUD = F_CPU / SPI Divider
    *
+   * SPI Divider = 128
+   *
    * 10 bit time periods per byte to account for interrupt service length variations
    *
-   * SPI transfer time = 40us
+   * SPI transfer time = 640us
    *
-   * period(MLX) = 960us
+   * period(MLX) = 1560us
    *
-   * min(cyclesPWMPerMLX) = 31.25kHz * 960us = 30;
+   * min(cyclesPWMPerMLX) = 31.25kHz * 1560us = 49;
    */
-  static constexpr u1 cyclesPWMPerMLX = 32;
+  static constexpr u1 cyclesPWMPerMLX = 64;
 
   /**
    * Number indicating the quality of our magnetometer based position estimate. Lower is worse.
