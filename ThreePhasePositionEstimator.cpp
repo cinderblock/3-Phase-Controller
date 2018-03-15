@@ -15,7 +15,6 @@
 // #include <cmath>
 // #include "common.h"
 
-using namespace std;
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
@@ -47,11 +46,6 @@ inline static void limit(u4 &value, u4 MAX, bool forward) {
 }
 
 ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
-  HallWatcher::checkH1();
-  HallWatcher::checkH2();
-  HallWatcher::checkH3();
-  getAndProcessNewHallState();
-  return drivePhaseHallEstimate;
 
   // Start at cyclesPWMPerMLX so that we have a whole period before the second
   // reading. The first reading was started in init();
@@ -134,22 +128,15 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
 
   const auto position = Lookup::AlphaToPhase(alpha);
 
-  u2 mechanicalPhase = position.getMechanicalPosition();
-
-  // Find distance traveled in phase
-  s2 mechChange = mechanicalPhase - lastMagPhase;
-
-  // TODO: ensure we are not wrapping in the wrong direction due to high speeds
-  if (mechChange > (s2)(DriverConstants::StepsPerRotation / 2)) {
-    mechChange = mechChange - ((s2)DriverConstants::StepsPerRotation);
-  } else if (mechChange < -((s2)DriverConstants::StepsPerRotation / 2)) {
-    mechChange = mechChange + ((s2)DriverConstants::StepsPerRotation);
-  }
+//  u2 mechanicalPhase = position.getMechanicalPosition();
+//
+//  // Find distance traveled in phase
+//  s2 mechChange = mechanicalPhase - lastMagPhase;
 
   // Now we figure out how much to adjust our velocity estimate by to get back
   // in lock
 
-  s4 tempVelocity = driveVelocityMagEstimate;
+//  s4 tempVelocity = driveVelocityMagEstimate;
 
   // Here, instead of measuring how far we went and dividing by the number of
   // steps it took to get here, we predict how far we would have gone if our
@@ -157,12 +144,12 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   // mechanical distance traveled. If we're too fast, adjust down. If we're too
   // slow, adjust up. Also handle if we missed data from the MLX because of CRC
   // error or something
-  const s2 predictedPhaseChange =
-      (tempVelocity * DriverConstants::PredictsPerValue * numberOfCycles) >> drivePhaseMagSubResolution;
-
-  const s2 phaseError = mechChange - predictedPhaseChange;
-
-  tempVelocity += phaseError / DriverConstants::PredictsPerValue;
+//  const s2 predictedPhaseChange =
+//      (tempVelocity * DriverConstants::PredictsPerValue * numberOfCycles) >> drivePhaseMagSubResolution;
+//
+//  const s2 phaseError = mechChange - predictedPhaseChange;
+//
+//  tempVelocity += phaseError / DriverConstants::PredictsPerValue;
 
   //	if (phaseError > 0) {
   //		tempVelocity += adjustVal;
@@ -174,27 +161,19 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   // needed phase advance to compensate for the delayed readings and store this
   // value for direct usage in advance() (NOTE: This is different from the phase
   // advance achieved with FOC)
-  s4 tempPhaseAdvance = tempVelocity * phaseAdvanceMagRatio;
+//  s4 tempPhaseAdvance = tempVelocity * phaseAdvanceMagRatio;
 
   // These values are accessed by other parts on interrupts. Turn off interrupts
   // so that the prediction steps are delayed until the new values are copied
   // over.
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    driveVelocityMagEstimate = tempVelocity;
-    drivePhaseMagEstimate = u4(position.getPhasePosition()) << drivePhaseMagSubResolution;
-    phaseAdvanceMagCachedAmount = tempPhaseAdvance;
+//    driveVelocityMagEstimate = tempVelocity;
+    drivePhaseMagEstimate = u4(position) << drivePhaseMagSubResolution;
+//    phaseAdvanceMagCachedAmount = tempPhaseAdvance;
   }
-
-  // Save the most recent magnetic position
-  lastMagPhase = mechanicalPhase;
 }
 
 void ThreePhasePositionEstimator::init() {
-  // Just use halls for now
-  HallWatcher::init();
-  HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
-  return;
-
   MLX90363::init();
   MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
 
@@ -202,6 +181,10 @@ void ThreePhasePositionEstimator::init() {
 
   do {
     MLX90363::startTransmitting();
+
+    while (MLX90363::isTransmitting());
+
+    
     // Delay long enough to guarantee data is ready
     _delay_ms(2);
 
