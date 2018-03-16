@@ -21,54 +21,53 @@ libCameron::DecPrintFormatter Debug::dout(&sendByte);
 static CRC8 CRC;
 
 void Debug::init() {
- UBRR1 = 0;
+  UBRR1 = 3;
 
- // Set default
- UCSR1D = 0b00;
+  // Set default
+  UCSR1D = 0b00;
 
- // Set default
- UCSR1C = 0b00000110;
+  // Set default
+  UCSR1C = 0b00000110;
 
- // Set default
- UCSR1A = 0b00000000;
+  // Set default
+  UCSR1A = 0b00000000;
 
- // Enable transmitter
- UCSR1B = 0b00001000;
+  // Enable transmitter and receiver
+  UCSR1B = 0b00011000;
 }
 
 void Debug::sendByte(const u1 c) {
- while (!(UCSR1A & (1 << UDRE1)));
- UDR1 = c;
+  while (!(UCSR1A & (1 << UDRE1)))
+    ;
+  UDR1 = c;
 }
 
 u1 nibToHex(u1 const nib) {
- if (nib < 10)
-  return '0' + nib;
- if (nib < 16)
-  return 'A' - 10 + nib;
- return '*';
+  if (nib < 10)
+    return '0' + nib;
+  if (nib < 16)
+    return 'A' - 10 + nib;
+  return '*';
 }
 
 void Debug::reportU1(const u1 b) {
- CRC << b;
- sendByte(b);
+  CRC << b;
+  sendByte(b);
 }
 
 void Debug::reportClock() {
- u4 t;
- Clock::readTime(t);
- reportU2(t);
+  u4 t;
+  Clock::readTime(t);
+  reportU2(t);
 }
 
 void Debug::sendHeader() {
- sendByte(0xff);
- sendByte(0x00);
- sendByte(0xff);
- sendByte(0xA5);
- sendByte(0xff);
- CRC.reset();
+  sendByte(0xff);
+  sendByte(0x00);
+  sendByte(0xff);
+  sendByte(0xA5);
+  sendByte(0xff);
+  CRC.reset();
 }
 
-void Debug::sendEnd() {
- sendByte(CRC.getCRC());
-}
+void Debug::sendEnd() { sendByte(CRC.getCRC()); }
