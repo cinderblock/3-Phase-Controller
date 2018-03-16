@@ -19,6 +19,7 @@ using namespace AVR;
 namespace Board {
  using LED0 = Output<Ports::F, 4>; // On breakout
  using LED1 = Output<Ports::D, 5>; // On Simple Controller
+ using LED_LIS = Output<Ports::F, 0>; // On Simple Controller
  using VBATS = Input<Ports::D, 4, false>;
 
  using Sw1 = Input<Ports::F, 1>; // start switch pin
