@@ -47,7 +47,7 @@ namespace ThreePhaseControllerNamespace {
     /**
      * Are we trying to go forward
      */
-    static bool isForwardTorque;
+    static volatile bool isForwardTorque;
 
     /**
      * 90 degree phase shift

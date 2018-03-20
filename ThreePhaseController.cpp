@@ -21,7 +21,7 @@ using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
 volatile bool ThreePhaseController::enabled = false;
-bool ThreePhaseController::isForwardTorque;
+volatile bool ThreePhaseController::isForwardTorque;
 
 /**
  * This interrupt is triggered on TIMER4 (PWM6) overflow. This happens at the BOTTOM

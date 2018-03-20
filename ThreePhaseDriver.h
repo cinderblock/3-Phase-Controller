@@ -37,7 +37,7 @@ class ThreePhaseDriver {
   /**
    * The current PWM amplitude
    */
-  static u1 amplitude;
+  static volatile u1 amplitude;
 
 public:
 
