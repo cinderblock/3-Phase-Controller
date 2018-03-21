@@ -45,8 +45,14 @@ void init() {
   Debug::init();
   Debug::dout << PSTR("Beginning Inits \r\n");
 
-  // Set up the driver pins
-  ThreePhaseDriver::init();
+  // Set up the driver pins in pwm mode
+  // ThreePhaseDriver::init();  // (comment out for digital cotrol)
+  // *************************************** Turn everything off example code in
+  // digital mode Board::DRV::AL::off(); Board::DRV::BL::off();
+  // Board::DRV::CL::off();
+  // Board::DRV::AH::off();
+  // Board::DRV::BH::off();
+  // Board::DRV::CH::off();
 
   // Clear the MCU Status Register.  Indicates previous reset's source.
   MCUSR = 0;
@@ -310,10 +316,36 @@ u2 getSerialWord() {
   return first << 8 | second;
 }
 
+void doState(bool al, bool bl, bool cl, bool ah, bool bh, bool ch) {
+
+  Board::DRV::AL::set(al);
+  Board::DRV::BL::set(bl);
+  Board::DRV::CL::set(cl);
+  Board::DRV::AH::set(ah);
+  Board::DRV::BH::set(bh);
+  Board::DRV::CH::set(ch);
+}
+
 /**
  *
  **/
 int main() {
+
+  while (1) {
+
+    doState(0, 0, 0, 0, 0, 0);
+    delay(1000);
+    doState(0, 0, 0, 0, 0, 0);
+    delay(1000);
+    doState(0, 0, 0, 0, 0, 0);
+    delay(1000);
+    doState(0, 0, 0, 0, 0, 0);
+    delay(1000);
+    doState(0, 0, 0, 0, 0, 0);
+    delay(1000);
+    doState(0, 0, 0, 0, 0, 0);
+    delay(1000);
+  }
 
   // Clock::MicroTime next;
   //
@@ -336,7 +368,6 @@ int main() {
   // setPWM(60);
 
   // get a byte from the master and set the pwm
-
   u1 i = 0;
 
   // setPWM(-100);
