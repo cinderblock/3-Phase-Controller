@@ -124,7 +124,7 @@ public:
    *
    * @return current estimate of PhasePosition
    */
-  static ThreePhaseDriver::PhasePosition advance() __attribute__((hot));
+  static ThreePhaseDriver::PhasePosition advance(u1 steps) __attribute__((hot));
 
   /**
    * Get the phase advance ratio

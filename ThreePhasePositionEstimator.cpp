@@ -45,18 +45,53 @@ inline static void limit(u4 &value, u4 MAX, bool forward) {
   }
 }
 
-ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
+/**
+ * Class to help trigger a periodic task based on potentially arbitrary steps in time
+ */
+template <u1 period>
+class Counter {
+  u1 count;
+  public:
+    Counter() : count(period) {}
 
-  // Start at cyclesPWMPerMLX so that we have a whole period before the second
-  // reading. The first reading was started in init();
-  // If cyclesPWMPerMLX is 1, will try to communicate over SPI every time this function is called.
-  u1 static mlxPeriodCounter = cyclesPWMPerMLX;
+    u1 advanceAndCheckOverflow(u1 i) {
+
+      u1 ret = 0;
+
+      while (i) {
+        if (count > i) {
+          count -= i;
+          break;
+        }
+
+        ret++;
+
+        i -= count;
+
+        count = period;
+      };
+
+      return ret;
+    }
+};
+
+ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
+  // If cyclesPWMPerMLX is 1, will try to communicate over SPI every time advance() is called.
+  static Counter<cyclesPWMPerMLX> mlxPeriodCounter;
+
+  u1 overflows = mlxPeriodCounter.advanceAndCheckOverflow(steps);
 
   // Automatically start MLX communications every few ticks
-  if (!--mlxPeriodCounter) {
+
+  if (overflows) {
+    // TODO: There is a potential issue that if the timings are too tight, in
+    // certain cases, we could talk to the MLX late, which isn't immediately a
+    // problem, except that the next MLX reading would be early, causing a NTT
+    // response from the MLX. This isn't a major problem as the MLX handler
+    // should just drop that sample and get the next one.
+
     MLX90363::startTransmitting();
-    mlxReadingsStarted++;
-    mlxPeriodCounter = cyclesPWMPerMLX;
+    mlxReadingsStarted += overflows;
   }
 
   u4 newPhaseEstimate = drivePhaseMagEstimate;

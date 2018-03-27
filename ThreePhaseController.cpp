@@ -37,9 +37,29 @@ void TIMER4_OVF_vect() {
 }
 
 void ThreePhaseController::controlLoop() {
-  // Advance our position estimate on step in time
-  ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance();
+  static volatile bool running = false;
+  static volatile u1 stepCount = 0;
 
+  stepCount++;
+  if (running)  {
+    return;
+  }
+
+  running = true;
+
+  // Record number of steps
+  u1 steps = stepCount;
+
+  // Reset missed step count
+  stepCount = 0;
+
+  // Re-enable interrupts
+  sei();
+
+
+  // Advance our position estimate n steps in time
+  ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance(steps);
+  
   // TODO: more phase advance at higher speeds
   if (isForwardTorque == Config::forward) {
     p += output90DegPhaseShift;
@@ -48,6 +68,8 @@ void ThreePhaseController::controlLoop() {
   }
 
   ThreePhaseDriver::advanceTo(p);
+
+  running = false;
 }
 
 void ThreePhaseController::run() {
