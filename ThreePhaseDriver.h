@@ -168,18 +168,18 @@ public:
   /**
    * Internal granularity of sin wave for each phase
    */
-  static u2 constexpr StepsPerPhase = DriverConstants::StepsPerPhase;
+  static u2 constexpr StepsPerPhase = 256;
 
   /**
    * One for each of A, B, and C.
    */
-  static u1 constexpr PhasesPerCycle = DriverConstants::PhasesPerCycle;
+  static u1 constexpr PhasesPerCycle = 3;
 
   /**
    * One Cycle is one full commutation (aka electrical revolution) of the motor.
    * This is almost certainly not one actual revolution of the motor shaft.
    */
-  static u2 constexpr StepsPerCycle = DriverConstants::StepsPerCycle;
+  static u2 constexpr StepsPerCycle = StepsPerPhase * PhasesPerCycle;
 
   /**
    * Highest possible timer value
