@@ -25,6 +25,7 @@
       <itemPath>MLX90363.h</itemPath>
       <itemPath>MLXDebug.h</itemPath>
       <itemPath>MotorPosition.h</itemPath>
+      <itemPath>SerialInterface.h</itemPath>
       <itemPath>ServoController.h</itemPath>
       <itemPath>ThreePhaseController.h</itemPath>
       <itemPath>ThreePhaseDriver.h</itemPath>
@@ -50,6 +51,7 @@
       <itemPath>LookupTable.cpp</itemPath>
       <itemPath>MLX90363.cpp</itemPath>
       <itemPath>MLXDebug.cpp</itemPath>
+      <itemPath>SerialInterface.cpp</itemPath>
       <itemPath>ServoController.cpp</itemPath>
       <itemPath>ThreePhaseController.cpp</itemPath>
       <itemPath>ThreePhaseDriver.cpp</itemPath>
@@ -159,6 +161,10 @@
       <item path="MLXDebug.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MotorPosition.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SerialInterface.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SerialInterface.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ServoController.cpp" ex="false" tool="1" flavor2="0">
       </item>

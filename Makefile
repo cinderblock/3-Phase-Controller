@@ -28,6 +28,8 @@ CPP += HallWatcher
 
 CPP += LookupTable
 
+CPP += SerialInterface
+
 # This should be compiled by AVR++ but it's a little broken so do this instead.
 CPP += AVR++/gccGuard AVR++/USART
 
