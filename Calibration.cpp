@@ -49,7 +49,7 @@ void Calibration::main() {
   } while (!MLX90363::hasNewData(magRoll));
 
   // If numberOfSpins is too large, we should get a compile time overflow error
-  constexpr u2 steps = DriverConstants::StepsPerRotation * numberOfSpins;
+  constexpr u2 steps = ThreePhaseDriver::StepsPerCycle * numberOfSpins;
 
   constexpr u1 stepSize = 1;
 
@@ -57,14 +57,14 @@ void Calibration::main() {
 
   u2 i = 0;
 
-  for (; i < DriverConstants::StepsPerCycle; i += stepSize) {
+  for (; i < ThreePhaseDriver::StepsPerCycle; i += stepSize) {
     ThreePhaseDriver::setAmplitude(i * amplitude / rampSteps);
     step(i);
   }
 
   ThreePhaseDriver::setAmplitude(amplitude);
   
-  for (; i < steps + DriverConstants::StepsPerCycle; i += stepSize) {
+  for (; i < steps + ThreePhaseDriver::StepsPerCycle; i += stepSize) {
     step(i);
     // Send data via debug serial port
     SOUT
