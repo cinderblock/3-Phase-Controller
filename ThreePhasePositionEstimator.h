@@ -83,7 +83,7 @@ class ThreePhasePositionEstimator {
    *
    * min(cyclesPWMPerMLX) = 31.25kHz * 1560us = 49;
    */
-  static constexpr u1 cyclesPWMPerMLX = 64;
+  static constexpr u1 cyclesPWMPerMLX = 49;
 
   /**
    * Number indicating the quality of our magnetometer based position estimate. Lower is worse.
