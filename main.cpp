@@ -19,6 +19,7 @@
 #include "Interpreter.h"
 #include "ServoController.h"
 #include "MLXDebug.h"
+#include "SerialInterface.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
@@ -63,6 +64,17 @@ int main() {
   Calibration::main();
   Demo::main();
 
+  ThreePhaseController::init();
+
+  SerialInterface::init();
+
+  while (1) {
+    while (!SerialInterface::isMessageReady());
+    SerialInterface::receiveMessage();
+    auto msg = SerialInterface::getMessage();
+
+    ThreePhaseController::setAmplitude(s1(msg->getCommand()));
+  }
 
   // Init for hardware interface.
   ServoController::init();
