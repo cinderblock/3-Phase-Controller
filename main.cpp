@@ -211,8 +211,8 @@ u1 initializeLIS331() {
 
   AVR::I2C::sendSTOP();
 
-  while (AVR::I2C::isStopping())
-    Debug::dout << PSTR("Stopping\r\n");
+  // while (AVR::I2C::isStopping())
+  Debug::dout << PSTR("Stopping\r\n");
 
   return 0;
 }
@@ -291,8 +291,8 @@ u2 readLIS331Word(u1 const device, u1 const addr) {
   u1 temp2 = AVR::I2C::getByte();
 
   AVR::I2C::sendSTOP();
-  while (AVR::I2C::isStopping())
-    ;
+  // while (AVR::I2C::isStopping())
+  // ;
 
   return temp << 8 | temp2;
 }
