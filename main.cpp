@@ -46,13 +46,7 @@ void init() {
   Debug::dout << PSTR("Beginning Inits \r\n");
 
   // Set up the driver pins in pwm mode
-  // ThreePhaseDriver::init();  // (comment out for digital cotrol)
-  // *************************************** Turn everything off example code in
-  // digital mode Board::DRV::AL::off(); Board::DRV::BL::off();
-  // Board::DRV::CL::off();
-  // Board::DRV::AH::off();
-  // Board::DRV::BH::off();
-  // Board::DRV::CH::off();
+  ThreePhaseDriver::init(); // (comment out for digital cotrol tests)
 
   // Clear the MCU Status Register.  Indicates previous reset's source.
   MCUSR = 0;
@@ -318,12 +312,21 @@ u2 getSerialWord() {
 
 void doState(bool al, bool bl, bool cl, bool ah, bool bh, bool ch) {
 
+  // Board::DRV::AL::set(0); //  all off for a moment
+  // Board::DRV::BL::set(0);
+  // Board::DRV::CL::set(0);
+  // Board::DRV::AH::set(0);
+  // Board::DRV::BH::set(0);
+  // Board::DRV::CH::set(0);
+  // _delay_ms(20);
+
   Board::DRV::AL::set(al);
   Board::DRV::BL::set(bl);
   Board::DRV::CL::set(cl);
   Board::DRV::AH::set(ah);
   Board::DRV::BH::set(bh);
   Board::DRV::CH::set(ch);
+  _delay_ms(20);
 }
 
 /**
@@ -331,21 +334,24 @@ void doState(bool al, bool bl, bool cl, bool ah, bool bh, bool ch) {
  **/
 int main() {
 
-  while (1) {
+  // while (1) {
+  //
+  //   //     al,bl,cl,ah,bh,ch
+  //   doState(1, 0, 0, 0, 1, 0); // 6
+  //   doState(0, 0, 1, 0, 1, 0); // 4
+  //   doState(0, 0, 1, 1, 0, 0); // 5
+  //   doState(0, 1, 0, 1, 0, 0); // 1
+  //   doState(0, 1, 0, 0, 0, 1); // 3
+  //   doState(1, 0, 0, 0, 0, 1); // 2
 
-    doState(0, 0, 0, 0, 0, 0);
-    delay(1000);
-    doState(0, 0, 0, 0, 0, 0);
-    delay(1000);
-    doState(0, 0, 0, 0, 0, 0);
-    delay(1000);
-    doState(0, 0, 0, 0, 0, 0);
-    delay(1000);
-    doState(0, 0, 0, 0, 0, 0);
-    delay(1000);
-    doState(0, 0, 0, 0, 0, 0);
-    delay(1000);
-  }
+  // Set to 2 volts with 1A for this test
+  // doState(1, 0, 0, 1, 0, 0); // short A
+  // doState(0, 1, 0, 0, 1, 0); // short B
+  // doState(0, 0, 1, 0, 0, 1); // short C
+
+  // short all
+  // doState(1, 1, 1, 1, 1, 1); // short All
+  // }
 
   // Clock::MicroTime next;
   //
@@ -387,7 +393,7 @@ int main() {
 
     // Respond with a counter
     UDR1 = i++;
-  }
+  };
 
   while (0) {
 
@@ -404,4 +410,4 @@ int main() {
   // allows for interrupts to continue
   while (1)
     ;
-}
+};
