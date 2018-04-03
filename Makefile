@@ -47,8 +47,22 @@ TARGET = turnigy
 
 MCU = atmega32u4
 
-all: build-lss run
-run: dfu-erase dfu-flash dfu-reset
+all: build-lss
+
+# Program with AVR attached locally
+#all: dfu-erase dfu-flash dfu-reset
+
+# Program with AVR attached to SleepyPi
+all: remote_prog
+
+REMOTE_HEX = $(TARGET).hex
+REMOTE = pi@sleepypi
+
+remote_prog:
+	pscp -q $(OUT_HEX) $(REMOTE):$(REMOTE_HEX)
+	-plink $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX)
+	-plink $(REMOTE) sudo $(DFU_TARGETED) reset
+	plink $(REMOTE) rm $(REMOTE_HEX)
 
 #ASM = $(CPP:%=%.cpp.S)
 
