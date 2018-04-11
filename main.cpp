@@ -21,6 +21,7 @@
 #include "Interpreter.h"
 #include "ServoController.h"
 #include "commutation.h"
+#include "SerialInterface.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
@@ -352,6 +353,16 @@ int main() {
   // short all
   // doState(1, 1, 1, 1, 1, 1); // short All
   // }
+
+  SerialInterface::init();
+
+  while (1) {
+    while (!SerialInterface::isMessageReady());
+    SerialInterface::receiveMessage();
+    auto msg = SerialInterface::getMessage();
+
+    setPWM(msg->getCommand());
+  }
 
   // Clock::MicroTime next;
   //

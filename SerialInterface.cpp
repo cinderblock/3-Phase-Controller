@@ -17,7 +17,12 @@
 
 #include <TripleBuffer.cpp>
 
+#include <CRC8.h>
+
 libCameron::TripleBuffer<SerialInterface::Message, true> SerialInterface::incoming;
+constexpr u1 SerialInterface::Message::header[headerLength];
+
+u1 SerialInterface::Message::pos = 0;
 
 void USART1_RX_vect() {
   SerialInterface::receiveByte();
@@ -35,17 +40,52 @@ void SerialInterface::init() {
   // Set default
   UCSR1A = 0b00000000;
 
-  // Enable transmitter and Receiver
-  UCSR1B = (1 << TXEN1) | (1 << RXEN1);
-
   // Make sure incoming buffer is ready to receive first block
   incoming.markNewestBuffer();
 
-  // TODO: Enable interrupt
+  // Enable transmitter, receiver, and rx interrupt
+  UCSR1B = (1 << TXEN1) | (1 << RXEN1) | (1 << RXCIE1);
 }
 
 void SerialInterface::receiveByte() {
-  // TODO: Implement interrupt
+  if (incoming.getWriteBuffer()->feed(UDR1))
+    incoming.markNewestBuffer();
+}
+
+bool SerialInterface::Message::feed(u1 b) {
+  if (pos < headerLength) {
+    if (header[pos] != b) {
+      pos = 0;
+      return false;
+    }
+    pos++;
+    return false;
+  }
+
+  raw[pos - headerLength] = b;
+
+  pos++;
+
+  if (pos < headerLength + length) return false;
+
+  pos = 0;
+  return checkCRC() == 0;
+}
+
+u1 SerialInterface::Message::checkCRC() {
+  return crc(raw);
+}
+
+u1 SerialInterface::Message::crc(u1* block) {
+  static CRC8 c;
+
+  c.reset();
+
+  for (u1 i = 0; i < length; i++) {
+    c << *block++;
+  }
+
+  return c.getCRC();
 }
 
 
