@@ -14,6 +14,8 @@
 #ifndef SERIALINTERFACE_H
 #define SERIALINTERFACE_H
 
+#include <stddef.h>
+
 #include <AVR++/basicTypes.h>
 #include <TripleBuffer.h>
 #include <avr/interrupt.h>
@@ -34,10 +36,22 @@ public:
     static constexpr u1 header[headerLength] = {0xff, 0xfe, 0xfe};
 
     /**
+     * Internal block of bytes we're wrapping around
+     */
+    typedef struct {
+      s2 command;
+      u1 crc;
+    } block;
+
+    /**
      * fix length of message, including crc
      */
-    static constexpr u1 length = 2;
-
+    static constexpr size_t length = sizeof(block);
+    
+    union {
+      u1 raw[length];
+      block data;
+    };
 
     static u1 crc(u1 *);
 
@@ -49,11 +63,6 @@ public:
 
     static u1 scratch[headerLength];
 
-    /**
-     * Internal block of bytes we're wrapping around
-     */
-    u1 raw[length];
-
     u1 checkCRC();
 
     /**
@@ -64,7 +73,7 @@ public:
     bool feed(u1 b);
   public:
     inline s2 getCommand() const {
-      return 2 * s1(raw[0]);
+      return data.command;
     }
   };
 
@@ -87,4 +96,3 @@ private:
 };
 
 #endif /* SERIALINTERFACE_H */
-
