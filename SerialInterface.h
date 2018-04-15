@@ -65,8 +65,8 @@ public:
      */
     bool feed(u1 b);
   public:
-    inline u1 getCommand() const {
-      return raw[0];
+    inline s1 getCommand() const {
+      return s1(raw[0]);
     }
   };
 
