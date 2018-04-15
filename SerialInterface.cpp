@@ -88,5 +88,11 @@ u1 SerialInterface::Message::crc(u1 const * block) {
   return c.getCRC();
 }
 
+bool SerialInterface::isMessageReady() {
+  if (!incoming.isNewData()) return false;
+  SerialInterface::receiveMessage();
+  return getMessage()->checkCRC() == 0;
+}
+
 
 template class libCameron::TripleBuffer<SerialInterface::Message, true>;

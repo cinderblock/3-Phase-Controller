@@ -69,9 +69,7 @@ public:
   };
 
 public:
-  inline static bool isMessageReady() {
-    return incoming.isNewData();
-  }
+  static bool isMessageReady();
 
   inline static Message const * getMessage() {
     return incoming.getReadBuffer();

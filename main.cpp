@@ -70,7 +70,7 @@ int main() {
 
   while (1) {
     while (!SerialInterface::isMessageReady());
-    SerialInterface::receiveMessage();
+    
     auto msg = SerialInterface::getMessage();
 
     ThreePhaseController::setAmplitude(s1(msg->getCommand()));
