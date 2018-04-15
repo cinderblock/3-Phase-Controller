@@ -76,7 +76,7 @@ u1 SerialInterface::Message::checkCRC() {
   return crc(raw);
 }
 
-u1 SerialInterface::Message::crc(u1* block) {
+u1 SerialInterface::Message::crc(u1 const * block) {
   static CRC8 c;
 
   c.reset();

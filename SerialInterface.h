@@ -39,7 +39,7 @@ public:
     static constexpr u1 length = 2;
 
 
-    static u1 crc(u1 *);
+    static u1 crc(u1 const *);
 
     /**
      * Track the current position we're writing to. Static because we never
