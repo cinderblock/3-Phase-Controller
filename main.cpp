@@ -73,7 +73,7 @@ int main() {
     
     auto msg = SerialInterface::getMessage();
 
-    ThreePhaseController::setAmplitude(s1(msg->getCommand()));
+    ThreePhaseController::setAmplitude(msg->getCommand());
   }
 
   // Init for hardware interface.
