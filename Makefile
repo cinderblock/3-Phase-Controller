@@ -54,7 +54,16 @@ TARGET = turnigy
 MCU = atmega32u4
 
 all: build-lss run
-run: dfu-erase dfu-flash dfu-reset
+#run: dfu-erase dfu-flash dfu-reset
+run: run-remote
+
+REMOTE_HEX = $(TARGET).hex
+
+run-remote:
+	pscp -q $(OUT_HEX) pi@sleepypi:$(REMOTE_HEX)
+	-plink pi@sleepypi sudo $(DFU_TARGETED) flash $(REMOTE_HEX)
+	-plink pi@sleepypi sudo $(DFU_TARGETED) reset
+	plink pi@sleepypi rm $(REMOTE_HEX)
 
 #ASM = $(CPP:%=%.cpp.S)
 
@@ -94,4 +103,4 @@ include $(uMakerPath)tools/dfu.mk
 # Directory creation targets
 include $(uMakerPath)tools/mkdir.mk
 
-.PHONY: all run
+.PHONY: all run run-remote
