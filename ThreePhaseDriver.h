@@ -45,7 +45,7 @@ public:
    * The outputs can be in one of 3 phases
    */
   enum class Phase : u1 {
-    A = 0, B = 1, C = 2, Invalid
+    A = 0, B = 1, C = 2, Brake = 3
   };
 
   /**
@@ -95,6 +95,7 @@ public:
    inline PhasePosition(Phase const phase, u1 const commutation) : commutation(((u1)phase << 8) | commutation) {}
 
    inline PhasePosition& operator+=(u1 const steps) {
+     if (getPhase() == Phase::Brake) return;
     commutation += steps;
     if (commutation > MAX) commutation -= MAX;
 
@@ -102,6 +103,7 @@ public:
    }
 
    inline PhasePosition& operator-=(u1 const steps) {
+     if (getPhase() == Phase::Brake) return;
     commutation -= steps;
     if (commutation > MAX) commutation += MAX;
 
@@ -109,6 +111,7 @@ public:
    }
 
    inline PhasePosition& operator+=(u2 const steps) {
+     if (getPhase() == Phase::Brake) return;
      // TODO: This is broken if steps is very large and overflows commutation
     commutation += steps;
     commutation %= MAX + 1;
@@ -117,6 +120,7 @@ public:
    }
 
    inline PhasePosition& operator-=(u2 const steps) {
+    if (getPhase() == Phase::Brake) return;
     commutation -= steps;
     // TODO: Better & faster math here
     while (commutation > MAX) commutation += MAX;
@@ -125,6 +129,7 @@ public:
    }
 
    inline PhasePosition& operator++() {
+    if (getPhase() == Phase::Brake) return;
     if (commutation == MAX) {
      commutation = 0;
     } else {
