@@ -69,7 +69,7 @@ bool SerialInterface::Message::feed(u1 b) {
   if (pos < headerLength + length) return false;
 
   pos = 0;
-  return checkCRC() == 0;
+  return true;
 }
 
 u1 SerialInterface::Message::checkCRC() {
