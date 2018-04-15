@@ -118,6 +118,12 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
 //    return drivePhaseHallEstimate;
 //  }
 
+  HallWatcher::checkH1();
+  HallWatcher::checkH2();
+  HallWatcher::checkH3();
+
+  return drivePhaseHallEstimate;
+
   return (newPhaseEstimate >> drivePhaseMagSubResolution);
 }
 
