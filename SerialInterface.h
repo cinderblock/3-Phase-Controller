@@ -54,7 +54,9 @@ public:
      */
     u1 raw[length];
 
-    u1 checkCRC();
+    inline u1 checkCRC() const {
+      return crc(raw);
+    }
 
     /**
      * Feed a new byte to the message parser

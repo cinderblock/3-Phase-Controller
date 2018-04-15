@@ -72,10 +72,6 @@ bool SerialInterface::Message::feed(u1 b) {
   return true;
 }
 
-u1 SerialInterface::Message::checkCRC() {
-  return crc(raw);
-}
-
 u1 SerialInterface::Message::crc(u1 const * block) {
   static CRC8 c;
 
