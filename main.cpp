@@ -65,6 +65,7 @@ int main() {
   Demo::main();
 
   ThreePhaseController::init();
+//   ThreePhaseController::setAmplitude(20);
 
   SerialInterface::init();
 
