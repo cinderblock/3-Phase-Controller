@@ -93,7 +93,7 @@ include $(uMakerPath)vars/AVR.mk
 #include $(uMakerPath)tools/AVR/lufa.mk
 #include $(uMakerPath)tools/extlib.mk
 include $(uMakerPath)tools/AVR/AVR++.mk
-include $(uMakerPath)tools/AVR/libCameron.mk
+include $(uMakerPath)tools/libCameron.mk
 
 # Build targets
 include $(uMakerPath)tools/build.mk
