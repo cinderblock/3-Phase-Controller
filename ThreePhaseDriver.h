@@ -95,7 +95,7 @@ public:
    inline PhasePosition(Phase const phase, u1 const commutation) : commutation(((u1)phase << 8) | commutation) {}
 
    inline PhasePosition& operator+=(u1 const steps) {
-     if (getPhase() == Phase::Brake) return;
+     if (getPhase() == Phase::Brake) return *this;
     commutation += steps;
     if (commutation > MAX) commutation -= MAX;
 
@@ -103,7 +103,7 @@ public:
    }
 
    inline PhasePosition& operator-=(u1 const steps) {
-     if (getPhase() == Phase::Brake) return;
+     if (getPhase() == Phase::Brake) return *this;
     commutation -= steps;
     if (commutation > MAX) commutation += MAX;
 
@@ -111,7 +111,7 @@ public:
    }
 
    inline PhasePosition& operator+=(u2 const steps) {
-     if (getPhase() == Phase::Brake) return;
+     if (getPhase() == Phase::Brake) return *this;
      // TODO: This is broken if steps is very large and overflows commutation
     commutation += steps;
     commutation %= MAX + 1;
@@ -120,7 +120,7 @@ public:
    }
 
    inline PhasePosition& operator-=(u2 const steps) {
-    if (getPhase() == Phase::Brake) return;
+    if (getPhase() == Phase::Brake) return *this;
     commutation -= steps;
     // TODO: Better & faster math here
     while (commutation > MAX) commutation += MAX;
@@ -129,7 +129,7 @@ public:
    }
 
    inline PhasePosition& operator++() {
-    if (getPhase() == Phase::Brake) return;
+    if (getPhase() == Phase::Brake) return *this;
     if (commutation == MAX) {
      commutation = 0;
     } else {
