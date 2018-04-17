@@ -26,6 +26,8 @@ CPP += LookupTable/$(MotorID)
 
 CPP += SerialInterface
 
+CPP += ThreePhaseFaultTester
+
 # This should be compiled by AVR++ but it's a little broken so do this instead.
 CPP += AVR++/gccGuard
 

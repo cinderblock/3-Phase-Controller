@@ -27,6 +27,7 @@ using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
 #include "mainHelper.inc"
+#include "ThreePhaseFaultTester.h"
 
 /**
  * All the init functions should go in here.
@@ -45,6 +46,8 @@ void init() {
 
   Debug::init();
   Debug::dout << PSTR("Beginning Inits \r\n");
+
+  return;
 
   // Set up the driver pins in pwm mode
   ThreePhaseDriver::init(); // (comment out for digital cotrol tests)
@@ -334,6 +337,18 @@ void doState(bool al, bool bl, bool cl, bool ah, bool bh, bool ch) {
  *
  **/
 int main() {
+
+//  Board::SPI::slaveSelect();
+
+  ThreePhaseFaultTester::init();
+
+//  ThreePhaseFaultTester::testPhase(ThreePhaseDriver::Phase::C);
+  ThreePhaseFaultTester::testChannel(ThreePhaseFaultTester::Channel::CH);
+
+  
+//  Board::SPI::slaveDeselect();
+
+  while (1);
 
   // while (1) {
   //
