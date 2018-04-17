@@ -8,30 +8,30 @@
 C = 
 
 # List of CPP file basenames to build
-CPP = main Board Debug Timer Clock
+cppNames = main Board Debug Timer Clock
 
-CPP += ThreePhaseDriver
-CPP += MLX90363 ThreePhasePositionEstimator ThreePhaseController
+cppNames += ThreePhaseDriver
+cppNames += MLX90363 ThreePhasePositionEstimator ThreePhaseController
 
-CPP += ServoController
+cppNames += ServoController
 
-CPP += MLXDebug
+cppNames += MLXDebug
 
-CPP += TripleBuffer-impl BlockBuffer-impl
+cppNames += TripleBuffer-impl BlockBuffer-impl
 
-CPP += Demo
-CPP += Calibration
+cppNames += Demo
+cppNames += Calibration
 
-CPP += HallWatcher
+cppNames += HallWatcher
 
-#CPP += LookupTable/$(MotorID)
+#cppNames += LookupTable/$(MotorID)
 
-CPP += LookupTable
+cppNames += LookupTable
 
-CPP += SerialInterface
+cppNames += SerialInterface
 
 # This should be compiled by AVR++ but it's a little broken so do this instead.
-CPP += AVR++/gccGuard AVR++/USART
+cppNames += AVR++/gccGuard AVR++/USART
 
 #MotorID = Motor1
 
@@ -69,9 +69,15 @@ run-remote:
 
 # Load local settings
 -include local.mk
+-include local.$(shell hostname).mk
 
 uMakerPath ?= uMaker/
-AVRpp_BASEDIR ?= AVR++/
+AVRpp_BaseDir ?= AVR++/
+
+include $(uMakerPath)tools/paths.mk
+
+# Generate list of source files from basenames
+include $(uMakerPath)tools/source.mk
 
 # Force setting certain make flags
 #include $(uMakerPath)tools/makeflags.mk
