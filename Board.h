@@ -36,6 +36,8 @@ namespace Board {
   using MOSI = Output<Ports::B, 2>;
   using MISO = Input<Ports::B, 3>;
 
+  inline void slaveDeselect() __attribute__((always_inline, hot));
+  inline void slaveSelect() __attribute__((always_inline, hot));
   inline void slaveDeselect() {MagSel::off();}
   inline void slaveSelect  () {MagSel::on();}
 
