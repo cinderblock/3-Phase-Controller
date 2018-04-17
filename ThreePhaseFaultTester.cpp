@@ -109,6 +109,7 @@ void ThreePhaseFaultTester::init() {
   // 7.8kHz
   // TCCR4B = 0b01000011;
 
+  // Set all outputs to ~50%
   constexpr u2 val = 2047 / 2;
   
   TC4H = val >> 8;
