@@ -15,6 +15,7 @@
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
+inline static void setUpdateLock(const bool lock) __attribute__((always_inline, hot));
 inline static void setUpdateLock(const bool lock) {
   /**
    * TCCR4E
