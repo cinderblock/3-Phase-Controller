@@ -49,8 +49,8 @@ TARGET = turnigy
 MCU = atmega32u4
 
 all: build-lss run
-#run: dfu-erase dfu-flash dfu-reset
-run: run-remote
+run: dfu-erase dfu-flash dfu-reset
+#run: run-remote
 
 REMOTE_HEX = $(TARGET).hex
 
