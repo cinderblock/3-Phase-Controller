@@ -54,12 +54,6 @@ run: run-remote
 
 REMOTE_HEX = $(TARGET).hex
 
-run-remote:
-	pscp -q $(OUT_HEX) pi@sleepypi:$(REMOTE_HEX)
-	-plink pi@sleepypi sudo $(DFU_TARGETED) flash $(REMOTE_HEX)
-	-plink pi@sleepypi sudo $(DFU_TARGETED) reset
-	plink pi@sleepypi rm $(REMOTE_HEX)
-
 #ASM = $(CPP:%=%.cpp.S)
 
 # Load local settings
@@ -103,5 +97,11 @@ include $(uMakerPath)tools/dfu.mk
 
 # Directory creation targets
 include $(uMakerPath)tools/mkdir.mk
+
+run-remote: $(OUT_HEX)
+	pscp -q $(OUT_HEX) pi@sleepypi:$(REMOTE_HEX)
+	-plink pi@sleepypi sudo $(DFU_TARGETED) flash $(REMOTE_HEX)
+	-plink pi@sleepypi sudo $(DFU_TARGETED) reset
+	plink pi@sleepypi rm $(REMOTE_HEX)
 
 .PHONY: all run run-remote
