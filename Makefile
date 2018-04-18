@@ -30,12 +30,10 @@ cppNames += LookupTable
 
 cppNames += SerialInterface
 
-# This should be compiled by AVR++ but it's a little broken so do this instead.
-cppNames += AVR++/gccGuard AVR++/USART
-
 #MotorID = Motor1
 
-AVRpp_SRC = TimerTimeout #ADC USART  gccGuard
+AVRpp_SRC = TimerTimeout USART gccGuard #ADC
+
 libCameron_SRC = CRC8 DecPrintFormatter
 
 # Select specific LUFA source files to compile like this
