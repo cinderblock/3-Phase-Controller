@@ -32,6 +32,13 @@
       <itemPath>ThreePhasePositionEstimator.h</itemPath>
       <itemPath>Timer.h</itemPath>
     </logicalFolder>
+    <logicalFolder name="f2" displayName="LUFA" projectFiles="true" kind="ROOT">
+      <itemPath>lufa/LUFA/CodeTemplates</itemPath>
+      <itemPath>lufa/LUFA/Common</itemPath>
+      <itemPath>lufa/LUFA/Drivers</itemPath>
+      <itemPath>lufa/LUFA/Platform</itemPath>
+      <itemPath>lufa/LUFA/Version.h</itemPath>
+    </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
@@ -86,6 +93,11 @@
       <compileType>
         <cTool>
           <standard>10</standard>
+          <incDir>
+            <pElem>AVR++</pElem>
+            <pElem>libCameron/src</pElem>
+            <pElem>lufa</pElem>
+          </incDir>
           <preprocessorList>
             <Elem>F_CPU=16000000UL</Elem>
             <Elem>__AVR_ATmega32U4__</Elem>
@@ -96,6 +108,7 @@
           <incDir>
             <pElem>AVR++</pElem>
             <pElem>libCameron/src</pElem>
+            <pElem>lufa</pElem>
           </incDir>
           <preprocessorList>
             <Elem>F_CPU=16000000UL</Elem>
@@ -186,6 +199,16 @@
       <item path="Timer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="TripleBuffer-impl.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="lufa/LUFA/CodeTemplates" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="lufa/LUFA/Common" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="lufa/LUFA/Drivers" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="lufa/LUFA/Platform" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="lufa/LUFA/Version.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
