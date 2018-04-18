@@ -68,7 +68,7 @@ include $(uMakerPath)tools/paths.mk
 include $(uMakerPath)tools/source.mk
 
 # Force setting certain make flags
-#include $(uMakerPath)tools/makeflags.mk
+include $(uMakerPath)tools/makeflags.mk
 
 # Optional configuration testing for development
 include $(uMakerPath)tools/checks.mk
