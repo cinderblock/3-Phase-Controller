@@ -61,7 +61,6 @@ REMOTE_HEX = $(TARGET).hex
 -include local.$(shell hostname).mk
 
 uMakerPath ?= uMaker/
-AVRpp_BaseDir ?= AVR++/
 
 include $(uMakerPath)tools/paths.mk
 
