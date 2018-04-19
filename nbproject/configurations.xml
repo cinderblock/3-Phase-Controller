@@ -31,8 +31,10 @@
       <itemPath>ThreePhaseDriver.h</itemPath>
       <itemPath>ThreePhasePositionEstimator.h</itemPath>
       <itemPath>Timer.h</itemPath>
+      <itemPath>USBDescriptors.h</itemPath>
+      <itemPath>USBInterface.h</itemPath>
     </logicalFolder>
-    <logicalFolder name="f2" displayName="LUFA" projectFiles="true" kind="ROOT">
+    <logicalFolder name="f2" displayName="LUFA" projectFiles="true">
       <itemPath>lufa/LUFA/CodeTemplates</itemPath>
       <itemPath>lufa/LUFA/Common</itemPath>
       <itemPath>lufa/LUFA/Drivers</itemPath>
@@ -65,6 +67,8 @@
       <itemPath>ThreePhasePositionEstimator.cpp</itemPath>
       <itemPath>Timer.cpp</itemPath>
       <itemPath>TripleBuffer-impl.cpp</itemPath>
+      <itemPath>USBDescriptors.c</itemPath>
+      <itemPath>USBInterface.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>test.cpp</itemPath>
     </logicalFolder>
@@ -99,7 +103,10 @@
             <pElem>lufa</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>ARCH=ARCH_AVR8</Elem>
             <Elem>F_CPU=16000000UL</Elem>
+            <Elem>F_USB=16000000UL</Elem>
+            <Elem>USE_LUFA_CONFIG_HEADER</Elem>
             <Elem>__AVR_ATmega32U4__</Elem>
           </preprocessorList>
         </cTool>
@@ -111,7 +118,10 @@
             <pElem>lufa</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>ARCH=ARCH_AVR8</Elem>
             <Elem>F_CPU=16000000UL</Elem>
+            <Elem>F_USB=16000000UL</Elem>
+            <Elem>USE_LUFA_CONFIG_HEADER</Elem>
             <Elem>__AVR_ATmega32U4__</Elem>
           </preprocessorList>
         </ccTool>
@@ -199,6 +209,14 @@
       <item path="Timer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="TripleBuffer-impl.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="USBDescriptors.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="USBDescriptors.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="USBInterface.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="USBInterface.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="lufa/LUFA/CodeTemplates" ex="false" tool="3" flavor2="0">
       </item>

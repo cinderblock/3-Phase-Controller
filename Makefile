@@ -5,7 +5,7 @@
 ## here. Just variables, or overrides, that the included helper makefiles will use.
 
 # List of C file basenames to build
-C = 
+cNames =
 
 # List of CPP file basenames to build
 cppNames = main Board Debug Timer Clock
@@ -30,6 +30,10 @@ cppNames += LookupTable
 
 cppNames += SerialInterface
 
+cppNames += USBInterface
+
+cNames += USBDescriptors
+
 #MotorID = Motor1
 
 AVRpp_SRC = TimerTimeout USART gccGuard #ADC
@@ -40,6 +44,10 @@ libCameron_SRC = CRC8 DecPrintFormatter
 #LUFA_SRC = LUFA/Drivers/USB/Class/Common/HIDParser.c
 
 F_CPU = 16000000UL
+
+DEFINES = USE_LUFA_CONFIG_HEADER
+
+INCLUDES = .
 
 #BLD_STD_GCC ?= c11
 #BLD_STD_GXX ?= c++11

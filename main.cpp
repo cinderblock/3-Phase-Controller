@@ -21,6 +21,9 @@
 #include "MLXDebug.h"
 #include "SerialInterface.h"
 
+#include <LUFA/Drivers/USB/USB.h>
+#include "USBDescriptors.h"
+
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
@@ -38,15 +41,19 @@ void init() {
   wdt_reset();
   wdt_disable();
 
-  Debug::init();
+//  Debug::init();
 //  Debug::dout << PSTR("Beginning Inits\r\n");
 
   // Save and Clear the MCU Status Register. Indicates previous reset's source.
   resetCause = MCUSR;
   MCUSR = 0;
 
+	USB_Init();
+
   // Set Enable Interrupts.
   sei();
+
+  return;
 
   // Use the Clock that is outside the AVR++ namespace.
   ::Clock::init();
@@ -59,6 +66,12 @@ void init() {
  *
  */
 int main() {
+
+  while (1) {
+   HID_Device_USBTask(&Generic_HID_Interface);
+		USB_USBTask();
+  }
+
   // Each of these does nothing if they're not enabled
   MLXDebug::main();
   Calibration::main();
@@ -70,7 +83,10 @@ int main() {
   SerialInterface::init();
 
   while (1) {
-    while (!SerialInterface::isMessageReady());
+   // HID_Device_USBTask(&Generic_HID_Interface);
+		USB_USBTask();
+
+    if (!SerialInterface::isMessageReady()) continue;
     
     auto msg = SerialInterface::getMessage();
 
