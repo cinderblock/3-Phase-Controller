@@ -164,7 +164,7 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   //         << reading
   //         << Debug::Printer::Special::End;
 
-  u1 const numberOfCycles = mlxReadingsStarted;
+  // u1 const numberOfCycles = mlxReadingsStarted;
   mlxReadingsStarted = 0;
 
   const auto position = Lookup::AlphaToPhase(alpha);
