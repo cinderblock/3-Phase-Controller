@@ -13,6 +13,7 @@
 
 #include "USBInterface.h"
 #include "USBDescriptors.h"
+#include "ThreePhaseController.h"
 
 using namespace ThreePhaseControllerNamespace;
 
@@ -96,19 +97,6 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
                                           const uint16_t ReportSize)
 {
 	uint8_t* Data       = (uint8_t*)ReportData;
-	uint8_t  NewLEDMask = LEDS_NO_LEDS;
-
-	if (Data[0])
-	  NewLEDMask |= LEDS_LED1;
-
-	if (Data[1])
-	  NewLEDMask |= LEDS_LED2;
-
-	if (Data[2])
-	  NewLEDMask |= LEDS_LED3;
-
-	if (Data[3])
-	  NewLEDMask |= LEDS_LED4;
-
-	LEDs_SetAllLEDs(NewLEDMask);
+	
+	ThreePhaseController::setAmplitude(Data[0] ? 30 : -30);
 }
