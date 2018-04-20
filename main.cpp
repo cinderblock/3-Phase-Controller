@@ -55,8 +55,6 @@ void init() {
   // Set Enable Interrupts.
   sei();
 
-  return;
-
   // Use the Clock that is outside the AVR++ namespace.
   ::Clock::init();
 
