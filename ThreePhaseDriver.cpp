@@ -19,9 +19,9 @@ inline static void setUpdateLock(const bool lock) {
   /**
    * TCCR4E
    * TLOCK4 ENHC4 OC4OE5 OC4OE4 OC4OE3 OC4OE2 OC4OE1 OC4OE0
-   * 0b   0     1      0      0      0      0      0      0
+   * 0b   0     1      1      1      1      1      1      1
    */
-  TCCR4E = ((lock ? 1 : 0) << TLOCK4) | 0b01000000;
+  TCCR4E = ((lock ? 1 : 0) << TLOCK4) | 0b01111111;
 }
 
 void ThreePhaseDriver::init() {
@@ -67,9 +67,9 @@ void ThreePhaseDriver::init() {
   /**
    * TCCR4D
    * FPIE4 FPEN4 FPNC4 FPES4 FPAC4 FPF4 WGM41 WGM40
-   * 0b  0     0     0     0     0    1     0     1
+   * 0b  0     0     0     0     0    1     1     1
    */
-  TCCR4D = 0b00000101;
+  TCCR4D = 0b00000111;
 
   /**
    * TCCR4A:
@@ -84,9 +84,14 @@ void ThreePhaseDriver::init() {
    * 0b    0       1       0       1      0      1     0     1
    */
   TCCR4C = 0b01010101;
-
-  // TCCR4E
-  setUpdateLock(false);
+  
+  // Enable "Enhanced" mode for 11-bit PWM
+  /**
+   * TCCR4E
+   * TLOCK4 ENHC4 OC4OE5 OC4OE4 OC4OE3 OC4OE2 OC4OE1 OC4OE0
+   * 0b   0     1      0      0      0      0      0      0
+   */
+  TCCR4E = 0b01000000;
 
   // Clear compare match registers for now
   OCR4A = 0;
