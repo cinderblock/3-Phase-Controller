@@ -201,7 +201,8 @@ void ThreePhaseDriver::advanceTo(const PhasePosition pp) {
     setCompareMatchB(ONE);
     setCompareMatchC(OFF);
   } else {
-    // Should not get here. bad phase...
+    // Braking phase
+    // TODO: implement
 
     setCompareMatchA(0);
     setCompareMatchB(0);
