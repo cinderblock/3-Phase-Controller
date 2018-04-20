@@ -50,7 +50,7 @@ void init() {
   
   ThreePhaseDriver::init();
 
-	USB_Init();
+//	USB_Init();
 
   // Set Enable Interrupts.
   sei();
@@ -66,25 +66,20 @@ void init() {
  *
  */
 int main() {
-
-  while (1) {
-   HID_Device_USBTask(&Generic_HID_Interface);
-		USB_USBTask();
-  }
-
   // Each of these does nothing if they're not enabled
   MLXDebug::main();
   Calibration::main();
   Demo::main();
 
   ThreePhaseController::init();
-//   ThreePhaseController::setAmplitude(20);
+  ThreePhaseController::setAmplitude(20);
 
-  SerialInterface::init();
+  // SerialInterface::init();
 
   while (1) {
-   // HID_Device_USBTask(&Generic_HID_Interface);
-		USB_USBTask();
+//    HID_Device_USBTask(&Generic_HID_Interface);
+//		USB_USBTask();
+    continue;
 
     if (!SerialInterface::isMessageReady()) continue;
     
