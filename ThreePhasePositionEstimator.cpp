@@ -58,6 +58,9 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance() {
     mlx = cyclesPWMPerMLX;
   }
 
+  return drivePhase >> predictionResolutionShift;
+  // TODO: Deal with estimating velocities
+
 	u4 ph = drivePhase;
 	ph += driveVelocity;
 
@@ -102,6 +105,12 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   mlxReadingsStarted = 0;
 
   const auto position = Lookup::AlphaToPhase(alpha);
+
+	ATOMIC_BLOCK(ATOMIC_FORCEON) {
+		drivePhase = u4(position.getPhasePosition()) << predictionResolutionShift;
+	}
+  return;
+  // TODO: estimate velocity...
 
 	u2 mechanicalPhase = position.getMechanicalPosition();
 
