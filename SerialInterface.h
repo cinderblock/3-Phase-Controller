@@ -68,9 +68,8 @@ public:
     /**
      * Feed a new byte to the message parser
      * @param b the byte to parse
-     * @return true if a complete message has been received and validated
      */
-    bool feed(u1 b);
+    void feed(u1 b);
   public:
     inline s2 getCommand() const {
       return data.command;
@@ -79,15 +78,13 @@ public:
 
 public:
   inline static bool isMessageReady() {
-    return incoming.isNewData();
+    if (!incoming.isNewData()) return false;
+    incoming.reserveNewestBufferForReading();
+    if (incoming.getReadBuffer()->checkCRC() == 0) return true;
   }
 
   inline static Message const * getMessage() {
-    return incoming.getReadBuffer();
-  }
-
-  inline static void receiveMessage() {
-    incoming.reserveNewestBufferForReading();
+    return isMessageReady() ? incoming.getReadBuffer() : nullptr;
   }
 
 private:

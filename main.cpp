@@ -187,11 +187,8 @@ int main() {
   SerialInterface::init();
 
   while (1) {
-    while (!SerialInterface::isMessageReady());
-    SerialInterface::receiveMessage();
-    auto msg = SerialInterface::getMessage();
-
-    setPWM(msg->getCommand());
+    if (auto msg = SerialInterface::getMessage())
+      setPWM(msg->getCommand());
   }
 
   // Clock::MicroTime next;

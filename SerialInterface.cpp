@@ -48,28 +48,27 @@ void SerialInterface::init() {
 }
 
 void SerialInterface::receiveByte() {
-  if (incoming.getWriteBuffer()->feed(UDR1))
-    incoming.markNewestBuffer();
+  incoming.getWriteBuffer()->feed(UDR1);
 }
 
-bool SerialInterface::Message::feed(u1 b) {
+void SerialInterface::Message::feed(u1 b) {
   if (pos < headerLength) {
     if (header[pos] != b) {
       pos = 0;
-      return false;
+      return;
     }
     pos++;
-    return false;
+    return;
   }
 
   raw[pos - headerLength] = b;
 
   pos++;
 
-  if (pos < headerLength + length) return false;
+  if (pos < headerLength + length) return;
 
   pos = 0;
-  return checkCRC() == 0;
+  incoming.markNewestBuffer();
 }
 
 u1 SerialInterface::Message::checkCRC() {
