@@ -26,6 +26,15 @@ inline static void setUpdateLock(const bool lock) {
 
 void ThreePhaseDriver::init() {
   AVR::Clock::enablePLL();
+
+  // Turn everything off
+  Board::DRV::AL::off();
+  Board::DRV::BL::off();
+  Board::DRV::CL::off();
+  Board::DRV::AH::off();
+  Board::DRV::BH::off();
+  Board::DRV::CH::off();
+  
   AVR::Clock::waitForPLL();
 
   // Turn off all timer 4 interrupts just in case
@@ -106,14 +115,6 @@ void ThreePhaseDriver::init() {
 
   // 7.8kHz
   // TCCR4B = 0b01000011;
-
-  // Turn everything off
-  Board::DRV::AL::off();
-  Board::DRV::BL::off();
-  Board::DRV::CL::off();
-  Board::DRV::AH::off();
-  Board::DRV::BH::off();
-  Board::DRV::CH::off();
 }
 
 /**
