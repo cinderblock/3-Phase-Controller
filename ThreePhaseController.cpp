@@ -19,7 +19,6 @@
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
-#error 2
 
 volatile bool ThreePhaseController::enabled = false;
 bool ThreePhaseController::isForwardTorque;

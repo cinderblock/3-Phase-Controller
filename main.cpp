@@ -47,7 +47,7 @@ void init() {
   Debug::dout << PSTR("Beginning Inits \r\n");
 
   // Set up the driver pins in pwm mode
-  ThreePhaseDriver::init(); // (comment out for digital cotrol tests)
+  ThreePhaseController::init(); // (comment out for digital cotrol tests)
 
   // Clear the MCU Status Register.  Indicates previous reset's source.
   MCUSR = 0;
