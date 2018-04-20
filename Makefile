@@ -52,10 +52,10 @@ MCU = atmega32u4
 all: build-lss
 
 # Program with AVR attached locally
-#all: dfu-erase dfu-flash dfu-reset
+all: dfu-erase dfu-flash dfu-reset
 
 # Program with AVR attached to SleepyPi
-all: remote_prog
+#all: remote_prog
 
 REMOTE_HEX = $(TARGET).hex
 REMOTE = pi@sleepypi
