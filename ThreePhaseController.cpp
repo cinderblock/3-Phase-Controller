@@ -78,7 +78,6 @@ void ThreePhaseController::run() {
 
 
 void ThreePhaseController::init() {
-  ThreePhaseDriver::init();
   ThreePhaseDriver::setAmplitude(0);
 
   ThreePhasePositionEstimator::init();

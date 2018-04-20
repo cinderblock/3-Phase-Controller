@@ -47,6 +47,8 @@ void init() {
   // Save and Clear the MCU Status Register. Indicates previous reset's source.
   resetCause = MCUSR;
   MCUSR = 0;
+  
+  ThreePhaseDriver::init();
 
 	USB_Init();
 
