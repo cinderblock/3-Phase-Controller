@@ -19,14 +19,19 @@
 #include <TripleBuffer.h>
 #include <avr/interrupt.h>
 
-using namespace AVR;
-using namespace libCameron;
 #include <CRC8.h>
+
+#include "Board.h"
 
 ISR(USART1_RX_vect);
 
+namespace ThreePhaseControllerNamespace {
+
+using namespace AVR;
+using namespace libCameron;
+
 class SerialInterface {
-  friend void USART1_RX_vect();
+  friend void ::USART1_RX_vect();
   static void receiveByte();
 public:
   static void init();
@@ -90,6 +95,8 @@ public:
 
 private:
   static TripleBuffer<Message, true> incoming;
+
+};
 
 };
 
