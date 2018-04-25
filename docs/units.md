@@ -40,5 +40,4 @@ Velocity is measured in units of [phase position](#phase) change during one [pwm
 
 ### Magnetometer<a name="mlx-time"></a>
 
-800 Hz update rate (31.25 kHz / 40 (ThreePhaseController::cyclesPWMPerMLX))
-
+800 Hz update rate (31.25 kHz / 40 (`ThreePhaseController::cyclesPWMPerMLX`))

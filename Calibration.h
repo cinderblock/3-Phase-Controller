@@ -17,13 +17,15 @@
 namespace ThreePhaseControllerNamespace {
 
 namespace Calibration {
-  constexpr bool enabled = true;
-  constexpr float numberOfSpins = 3.5;
-  constexpr uint8_t amplitude = 10;
+  constexpr bool enabled = false;
+  constexpr float numberOfSpins = 7;
+  constexpr uint8_t amplitude = 40;
+  constexpr uint16_t rampSteps = 0x300;
   void main();
+  
+  void step(uint16_t i);
 };
 
 };
 
 #endif /* CALIBRATION_H */
-

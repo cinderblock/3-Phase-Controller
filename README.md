@@ -24,11 +24,12 @@ This is very much a work in progress. The following list is of currently impleme
 
 ### Board
 
-This code is ment to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-7766-8-bit-AVR-ATmega16U4-32U4_Datasheet.pdf) on [3 Phase Driver Board](https://github.com/cinderblock/3-Phase-Driver).
+This code is meant to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-7766-8-bit-AVR-ATmega16U4-32U4_Datasheet.pdf) on [3 Phase Driver Board](https://github.com/cinderblock/3-Phase-Driver).
 
 ## Motor
 
-Currently Testing with [Turnigy 480 850kv](http://www.hobbyking.com/hobbyking/store/__19037__Turnigy_Park480_Brushless_Outrunner_850kv.html) and [Turnigy 480 1320kv](http://www.hobbyking.com/hobbyking/store/__19038__Turnigy_Park480_Brushless_Outrunner_1320kv.html).
+Currently Testing with [Quanum MT5206](https://hobbyking.com/en_us/quanum-mt-series-5206-320kv-brushless-multirotor-motor-built-by-dys.html).
+Also playing with Hoverboard motors.
 
 ### Git Submodules
 

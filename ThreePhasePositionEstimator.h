@@ -2,155 +2,159 @@
 #ifndef THREEPHASEPOSITIONESTIMATOR_H
 #define THREEPHASEPOSITIONESTIMATOR_H
 
-#include <AVR++/basicTypes.h>
-#include "DriverConstants.h"
 #include "ThreePhaseDriver.h"
-#include "MotorPosition.h"
+#include <AVR++/basicTypes.h>
 
 namespace ThreePhaseControllerNamespace {
 
-  using namespace AVR;
+using namespace AVR;
+
+/**
+ * This class wraps around a rotor position estimate. At some regular interval,
+ * we update our position estimate based on an estimate of our current velocity.
+ * As some slower regular interval, we get real position readings. Those are
+ * used to update our velocity estimates.
+ *
+ * This can be thought of as a software PLL. We're trying to interpolate
+ * positions between actual readings from the magnetometer. If we're running to
+ * fast, slow down our "period". If we're running too slow, speed up our
+ * "period". In this case however, we have a fixed time based and we need to
+ * adjust how large our steps are to match how fast we're really spinning.
+ */
+class ThreePhasePositionEstimator {
+  /**
+   * Last magnetometer reading
+   */
+  static u2 lastMagPhase;
 
   /**
-   * This class wraps around a rotor position estimate. At some regular interval,
-   * we update our position estimate based on an estimate of our current velocity.
-   * As some slower regular interval, we get real position readings. Those are used
-   * to update our velocity estimates.
-   *
-   * This can be thought of as a software PLL. We're trying to interpolate positions
-   * between actual readings from the magnetometer. If we're running to fast, slow
-   * down our "period". If we're running too slow, speed up our "period". In this
-   * case however, we have a fixed time based and we need to adjust how large our
-   * steps are to match how fast we're really spinning.
+   * The current position estimate. Higher resolution than output phase angle
    */
-  class ThreePhasePositionEstimator {
-    /**
-     * Last magnetometer reading
-     */
-    static u2 lastMecPha;
+  static u4 drivePhaseMagEstimate;
 
-    /**
-     * The current position estimate. Higher resolution than output phase angle
-     */
-    static u4 drivePhase;
+  /**
+   * For out internal estimate of position, increase the resolution by some
+   * number of bits
+   */
+  constexpr static u1 drivePhaseMagSubResolution = 8;
 
-    /**
-     * The current velocity estimate. Used to advance drivePhase position estimate
-     */
-    static s2 driveVelocity;
+  /**
+   * The current velocity estimate. Used to advance drivePhaseMagEstimate
+   * position estimate
+   */
+  static s2 driveVelocityMagEstimate;
 
-    /**
-     * Amount to adjust the velocity by. The smaller this number is, the more
-     * the velocity is filtered
-     */
-    static u1 adjustVal;
+  /**
+   * Multiplier on velocity to advance our velocity estimate by
+   */
+  static u1 phaseAdvanceMagRatio;
 
-    /**
-     * Multiplier on velocity to advance our velocity estimate by
-     */
-    static u1 phaseAdvanceRatio;
+  /**
+   * cached constant amount of phase advance for our current velocity
+   */
+  static s4 phaseAdvanceMagCachedAmount;
 
-    /**
-     * cached constant amount of phase advance for our current velocity
-     */
-    static s4 phaseAdvanceAmount;
+  /**
+   * Number of MLX readings started since last estimate
+   */
+  static u1 mlxReadingsStarted;
 
-    /**
-     * For out internal estimate of position, increase the resolution by some number of bits
-     */
-    constexpr static u1 predictionResolutionShift = 8;
+  /**
+   * Number of cycles the PWM timer makes per measurement ready from MLX. We pick a number such that we wait at least
+   * 920us (tReady_mod1) between SS rising and falling edges, otherwise the data won't be ready.
+   *
+   * min(cyclesPWMPerMLX) = frequency(PWM) * period(MLX);
+   *
+   * period(MLX) = 920us + SPI transfer time
+   *
+   * SPI transfer time = 8 bytes * (10 / byte) / BAUD
+   *
+   * BAUD = F_CPU / SPI Divider
+   *
+   * SPI Divider = 128
+   *
+   * 10 bit time periods per byte to account for interrupt service length variations
+   *
+   * SPI transfer time = 640us
+   *
+   * period(MLX) = 1560us
+   *
+   * min(cyclesPWMPerMLX) = 31.25kHz * 1560us = 49;
+   */
+  static constexpr u1 cyclesPWMPerMLX = 49;
 
-    /**
-     * Number of MLX readings started since last estimate
-     */
-    static u1 mlxReadingsStarted;
+  /**
+   * Number indicating the quality of our magnetometer based position estimate. Lower is worse.
+   */
+  static u1 qualityMagEstimate;
 
-    /**
-     * Number of cycles the PWM timer makes per measurement ready from MLX. We pick
-     * a number such that we wait at least 1ms between measurements, otherwise the
-     * data won't be ready.
-     *
-     * = frequency(PWM) * period(MLX) = 32kHz * 1.25ms = 40;
-     */
-    static constexpr u1 cyclesPWMPerMLX = 40;
+  /**
+   * Most recent hall watcher state
+   */
+  static u1 lastHallState;
 
-    /**
-     * Converts from magnetometer lookup table numbers to linear numbers
-     */
-    inline static u2 getMechPhase(u2 phase) {
-      return (phase & DriverConstants::MaskForPhase) + (phase >> 12) * DriverConstants::StepsPerCycle;
-    };
+  /**
+   *
+   */
+  static ThreePhaseDriver::PhasePosition drivePhaseHallEstimate;
 
-  public:
-    /**
-     * Initialize hardware and internal variables to match initial hardware state
-     */
-    static void init();
+  /**
+   * Handle new position reading from Hall system
+   *
+   */
+  static void getAndProcessNewHallState();
 
-    /**
-     * Handle new position reading from MLX system
-     *
-     * @param alpha raw reading from MLX
-     */
-    static void handleNewPositionReading(u2 alpha);
+  /**
+   * Handle new position reading from MLX system
+   *
+   * @param alpha raw reading from MLX
+   */
+  static void handleNewPositionReading(u2 alpha);
 
-    /**
-     * Advance our prediction of where we currently are by one dt.
-     *
-     * @return current estimate of PhasePosition
-     */
-    static ThreePhaseDriver::PhasePosition advance() __attribute__((hot));
+public:
+  /**
+   * Initialize hardware and internal variables to match initial hardware state
+   */
+  static void init();
 
-    /**
-     * Get the phase advance ratio
-     *
-     * Estimation of delay from last magnetometer reading and setting current phase
-     */
-    inline static u1 getPhaseAdvanceRatio() {
-      return phaseAdvanceRatio;
-    };
+  /**
+   * Advance our prediction of where we currently are by one dt.
+   *
+   * @return current estimate of PhasePosition
+   */
+  static ThreePhaseDriver::PhasePosition advance(u1 steps) __attribute__((hot));
 
-    /**
-     * Set phase advance ratio
-     * @param val
-     */
-    inline static void setPhaseAdvanceRatio(u1 val) {
-      phaseAdvanceRatio = val;
-    }
+  /**
+   * Get the phase advance ratio
+   *
+   * Estimation of delay from last magnetometer reading and setting current
+   * phase
+   */
+  inline static u1 getMagnetometerPhaseAdvanceRatio() { return phaseAdvanceMagRatio; };
 
-    /**
-     * Estimation of distance given there are delays in system (phaseAdvanceRatio * velocity)
-     */
-    inline static s4 getPhaseAdvanceAmount() {
-      return phaseAdvanceAmount;
-    };
+  /**
+   * Set phase advance ratio
+   * @param val
+   */
+  inline static void setMagnetometorPhaseAdvanceRatio(u1 val) { phaseAdvanceMagRatio = val; }
 
-    /**
-     * Get the last measured position
-     */
-    inline static u2 getMeasuredPosition() {
-      return lastMecPha;
-    };
+  /**
+   * Estimation of distance given there are delays in system (phaseAdvanceRatio
+   * * velocity)
+   */
+  inline static s4 getCachedMagnetometerPhaseAdvanceAmount() { return phaseAdvanceMagCachedAmount; };
 
-    /**
-     * Get currently extrapolated velocity
-     */
-    inline static s2 getVelocity() {
-      return driveVelocity;
-    };
+  /**
+   * Get the last measured position
+   */
+  inline static u2 getLastMagnetometerPhase() { return lastMagPhase; };
 
-    /**
-     * Get value the velocity may get shifted by per velocity update
-     */
-    inline static u1 getAdjustVal() {
-      return adjustVal;
-    }
-
-    inline static void setAdjustVal(u1 val) {
-      adjustVal = val;
-    }
-  };
-
+  /**
+   * Get currently extrapolated velocity
+   */
+  inline static s2 getMagnetometerVelocityEstimate() { return driveVelocityMagEstimate; };
 };
 
-#endif  /* THREEPHASEPOSITIONESTIMATOR_H */
+}; // namespace ThreePhaseControllerNamespace
+
+#endif /* THREEPHASEPOSITIONESTIMATOR_H */

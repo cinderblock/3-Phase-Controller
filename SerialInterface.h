@@ -15,7 +15,6 @@
 #define SERIALINTERFACE_H
 
 #include <stddef.h>
-
 #include <AVR++/basicTypes.h>
 #include <TripleBuffer.h>
 #include <avr/interrupt.h>

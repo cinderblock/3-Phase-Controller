@@ -1,7 +1,7 @@
-/*
+/* 
  * File:   ThreePhaseController.cpp
  * Author: Cameron
- *
+ * 
  * Created on October 22, 2015, 2:21 AM
  */
 
@@ -11,7 +11,6 @@
 #include "ThreePhaseController.h"
 #include "ThreePhaseDriver.h"
 #include "Debug.h"
-#include "Interpreter.h"
 #include "ThreePhasePositionEstimator.h"
 #include "LookupTable.h"
 #include "ServoController.h"
@@ -21,7 +20,7 @@ using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
 volatile bool ThreePhaseController::enabled = false;
-bool ThreePhaseController::isForwardTorque;
+volatile bool ThreePhaseController::isForwardTorque;
 
 /**
  * This interrupt is triggered on TIMER4 (PWM6) overflow. This happens at the BOTTOM
@@ -37,18 +36,45 @@ void TIMER4_OVF_vect() {
 }
 
 void ThreePhaseController::controlLoop() {
-  // Advance our position estimate on step in time
-  ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance();
+  static volatile bool running = false;
+  static volatile u1 stepCount = 0;
 
+  stepCount++;
+  if (running)  {
+    return;
+  }
+
+  running = true;
+
+  // Record number of steps
+  u1 steps = stepCount;
+
+  // Reset missed step count
+  stepCount = 0;
+
+  // Re-enable interrupts
+  sei();
+
+
+  // Advance our position estimate n steps in time
+  ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance(steps);
+  
   // TODO: more phase advance at higher speeds
-  if (isForwardTorque == Config::forward) {
+  if (isForwardTorque == true) {
     p += output90DegPhaseShift;
   } else {
     p -= output90DegPhaseShift;
   }
 
   ThreePhaseDriver::advanceTo(p);
+
+  running = false;
 }
+
+void ThreePhaseController::run() {
+  controlLoop();
+}
+
 
 void ThreePhaseController::init() {
   ThreePhaseDriver::init();

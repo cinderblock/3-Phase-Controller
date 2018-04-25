@@ -16,7 +16,7 @@ using namespace ThreePhaseControllerNamespace;
 using libCameron::CRC8;
 
 Debug::Printer Debug::SOUT;
-libCameron::DecPrintFormatter Debug::dout(&sendByte);
+libCameron::DecPrintFormatter Debug::dout(&Debug::sendByte);
 
 static CRC8 CRC;
 
@@ -32,8 +32,8 @@ void Debug::init() {
   // Set default
   UCSR1A = 0b00000000;
 
-  // Enable transmitter and receiver
-  UCSR1B = 0b00011000;
+  // Enable transmitter and Receiver
+  UCSR1B = (1 << TXEN1) | (1 << RXEN1);
 }
 
 void Debug::sendByte(const u1 c) {

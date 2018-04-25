@@ -1,8 +1,6 @@
 
 #include "ServoController.h"
 #include "ThreePhaseController.h"
-#include "DriverConstants.h"
-// #include "common.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
@@ -76,7 +74,7 @@ void ServoController::update() {
 
   } else if (servoMode == Mode::Velocity) {
     static s2 lastVel = 0;
-    const s2 vel = ThreePhasePositionEstimator::getVelocity();
+    const s2 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
     const s2 velocityDelta = vel - lastVel;
 
@@ -97,7 +95,7 @@ void ServoController::update() {
 
   } else if (servoMode == Mode::Position) {
 
-    const s2 vel = ThreePhasePositionEstimator::getVelocity();
+    const s2 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
     const s4 distance = positionCommand - getPosition();
 

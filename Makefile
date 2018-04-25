@@ -5,15 +5,17 @@
 ## here. Just variables, or overrides, that the included helper makefiles will use.
 
 # List of C file basenames to build
-C =
+C = 
 
 # List of CPP file basenames to build
-CPP = main Board Debug Timer Clock commutation
+CPP = main Board Debug Timer Clock
 
 CPP += ThreePhaseDriver
-CPP += MLX90363 ThreePhasePositionEstimator #ThreePhaseController
+CPP += MLX90363 ThreePhasePositionEstimator ThreePhaseController
 
-CPP += #ServoController
+CPP += ServoController
+
+CPP += MLXDebug
 
 CPP += TripleBuffer-impl BlockBuffer-impl
 
@@ -22,14 +24,14 @@ CPP += Calibration
 
 CPP += HallWatcher
 
-CPP += LookupTable/$(MotorID)
+#CPP += LookupTable/$(MotorID)
+
+CPP += LookupTable
 
 CPP += SerialInterface
 
 # This should be compiled by AVR++ but it's a little broken so do this instead.
-CPP += AVR++/gccGuard
-
-MotorID = Motor1
+CPP += AVR++/gccGuard AVR++/USART
 
 AVRpp_SRC = TimerTimeout #ADC USART  gccGuard
 libCameron_SRC = CRC8 DecPrintFormatter
@@ -41,9 +43,6 @@ F_CPU = 16000000UL
 
 #BLD_STD_GCC ?= c11
 #BLD_STD_GXX ?= c++11
-
-# Registers used by ThreePhaseDriver
-BLD_FLAGS_EXTRA=-ffixed-2 -ffixed-3 -ffixed-4 -ffixed-5 -ffixed-6
 
 TARGET = turnigy
 

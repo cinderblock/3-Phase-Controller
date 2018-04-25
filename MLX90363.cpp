@@ -22,7 +22,9 @@ static inline void sendSPI(u1 const b) { *SPI::DR = b; }
 
 static inline u1 receiveSPI() { return *SPI::DR; }
 
-ISR(SPI_STC_vect) { MLX90363::isr(); }
+void SPI_STC_vect() {
+ MLX90363::isr();
+}
 
 void MLX90363::isr() {
   // Receive a byte
@@ -67,12 +69,25 @@ void MLX90363::init() {
   // Setup Slave Select line
   Board::SPI::slaveDeselect();
 
+  Board::SPI::MOSI::on();
+  Board::SPI::SCLK::on();
+  Board::MagSel::off();
+
   // Setup control registers
 
-  // Enable SPI2X
+#ifdef BED_CONTROLLER
+  // Disable SPI2X
   AVR::SPI::SR->byte = 0 << SPI2X;
   // F_CPU/64
   AVR::SPI::CR->byte = 0b11010111;
+#endif
+
+#ifdef QUANTUM_DRIVE
+  // Enable SPI2X
+  AVR::SPI::SR->byte = 1 << SPI2X;
+  // F_CPU/8
+  AVR::SPI::CR->byte = 0b11010101;
+#endif
 
   responseState = ResponseState::Ready;
 }

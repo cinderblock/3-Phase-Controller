@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/*
+/* 
  * File:   HallWatcher.h
  * Author: Cameron
  *
@@ -18,66 +18,103 @@
 
 #include "Board.h"
 
-ISR(INT6_vect);
-ISR(PCINT0_vect);
+#ifdef QUANTUM_DRIVE
+ISR(INT0_vect); // H1
+ISR(INT1_vect); // H2
+ISR(PCINT0_vect); // H3 (PCINT4 in group PCINT0)
+#endif
 
-/*  this macro call of "ISR"
-ISR(PCINT0_vect) {
-  blah blah blah
-}
-
-...is the same as ...
-
-void __vector_6() __attribute__((interrupt, used));
-void __vector_6() {
-  blah blah blah
-}
-*/
+#ifdef BED_CONTROLLER
+ISR(INT6_vect); // H1
+ISR(PCINT0_vect); // H2 & H3 (PCINT7 & PCINT4 respectively)
+#endif
 
 namespace ThreePhaseControllerNamespace {
 
   using namespace AVR;
 
   class HallWatcher {
-    using H1 = Board::H1; // INT6
-    using H2 = Board::H2; // PCINT7
-    using H3 = Board::H3; // PCINT4
+    using H1 = Board::H1;
+    using H2 = Board::H2;
+    using H3 = Board::H3;
 
-    // state is the three bits representing the three hall sensor state
-    static volatile u1 state;
+    static u1 volatile state;
+    static void (*stateChangeReceiver)();
+    
+  public:
 
     static inline void checkH1() {
+      constexpr u1 pos = 2;
+
+      u1 oldState = state;
+      u1 newState = oldState;
+
       if (H1::isActive())
-        state |= 1 << 2;
+        newState |= 1 << pos;
       else
-        state &= ~(1 << 2);
+        newState &= ~(1 << pos);
+      state = newState;
+
+      if (newState != oldState && stateChangeReceiver) {
+        stateChangeReceiver();
+      }
     }
 
     static inline void checkH2() {
+      constexpr u1 pos = 1;
+
+      u1 oldState = state;
+      u1 newState = oldState;
+
       if (H2::isActive())
-        state |= 1 << 1;
+        newState |= 1 << pos;
       else
-        state &= ~(1 << 1);
+        newState &= ~(1 << pos);
+      state = newState;
+
+      if (newState != oldState && stateChangeReceiver) {
+        stateChangeReceiver();
+      }
     }
 
     static inline void checkH3() {
+      constexpr u1 pos = 0;
+
+      u1 oldState = state;
+      u1 newState = oldState;
+
       if (H3::isActive())
-        state |= 1 << 0;
+        newState |= 1 << pos;
       else
-        state &= ~(1 << 0);
+        newState &= ~(1 << pos);
+      state = newState;
+
+      if (newState != oldState && stateChangeReceiver) {
+        stateChangeReceiver();
+      }
     }
 
-    friend void ::INT6_vect();
-    friend void ::PCINT0_vect();
+    // #ifdef QUANTUM_DRIVE
+    // friend void ::INT0_vect();
+    // friend void ::INT1_vect();
+    // friend void ::PCINT0_vect();
+    // #endif
+    // 
+    // #ifdef BED_CONTROLLER
+    // friend void ::INT6_vect();
+    // friend void ::PCINT0_vect();
+    // #endif
 
   public:
     static void init();
-    static void checkAndUpdate();
+
+    static inline void setStateChangeReceiver(void (*receiver)()) {
+      stateChangeReceiver = receiver;
+    }
 
     inline static u1 getState() {
       return state;
     }
-
   private:
 
   };

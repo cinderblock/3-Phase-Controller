@@ -10,7 +10,6 @@
 
 #include <AVR++/basicTypes.h>
 #include <avr/interrupt.h>
-#include "DriverConstants.h"
 
 namespace ThreePhaseControllerNamespace {
 
@@ -37,7 +36,7 @@ class ThreePhaseDriver {
   /**
    * The current PWM amplitude
    */
-  static u1 amplitude;
+  static volatile u1 amplitude;
 
 public:
 
@@ -64,6 +63,8 @@ public:
 
    friend class ThreePhaseDriver;
 
+  public:
+
    /**
     * Get the current subphase angle
     * @return
@@ -79,8 +80,6 @@ public:
    inline Phase getPhase() const {
     return (Phase)(commutation >> 8);
    }
-
-  public:
    /**
     * Initialize a commutation angle with some current angle
     * @param commutation
@@ -160,7 +159,7 @@ public:
     return ret;
    }
 
-   inline operator u4() {
+   inline operator u4() const {
      return commutation;
    }
   };
@@ -168,18 +167,18 @@ public:
   /**
    * Internal granularity of sin wave for each phase
    */
-  static u2 constexpr StepsPerPhase = DriverConstants::StepsPerPhase;
+  static u2 constexpr StepsPerPhase = 256;
 
   /**
    * One for each of A, B, and C.
    */
-  static u1 constexpr PhasesPerCycle = DriverConstants::PhasesPerCycle;
+  static u1 constexpr PhasesPerCycle = 3;
 
   /**
    * One Cycle is one full commutation (aka electrical revolution) of the motor.
    * This is almost certainly not one actual revolution of the motor shaft.
    */
-  static u2 constexpr StepsPerCycle = DriverConstants::StepsPerCycle;
+  static u2 constexpr StepsPerCycle = StepsPerPhase * PhasesPerCycle;
 
   /**
    * Highest possible timer value
@@ -201,9 +200,10 @@ public:
 
   /**
    * Magic number to ensure we don't miss a tick of a phase
+   * TODO: confirm this is still needed.
    */
   static constexpr u1 calcMaxAmplitude = 0xff - 30;
-  static constexpr u1 maxAmplitude = min(DriverConstants::MaxTorque, calcMaxAmplitude);
+  static constexpr u1 maxAmplitude = calcMaxAmplitude;
 
   static inline void setAmplitude(u1 const a) {
     amplitude = a > maxAmplitude ? maxAmplitude : a;

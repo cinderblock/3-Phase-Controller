@@ -148,7 +148,7 @@ static const u2 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
 	1891,1885,1878,1871,1865,1858,1850,1843,1836,1828,1821,1813,1805,1797,1789,1781,
 };
 
-u1 ThreePhaseDriver::amplitude = 0;
+volatile u1 ThreePhaseDriver::amplitude = 0;
 
 u2 ThreePhaseDriver::getPhasePWM(const u1 step) {
   // Make sure we get 0 out if amplitude is set to 0.

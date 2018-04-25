@@ -18,25 +18,20 @@
       <itemPath>Config.h</itemPath>
       <itemPath>Debug.h</itemPath>
       <itemPath>Demo.h</itemPath>
-      <itemPath>DriverConstants.h</itemPath>
-      <itemPath>FilebotInterface.h</itemPath>
       <itemPath>HallWatcher.h</itemPath>
-      <itemPath>Interpreter.h</itemPath>
       <itemPath>LookupTable.h</itemPath>
       <itemPath>MLX90363.h</itemPath>
-      <itemPath>MotorPosition.h</itemPath>
+      <itemPath>MLXDebug.h</itemPath>
       <itemPath>SerialInterface.h</itemPath>
       <itemPath>ServoController.h</itemPath>
       <itemPath>ThreePhaseController.h</itemPath>
       <itemPath>ThreePhaseDriver.h</itemPath>
       <itemPath>ThreePhasePositionEstimator.h</itemPath>
       <itemPath>Timer.h</itemPath>
-      <itemPath>FilebotInterface/TwillBotInterface.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
-      <itemPath>LookupTable/Motor1.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -47,10 +42,10 @@
       <itemPath>Clock.cpp</itemPath>
       <itemPath>Debug.cpp</itemPath>
       <itemPath>Demo.cpp</itemPath>
-      <itemPath>FilebotInterface.cpp</itemPath>
       <itemPath>HallWatcher.cpp</itemPath>
-      <itemPath>Interpreter.cpp</itemPath>
+      <itemPath>LookupTable.cpp</itemPath>
       <itemPath>MLX90363.cpp</itemPath>
+      <itemPath>MLXDebug.cpp</itemPath>
       <itemPath>SerialInterface.cpp</itemPath>
       <itemPath>ServoController.cpp</itemPath>
       <itemPath>ThreePhaseController.cpp</itemPath>
@@ -58,7 +53,6 @@
       <itemPath>ThreePhasePositionEstimator.cpp</itemPath>
       <itemPath>Timer.cpp</itemPath>
       <itemPath>TripleBuffer-impl.cpp</itemPath>
-      <itemPath>FilebotInterface/TwillBotInterface.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>test.cpp</itemPath>
     </logicalFolder>
@@ -89,6 +83,7 @@
         <cTool>
           <standard>10</standard>
           <preprocessorList>
+            <Elem>BED_CONTROLLER</Elem>
             <Elem>F_CPU=16000000UL</Elem>
             <Elem>__AVR_ATmega32U4__</Elem>
           </preprocessorList>
@@ -100,6 +95,7 @@
             <pElem>libCameron/src</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>BED_CONTROLLER</Elem>
             <Elem>F_CPU=16000000UL</Elem>
             <Elem>__AVR_ATmega32U4__</Elem>
           </preprocessorList>
@@ -137,39 +133,21 @@
       </item>
       <item path="Demo.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="DriverConstants.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="FilebotInterface.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="FilebotInterface.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="FilebotInterface/TwillBotInterface.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="FilebotInterface/TwillBotInterface.h"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
       <item path="HallWatcher.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="HallWatcher.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Interpreter.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="Interpreter.h" ex="false" tool="3" flavor2="0">
+      <item path="LookupTable.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="LookupTable.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="LookupTable/Motor1.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MLX90363.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="MLX90363.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MotorPosition.h" ex="false" tool="3" flavor2="0">
+      <item path="MLXDebug.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MLXDebug.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="SerialInterface.cpp" ex="false" tool="1" flavor2="0">
       </item>

@@ -12,7 +12,6 @@
 #include <AVR++/basicTypes.h>
 
 #include "ThreePhaseDriver.h"
-#include "MotorPosition.h"
 
 namespace ThreePhaseControllerNamespace {
 
@@ -51,7 +50,7 @@ public:
    * @param alpha 14-bit value from magnetometer
    * @return phase upperNibble: mechanical pos. Rest: value (0 - 0x2ff inclusive)
    */
-  inline static MotorPosition AlphaToPhase(u2 alpha) {
+  inline static ThreePhaseDriver::PhasePosition AlphaToPhase(u2 alpha) {
     // Make sure we're working with a 14-bit number
     alpha &= InputMask;
 
@@ -59,7 +58,7 @@ public:
     alpha >>= ResolutionReductionBits;
 
     // Read the phase number word from the calculated place in the lookup table
-    return (MotorPosition)pgm_read_word(&Lookup::table[alpha]);
+    return (ThreePhaseDriver::PhasePosition)pgm_read_word(&Lookup::table[alpha]);
   }
 
 

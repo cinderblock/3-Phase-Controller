@@ -19,6 +19,7 @@
 #include <AVR++/TimerTimeout.h>
 #include <util/atomic.h>
 #include <avr/eeprom.h>
+#include <util/delay.h>
 
 using namespace ThreePhaseControllerNamespace;
 
@@ -32,6 +33,8 @@ void TIMER0_COMPA_vect() {
 void Demo::main() {
   if (!enabled) return;
   
+  _delay_ms(500);
+  
   u1 mode = eeprom_read_byte(modeLocation) + 1;
   
   if (mode > modesMax) mode = 0;
@@ -40,7 +43,8 @@ void Demo::main() {
   
 //  if (mode == 0) dumbSpin::main();
   if (mode == 0) ManualConstantTorque::main();
-  if (mode == 1) PositionHold::main();
+  if (mode == 1) ManualConstantTorque::main(50);
+  if (mode == 2) ManualConstantTorque::main(100);
 
   while(1);
 }
@@ -79,7 +83,7 @@ void Demo::dumbSpin::main() {
     while (!go) {
       if (i > iMax) i = iMax;
       do {
-        Board::LED1::set(i < alpha);
+        Board::LED::set(i < alpha);
       } while (i-- && !go);
     }
     go = false;
@@ -93,20 +97,10 @@ void Demo::dumbSpin::timeout() {
   go = true;
 }
 
-void Demo::ManualConstantTorque::main() {
-  ThreePhaseDriver::setAmplitude(10);
-  
-  u1 magRoll = -1;
-  
-  while (1) {
-    while (!MLX90363::hasNewData(magRoll));
-    
-    ThreePhaseDriver::PhasePosition phase(Lookup::AlphaToPhase(MLX90363::getAlpha()).getPhasePosition());
-    
-    phase += ThreePhaseDriver::StepsPerCycle / 4;
-    
-    ThreePhaseDriver::advanceTo(phase);
-  }
+void Demo::ManualConstantTorque::main(u1 ampl) {
+  ThreePhaseController::init();
+  ThreePhaseController::setAmplitude(ampl);
+  while(1);
 }
 
 void Demo::PositionHold::main() {
