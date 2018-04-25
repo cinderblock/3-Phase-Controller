@@ -21,7 +21,7 @@ libCameron::DecPrintFormatter Debug::dout(&Debug::sendByte);
 static CRC8 CRC;
 
 void Debug::init() {
-  UBRR1 = 3;
+  UBRR1 = 0;
 
   // Set default
   UCSR1D = 0b00;
