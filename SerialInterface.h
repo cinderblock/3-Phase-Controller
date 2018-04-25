@@ -21,6 +21,7 @@
 
 using namespace AVR;
 using namespace libCameron;
+#include <CRC8.h>
 
 ISR(USART1_RX_vect);
 
