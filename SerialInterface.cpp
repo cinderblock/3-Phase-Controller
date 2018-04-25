@@ -17,13 +17,16 @@
 
 #include <CRC8.h>
 
+using namespace ThreePhaseControllerNamespace;
+using namespace libCameron;
+
 libCameron::TripleBuffer<SerialInterface::Message, true> SerialInterface::incoming;
 constexpr u1 SerialInterface::Message::header[headerLength];
 
 u1 SerialInterface::Message::pos = 0;
 
 void USART1_RX_vect() {
-  SerialInterface::receiveByte();
+  ThreePhaseControllerNamespace::SerialInterface::receiveByte();
 }
 
 void SerialInterface::init() {
