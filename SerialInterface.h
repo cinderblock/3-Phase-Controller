@@ -57,8 +57,6 @@ public:
       block data;
     };
 
-    static u1 crc(u1 *);
-
     /**
      * Track the current position we're writing to. Static because we never
      * write to this from multiple places.
