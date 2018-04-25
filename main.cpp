@@ -62,6 +62,7 @@ int main() {
   Demo::main();
 
   SerialInterface::init();
+  ThreePhaseController::init();
 
   while (1) {
     if (auto msg = SerialInterface::getMessage()) {
