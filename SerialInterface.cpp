@@ -15,8 +15,6 @@
 
 #include <avr/io.h>
 
-#include <TripleBuffer.cpp>
-
 #include <CRC8.h>
 
 libCameron::TripleBuffer<SerialInterface::Message, true> SerialInterface::incoming;
@@ -84,5 +82,6 @@ u1 SerialInterface::Message::checkCRC() {
   return c.getCRC();
 }
 
-
+// Yes, we're including the .cpp
+#include <TripleBuffer.cpp>
 template class libCameron::TripleBuffer<SerialInterface::Message, true>;
