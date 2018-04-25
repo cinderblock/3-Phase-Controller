@@ -39,13 +39,12 @@ public:
      */
     typedef struct {
       s2 command;
-      u1 crc;
     } block;
 
     /**
      * fix length of message, including crc
      */
-    static constexpr size_t length = sizeof(block);
+    static constexpr size_t length = sizeof(block) + sizeof(CRC8);
     
     union {
       u1 raw[length];

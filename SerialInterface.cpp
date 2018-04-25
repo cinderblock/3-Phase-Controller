@@ -72,16 +72,12 @@ void SerialInterface::Message::feed(u1 b) {
 }
 
 u1 SerialInterface::Message::checkCRC() {
-  return crc(raw);
-}
+  CRC8 c;
 
-u1 SerialInterface::Message::crc(u1* block) {
-  static CRC8 c;
-
-  c.reset();
+  auto data = raw;
 
   for (u1 i = 0; i < length; i++) {
-    c << *block++;
+    c << *data++;
   }
 
   return c.getCRC();
