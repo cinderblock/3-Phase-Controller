@@ -29,6 +29,7 @@ void USART1_RX_vect() {
 }
 
 void SerialInterface::init() {
+  // at F_CPU == 16MHz, this is 1MBaud
   UBRR1 = 0;
 
   // Set default
