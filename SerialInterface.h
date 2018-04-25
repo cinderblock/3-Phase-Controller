@@ -77,8 +77,10 @@ public:
 public:
   inline static bool isMessageReady() {
     if (!incoming.isNewData()) return false;
+    
     incoming.reserveNewestBufferForReading();
-    if (incoming.getReadBuffer()->checkCRC() == 0) return true;
+
+    return (incoming.getReadBuffer()->checkCRC() == 0);
   }
 
   inline static Message const * getMessage() {
