@@ -71,11 +71,6 @@ void ThreePhaseController::controlLoop() {
   running = false;
 }
 
-void ThreePhaseController::run() {
-  controlLoop();
-}
-
-
 void ThreePhaseController::init() {
   ThreePhaseDriver::init();
   ThreePhaseDriver::setAmplitude(0);
