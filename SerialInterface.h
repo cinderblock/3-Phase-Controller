@@ -36,6 +36,7 @@ class SerialInterface {
 public:
   static void init();
   class Message {
+    using crc = CRC8;
     friend class SerialInterface;
     static constexpr u1 headerLength = 3;
     static constexpr u1 header[headerLength] = {0xff, 0xfe, 0xfe};
@@ -50,7 +51,7 @@ public:
     /**
      * fix length of message, including crc
      */
-    static constexpr size_t length = sizeof(block) + sizeof(CRC8);
+    static constexpr size_t length = sizeof(block) + sizeof(crc);
     
     union {
       u1 raw[length];

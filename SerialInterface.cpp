@@ -75,7 +75,7 @@ void SerialInterface::Message::feed(u1 b) {
 }
 
 u1 SerialInterface::Message::checkCRC() {
-  CRC8 c;
+  crc c;
 
   auto data = raw;
 
