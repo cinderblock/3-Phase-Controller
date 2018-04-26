@@ -57,7 +57,7 @@ class ThreePhasePositionEstimator {
   /**
    * Number of MLX readings started since last estimate
    */
-  static u1 mlxReadingsStarted;
+  static u1 mlxPeriodsSinceLastValid;
 
   /**
    * Number of cycles the PWM timer makes per measurement ready from MLX. We pick a number such that we wait at least

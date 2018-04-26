@@ -27,7 +27,7 @@ s2 ThreePhasePositionEstimator::driveVelocityMagEstimate = 0;
 
 u1 ThreePhasePositionEstimator::phaseAdvanceMagRatio = 1;
 s4 ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount = 0;
-u1 ThreePhasePositionEstimator::mlxReadingsStarted = 0;
+u1 ThreePhasePositionEstimator::mlxPeriodsSinceLastValid = 0;
 u1 ThreePhasePositionEstimator::qualityMagEstimate = 0;
 
 inline static s2 constexpr abs(s2 num) { return num >= 0 ? num : -num; }
@@ -88,7 +88,7 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
     // should just drop that sample and get the next one.
 
     MLX90363::startTransmitting();
-    mlxReadingsStarted += overflows;
+    mlxPeriodsSinceLastValid += overflows;
   }
 
   u4 newPhaseEstimate = drivePhaseMagEstimate;
@@ -155,8 +155,8 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   //         << reading
   //         << Debug::Printer::Special::End;
 
-  u1 const numberOfCycles = mlxReadingsStarted;
-  mlxReadingsStarted = 0;
+  u1 const numberOfCycles = mlxPeriodsSinceLastValid;
+  mlxPeriodsSinceLastValid = 0;
 
   const auto position = Lookup::AlphaToPhase(alpha);
 
