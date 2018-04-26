@@ -109,7 +109,7 @@ class ThreePhasePositionEstimator {
    *
    * @param alpha raw reading from MLX
    */
-  static void handleNewPositionReading(u2 alpha);
+  static void handleNewMagnetometerPositionReading(u2 alpha);
 
 public:
   /**

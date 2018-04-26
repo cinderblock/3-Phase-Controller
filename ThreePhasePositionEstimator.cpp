@@ -135,7 +135,7 @@ void ThreePhasePositionEstimator::getAndProcessNewHallState() {
     drivePhaseHallEstimate = 640;
 }
 
-void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
+void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha) {
   // Here, we are receiving a new position reading from the magnetometer.
   // We need to take this new reading, update our running estimates, and be
   // done. This is called by the magnetometer software after a new reading has
@@ -184,7 +184,7 @@ void ThreePhasePositionEstimator::init() {
     // Loop until we actually receive real data
   } while (!MLX90363::hasNewData(magRoll));
 
-  MLX90363::setAlphaHandler(&handleNewPositionReading);
+  MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
 
   const auto phase = Lookup::AlphaToPhase(MLX90363::getAlpha());
 
