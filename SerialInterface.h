@@ -32,7 +32,7 @@ using namespace libCameron;
 
 class SerialInterface {
   friend void ::USART1_RX_vect();
-  static void receiveByte();
+  inline static void receiveByte() __attribute__((always_inline, hot));
 public:
   static void init();
   class Message {
