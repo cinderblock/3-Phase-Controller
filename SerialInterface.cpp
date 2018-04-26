@@ -54,6 +54,7 @@ void SerialInterface::receiveByte() {
 }
 
 void SerialInterface::Message::feed(u1 b) {
+  // NOTE: This is a little "hacky". Doesn't handle missalignment well. Could get lost.
   if (pos < headerLength) {
     if (header[pos] != b) {
       pos = 0;
