@@ -161,7 +161,7 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
   const auto position = Lookup::AlphaToPhase(alpha);
 
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
-		drivePhaseMagEstimate = u4(position.getPosition()) << drivePhaseMagSubResolution;
+		drivePhaseMagEstimate = u4(position) << drivePhaseMagSubResolution;
 	}
 
   // TODO: estimate velocity...
