@@ -78,11 +78,9 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
   // If cyclesPWMPerMLX is 1, will try to communicate over SPI every time advance() is called.
   static Counter<cyclesPWMPerMLX> mlxPeriodCounter;
 
-  u1 overflows = mlxPeriodCounter.advanceAndCheckOverflow(steps);
-
   // Automatically start MLX communications every few ticks
 
-  if (overflows) {
+  if (auto overflows = mlxPeriodCounter.advanceAndCheckOverflow(steps)) {
     // TODO: There is a potential issue that if the timings are too tight, in
     // certain cases, we could talk to the MLX late, which isn't immediately a
     // problem, except that the next MLX reading would be early, causing a NTT
