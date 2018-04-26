@@ -91,6 +91,12 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
     mlxPeriodsSinceLastValid += overflows;
   }
 
+//  HallWatcher::checkH1();
+//  HallWatcher::checkH2();
+//  HallWatcher::checkH3();
+
+//  return drivePhaseHallEstimate;
+
   u4 newPhaseEstimate = drivePhaseMagEstimate;
 //  newPhaseEstimate += driveVelocityMagEstimate;
 //
