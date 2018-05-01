@@ -75,19 +75,19 @@ void MLX90363::init() {
 
   // Setup control registers
 
-#ifdef BED_CONTROLLER
+// #ifdef BED_CONTROLLER
   // Disable SPI2X
   AVR::SPI::SR->byte = 0 << SPI2X;
   // F_CPU/64
   AVR::SPI::CR->byte = 0b11010111;
-#endif
+// #endif
 
-#ifdef QUANTUM_DRIVE
-  // Enable SPI2X
-  AVR::SPI::SR->byte = 1 << SPI2X;
-  // F_CPU/8
-  AVR::SPI::CR->byte = 0b11010101;
-#endif
+// #ifdef QUANTUM_DRIVE
+//   // Enable SPI2X
+//   AVR::SPI::SR->byte = 1 << SPI2X;
+//   // F_CPU/8
+//   AVR::SPI::CR->byte = 0b11010101;
+// #endif
 
   responseState = ResponseState::Ready;
 }
