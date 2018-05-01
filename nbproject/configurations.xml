@@ -87,7 +87,6 @@
             <pElem>libCameron/src</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>BED_CONTROLLER</Elem>
             <Elem>F_CPU=16000000UL</Elem>
             <Elem>__AVR_ATmega32U4__</Elem>
           </preprocessorList>
@@ -99,7 +98,6 @@
             <pElem>libCameron/src</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>BED_CONTROLLER</Elem>
             <Elem>F_CPU=16000000UL</Elem>
             <Elem>__AVR_ATmega32U4__</Elem>
           </preprocessorList>
