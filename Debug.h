@@ -42,8 +42,8 @@ namespace Debug {
  
  void reportClock();
 
- void sendHeader();
- void sendEnd();
+ void start();
+ void end();
  
  class Printer {
  public:
@@ -51,9 +51,9 @@ namespace Debug {
   
   inline Printer& operator<< (const Special s) {
    if (s == Special::Start) {
-    Debug::sendHeader();
+    Debug::start();
    } else if (s == Special::End) {
-    Debug::sendEnd();
+    Debug::end();
    }
    return *this;
   }
