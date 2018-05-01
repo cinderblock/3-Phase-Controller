@@ -56,15 +56,6 @@ all: dfu-erase dfu-flash dfu-reset
 # Program with AVR attached to SleepyPi
 #all: remote_prog
 
-REMOTE_HEX = $(TARGET).hex
-REMOTE = pi@sleepypi
-
-remote_prog:
-	pscp -q $(OUT_HEX) $(REMOTE):$(REMOTE_HEX)
-	-plink $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX)
-	-plink $(REMOTE) sudo $(DFU_TARGETED) reset
-	plink $(REMOTE) rm $(REMOTE_HEX)
-
 #ASM = $(CPP:%=%.cpp.S)
 
 # Load local settings
@@ -103,4 +94,13 @@ include $(uMakerPath)tools/dfu.mk
 # Directory creation targets
 include $(uMakerPath)tools/mkdir.mk
 
-.PHONY: all run
+REMOTE_HEX = $(TARGET).hex
+REMOTE = pi@sleepypi
+
+remote_prog: $(OUT_HEX)
+	pscp -q $(OUT_HEX) $(REMOTE):$(REMOTE_HEX)
+	-plink $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX)
+	-plink $(REMOTE) sudo $(DFU_TARGETED) reset
+	plink $(REMOTE) rm $(REMOTE_HEX)
+
+.PHONY: all run remote_prog
