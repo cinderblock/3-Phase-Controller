@@ -88,6 +88,7 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
     // should just drop that sample and get the next one.
 
     MLX90363::startTransmitting();
+    // overflows should almost always be 1, but just in case...
     mlxPeriodsSinceLastValid += overflows;
   }
 
