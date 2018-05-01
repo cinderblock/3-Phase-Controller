@@ -64,8 +64,6 @@ public:
      */
     static u1 pos;
 
-    static u1 scratch[headerLength];
-
     u1 checkCRC();
 
     /**
