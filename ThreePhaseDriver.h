@@ -97,14 +97,14 @@ public:
 
    inline PhasePosition& operator+=(u1 const steps) {
     commutation += steps;
-    if (commutation > MAX) commutation -= MAX;
+    if (commutation > MAX) commutation -= FULL;
 
     return *this;
    }
 
    inline PhasePosition& operator-=(u1 const steps) {
     commutation -= steps;
-    if (commutation > MAX) commutation += MAX;
+    if (commutation > MAX) commutation += FULL;
 
     return *this;
    }
@@ -120,7 +120,7 @@ public:
    inline PhasePosition& operator-=(u2 const steps) {
     commutation -= steps;
     // TODO: Better & faster math here
-    while (commutation > MAX) commutation += MAX;
+    while (commutation > MAX) commutation += FULL;
 
     return *this;
    }
