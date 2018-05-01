@@ -60,7 +60,7 @@ void ThreePhaseController::controlLoop() {
   ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance(steps);
   
   // TODO: more phase advance at higher speeds
-  if (isForwardTorque == true) {
+  if (isForwardTorque) {
     p += output90DegPhaseShift;
   } else {
     p -= output90DegPhaseShift;
