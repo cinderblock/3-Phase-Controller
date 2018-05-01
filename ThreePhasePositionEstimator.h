@@ -25,7 +25,7 @@ class ThreePhasePositionEstimator {
   /**
    * Last magnetometer reading
    */
-  static u2 lastMagPhase;
+  static ThreePhaseDriver::PhasePosition lastMagPhase;
 
   /**
    * The current position estimate. Higher resolution than output phase angle
@@ -147,7 +147,7 @@ public:
   /**
    * Get the last measured position
    */
-  inline static u2 getLastMagnetometerPhase() { return lastMagPhase; };
+  inline static typeof(lastMagPhase) getLastMagnetometerPhase() { return lastMagPhase; };
 
   /**
    * Get currently extrapolated velocity

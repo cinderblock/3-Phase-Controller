@@ -6,6 +6,7 @@
 #include "HallWatcher.h"
 #include "MLX90363.h"
 #include "ServoController.h"
+#include "Debug.h"
 #include <util/atomic.h>
 #include <util/delay.h>
 
@@ -95,27 +96,27 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
 //  HallWatcher::checkH1();
 //  HallWatcher::checkH2();
 //  HallWatcher::checkH3();
-
+//
 //  return drivePhaseHallEstimate;
 
   u4 newPhaseEstimate = drivePhaseMagEstimate;
-//  newPhaseEstimate += driveVelocityMagEstimate;
-//
-//  const bool forward = driveVelocityMagEstimate > 0;
-//
-//  static constexpr u4 MAX = ((u4)DriverConstants::StepsPerCycle) << drivePhaseMagSubResolution;
-//
-//  // Check if ph(ase) value is out of range
-//  limit(newPhaseEstimate, MAX, forward);
-//
-//  // Store new drivePhase
-//  drivePhaseMagEstimate = newPhaseEstimate;
+//  newPhaseEstimate += driveVelocityMagEstimate * steps;
+
+  const bool forward = driveVelocityMagEstimate > 0;
+
+  static constexpr u4 MAX = ((u4)ThreePhaseDriver::StepsPerCycle) << drivePhaseMagSubResolution;
+
+  // Check if ph(ase) value is out of range
+  limit(newPhaseEstimate, MAX, forward);
+
+  // Store new drivePhase
+  drivePhaseMagEstimate = newPhaseEstimate;
 
   // Adjust output for velocity lag
-  // newPhaseEstimate += phaseAdvanceMagCachedAmount;
+   newPhaseEstimate += phaseAdvanceMagCachedAmount * steps;
 
   // Check if ph(ase) value is out of range again
-  // limit(ph, MAX, forward);
+   limit(newPhaseEstimate, MAX, forward);
 
   // If we're going fast, use Hall position readings directly
 //  if (qualityMagEstimate < 100) {
@@ -165,13 +166,41 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
   u1 const numberOfCycles = mlxPeriodsSinceLastValid;
   mlxPeriodsSinceLastValid = 0;
 
-  const auto position = Lookup::AlphaToPhase(alpha);
+  
+  auto v = driveVelocityMagEstimate;
+  u4 estimate;
 
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
-		drivePhaseMagEstimate = u4(position) << drivePhaseMagSubResolution;
-	}
+    estimate = drivePhaseMagEstimate;
+  }
 
-  // TODO: estimate velocity...
+  const u4 position = u4(Lookup::AlphaToPhase(alpha)) << drivePhaseMagSubResolution;
+
+  // Positive delta likely means our velocity estimate is too fast
+  s4 delta = position - estimate;
+
+  // Fix delta range
+  if (delta >  ((ThreePhaseDriver::MAX + 1) / 2 << drivePhaseMagSubResolution)) delta -= ThreePhaseDriver::MAX + 1;
+  if (delta < -((ThreePhaseDriver::MAX + 1) / 2 << drivePhaseMagSubResolution)) delta += ThreePhaseDriver::MAX + 1;
+  
+//  constexpr u1 MAXerr = 10;
+//  if (deltaError >  MAXerr) deltaError =  MAXerr;
+//  if (deltaError < -MAXerr) deltaError = -MAXerr;
+  
+  using namespace Debug;
+
+  // Scale the error by some factor and adjust our velocity estimate
+  v += delta / (cyclesPWMPerMLX * numberOfCycles * 8);
+  
+  SOUT << Printer::Special::Start
+      << numberOfCycles << estimate << u4(position) << delta << v
+      << Printer::Special::End;
+
+	ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    driveVelocityMagEstimate = v;
+		drivePhaseMagEstimate = position;
+	}
+  
 }
 
 void ThreePhasePositionEstimator::init() {
