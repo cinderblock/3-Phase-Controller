@@ -61,6 +61,8 @@ public:
     */
    static constexpr u2 MAX = 0x2ff;
 
+   static constexpr u2 FULL = MAX + 1;
+
    friend class ThreePhaseDriver;
 
   public:
