@@ -86,7 +86,7 @@ public:
     * Initialize a commutation angle with some current angle
     * @param commutation
     */
-   inline PhasePosition(u2 const commutation = 0) : commutation(commutation % (MAX + 1)) {}
+   inline PhasePosition(u2 const commutation = 0) : commutation(commutation % FULL) {}
 
    /**
     * Initialize a commutation angle with a subPhase angle and phase
@@ -112,7 +112,7 @@ public:
    inline PhasePosition& operator+=(u2 const steps) {
      // TODO: This is broken if steps is very large and overflows commutation
     commutation += steps;
-    commutation %= MAX + 1;
+    commutation %= FULL;
 
     return *this;
    }
