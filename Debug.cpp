@@ -61,13 +61,16 @@ void Debug::reportClock() {
   reportU2(t);
 }
 
-void Debug::sendHeader() {
+void Debug::start() {
+  CRC.reset();
+}
+
+void Debug::end() {
+  sendByte(CRC.getCRC());
+  
   sendByte(0xff);
   sendByte(0x00);
   sendByte(0xff);
   sendByte(0xA5);
   sendByte(0xff);
-  CRC.reset();
 }
-
-void Debug::sendEnd() { sendByte(CRC.getCRC()); }
