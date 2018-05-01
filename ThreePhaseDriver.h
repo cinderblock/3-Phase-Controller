@@ -164,6 +164,15 @@ public:
    inline operator u4() const {
      return commutation;
    }
+
+   inline s2 operator -(PhasePosition &that) {
+     s2 delta = commutation - that.commutation;
+
+     if (delta > s2(  FULL / 2)) delta -= MAX;
+     if (delta < s2(- FULL / 2)) delta += MAX;
+
+     return delta;
+   }
   };
 
   /**
