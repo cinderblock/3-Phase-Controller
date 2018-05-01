@@ -17,18 +17,18 @@
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
-ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::drivePhaseHallEstimate;
+typeof(ThreePhasePositionEstimator::drivePhaseHallEstimate) ThreePhasePositionEstimator::drivePhaseHallEstimate;
 
-u4 ThreePhasePositionEstimator::drivePhaseMagEstimate;
-u2 ThreePhasePositionEstimator::lastMagPhase;
+typeof(ThreePhasePositionEstimator::drivePhaseMagEstimate) ThreePhasePositionEstimator::drivePhaseMagEstimate;
+typeof(ThreePhasePositionEstimator::lastMagPhase) ThreePhasePositionEstimator::lastMagPhase;
 
 // Assume we start at 0 velocity
-s2 ThreePhasePositionEstimator::driveVelocityMagEstimate = 0;
+typeof(ThreePhasePositionEstimator::driveVelocityMagEstimate) ThreePhasePositionEstimator::driveVelocityMagEstimate = 0;
 
-u1 ThreePhasePositionEstimator::phaseAdvanceMagRatio = 1;
-s4 ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount = 0;
-u1 ThreePhasePositionEstimator::mlxPeriodsSinceLastValid = 0;
-u1 ThreePhasePositionEstimator::qualityMagEstimate = 0;
+typeof(ThreePhasePositionEstimator::phaseAdvanceMagRatio) ThreePhasePositionEstimator::phaseAdvanceMagRatio = 100;
+typeof(ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount) ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount = 0;
+typeof(ThreePhasePositionEstimator::mlxPeriodsSinceLastValid) ThreePhasePositionEstimator::mlxPeriodsSinceLastValid = 0;
+typeof(ThreePhasePositionEstimator::qualityMagEstimate) ThreePhasePositionEstimator::qualityMagEstimate = 0;
 
 inline static s2 constexpr abs(s2 num) { return num >= 0 ? num : -num; }
 
