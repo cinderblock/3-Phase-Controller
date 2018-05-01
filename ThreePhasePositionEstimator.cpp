@@ -228,14 +228,14 @@ void ThreePhasePositionEstimator::init() {
     // Loop until we actually receive real data
   } while (!MLX90363::hasNewData(magRoll));
 
-  MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
-
   const auto phase = Lookup::AlphaToPhase(MLX90363::getAlpha());
 
   // Set up the hall sensor interrupts
   HallWatcher::init();
-  HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
 
 //  lastMagPhase = phase.getMechanicalPosition();
   drivePhaseMagEstimate = u4(phase) << drivePhaseMagSubResolution;
+
+  HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
+  MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
 }
