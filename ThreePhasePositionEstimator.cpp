@@ -169,13 +169,19 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
   //         << reading
   //         << Debug::Printer::Special::End;
 
+  // Capture the number of times this should have been run.
+  // If we don't compensate for this, our velocity estimates might be way wrong
   u1 const numberOfCycles = mlxPeriodsSinceLastValid;
   mlxPeriodsSinceLastValid = 0;
 
+  // Instead of directly calculating what the velocity should be, for instance doing a dX/dt division,
+  // we just keep a running estimate of the velocity and adjust it up or down based on how close we were.
+  // This has the effect of doing a low pass filter on the velocity estimate which is desirable.
   
   auto v = driveVelocityMagEstimate;
   u4 estimate;
 
+  // Capture our current position estimate
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
     estimate = drivePhaseMagEstimate;
   }
