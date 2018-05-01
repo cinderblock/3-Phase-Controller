@@ -155,6 +155,12 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
   // ISR and this position estimator.
 
 
+  // Disable this long handler. Re enabled at the end.
+	ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    MLX90363::setAlphaHandler(nullptr);
+  }
+
+
   // static u1 tick = 0;
 
   // Debug::SOUT
@@ -199,6 +205,8 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
     driveVelocityMagEstimate = v;
 		drivePhaseMagEstimate = position;
+    // Re-enable this long alpha handler
+    MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
 	}
   
 }
