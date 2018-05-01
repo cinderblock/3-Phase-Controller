@@ -57,12 +57,21 @@ void Calibration::main() {
 
   u2 i = 0;
 
+  dout << PSTR("Calibration Mode\n") << steps;
+
+  // "Mark" start of binary data
+  SOUT << Printer::Special::End;
+
+  // Ramp up
+
   for (; i < ThreePhaseDriver::StepsPerCycle; i += stepSize) {
     ThreePhaseDriver::setAmplitude(i * amplitude / rampSteps);
     step(i);
   }
 
   ThreePhaseDriver::setAmplitude(amplitude);
+
+  // Forward
   
   for (; i < steps + ThreePhaseDriver::StepsPerCycle; i += stepSize) {
     step(i);
