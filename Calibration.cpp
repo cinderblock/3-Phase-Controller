@@ -88,14 +88,16 @@ void Calibration::main() {
   }
   
   
-  for (; i; i -= stepSize) {
+  do {
     step(i);
     // Send data via debug serial port
     SOUT
       << Printer::Special::Start
       << i << MLX90363::getAlpha() << HallWatcher::getState()
       << Printer::Special::End;
-  }
+
+    i -= stepSize;
+  } while (i);
 
   ThreePhaseDriver::setAmplitude(0);
   ThreePhaseDriver::advanceTo(0);
