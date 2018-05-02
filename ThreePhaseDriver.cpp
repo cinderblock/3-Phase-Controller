@@ -72,7 +72,7 @@ void ThreePhaseDriver::init() {
    * FPIE4 FPEN4 FPNC4 FPES4 FPAC4 FPF4 WGM41 WGM40
    * 0b  0     0     0     0     0    1     0     1
    */
-  TCCR4D = 0b00000101;
+  TCCR4D = 0b00000101 | (usingPWM6 ? 1 << WGM41 : 0);
 
   // Setup output configuration for A & B
   /**
@@ -91,7 +91,12 @@ void ThreePhaseDriver::init() {
   TCCR4C = 0b01010101;
 
   // TCCR4E
-  setUpdateLock(false);
+  if (usingPWM6)
+    TCCR4E = 0;
+  else
+    setUpdateLock(false);
+
+
   // High bits are still 0 from previous assignment in this function
 
   // Clear compare match registers for now
@@ -186,6 +191,11 @@ inline static void setCompareMatchC(u2 const val) {
   OCR4D = val;
 }
 
+inline static void setEnables(bool A, bool B, bool C) {
+  u1 constexpr en = 0b10;
+  TCCR4E = 0b01000000 | (A ? en << 0 : 0) | (B ? en << 2 : 0) | (C ? en << 4 : 0);
+}
+
 void ThreePhaseDriver::advanceTo(const PhasePosition pp) {
   auto const step = pp.getPosition();
   auto const phase = pp.getPhase();
@@ -193,6 +203,32 @@ void ThreePhaseDriver::advanceTo(const PhasePosition pp) {
   u2 const ONE = getPhasePWM(step);
   u2 const TWO = getPhasePWM(255 - step);
   u2 const OFF = 0;
+
+  if (usingPWM6) {
+    setCompareMatchA(ONE > TWO ? ONE : TWO);
+
+    if (phase == Phase::A) {
+      Board::DRV::AL::on();
+      Board::DRV::BL::off();
+      Board::DRV::CL::off();
+      setEnables(false, ONE < TWO, ONE > TWO);
+    } else if (phase == Phase::B) {
+      Board::DRV::AL::off();
+      Board::DRV::BL::on();
+      Board::DRV::CL::off();
+      setEnables(ONE > TWO, false, ONE < TWO);
+    } else if (phase == Phase::C) {
+      Board::DRV::AL::off();
+      Board::DRV::BL::off();
+      Board::DRV::CL::on();
+      setEnables(ONE < TWO, ONE > TWO, false);
+    } else {
+      // Should not get here. bad phase...
+      setEnables(false, false, false);
+    }
+    return;
+  }
+
 
   setUpdateLock(true);
 

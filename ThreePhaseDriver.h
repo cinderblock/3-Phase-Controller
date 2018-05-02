@@ -38,6 +38,8 @@ class ThreePhaseDriver {
    */
   static volatile u1 amplitude;
 
+  static constexpr bool usingPWM6 = false;
+
 public:
 
   /**
