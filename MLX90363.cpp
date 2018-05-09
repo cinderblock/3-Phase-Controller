@@ -190,8 +190,10 @@ void MLX90363::handleResponse() {
     handleAlpha();
     responseState = ResponseState::TypeA;
 
-    if (alphaHandler)
-      alphaHandler(alpha);
+    // Get one copy of volatile pointer
+    void (* handler)(u2 const alpha)  = alphaHandler;
+    if (handler)
+      handler(alpha);
 
     return;
   }
