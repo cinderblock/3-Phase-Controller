@@ -24,7 +24,7 @@ class MLX90363 {
  friend void ::SPI_STC_vect();
  static inline void isr();
 
- static void (*alphaHandler)(u2 const alpha);
+ static void (*volatile alphaHandler)(u2 const alpha);
  
  /**
   * The fixed message length that the MLX90363 sends
