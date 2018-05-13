@@ -45,7 +45,7 @@ class ThreePhasePositionEstimator {
   static s2 driveVelocityMagEstimate;
 
   /**
-   * Multiplier on velocity to advance our velocity estimate by
+   * Multiplier on velocity error to adjust our velocity estimate
    */
   static u1 phaseAdvanceMagRatio;
 
