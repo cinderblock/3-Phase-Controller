@@ -69,7 +69,10 @@ void Debug::start() {
 
 void Debug::end() {
   sendByte(CRC.getCRC());
-  
+  marker();
+}
+
+void Debug::marker() {
   sendByte(0xff);
   sendByte(0x00);
   sendByte(0xff);

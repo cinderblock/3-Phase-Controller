@@ -44,16 +44,19 @@ namespace Debug {
 
  void start();
  void end();
+ void marker();
  
  class Printer {
  public:
-  enum class Special : u1 {Start, End};
+  enum class Special : u1 {Start, End, Marker};
   
   inline Printer& operator<< (const Special s) {
    if (s == Special::Start) {
     Debug::start();
    } else if (s == Special::End) {
     Debug::end();
+   } else if (s == Special::Marker) {
+     Debug::marker();
    }
    return *this;
   }
