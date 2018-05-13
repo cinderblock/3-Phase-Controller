@@ -205,7 +205,7 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
   v += delta / (cyclesPWMPerMLX * numberOfCycles * 8);
   
   SOUT << Printer::Special::Start
-      << numberOfCycles << estimate << u4(position) << delta << v
+      << numberOfCycles << estimate << u4(position) << delta << v << MLX90363::getRoll()
       << Printer::Special::End;
 
 	ATOMIC_BLOCK(ATOMIC_FORCEON) {
