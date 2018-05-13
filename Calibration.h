@@ -14,13 +14,17 @@
 #ifndef CALIBRATION_H
 #define CALIBRATION_H
 
+#include <AVR++/basicTypes.h>
+
 namespace ThreePhaseControllerNamespace {
 
 namespace Calibration {
+  using namespace AVR;
+
   constexpr bool enabled = false;
-  constexpr float numberOfSpins = 7*7;
-  constexpr uint8_t amplitude = 40;
-  constexpr uint16_t rampSteps = 0x300;
+  constexpr u2 numberOfSpins = 7*5;
+  constexpr u1 amplitude = 70;
+  constexpr u2 rampSteps = 0x300;
   void main();
   
   void step(u4 i);
