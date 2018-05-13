@@ -60,6 +60,7 @@ int main() {
   // These don't do anything if they're not enabled
   Calibration::main();
   Demo::main();
+  MLXDebug::main();
 
   SerialInterface::init();
   ThreePhaseController::init();
