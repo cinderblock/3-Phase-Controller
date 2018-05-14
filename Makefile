@@ -56,11 +56,13 @@ TARGET = turnigy
 
 MCU = atmega32u4
 
-all: build-lss run
-run: dfu-erase dfu-flash dfu-reset
-#run: run-remote
+all: build-lss
 
-REMOTE_HEX = $(TARGET).hex
+# Program with AVR attached locally
+all: dfu-erase dfu-flash dfu-reset
+
+# Program with AVR attached to SleepyPi
+#all: remote_prog
 
 #ASM = $(CPP:%=%.cpp.S)
 
@@ -105,10 +107,13 @@ include $(uMakerPath)tools/dfu.mk
 # Directory creation targets
 include $(uMakerPath)tools/mkdir.mk
 
-run-remote: $(OUT_HEX)
-	pscp -q $(OUT_HEX) pi@sleepypi:$(REMOTE_HEX)
-	-plink pi@sleepypi sudo $(DFU_TARGETED) flash $(REMOTE_HEX)
-	-plink pi@sleepypi sudo $(DFU_TARGETED) reset
-	plink pi@sleepypi rm $(REMOTE_HEX)
+REMOTE_HEX = $(TARGET).hex
+REMOTE = pi@sleepypi
 
-.PHONY: all run run-remote
+remote_prog: $(OUT_HEX)
+	pscp -q $(OUT_HEX) $(REMOTE):$(REMOTE_HEX)
+	-plink $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX)
+	-plink $(REMOTE) sudo $(DFU_TARGETED) reset
+	plink $(REMOTE) rm $(REMOTE_HEX)
+
+.PHONY: all run remote_prog

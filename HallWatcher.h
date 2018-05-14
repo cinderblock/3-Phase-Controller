@@ -18,18 +18,25 @@
 
 #include "Board.h"
 
+#ifdef QUANTUM_DRIVE
 ISR(INT0_vect); // H1
 ISR(INT1_vect); // H2
 ISR(PCINT0_vect); // H3 (PCINT4 in group PCINT0)
+#endif
+
+#ifdef BED_CONTROLLER
+ISR(INT6_vect); // H1
+ISR(PCINT0_vect); // H2 & H3 (PCINT7 & PCINT4 respectively)
+#endif
 
 namespace ThreePhaseControllerNamespace {
 
   using namespace AVR;
 
   class HallWatcher {
-    using H1 = Board::H1; // INT0
-    using H2 = Board::H2; // INT1
-    using H3 = Board::H3; // PCINT4
+    using H1 = Board::H1;
+    using H2 = Board::H2;
+    using H3 = Board::H3;
 
     static u1 volatile state;
     static void (*stateChangeReceiver)();
@@ -87,9 +94,16 @@ namespace ThreePhaseControllerNamespace {
       }
     }
 
-    friend void ::INT0_vect();
-    friend void ::INT1_vect();
-    friend void ::PCINT0_vect();
+    // #ifdef QUANTUM_DRIVE
+    // friend void ::INT0_vect();
+    // friend void ::INT1_vect();
+    // friend void ::PCINT0_vect();
+    // #endif
+    // 
+    // #ifdef BED_CONTROLLER
+    // friend void ::INT6_vect();
+    // friend void ::PCINT0_vect();
+    // #endif
 
   public:
     static void init();

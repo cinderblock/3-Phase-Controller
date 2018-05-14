@@ -11,7 +11,6 @@
 #include "ThreePhaseController.h"
 #include "ThreePhaseDriver.h"
 #include "Debug.h"
-#include "Interpreter.h"
 #include "ThreePhasePositionEstimator.h"
 #include "LookupTable.h"
 #include "ServoController.h"
@@ -61,7 +60,7 @@ void ThreePhaseController::controlLoop() {
   ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance(steps);
   
   // TODO: more phase advance at higher speeds
-  if (isForwardTorque == Config::forward) {
+  if (isForwardTorque) {
     p += output90DegPhaseShift;
   } else {
     p -= output90DegPhaseShift;
@@ -71,11 +70,6 @@ void ThreePhaseController::controlLoop() {
 
   running = false;
 }
-
-void ThreePhaseController::run() {
-  controlLoop();
-}
-
 
 void ThreePhaseController::init() {
   ThreePhaseDriver::setAmplitude(0);

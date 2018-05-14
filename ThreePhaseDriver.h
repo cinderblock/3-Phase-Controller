@@ -10,7 +10,6 @@
 
 #include <AVR++/basicTypes.h>
 #include <avr/interrupt.h>
-#include "DriverConstants.h"
 
 namespace ThreePhaseControllerNamespace {
 
@@ -39,6 +38,8 @@ class ThreePhaseDriver {
    */
   static volatile u1 amplitude;
 
+  static constexpr bool usingPWM6 = false;
+
 public:
 
   /**
@@ -62,7 +63,11 @@ public:
     */
    static constexpr u2 MAX = 0x2ff;
 
+   static constexpr u2 FULL = MAX + 1;
+
    friend class ThreePhaseDriver;
+
+  public:
 
    /**
     * Get the current subphase angle
@@ -79,13 +84,13 @@ public:
    inline Phase getPhase() const {
     return (Phase)(commutation >> 8);
    }
-
-  public:
    /**
     * Initialize a commutation angle with some current angle
     * @param commutation
     */
-   inline PhasePosition(u2 const commutation = 0) : commutation(commutation % (MAX + 1)) {}
+   inline PhasePosition(u2 const commutation = 0) : commutation(commutation % FULL) {}
+   inline PhasePosition(u4 const commutation) : commutation(commutation % FULL) {}
+   inline PhasePosition(int const commutation) : commutation(commutation % FULL) {}
 
    /**
     * Initialize a commutation angle with a subPhase angle and phase
@@ -97,7 +102,7 @@ public:
    inline PhasePosition& operator+=(u1 const steps) {
      if (getPhase() == Phase::Brake) return *this;
     commutation += steps;
-    if (commutation > MAX) commutation -= MAX;
+    if (commutation > MAX) commutation -= FULL;
 
     return *this;
    }
@@ -105,7 +110,7 @@ public:
    inline PhasePosition& operator-=(u1 const steps) {
      if (getPhase() == Phase::Brake) return *this;
     commutation -= steps;
-    if (commutation > MAX) commutation += MAX;
+    if (commutation > MAX) commutation += FULL;
 
     return *this;
    }
@@ -114,7 +119,7 @@ public:
      if (getPhase() == Phase::Brake) return *this;
      // TODO: This is broken if steps is very large and overflows commutation
     commutation += steps;
-    commutation %= MAX + 1;
+    commutation %= FULL;
 
     return *this;
    }
@@ -123,7 +128,7 @@ public:
     if (getPhase() == Phase::Brake) return *this;
     commutation -= steps;
     // TODO: Better & faster math here
-    while (commutation > MAX) commutation += MAX;
+    while (commutation > MAX) commutation += FULL;
 
     return *this;
    }
@@ -168,6 +173,15 @@ public:
    inline operator u4() const {
      return commutation;
    }
+
+   inline s2 operator -(PhasePosition &that) {
+     s2 delta = commutation - that.commutation;
+
+     if (delta > s2(  FULL / 2)) delta -= MAX;
+     if (delta < s2(- FULL / 2)) delta += MAX;
+
+     return delta;
+   }
   };
 
   /**
@@ -206,9 +220,10 @@ public:
 
   /**
    * Magic number to ensure we don't miss a tick of a phase
+   * TODO: confirm this is still needed.
    */
   static constexpr u1 calcMaxAmplitude = 0xff - 30;
-  static constexpr u1 maxAmplitude = min(DriverConstants::MaxTorque, calcMaxAmplitude);
+  static constexpr u1 maxAmplitude = calcMaxAmplitude;
 
   static inline void setAmplitude(u1 const a) {
     amplitude = a > maxAmplitude ? maxAmplitude : a;

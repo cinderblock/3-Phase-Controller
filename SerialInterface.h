@@ -14,32 +14,49 @@
 #ifndef SERIALINTERFACE_H
 #define SERIALINTERFACE_H
 
+#include <stddef.h>
 #include <AVR++/basicTypes.h>
 #include <TripleBuffer.h>
 #include <avr/interrupt.h>
 
-using namespace AVR;
-using namespace libCameron;
+#include <CRC8.h>
+
+#include "Board.h"
 
 ISR(USART1_RX_vect);
 
+namespace ThreePhaseControllerNamespace {
+
+using namespace AVR;
+using namespace libCameron;
+
 class SerialInterface {
-  friend void USART1_RX_vect();
-  static void receiveByte();
+  friend void ::USART1_RX_vect();
+  inline static void receiveByte() __attribute__((always_inline, hot));
 public:
   static void init();
   class Message {
+    using crc = CRC8;
     friend class SerialInterface;
     static constexpr u1 headerLength = 3;
     static constexpr u1 header[headerLength] = {0xff, 0xfe, 0xfe};
 
     /**
+     * Internal block of bytes we're wrapping around
+     */
+    typedef struct {
+      s2 command;
+    } block;
+
+    /**
      * fix length of message, including crc
      */
-    static constexpr u1 length = 2;
-
-
-    static u1 crc(u1 const *);
+    static constexpr size_t length = sizeof(block) + sizeof(crc);
+    
+    union {
+      u1 raw[length];
+      block data;
+    };
 
     /**
      * Track the current position we're writing to. Static because we never
@@ -47,38 +64,30 @@ public:
      */
     static u1 pos;
 
-    static u1 scratch[headerLength];
-
-    /**
-     * Internal block of bytes we're wrapping around
-     */
-    u1 raw[length];
-
-    inline u1 checkCRC() const {
-      return crc(raw);
-    }
+    u1 checkCRC();
 
     /**
      * Feed a new byte to the message parser
      * @param b the byte to parse
-     * @return true if a complete message has been received and validated
      */
-    bool feed(u1 b);
+    void feed(u1 b);
   public:
-    inline s1 getCommand() const {
-      return s1(raw[0]);
+    inline s2 getCommand() const {
+      return data.command;
     }
   };
 
 public:
-  static bool isMessageReady();
+  inline static bool isMessageReady() {
+    if (!incoming.isNewData()) return false;
+    
+    incoming.reserveNewestBufferForReading();
 
-  inline static Message const * getMessage() {
-    return incoming.getReadBuffer();
+    return (incoming.getReadBuffer()->checkCRC() == 0);
   }
 
-  inline static void receiveMessage() {
-    incoming.reserveNewestBufferForReading();
+  inline static Message const * getMessage() {
+    return isMessageReady() ? incoming.getReadBuffer() : nullptr;
   }
 
 private:
@@ -86,5 +95,6 @@ private:
 
 };
 
-#endif /* SERIALINTERFACE_H */
+}
 
+#endif /* SERIALINTERFACE_H */

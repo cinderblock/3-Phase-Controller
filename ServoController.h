@@ -10,7 +10,6 @@
 #define SERVOCONTROLLER_H
 
 #include <AVR++/basicTypes.h>
-#include "DriverConstants.h"
 #include "MLX90363.h"
 #include "ThreePhaseDriver.h"
 #include "ThreePhaseController.h"
@@ -125,8 +124,9 @@ namespace ThreePhaseControllerNamespace {
      * @return
      */
     inline static s4 getPosition() {
-      return ((s4) onRotation * (1 << DriverConstants::MagnetometerBits)) + (DriverConstants::MagnetometerMax - MLX90363::getAlpha());
-    };
+      // TODO: implement
+      return 0;
+    }
 
     /**
      * Get the commanded position

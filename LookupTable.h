@@ -12,7 +12,6 @@
 #include <AVR++/basicTypes.h>
 
 #include "ThreePhaseDriver.h"
-#include "MotorPosition.h"
 
 namespace ThreePhaseControllerNamespace {
 

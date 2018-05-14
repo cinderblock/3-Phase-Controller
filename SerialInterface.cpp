@@ -15,9 +15,10 @@
 
 #include <avr/io.h>
 
-#include <TripleBuffer.cpp>
-
 #include <CRC8.h>
+
+using namespace ThreePhaseControllerNamespace;
+using namespace libCameron;
 
 libCameron::TripleBuffer<SerialInterface::Message, true> SerialInterface::incoming;
 constexpr u1 SerialInterface::Message::header[headerLength];
@@ -25,10 +26,11 @@ constexpr u1 SerialInterface::Message::header[headerLength];
 u1 SerialInterface::Message::pos = 0;
 
 void USART1_RX_vect() {
-  SerialInterface::receiveByte();
+  ThreePhaseControllerNamespace::SerialInterface::receiveByte();
 }
 
 void SerialInterface::init() {
+  // at F_CPU == 16MHz, this is 1MBaud
   UBRR1 = 0;
 
   // Set default
@@ -48,47 +50,42 @@ void SerialInterface::init() {
 }
 
 void SerialInterface::receiveByte() {
-  if (incoming.getWriteBuffer()->feed(UDR1))
-    incoming.markNewestBuffer();
+  incoming.getWriteBuffer()->feed(UDR1);
 }
 
-bool SerialInterface::Message::feed(u1 b) {
+void SerialInterface::Message::feed(u1 b) {
+  // NOTE: This is a little "hacky". Doesn't handle missalignment well. Could get lost.
   if (pos < headerLength) {
     if (header[pos] != b) {
       pos = 0;
-      return false;
+      return;
     }
     pos++;
-    return false;
+    return;
   }
 
   raw[pos - headerLength] = b;
 
   pos++;
 
-  if (pos < headerLength + length) return false;
+  if (pos < headerLength + length) return;
 
   pos = 0;
-  return true;
+  incoming.markNewestBuffer();
 }
 
-u1 SerialInterface::Message::crc(u1 const * block) {
-  static CRC8 c;
+u1 SerialInterface::Message::checkCRC() {
+  crc c;
 
-  c.reset();
+  auto data = raw;
 
   for (u1 i = 0; i < length; i++) {
-    c << *block++;
+    c << *data++;
   }
 
   return c.getCRC();
 }
 
-bool SerialInterface::isMessageReady() {
-  if (!incoming.isNewData()) return false;
-  SerialInterface::receiveMessage();
-  return getMessage()->checkCRC() == 0;
-}
-
-
+// Yes, we're including the .cpp
+#include <TripleBuffer.cpp>
 template class libCameron::TripleBuffer<SerialInterface::Message, true>;

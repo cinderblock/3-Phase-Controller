@@ -11,12 +11,10 @@
 
 #include "MLX90363.h"
 #include "ThreePhaseController.h"
-// #include "Debug.h"
 #include "Calibration.h"
 #include "Clock.h"
 #include "Debug.h"
 #include "Demo.h"
-#include "Interpreter.h"
 #include "ServoController.h"
 #include "MLXDebug.h"
 #include "SerialInterface.h"
@@ -41,60 +39,45 @@ void init() {
   wdt_reset();
   wdt_disable();
 
-//  Debug::init();
-//  Debug::dout << PSTR("Beginning Inits\r\n");
+  Debug::init();
+  Debug::dout << PSTR("Beginning Inits \r\n");
+
+  // Set up the driver pins
+  ThreePhaseDriver::init();
 
   // Save and Clear the MCU Status Register. Indicates previous reset's source.
   resetCause = MCUSR;
   MCUSR = 0;
-  
+
   ThreePhaseDriver::init();
 
-	 USB_Init();
+	USB_Init();
 
   // Set Enable Interrupts.
   sei();
 
   // Use the Clock that is outside the AVR++ namespace.
   ::Clock::init();
-
-  // End of init
-//  Debug::dout << PSTR("End of Inits\r\n");
 }
 
 /**
  *
  */
 int main() {
-  // Each of these does nothing if they're not enabled
-  MLXDebug::main();
+  // These don't do anything if they're not enabled
   Calibration::main();
   Demo::main();
+  MLXDebug::main();
 
+  SerialInterface::init();
   ThreePhaseController::init();
-  ThreePhaseController::setAmplitude(30);
-
-  // SerialInterface::init();
 
   while (1) {
     HID_Device_USBTask(&Generic_HID_Interface);
 		USB_USBTask();
-    continue;
-
-    if (!SerialInterface::isMessageReady()) continue;
-    
-    auto msg = SerialInterface::getMessage();
-
-    ThreePhaseController::setAmplitude(msg->getCommand());
-  }
-
-  // Init for hardware interface.
-  ServoController::init();
-
-  // main loop
-  while (1) {
-    // Let ServoController calculate new amplitude command
-    ServoController::update();
+    if (auto msg = SerialInterface::getMessage()) {
+      ThreePhaseController::setAmplitude(msg->getCommand());
+    }
   }
 
   // loop in case main loop is disabled

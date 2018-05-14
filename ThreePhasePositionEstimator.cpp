@@ -1,12 +1,12 @@
 
+#include "LookupTable.h"
 #include "ThreePhasePositionEstimator.h"
 // #include "Debug.h"
 #include "Config.h"
-#include "DriverConstants.h"
 #include "HallWatcher.h"
-#include "LookupTable.h"
 #include "MLX90363.h"
 #include "ServoController.h"
+#include "Debug.h"
 #include <util/atomic.h>
 #include <util/delay.h>
 
@@ -18,18 +18,18 @@
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
-ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::drivePhaseHallEstimate;
+typeof(ThreePhasePositionEstimator::drivePhaseHallEstimate) ThreePhasePositionEstimator::drivePhaseHallEstimate;
 
-u4 ThreePhasePositionEstimator::drivePhaseMagEstimate;
-u2 ThreePhasePositionEstimator::lastMagPhase;
+typeof(ThreePhasePositionEstimator::drivePhaseMagEstimate) ThreePhasePositionEstimator::drivePhaseMagEstimate;
+typeof(ThreePhasePositionEstimator::lastMagPhase) ThreePhasePositionEstimator::lastMagPhase;
 
 // Assume we start at 0 velocity
-s2 ThreePhasePositionEstimator::driveVelocityMagEstimate = 0;
+typeof(ThreePhasePositionEstimator::driveVelocityMagEstimate) ThreePhasePositionEstimator::driveVelocityMagEstimate = 0;
 
-u1 ThreePhasePositionEstimator::phaseAdvanceMagRatio = Config::DefaultPhaseAdvance;
-s4 ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount = 0;
-u1 ThreePhasePositionEstimator::mlxReadingsStarted = 0;
-u1 ThreePhasePositionEstimator::qualityMagEstimate = 0;
+typeof(ThreePhasePositionEstimator::phaseAdvanceMagRatio) ThreePhasePositionEstimator::phaseAdvanceMagRatio = 100;
+typeof(ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount) ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount = 0;
+typeof(ThreePhasePositionEstimator::mlxPeriodsSinceLastValid) ThreePhasePositionEstimator::mlxPeriodsSinceLastValid = 0;
+typeof(ThreePhasePositionEstimator::qualityMagEstimate) ThreePhasePositionEstimator::qualityMagEstimate = 0;
 
 inline static s2 constexpr abs(s2 num) { return num >= 0 ? num : -num; }
 
@@ -79,11 +79,9 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
   // If cyclesPWMPerMLX is 1, will try to communicate over SPI every time advance() is called.
   static Counter<cyclesPWMPerMLX> mlxPeriodCounter;
 
-  u1 overflows = mlxPeriodCounter.advanceAndCheckOverflow(steps);
-
   // Automatically start MLX communications every few ticks
 
-  if (overflows) {
+  if (auto overflows = mlxPeriodCounter.advanceAndCheckOverflow(steps)) {
     // TODO: There is a potential issue that if the timings are too tight, in
     // certain cases, we could talk to the MLX late, which isn't immediately a
     // problem, except that the next MLX reading would be early, causing a NTT
@@ -91,38 +89,39 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
     // should just drop that sample and get the next one.
 
     MLX90363::startTransmitting();
-    mlxReadingsStarted += overflows;
+    // overflows should almost always be 1, but just in case...
+    mlxPeriodsSinceLastValid += overflows;
   }
 
+//  HallWatcher::checkH1();
+//  HallWatcher::checkH2();
+//  HallWatcher::checkH3();
+//
+//  return drivePhaseHallEstimate;
+
   u4 newPhaseEstimate = drivePhaseMagEstimate;
-//  newPhaseEstimate += driveVelocityMagEstimate;
-//
-//  const bool forward = driveVelocityMagEstimate > 0;
-//
-//  static constexpr u4 MAX = ((u4)DriverConstants::StepsPerCycle) << drivePhaseMagSubResolution;
-//
-//  // Check if ph(ase) value is out of range
-//  limit(newPhaseEstimate, MAX, forward);
-//
-//  // Store new drivePhase
-//  drivePhaseMagEstimate = newPhaseEstimate;
+//  newPhaseEstimate += driveVelocityMagEstimate * steps;
+
+  const bool forward = driveVelocityMagEstimate > 0;
+
+  static constexpr u4 MAX = ((u4)ThreePhaseDriver::StepsPerCycle) << drivePhaseMagSubResolution;
+
+  // Check if ph(ase) value is out of range
+  limit(newPhaseEstimate, MAX, forward);
+
+  // Store new drivePhase
+  drivePhaseMagEstimate = newPhaseEstimate;
 
   // Adjust output for velocity lag
-  // newPhaseEstimate += phaseAdvanceMagCachedAmount;
+   newPhaseEstimate += phaseAdvanceMagCachedAmount * steps;
 
   // Check if ph(ase) value is out of range again
-  // limit(ph, MAX, forward);
+   limit(newPhaseEstimate, MAX, forward);
 
   // If we're going fast, use Hall position readings directly
 //  if (qualityMagEstimate < 100) {
 //    return drivePhaseHallEstimate;
 //  }
-
-  HallWatcher::checkH1();
-  HallWatcher::checkH2();
-  HallWatcher::checkH3();
-
-  return drivePhaseHallEstimate;
 
   return (newPhaseEstimate >> drivePhaseMagSubResolution);
 }
@@ -144,7 +143,7 @@ void ThreePhasePositionEstimator::getAndProcessNewHallState() {
     drivePhaseHallEstimate = 640;
 }
 
-void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
+void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha) {
   // Here, we are receiving a new position reading from the magnetometer.
   // We need to take this new reading, update our running estimates, and be
   // done. This is called by the magnetometer software after a new reading has
@@ -156,6 +155,12 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   // ISR and this position estimator.
 
 
+  // Disable this long handler. Re enabled at the end.
+	ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    MLX90363::setAlphaHandler(nullptr);
+  }
+
+
   // static u1 tick = 0;
 
   // Debug::SOUT
@@ -164,54 +169,52 @@ void ThreePhasePositionEstimator::handleNewPositionReading(u2 alpha) {
   //         << reading
   //         << Debug::Printer::Special::End;
 
-  // u1 const numberOfCycles = mlxReadingsStarted;
-  mlxReadingsStarted = 0;
+  // Capture the number of times this should have been run.
+  // If we don't compensate for this, our velocity estimates might be way wrong
+  u1 const numberOfCycles = mlxPeriodsSinceLastValid;
+  mlxPeriodsSinceLastValid = 0;
 
-  const auto position = Lookup::AlphaToPhase(alpha);
+  // Instead of directly calculating what the velocity should be, for instance doing a dX/dt division,
+  // we just keep a running estimate of the velocity and adjust it up or down based on how close we were.
+  // This has the effect of doing a low pass filter on the velocity estimate which is desirable.
+  
+  auto v = driveVelocityMagEstimate;
+  u4 estimate;
 
-//  u2 mechanicalPhase = position.getMechanicalPosition();
-//
-//  // Find distance traveled in phase
-//  s2 mechChange = mechanicalPhase - lastMagPhase;
-
-  // Now we figure out how much to adjust our velocity estimate by to get back
-  // in lock
-
-//  s4 tempVelocity = driveVelocityMagEstimate;
-
-  // Here, instead of measuring how far we went and dividing by the number of
-  // steps it took to get here, we predict how far we would have gone if our
-  // estimate was accurate and then directly compare that to the actual
-  // mechanical distance traveled. If we're too fast, adjust down. If we're too
-  // slow, adjust up. Also handle if we missed data from the MLX because of CRC
-  // error or something
-//  const s2 predictedPhaseChange =
-//      (tempVelocity * DriverConstants::PredictsPerValue * numberOfCycles) >> drivePhaseMagSubResolution;
-//
-//  const s2 phaseError = mechChange - predictedPhaseChange;
-//
-//  tempVelocity += phaseError / DriverConstants::PredictsPerValue;
-
-  //	if (phaseError > 0) {
-  //		tempVelocity += adjustVal;
-  //	} else if (phaseError < 0) {
-  //		tempVelocity -= adjustVal;
-  //	}
-
-  // Since we know these readings are old, do a simple approximation of the
-  // needed phase advance to compensate for the delayed readings and store this
-  // value for direct usage in advance() (NOTE: This is different from the phase
-  // advance achieved with FOC)
-//  s4 tempPhaseAdvance = tempVelocity * phaseAdvanceMagRatio;
-
-  // These values are accessed by other parts on interrupts. Turn off interrupts
-  // so that the prediction steps are delayed until the new values are copied
-  // over.
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
-//    driveVelocityMagEstimate = tempVelocity;
-    drivePhaseMagEstimate = u4(position) << drivePhaseMagSubResolution;
-//    phaseAdvanceMagCachedAmount = tempPhaseAdvance;
+  // Capture our current position estimate
+	ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    estimate = drivePhaseMagEstimate;
   }
+
+  const u4 position = u4(Lookup::AlphaToPhase(alpha)) << drivePhaseMagSubResolution;
+
+  // Positive delta likely means our velocity estimate is too fast
+  s4 delta = position - estimate;
+
+  // Fix delta range
+  if (delta >  ((ThreePhaseDriver::MAX + 1) / 2 << drivePhaseMagSubResolution)) delta -= ThreePhaseDriver::MAX + 1;
+  if (delta < -((ThreePhaseDriver::MAX + 1) / 2 << drivePhaseMagSubResolution)) delta += ThreePhaseDriver::MAX + 1;
+  
+//  constexpr u1 MAXerr = 10;
+//  if (deltaError >  MAXerr) deltaError =  MAXerr;
+//  if (deltaError < -MAXerr) deltaError = -MAXerr;
+  
+  using namespace Debug;
+
+  // Scale the error by some factor and adjust our velocity estimate
+  v += delta / (cyclesPWMPerMLX * numberOfCycles * 8);
+  
+  SOUT << Printer::Special::Start
+      << numberOfCycles << estimate << u4(position) << delta << v << MLX90363::getRoll()
+      << Printer::Special::End;
+
+	ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    driveVelocityMagEstimate = v;
+		drivePhaseMagEstimate = position;
+    // Re-enable this long alpha handler
+    MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
+	}
+  
 }
 
 void ThreePhasePositionEstimator::init() {
@@ -224,7 +227,6 @@ void ThreePhasePositionEstimator::init() {
     MLX90363::startTransmitting();
 
     while (MLX90363::isTransmitting());
-
     
     // Delay long enough to guarantee data is ready
     _delay_ms(2);
@@ -232,14 +234,18 @@ void ThreePhasePositionEstimator::init() {
     // Loop until we actually receive real data
   } while (!MLX90363::hasNewData(magRoll));
 
-  MLX90363::setAlphaHandler(&handleNewPositionReading);
-
   const auto phase = Lookup::AlphaToPhase(MLX90363::getAlpha());
 
   // Set up the hall sensor interrupts
   HallWatcher::init();
-  HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
 
 //  lastMagPhase = phase.getMechanicalPosition();
   drivePhaseMagEstimate = u4(phase) << drivePhaseMagSubResolution;
+
+  Debug::dout << PSTR("Start: \n") << drivePhaseMagEstimate << '\n';
+
+  Debug::SOUT << Debug::Printer::Special::End;
+
+  HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
+  MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
 }

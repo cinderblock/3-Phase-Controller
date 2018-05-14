@@ -49,13 +49,29 @@ void Calibration::main() {
   } while (!MLX90363::hasNewData(magRoll));
 
   // If numberOfSpins is too large, we should get a compile time overflow error
-  constexpr u2 steps = ThreePhaseDriver::StepsPerCycle * numberOfSpins;
+  constexpr u4 steps = u4(ThreePhaseDriver::StepsPerCycle) * numberOfSpins;
 
   constexpr u1 stepSize = 1;
 
   using namespace Debug;
 
-  u2 i = 0;
+  u4 i = 0;
+
+  dout << PSTR("Calibration Mode");
+
+  // "Mark" start of binary data
+  SOUT << Printer::Special::Marker;
+
+  SOUT << Printer::Special::Start
+      << u1(0)
+      << u4(steps) << u1(amplitude)
+      << Printer::Special::End;
+
+  // Ramp up
+
+  dout << PSTR("Forward ramp");
+  // "Mark" start of binary data
+  SOUT << Printer::Special::Marker;
 
   for (; i < ThreePhaseDriver::StepsPerCycle; i += stepSize) {
     ThreePhaseDriver::setAmplitude(i * amplitude / rampSteps);
@@ -63,30 +79,58 @@ void Calibration::main() {
   }
 
   ThreePhaseDriver::setAmplitude(amplitude);
+
+  dout << PSTR("Forward");
+  // "Mark" start of binary data
+  SOUT << Printer::Special::Marker;
   
-  for (; i < steps + ThreePhaseDriver::StepsPerCycle; i += stepSize) {
+  for (i = 0; i < steps; i += stepSize) {
     step(i);
     // Send data via debug serial port
     SOUT
       << Printer::Special::Start
-      << i << MLX90363::getAlpha() << HallWatcher::getState()
+      << u1(1)
+      << i << MLX90363::getAlpha() << HallWatcher::getState() << s1(1)
       << Printer::Special::End;
   }
 
+  dout << PSTR("Forward tail");
+  // "Mark" start of binary data
+  SOUT << Printer::Special::Marker;
+
+  for (; i < steps + ThreePhaseDriver::StepsPerCycle; i += stepSize) {
+    step(i);
+  }
+
+  // Reverse start
+
+  dout << PSTR("Reverse ramp");
+  // "Mark" start of binary data
+  SOUT << Printer::Special::Marker;
 
   for (; i > steps; i -= stepSize) {
     step(i);
   }
+
+  dout << PSTR("Reverse");
+  // "Mark" start of binary data
+  SOUT << Printer::Special::Marker;
   
-  
-  for (; i; i -= stepSize) {
+  do {
+    i -= stepSize;
+
     step(i);
     // Send data via debug serial port
     SOUT
       << Printer::Special::Start
-      << i << MLX90363::getAlpha() << HallWatcher::getState()
+      << u1(1)
+      << i << MLX90363::getAlpha() << HallWatcher::getState() << s1(-1)
       << Printer::Special::End;
-  }
+  } while (i);
+  
+  dout << PSTR("Done");
+  // "Mark" start of binary data
+  SOUT << Printer::Special::Marker;
 
   ThreePhaseDriver::setAmplitude(0);
   ThreePhaseDriver::advanceTo(0);
@@ -95,7 +139,23 @@ void Calibration::main() {
   while (1);
 }
 
-void Calibration::step(uint16_t i) {
+
+ inline libCameron::DecPrintFormatter& operator<< (libCameron::DecPrintFormatter& out, const MLX90363::ResponseState res) {
+   switch (res) {
+     case MLX90363::ResponseState::Init: return out << PSTR("Init");
+     case MLX90363::ResponseState::Ready: return out << PSTR("Ready");
+     case MLX90363::ResponseState::Receiving: return out << PSTR("Receiving");
+     case MLX90363::ResponseState::Received: return out << PSTR("Received");
+     case MLX90363::ResponseState::failedCRC: return out << PSTR("failedCRC");
+     case MLX90363::ResponseState::TypeA: return out << PSTR("TypeA");
+     case MLX90363::ResponseState::TypeAB: return out << PSTR("TypeAB");
+     case MLX90363::ResponseState::TypeXYZ: return out << PSTR("TypeXYZ");
+     case MLX90363::ResponseState::Other: return out << PSTR("Other");
+     default: return out;
+   }
+ }
+
+void Calibration::step(u4 i) {
   // Move to next position
   ThreePhaseDriver::advanceTo(i);
 
@@ -107,18 +167,34 @@ void Calibration::step(uint16_t i) {
   // Hang while transmitting
   while (MLX90363::isTransmitting());
 
-  // Wait for a reading to be ready
-  _delay_ms(2);
-  // Record current roll value
-  auto magRoll = MLX90363::getRoll();
+  while (1) {
+    // Wait for a reading to be ready
+    _delay_ms(2);
+    // Record current roll value
+    auto magRoll = MLX90363::getRoll();
 
-  // Start SPI sequence
-  MLX90363::startTransmitting();
+    // Start SPI sequence
+    MLX90363::startTransmitting();
 
-  // Hang while transmitting
-  while (MLX90363::isTransmitting());
+    while (MLX90363::isTransmitting());
 
-  // Wait for SPI sequence to finish
-  // TODO: check in case crc fails and we'd be sitting here forever
-  while (!MLX90363::hasNewData(magRoll));
+    // Hang while transmitting
+    while (1) {
+//      Debug::dout << PSTR("RES ") << MLX90363::getResponseState();
+      Debug::SOUT << Debug::Printer::Special::Marker;
+     switch (MLX90363::getResponseState()) {
+       case MLX90363::ResponseState::Receiving:
+       case MLX90363::ResponseState::Received:
+         continue;
+       case MLX90363::ResponseState::failedCRC:
+       case MLX90363::ResponseState::Other:
+       default:
+         // Break and send message again
+         break;
+       case MLX90363::ResponseState::TypeA:
+         return;
+      }
+     break;
+    }
+  }
 }

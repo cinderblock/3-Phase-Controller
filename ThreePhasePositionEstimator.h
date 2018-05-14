@@ -2,8 +2,6 @@
 #ifndef THREEPHASEPOSITIONESTIMATOR_H
 #define THREEPHASEPOSITIONESTIMATOR_H
 
-#include "DriverConstants.h"
-#include "MotorPosition.h"
 #include "ThreePhaseDriver.h"
 #include <AVR++/basicTypes.h>
 
@@ -27,7 +25,7 @@ class ThreePhasePositionEstimator {
   /**
    * Last magnetometer reading
    */
-  static u2 lastMagPhase;
+  static ThreePhaseDriver::PhasePosition lastMagPhase;
 
   /**
    * The current position estimate. Higher resolution than output phase angle
@@ -47,7 +45,7 @@ class ThreePhasePositionEstimator {
   static s2 driveVelocityMagEstimate;
 
   /**
-   * Multiplier on velocity to advance our velocity estimate by
+   * Multiplier on velocity error to adjust our velocity estimate
    */
   static u1 phaseAdvanceMagRatio;
 
@@ -59,7 +57,7 @@ class ThreePhasePositionEstimator {
   /**
    * Number of MLX readings started since last estimate
    */
-  static u1 mlxReadingsStarted;
+  static u1 mlxPeriodsSinceLastValid;
 
   /**
    * Number of cycles the PWM timer makes per measurement ready from MLX. We pick a number such that we wait at least
@@ -111,7 +109,7 @@ class ThreePhasePositionEstimator {
    *
    * @param alpha raw reading from MLX
    */
-  static void handleNewPositionReading(u2 alpha);
+  static void handleNewMagnetometerPositionReading(u2 alpha);
 
 public:
   /**
@@ -149,7 +147,7 @@ public:
   /**
    * Get the last measured position
    */
-  inline static u2 getLastMagnetometerPhase() { return lastMagPhase; };
+  inline static typeof(lastMagPhase) getLastMagnetometerPhase() { return lastMagPhase; };
 
   /**
    * Get currently extrapolated velocity

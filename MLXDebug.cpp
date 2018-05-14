@@ -61,6 +61,13 @@ void printMLXBuffer(u1 const * buff) {
   while (length--) printHex(*buff++);
 }
 
+static u1 checkRx() {
+  if (UCSR1A & (1 << RXC1)) {
+    return UDR1 = UDR1;
+  }
+  return 0;
+}
+
 
 void MLXDebug::main() {
   if (!enabled) return;
@@ -73,6 +80,8 @@ void MLXDebug::main() {
   Board::LED::on();
 
   u1 i = 0;
+
+  u1 repeat = 0;
 
   do {
     
@@ -88,14 +97,32 @@ void MLXDebug::main() {
     printMLXBuffer(MLX90363::getRxBuffer());
     Debug::dout << '\r' << '\n';
     
-    Debug::dout << PSTR("State: ") << MLX90363::getResponseState() << '\r' << '\n';
+    Debug::dout << PSTR("State: ") << MLX90363::getResponseState();
+
+    if (MLX90363::getResponseState() == MLX90363::ResponseState::TypeA) {
+      Debug::dout << ' ' << MLX90363::getAlpha();
+    }
+    Debug::dout << '\r' << '\n';
     
     _delay_ms(2);
 
-    if (i++ == 5) while (1);
+    if (repeat) {
+      if (repeat != 0xff)
+        repeat--;
+      continue;
+    }
+
+    if (i == 5) {
+      u1 r;
+      while (!(r = checkRx()));
+      if (r == '2') repeat = 1;
+      if (r == ' ') repeat = 0xff;
+    } else {
+      i++;
+    }
 
     // Loop until we actually receive real data
-  } while (!MLX90363::hasNewData(magRoll));
+  } while (1);
   
   
   while (1);

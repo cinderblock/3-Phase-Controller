@@ -21,7 +21,9 @@ libCameron::DecPrintFormatter Debug::dout(&Debug::sendByte);
 static CRC8 CRC;
 
 void Debug::init() {
-  UBRR1 = 15;
+  Board::SER::Tx::on();
+  
+  UBRR1 = 0;
 
   // Set default
   UCSR1D = 0b00;
@@ -42,6 +44,14 @@ void Debug::sendByte(const u1 c) {
   UDR1 = c;
 }
 
+u1 nibToHex(u1 const nib) {
+  if (nib < 10)
+    return '0' + nib;
+  if (nib < 16)
+    return 'A' - 10 + nib;
+  return '*';
+}
+
 void Debug::reportU1(const u1 b) {
   CRC << b;
   sendByte(b);
@@ -53,13 +63,19 @@ void Debug::reportClock() {
   reportU2(t);
 }
 
-void Debug::sendHeader() {
+void Debug::start() {
+  CRC.reset();
+}
+
+void Debug::end() {
+  sendByte(CRC.getCRC());
+  marker();
+}
+
+void Debug::marker() {
   sendByte(0xff);
   sendByte(0x00);
   sendByte(0xff);
   sendByte(0xA5);
   sendByte(0xff);
-  CRC.reset();
 }
-
-void Debug::sendEnd() { sendByte(CRC.getCRC()); }

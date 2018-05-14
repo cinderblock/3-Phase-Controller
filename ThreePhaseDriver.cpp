@@ -15,11 +15,12 @@
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
+inline static void setUpdateLock(const bool lock) __attribute__((always_inline, hot));
 inline static void setUpdateLock(const bool lock) {
   /**
    * TCCR4E
    * TLOCK4 ENHC4 OC4OE5 OC4OE4 OC4OE3 OC4OE2 OC4OE1 OC4OE0
-   * 0b   0     1      1      1      1      1      1      1
+   * 0b   0     1      0      0      0      0      0      0
    */
   TCCR4E = ((lock ? 1 : 0) << TLOCK4) | 0b01000000;
 }
@@ -34,7 +35,7 @@ void ThreePhaseDriver::init() {
   Board::DRV::AH::off();
   Board::DRV::BH::off();
   Board::DRV::CH::off();
-  
+
   AVR::Clock::waitForPLL();
 
   // Turn off all timer 4 interrupts just in case
@@ -54,9 +55,10 @@ void ThreePhaseDriver::init() {
   // Clear timer counter
   TCNT4 = 0;
 
-  // Clear all interrupts just in case
+  // Clear all interrupts
   TIFR4 = 0xff;
 
+  // Set dead times
   /**
    * DT4:
    * DT4H3 DT4H2 DT4H1 DT4H0 DT4L3 DT4L2 DT4L1 DT4L0
@@ -64,13 +66,15 @@ void ThreePhaseDriver::init() {
    */
   DT4 = 0xFF;
 
+  // Make sure fault protection is off, clear the possible flag, and set PWM mode
   /**
    * TCCR4D
    * FPIE4 FPEN4 FPNC4 FPES4 FPAC4 FPF4 WGM41 WGM40
    * 0b  0     0     0     0     0    1     0     1
    */
-  TCCR4D = 0b00000101;
+  TCCR4D = 0b00000101 | (usingPWM6 ? 1 << WGM41 : 0);
 
+  // Setup output configuration for A & B
   /**
    * TCCR4A:
    * COM4A1 COM4A0 COM4B1 COM4B0 FOC4A FOC4B PWM4A PWM4B
@@ -78,6 +82,7 @@ void ThreePhaseDriver::init() {
    */
   TCCR4A = 0b01010011;
 
+  // Setup output configuration for C (aka D). Also repeat shadow values for A & B
   /**
    * TCCR4C
    * COM4A1S COM4A0S COM4B1S COMAB0S COM4D1 COM4D0 FOC4D PWM4D
@@ -91,7 +96,13 @@ void ThreePhaseDriver::init() {
    * TLOCK4 ENHC4 OC4OE5 OC4OE4 OC4OE3 OC4OE2 OC4OE1 OC4OE0
    * 0b   0     1      0      0      0      0      0      0
    */
-  TCCR4E = 0b01000000;
+  if (usingPWM6)
+    TCCR4E = 0b01000000;
+  else
+    setUpdateLock(false);
+
+
+  // High bits are still 0 from previous assignment in this function
 
   // Clear compare match registers for now
   OCR4A = 0;
@@ -110,6 +121,7 @@ void ThreePhaseDriver::init() {
    * TCCR4B
    * PWM4X PSR4 DTPS41 DTPS40 CS43 CS42 CS41 CS40
    * 0b  0    1      0      0    0    0    0    1
+   * PSR4 resets the internal prescaler to 0
    * The CS4n bits set the clock divider and start the timer.
    * A value of "1" in CS4x equates to ~31kHz PWM frequency
    * A value of "3" (0b11) equates to ~7.8kHz PWM frequency
@@ -120,6 +132,7 @@ void ThreePhaseDriver::init() {
 
   // 7.8kHz
   // TCCR4B = 0b01000011;
+
 }
 
 /**
@@ -183,6 +196,11 @@ inline static void setCompareMatchC(u2 const val) {
   OCR4D = val;
 }
 
+inline static void setEnables(bool A, bool B, bool C) {
+  u1 constexpr en = 0b10;
+  TCCR4E = 0b01000000 | (A ? en << 0 : 0) | (B ? en << 2 : 0) | (C ? en << 4 : 0);
+}
+
 void ThreePhaseDriver::advanceTo(const PhasePosition pp) {
   auto const step = pp.getPosition();
   auto const phase = pp.getPhase();
@@ -190,6 +208,32 @@ void ThreePhaseDriver::advanceTo(const PhasePosition pp) {
   u2 const ONE = getPhasePWM(step);
   u2 const TWO = getPhasePWM(255 - step);
   u2 const OFF = 0;
+
+  if (usingPWM6) {
+    setCompareMatchA(ONE > TWO ? ONE : TWO);
+
+    if (phase == Phase::A) {
+      Board::DRV::AL::on();
+      Board::DRV::BL::off();
+      Board::DRV::CL::off();
+      setEnables(false, ONE < TWO, ONE > TWO);
+    } else if (phase == Phase::B) {
+      Board::DRV::AL::off();
+      Board::DRV::BL::on();
+      Board::DRV::CL::off();
+      setEnables(ONE > TWO, false, ONE < TWO);
+    } else if (phase == Phase::C) {
+      Board::DRV::AL::off();
+      Board::DRV::BL::off();
+      Board::DRV::CL::on();
+      setEnables(ONE < TWO, ONE > TWO, false);
+    } else {
+      // Should not get here. bad phase...
+      setEnables(false, false, false);
+    }
+    return;
+  }
+
 
   setUpdateLock(true);
 

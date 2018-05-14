@@ -29,6 +29,7 @@ This code is meant to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-
 ## Motor
 
 Currently Testing with [Quanum MT5206](https://hobbyking.com/en_us/quanum-mt-series-5206-320kv-brushless-multirotor-motor-built-by-dys.html).
+Also playing with Hoverboard motors.
 
 ### Git Submodules
 
