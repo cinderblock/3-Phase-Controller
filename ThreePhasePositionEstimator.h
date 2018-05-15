@@ -89,6 +89,8 @@ class ThreePhasePositionEstimator {
    */
   static u1 lastHallState;
 
+  static constexpr u4 StepsPerCycle = u4(ThreePhaseDriver::StepsPerCycle) << drivePhaseMagSubResolution;
+
   /**
    *
    */
