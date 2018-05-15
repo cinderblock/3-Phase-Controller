@@ -103,10 +103,8 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
 
   const bool forward = driveVelocityMagEstimate > 0;
 
-  static constexpr u4 MAX = ((u4)ThreePhaseDriver::StepsPerCycle) << drivePhaseMagSubResolution;
-
   // Check if ph(ase) value is out of range
-  limit(newPhaseEstimate, MAX, forward);
+  limit(newPhaseEstimate, StepsPerCycle, forward);
 
   // Store new drivePhase
   drivePhaseMagEstimate = newPhaseEstimate;
@@ -115,7 +113,7 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
    newPhaseEstimate += phaseAdvanceMagCachedAmount;
 
   // Check if ph(ase) value is out of range again
-   limit(newPhaseEstimate, MAX, forward);
+   limit(newPhaseEstimate, StepsPerCycle, forward);
 
   // If we're going fast, use Hall position readings directly
 //  if (qualityMagEstimate < 100) {
