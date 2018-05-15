@@ -37,6 +37,7 @@
 
 #include "USBDescriptors.h"
 #include "LUFAConfig.h"
+#include "USBPacketFormats.h"
 
 
 /** HID class report descriptor. This is a special descriptor constructed with values from the
@@ -54,7 +55,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericReport[] =
 	 *  Vendor Report OUT Usage: 3
 	 *  Vendor Report Size: GENERIC_REPORT_SIZE
 	 */
-	HID_DESCRIPTOR_VENDOR(0x00, 0x01, 0x02, 0x03, GENERIC_REPORT_SIZE)
+	HID_DESCRIPTOR_VENDOR(0x00, 0x01, 0x02, 0x03, sizeof(USBDataBoth))
 };
 
 /** Device descriptor structure. This descriptor, located in FLASH memory, describes the overall
@@ -139,7 +140,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 			.EndpointAddress        = GENERIC_IN_EPADDR,
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = GENERIC_EPSIZE,
+			.EndpointSize           = sizeof(USBDataINShape),
 			.PollingIntervalMS      = 0x05,
 		},
 };
@@ -220,11 +221,6 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 	return Size;
 }
 
-
-
-/** Buffer to hold the previously generated HID report, for comparison purposes inside the HID class driver. */
-static uint8_t PrevHIDReportBuffer[GENERIC_REPORT_SIZE];
-
 /** LUFA HID Class driver interface configuration and state information. This structure is
  *  passed to all HID Class driver functions, so that multiple instances of the same class
  *  within a device can be differentiated from one another.
@@ -237,10 +233,10 @@ USB_ClassInfo_HID_Device_t Generic_HID_Interface =
 				.ReportINEndpoint             =
 					{
 						.Address              = GENERIC_IN_EPADDR,
-						.Size                 = GENERIC_EPSIZE,
+						.Size                 = sizeof(USBDataINShape),
 						.Banks                = 1,
 					},
-				.PrevReportINBuffer           = PrevHIDReportBuffer,
-				.PrevReportINBufferSize       = sizeof(PrevHIDReportBuffer),
+				.PrevReportINBuffer           = NULL,
+				.PrevReportINBufferSize       = sizeof(USBDataINShape),
 			},
 	};

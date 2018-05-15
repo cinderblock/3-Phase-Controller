@@ -41,6 +41,8 @@
 
 #include <LUFA/Drivers/USB/USB.h>
 
+#include "USBPacketFormats.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -84,7 +86,7 @@ extern "C" {
 #define GENERIC_IN_EPADDR         (ENDPOINT_DIR_IN | 1)
 
   /** Size in bytes of the Generic HID reporting endpoint. */
-#define GENERIC_EPSIZE            8
+//#define GENERIC_EPSIZE            sizeof(USBDataINShape)
 
   /* Function Prototypes: */
   uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,

@@ -14,6 +14,7 @@
 #include "USBInterface.h"
 #include "USBDescriptors.h"
 #include "ThreePhaseController.h"
+#include "USBPacketFormats.h"
 
 using namespace ThreePhaseControllerNamespace;
 
@@ -70,16 +71,14 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
                                          void* ReportData,
                                          uint16_t* const ReportSize)
 {
-	uint8_t* Data        = (uint8_t*)ReportData;
-	uint8_t  CurrLEDMask = LEDs_GetLEDs();
+	USBDataINShape * const data        = (USBDataINShape*)ReportData;
 
-	Data[0] = ((CurrLEDMask & LEDS_LED1) ? 1 : 0);
-	Data[1] = ((CurrLEDMask & LEDS_LED2) ? 1 : 0);
-	Data[2] = ((CurrLEDMask & LEDS_LED3) ? 1 : 0);
-	Data[3] = ((CurrLEDMask & LEDS_LED4) ? 1 : 0);
+	data->position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
+	data->velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
-	*ReportSize = GENERIC_REPORT_SIZE;
-	return false;
+	*ReportSize = sizeof(*data);
+
+	return true;
 }
 
 /** HID class driver callback function for the processing of HID reports from the host.
@@ -96,7 +95,11 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
                                           const void* ReportData,
                                           const uint16_t ReportSize)
 {
-	uint8_t* Data       = (uint8_t*)ReportData;
+	USBDataOUTShape const * const data = (USBDataOUTShape*)ReportData;
 	
-	ThreePhaseController::setAmplitude(Data[0] ? 30 : -30);
+	ThreePhaseController::setAmplitude(data->push);
+  
 }
+
+
+static_assert(sizeof(USBDataBoth) == 8, "size not 8");
