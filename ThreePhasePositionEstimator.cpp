@@ -189,9 +189,10 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
   s4 delta = position - estimate;
 
   // Fix delta range
-  if (delta >  ((ThreePhaseDriver::MAX + 1) / 2 << drivePhaseMagSubResolution)) delta -= ThreePhaseDriver::MAX + 1;
-  if (delta < -((ThreePhaseDriver::MAX + 1) / 2 << drivePhaseMagSubResolution)) delta += ThreePhaseDriver::MAX + 1;
-  
+  if ( delta > s4(StepsPerCycle/2)) delta -= StepsPerCycle;
+  if (-delta > s4(StepsPerCycle/2)) delta += StepsPerCycle;
+
+
 //  constexpr u1 MAXerr = 10;
 //  if (deltaError >  MAXerr) deltaError =  MAXerr;
 //  if (deltaError < -MAXerr) deltaError = -MAXerr;
