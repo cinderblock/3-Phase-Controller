@@ -22,10 +22,6 @@ using namespace AVR;
  * adjust how large our steps are to match how fast we're really spinning.
  */
 class ThreePhasePositionEstimator {
-  /**
-   * Last magnetometer reading
-   */
-  static ThreePhaseDriver::PhasePosition lastMagPhase;
 
   /**
    * The current position estimate. Higher resolution than output phase angle
@@ -147,7 +143,7 @@ public:
   /**
    * Get the last measured position
    */
-  inline static typeof(lastMagPhase) getLastMagnetometerPhase() { return lastMagPhase; };
+  inline static typeof(drivePhaseMagEstimate) getMagnetometerPhaseEstimate() { return drivePhaseMagEstimate; };
 
   /**
    * Get currently extrapolated velocity

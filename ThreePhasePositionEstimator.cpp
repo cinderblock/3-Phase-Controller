@@ -21,7 +21,6 @@ using namespace ThreePhaseControllerNamespace;
 typeof(ThreePhasePositionEstimator::drivePhaseHallEstimate) ThreePhasePositionEstimator::drivePhaseHallEstimate;
 
 typeof(ThreePhasePositionEstimator::drivePhaseMagEstimate) ThreePhasePositionEstimator::drivePhaseMagEstimate;
-typeof(ThreePhasePositionEstimator::lastMagPhase) ThreePhasePositionEstimator::lastMagPhase;
 
 // Assume we start at 0 velocity
 typeof(ThreePhasePositionEstimator::driveVelocityMagEstimate) ThreePhasePositionEstimator::driveVelocityMagEstimate = 0;
