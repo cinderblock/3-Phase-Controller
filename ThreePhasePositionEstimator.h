@@ -26,7 +26,7 @@ class ThreePhasePositionEstimator {
   /**
    * The current position estimate. Higher resolution than output phase angle
    */
-  static u4 drivePhaseMagEstimate;
+  static u4 volatile drivePhaseMagEstimate;
 
   /**
    * For out internal estimate of position, increase the resolution by some
