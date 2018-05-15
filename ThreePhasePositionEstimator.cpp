@@ -99,7 +99,7 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
 //  return drivePhaseHallEstimate;
 
   u4 newPhaseEstimate = drivePhaseMagEstimate;
-//  newPhaseEstimate += driveVelocityMagEstimate * steps;
+  newPhaseEstimate += driveVelocityMagEstimate * steps;
 
   const bool forward = driveVelocityMagEstimate > 0;
 
