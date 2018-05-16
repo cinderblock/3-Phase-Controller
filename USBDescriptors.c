@@ -55,7 +55,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericReport[] =
 	 *  Vendor Report OUT Usage: 3
 	 *  Vendor Report Size: GENERIC_REPORT_SIZE
 	 */
-	HID_DESCRIPTOR_VENDOR(0x00, 0x01, 0x02, 0x03, sizeof(USBDataBoth))
+	HID_DESCRIPTOR_VENDOR(0x00, 0x01, 0x02, 0x03, sizeof(USBDataINShape))
 };
 
 /** Device descriptor structure. This descriptor, located in FLASH memory, describes the overall
