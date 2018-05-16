@@ -72,7 +72,7 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 	.SubClass               = USB_CSCP_NoDeviceSubclass,
 	.Protocol               = USB_CSCP_NoDeviceProtocol,
 
-	.Endpoint0Size          = FIXED_CONTROL_ENDPOINT_SIZE,
+	.Endpoint0Size          = sizeof(USBDataOUTShape),
 
 	.VendorID               = 0x03EB,
 	.ProductID              = 0x204F,
