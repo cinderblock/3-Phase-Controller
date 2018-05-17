@@ -21,6 +21,7 @@
 
 #include <LUFA/Drivers/USB/USB.h>
 #include "USBDescriptors.h"
+#include "ThreePhaseFaultTester.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
@@ -68,6 +69,9 @@ int main() {
   Calibration::main();
   Demo::main();
   MLXDebug::main();
+
+//  ThreePhaseFaultTester::init();
+//  ThreePhaseFaultTester::testChannel(ThreePhaseFaultTester::Channel::AH);
 
   SerialInterface::init();
   ThreePhaseController::init();

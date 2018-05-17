@@ -13,6 +13,8 @@ cppNames = main Board Debug Timer Clock
 cppNames += ThreePhaseDriver
 cppNames += MLX90363 ThreePhasePositionEstimator ThreePhaseController
 
+cppNames += ThreePhaseFaultTester
+
 cppNames += ServoController
 
 cppNames += MLXDebug
