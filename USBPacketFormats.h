@@ -35,7 +35,7 @@ typedef struct {
 typedef struct {
   uint32_t position;
   int16_t velocity;
-  uint16_t dummy;
+  uint16_t adc;
 } USBDataINShape;
 
 typedef union {

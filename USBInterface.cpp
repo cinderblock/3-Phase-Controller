@@ -75,6 +75,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 
 	data->position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 	data->velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
+  data->adc = ADC;
 
 	*ReportSize = sizeof(*data);
 

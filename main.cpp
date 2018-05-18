@@ -59,6 +59,11 @@ void init() {
 
   // Use the Clock that is outside the AVR++ namespace.
   ::Clock::init();
+
+
+  ADMUX = 0b11000101;
+  ADCSRB = 0b10000000;
+  ADCSRA = 0b11110111;
 }
 
 /**
