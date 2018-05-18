@@ -11,6 +11,8 @@
 #include <AVR++/basicTypes.h>
 #include <avr/interrupt.h>
 
+ISR(ADC_vect);
+
 namespace ThreePhaseControllerNamespace {
 
 using namespace AVR;
@@ -39,6 +41,12 @@ class ThreePhaseDriver {
   static volatile u1 amplitude;
 
   static constexpr bool usingPWM6 = false;
+   
+  friend void ::ADC_vect();
+  
+  inline static void emergencyDisable();
+  
+  inline static void emergencyOK();
 
 public:
 
