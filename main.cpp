@@ -65,13 +65,16 @@ void init() {
  *
  */
 int main() {
+//  constexpr auto test = ThreePhaseFaultTester::Channel::AH;
+////  constexpr auto test = ThreePhaseFaultTester::Phase::C;
+//  ThreePhaseFaultTester::init();
+//  ThreePhaseFaultTester::test(test);
+//  while (1);
+
   // These don't do anything if they're not enabled
   Calibration::main();
   Demo::main();
   MLXDebug::main();
-
-//  ThreePhaseFaultTester::init();
-//  ThreePhaseFaultTester::testChannel(ThreePhaseFaultTester::Channel::AH);
 
   SerialInterface::init();
   ThreePhaseController::init();
