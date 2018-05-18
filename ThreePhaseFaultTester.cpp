@@ -120,15 +120,15 @@ void ThreePhaseFaultTester::init() {
   while (!TIFR4);
 }
 
-ThreePhaseFaultTester::FailMode ThreePhaseFaultTester::testPhase(ThreePhaseDriver::Phase p) {
+ThreePhaseFaultTester::FailMode ThreePhaseFaultTester::test(Phase p) {
   switch (p) {
-    case ThreePhaseDriver::Phase::A: TCCR4E = 0b01000000 | (1 << OC4OE0) | (1 << OC4OE1); break;
-    case ThreePhaseDriver::Phase::B: TCCR4E = 0b01000000 | (1 << OC4OE2) | (1 << OC4OE3); break;
-    case ThreePhaseDriver::Phase::C: TCCR4E = 0b01000000 | (1 << OC4OE4) | (1 << OC4OE5); break;
+    case Phase::A: TCCR4E = 0b01000000 | (1 << OC4OE0) | (1 << OC4OE1); break;
+    case Phase::B: TCCR4E = 0b01000000 | (1 << OC4OE2) | (1 << OC4OE3); break;
+    case Phase::C: TCCR4E = 0b01000000 | (1 << OC4OE4) | (1 << OC4OE5); break;
   }
 }
 
-ThreePhaseFaultTester::FailMode ThreePhaseFaultTester::testChannel(Channel c) {
+ThreePhaseFaultTester::FailMode ThreePhaseFaultTester::test(Channel c) {
   switch (c) {
     case Channel::AL: TCCR4E = 0b01000000 | (1 << OC4OE0); break;
     case Channel::AH: TCCR4E = 0b01000000 | (1 << OC4OE1); break;

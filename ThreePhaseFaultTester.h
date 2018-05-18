@@ -30,9 +30,11 @@ namespace ThreePhaseControllerNamespace {
       AL, BL, CL, AH, BH, CH,
     };
 
-    static FailMode testPhase(ThreePhaseDriver::Phase p);
+    using Phase = ThreePhaseDriver::Phase;
 
-    static FailMode testChannel(Channel c);
+    static FailMode test(Phase p);
+
+    static FailMode test(Channel c);
   private:
 
   };
