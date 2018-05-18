@@ -38,11 +38,6 @@ typedef struct {
   uint16_t adc;
 } USBDataINShape;
 
-typedef union {
-  USBDataOUTShape out;
-  USBDataINShape in;
-} USBDataBoth;
-
 #ifdef __cplusplus
 }
 #endif
