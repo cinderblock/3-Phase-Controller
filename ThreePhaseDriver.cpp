@@ -25,6 +25,39 @@ inline static void setUpdateLock(const bool lock) {
   TCCR4E = ((lock ? 1 : 0) << TLOCK4) | 0b01000000;
 }
 
+//#define USE_DISABLED_FLAG
+
+ISR(ADC_vect) {
+#ifdef USE_DISABLED_FLAG
+  static bool disabled = false;
+#endif
+  
+  if (ADC < 350
+#ifdef USE_DISABLED_FLAG
+          && !disabled
+#endif
+          ) {
+    ThreePhaseDriver::emergencyDisable();
+#ifdef USE_DISABLED_FLAG
+    disabled = true;
+#endif
+    Debug::LED::on();
+    return;
+  }
+  
+  if (ADC > 500
+#ifdef USE_DISABLED_FLAG
+          && disabled
+#endif
+          ) {
+#ifdef USE_DISABLED_FLAG
+    disabled = false;
+#endif
+    Debug::LED::off();
+    ThreePhaseDriver::emergencyOK();
+  }
+}
+
 void ThreePhaseDriver::init() {
   AVR::Clock::enablePLL();
 
@@ -132,7 +165,12 @@ void ThreePhaseDriver::init() {
 
   // 7.8kHz
   // TCCR4B = 0b01000011;
+  
+  u1 constexpr mux = Board::MUX::VBATS;
 
+  ADMUX  = 0b11000000 | (mux & 0b011111);
+  ADCSRB = 0b10000000 | (mux & 0b100000);
+  ADCSRA = 0b11110111;
 }
 
 /**
@@ -260,4 +298,21 @@ void ThreePhaseDriver::advanceTo(const PhasePosition pp) {
   }
 
   setUpdateLock(false);
+}
+
+void ThreePhaseDriver::emergencyDisable() {
+  // Disable all outputs in one instruction
+  // TODO: Re-investigate using ATmega32u4's hardware comparator to do this or equivalent
+  
+  /**
+   * TCCR4C
+   * COM4A1S COM4A0S COM4B1S COMAB0S COM4D1 COM4D0 FOC4D PWM4D
+   * 0b    0       0       0       0      0      0     0     1
+   */
+  TCCR4C = 0b00000001;
+}
+
+void ThreePhaseDriver::emergencyOK() {
+  // Back to normal
+  TCCR4C = 0b01010101;
 }
