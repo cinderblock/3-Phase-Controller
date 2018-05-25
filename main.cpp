@@ -60,9 +60,10 @@ void init() {
   // Use the Clock that is outside the AVR++ namespace.
   ::Clock::init();
 
+  u1 constexpr mux = Board::MUX::VBATS;
 
-  ADMUX = 0b11000101;
-  ADCSRB = 0b10000000;
+  ADMUX  = 0b11000000 | (mux & 0b011111);
+  ADCSRB = 0b10000000 | (mux & 0b100000);
   ADCSRA = 0b11110111;
 }
 
