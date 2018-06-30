@@ -35,6 +35,7 @@ void TIMER4_OVF_vect() {
 //  Board::SER::Tx::off();
 }
 
+// This is the loop that happens at 31.25 kHz
 void ThreePhaseController::controlLoop() {
   static volatile bool running = false;
   static volatile u1 stepCount = 0;
