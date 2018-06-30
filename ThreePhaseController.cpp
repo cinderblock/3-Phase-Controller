@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   ThreePhaseController.cpp
  * Author: Cameron
- * 
+ *
  * Created on October 22, 2015, 2:21 AM
  */
 
@@ -59,7 +59,7 @@ void ThreePhaseController::controlLoop() {
 
   // Advance our position estimate n steps in time
   ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance(steps);
-  
+
   // TODO: more phase advance at higher speeds
   if (isForwardTorque) {
     p += output90DegPhaseShift;
