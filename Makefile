@@ -110,7 +110,7 @@ include $(uMakerPath)tools/dfu.mk
 include $(uMakerPath)tools/mkdir.mk
 
 REMOTE_HEX = $(TARGET).hex
-REMOTE = pi@sleepypi
+REMOTE = pi@raspberrysandwich
 
 remote_prog: $(OUT_HEX)
 	pscp -q $(OUT_HEX) $(REMOTE):$(REMOTE_HEX)
