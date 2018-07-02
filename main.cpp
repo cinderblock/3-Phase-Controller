@@ -83,7 +83,7 @@ int main() {
     HID_Device_USBTask(&Generic_HID_Interface);
 		USB_USBTask();
     if (auto msg = SerialInterface::getMessage()) {
-      ThreePhaseController::setAmplitude(msg->getCommand());
+      ThreePhaseController::setAmplitudeTarget(msg->getCommand());
     }
   }
 

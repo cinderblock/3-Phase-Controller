@@ -201,6 +201,8 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
 
   // Scale the error by some factor and adjust our velocity estimate
   v += delta / (cyclesPWMPerMLX * numberOfCycles * 8);
+
+  ThreePhaseController::handleNewVelocityEstimate(v);
   
 //  SOUT << Printer::Special::Start
 //      << numberOfCycles << estimate << position << delta << v << MLX90363::getRoll()

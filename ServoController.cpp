@@ -70,7 +70,7 @@ void ServoController::update() {
   if (servoMode == Mode::Init) {
     // DO NOTHING
   } else if (servoMode == Mode::Amplitude) {
-    ThreePhaseController::setAmplitude(amplitudeCommand);
+    ThreePhaseController::setAmplitudeTarget(amplitudeCommand);
 
   } else if (servoMode == Mode::Velocity) {
     static s2 lastVel = 0;
@@ -80,7 +80,7 @@ void ServoController::update() {
 
     const s2 velocityError = vel - velocityCommand;
 
-    s4 command = ThreePhaseController::getAmplitude() + ((velocityError * velocityP + velocityDelta * velocityD) >> velocityShift);
+    s4 command = ThreePhaseController::getAmplitudeTarget() + ((velocityError * velocityP + velocityDelta * velocityD) >> velocityShift);
 
     constexpr s4 MAX = ThreePhaseDriver::maxAmplitude;
     if (command > MAX) {
@@ -89,7 +89,7 @@ void ServoController::update() {
       command = -MAX;
     }
 
-    ThreePhaseController::setAmplitude((s2)command);
+    ThreePhaseController::setAmplitudeTarget((s2)command);
 
     lastVel = vel;
 
@@ -108,7 +108,7 @@ void ServoController::update() {
       command = -MAX;
     }
 
-    ThreePhaseController::setAmplitude((s2)command);
+    ThreePhaseController::setAmplitudeTarget((s2)command);
 
   } else {
 

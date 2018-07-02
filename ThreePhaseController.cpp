@@ -21,6 +21,7 @@ using namespace ThreePhaseControllerNamespace;
 
 volatile bool ThreePhaseController::enabled = false;
 volatile bool ThreePhaseController::isForwardTorque;
+ThreePhaseController::Amplitude ThreePhaseController::targetAmplitude = 0;
 
 /**
  * This interrupt is triggered on TIMER4 (PWM6) overflow. This happens at the BOTTOM
@@ -80,7 +81,8 @@ void ThreePhaseController::init() {
   enable();
 }
 
-void ThreePhaseController::setAmplitude(const Amplitude t) {
+void ThreePhaseController::handleNewVelocityEstimate(s2 const v) {
+  auto t = targetAmplitude + ((s4(v) * dampingVelocityGain >> 8));
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     isForwardTorque = t.forward;
     ThreePhaseDriver::setAmplitude(t.amplitude);

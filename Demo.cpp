@@ -99,7 +99,7 @@ void Demo::dumbSpin::timeout() {
 
 void Demo::ManualConstantTorque::main(u1 ampl) {
   ThreePhaseController::init();
-  ThreePhaseController::setAmplitude(ampl);
+  ThreePhaseController::setAmplitudeTarget(ampl);
   while(1);
 }
 
