@@ -25,7 +25,8 @@ extern "C" {
  */
 typedef struct {
   int16_t push;
-  uint16_t dummy0;
+  uint8_t gain;
+  uint8_t dummy0;
   uint32_t dummy1;
 } USBDataOUTShape;
 

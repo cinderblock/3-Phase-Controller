@@ -99,5 +99,5 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
 	USBDataOUTShape const * const data = (USBDataOUTShape*)ReportData;
 	
 	ThreePhaseController::setAmplitudeTarget(data->push);
-  
+  ThreePhaseController::setAntiDampingVelocityGain(data->gain);
 }
