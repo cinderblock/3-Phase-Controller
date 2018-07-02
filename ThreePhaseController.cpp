@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   ThreePhaseController.cpp
  * Author: Cameron
- * 
+ *
  * Created on October 22, 2015, 2:21 AM
  */
 
@@ -36,6 +36,7 @@ void TIMER4_OVF_vect() {
 //  Board::SER::Tx::off();
 }
 
+// This is the loop that happens at 31.25 kHz
 void ThreePhaseController::controlLoop() {
   static volatile bool running = false;
   static volatile u1 stepCount = 0;
@@ -59,7 +60,7 @@ void ThreePhaseController::controlLoop() {
 
   // Advance our position estimate n steps in time
   ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance(steps);
-  
+
   // TODO: more phase advance at higher speeds
   if (isForwardTorque) {
     p += output90DegPhaseShift;
