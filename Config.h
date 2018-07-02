@@ -8,8 +8,8 @@
 #ifndef CONFIG_H
 #define	CONFIG_H
 
-// #define QUANTUM_DRIVE
-#define BED_CONTROLLER
+#define QUANTUM_DRIVE 2
+//#define BED_CONTROLLER
 
 
 #ifdef BED_CONTROLLER
