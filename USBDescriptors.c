@@ -167,7 +167,13 @@ const USB_Descriptor_String_t PROGMEM ProductString = USB_STRING_DESCRIPTOR(L"LM
 
 const USB_Descriptor_String_t PROGMEM SerialString = USB_STRING_DESCRIPTOR(
 #if defined QUANTUM_DRIVE
+#if QUANTUM_DRIVE == 1
 L"LMR-QT-00000001"
+#elif QUANTUM_DRIVE == 2
+L"LMR-QT-00000002"
+#else
+L"LMR-QT-00000000"
+#endif
 #elif defined BED_CONTROLLER
 L"CBN-HV-00000001"
 #else
