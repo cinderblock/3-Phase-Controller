@@ -74,13 +74,14 @@ void ServoController::update() {
 
   } else if (servoMode == Mode::Velocity) {
     static s2 lastVel = 0;
+    static s2 lastCommand = 0;
     const s2 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
     const s2 velocityDelta = vel - lastVel;
 
     const s2 velocityError = vel - velocityCommand;
 
-    s4 command = ThreePhaseController::getAmplitudeTarget() + ((velocityError * velocityP + velocityDelta * velocityD) >> velocityShift);
+    s4 command = lastCommand + ((velocityError * velocityP + velocityDelta * velocityD) >> velocityShift);
 
     constexpr s4 MAX = ThreePhaseDriver::maxAmplitude;
     if (command > MAX) {
@@ -89,7 +90,7 @@ void ServoController::update() {
       command = -MAX;
     }
 
-    ThreePhaseController::setAmplitudeTarget((s2)command);
+    ThreePhaseController::setAmplitudeTarget(lastCommand = (s2)command);
 
     lastVel = vel;
 
