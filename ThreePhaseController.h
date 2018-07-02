@@ -122,7 +122,7 @@ namespace ThreePhaseControllerNamespace {
     /**
      * Target "push" amount
      */
-    static Amplitude targetAmplitude;
+    static volatile Amplitude targetAmplitude;
 
   public:
 
@@ -145,7 +145,7 @@ namespace ThreePhaseControllerNamespace {
     static void handleNewVelocityEstimate(s2 const v);
     
   private:
-    static u1 dampingVelocityGain;
+    static volatile u1 dampingVelocityGain;
     
   public:
 

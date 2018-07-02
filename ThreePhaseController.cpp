@@ -21,8 +21,8 @@ using namespace ThreePhaseControllerNamespace;
 
 volatile bool ThreePhaseController::enabled = false;
 volatile bool ThreePhaseController::isForwardTorque;
-ThreePhaseController::Amplitude ThreePhaseController::targetAmplitude = 0;
-u1 ThreePhaseController::dampingVelocityGain = 0;
+volatile u1 ThreePhaseController::dampingVelocityGain = 0;
+volatile ThreePhaseController::Amplitude ThreePhaseController::targetAmplitude = 0;
 
 /**
  * This interrupt is triggered on TIMER4 (PWM6) overflow. This happens at the BOTTOM
