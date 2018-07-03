@@ -231,15 +231,8 @@ public:
    */
   static void advanceTo(PhasePosition const phase) __attribute__((hot));
 
-  /**
-   * Magic number to ensure we don't miss a tick of a phase
-   * TODO: confirm this is still needed.
-   */
-  static constexpr u1 calcMaxAmplitude = 0xff - 30;
-  static constexpr u1 maxAmplitude = calcMaxAmplitude;
-
   static inline void setAmplitude(u1 const a) {
-    amplitude = a > maxAmplitude ? maxAmplitude : a;
+    amplitude = a;
   }
 
   static inline u1 getAmplitude() {
