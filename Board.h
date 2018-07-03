@@ -23,7 +23,7 @@ namespace Board {
  using LED_L = Output<Ports::F, 4>;
  using LED_TX = Output<Ports::D, 5>; 
  // LED_RX is SPI_SS (PB0)
- using LED = LED_L;
+ using LED = LED_TX;
 #endif
 
 #ifdef QUANTUM_DRIVE
