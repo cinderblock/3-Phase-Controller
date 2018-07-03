@@ -16,6 +16,7 @@
 
 #include "ThreePhaseDriver.h"
 #include <avr/interrupt.h>
+#include <util/atomic.h>
 #include "ThreePhasePositionEstimator.h"
 
 ISR(TIMER4_OVF_vect);
@@ -108,7 +109,7 @@ namespace ThreePhaseControllerNamespace {
         return *this;
       }
 
-      inline Amplitude operator+(s1 const d) {
+      inline Amplitude operator+(s1 const d) volatile {
         s2 ampl = forward ? amplitude : -amplitude;
         ampl += d;
         if (ampl > 255) ampl = 255;
@@ -130,7 +131,10 @@ namespace ThreePhaseControllerNamespace {
      * Set the desired drive amplitude
      */
     inline static void setAmplitudeTarget(const Amplitude t) {
-      targetAmplitude = t;
+      ATOMIC_BLOCK(ATOMIC_FORCEON) {
+        targetAmplitude.amplitude = t.amplitude;
+        targetAmplitude.forward = t.forward;
+      }
     }
 
     /**
@@ -139,7 +143,7 @@ namespace ThreePhaseControllerNamespace {
      * @return s2 (range [-255, 255])
      */
     static inline Amplitude getAmplitudeTarget() {
-      return targetAmplitude;
+      return Amplitude(targetAmplitude.forward, targetAmplitude.amplitude);
     };
 
     static void handleNewVelocityEstimate(s2 const v);
