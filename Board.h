@@ -20,8 +20,8 @@ namespace Board {
 
 #ifdef BED_CONTROLLER
  using Sw1 = Input<Ports::F, 1>; // start switch pin
- using LED_L = Output<Ports::F, 4>; // On breakout
- using LED_TX = Output<Ports::D, 5>; // On Simple Controller
+ using LED_L = Output<Ports::F, 4>;
+ using LED_TX = Output<Ports::D, 5>; 
  // LED_RX is SPI_SS (PB0)
  using LED = LED_L;
 #endif
