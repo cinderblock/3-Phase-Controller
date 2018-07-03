@@ -113,6 +113,7 @@ REMOTE_HEX = $(TARGET).hex
 REMOTE = pi@raspberrysandwich
 
 remote_prog: $(OUT_HEX)
+	$(ECO) Sending $(OUT_HEX) to $(REMOTE)
 	pscp -q $(OUT_HEX) $(REMOTE):$(REMOTE_HEX)
 	-plink $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX)
 	-plink $(REMOTE) sudo $(DFU_TARGETED) reset
