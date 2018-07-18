@@ -45,10 +45,6 @@ namespace Board {
 #endif
  
  namespace SPI {
-  using SCLK = Output<Ports::B, 1>;
-  using MOSI = Output<Ports::B, 2>;
-  using MISO = Input<Ports::B, 3>;
-
   inline void slaveDeselect() __attribute__((always_inline, hot));
   inline void slaveSelect() __attribute__((always_inline, hot));
   inline void slaveDeselect() {MagSel::off();}
