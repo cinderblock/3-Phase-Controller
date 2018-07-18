@@ -99,10 +99,20 @@ void MLXDebug::main() {
     Debug::dout << PSTR("Tx: ");
     printMLXBuffer(MLX90363::getTxBuffer());
     Debug::dout << '\r' << '\n';
+
+    auto state = MLX90363::getResponseState();
+
+    Debug::dout << PSTR("MLX State: ") << state << '\r' << '\n';
     
     MLX90363::startTransmitting();
     // Wait for packet (get1 message) to actually send
-    while (MLX90363::isTransmitting());
+    while (MLX90363::isTransmitting()) {
+      auto newState = MLX90363::getResponseState();
+      if (state != newState) {
+        state = newState;
+        Debug::dout << PSTR("New State: ") << state << '\r' << '\n';
+      }
+    }
     
     Debug::dout << PSTR("Rx: ");
     printMLXBuffer(MLX90363::getRxBuffer());
