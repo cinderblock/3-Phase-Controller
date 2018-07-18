@@ -22,8 +22,20 @@ namespace Calibration {
   using namespace AVR;
 
   constexpr bool enabled = false;
-  constexpr u2 numberOfSpins = 7*5;
+
+
+  #ifdef BED_CONTROLLER
+  // 5 mechanical revolutions
+  constexpr u2 numberOfSpins = 5*15;
   constexpr u1 amplitude = 70;
+  #endif
+
+  #ifdef QUANTUM_DRIVE
+  // 10 mechanical revolutions
+  constexpr u2 numberOfSpins = 7*10;
+  constexpr u1 amplitude = 40;
+  #endif
+
   constexpr u2 rampSteps = 0x300;
   void main();
   
