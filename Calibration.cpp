@@ -34,7 +34,7 @@ void Calibration::main() {
 
   auto magRoll = MLX90363::getRoll();
   
-  Board::LED::on();
+//  Board::LED::on();
 
   do {
     MLX90363::startTransmitting();

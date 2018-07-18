@@ -41,7 +41,7 @@ ISR(ADC_vect) {
 #ifdef USE_DISABLED_FLAG
     disabled = true;
 #endif
-    Debug::LED::on();
+//    Debug::LED::on();
     return;
   }
   
@@ -53,7 +53,7 @@ ISR(ADC_vect) {
 #ifdef USE_DISABLED_FLAG
     disabled = false;
 #endif
-    Debug::LED::off();
+//    Debug::LED::off();
     ThreePhaseDriver::emergencyOK();
   }
 }

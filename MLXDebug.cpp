@@ -77,7 +77,7 @@ void MLXDebug::main() {
   
   auto magRoll = MLX90363::getRoll();
   
-  Board::LED::on();
+//  Board::LED::on();
 
   u1 i = 0;
 
