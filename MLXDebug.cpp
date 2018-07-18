@@ -71,9 +71,20 @@ static u1 checkRx() {
 
 void MLXDebug::main() {
   if (!enabled) return;
+
+  Debug::dout << PSTR("MLX Debug\r\n");
   
   MLX90363::init();
+
+  Debug::dout << PSTR("MLX90363::init() done\r\n");
+
+  if (MLX90363::isTransmitting()) {
+    Debug::dout << PSTR("Already Transmitting!\r\n");
+  }
+
   MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
+
+  Debug::dout << PSTR("Get 1 Message Ready\r\n");
   
   auto magRoll = MLX90363::getRoll();
   
