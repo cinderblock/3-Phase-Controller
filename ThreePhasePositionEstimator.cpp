@@ -242,9 +242,9 @@ void ThreePhasePositionEstimator::init() {
 //  lastMagPhase = phase.getMechanicalPosition();
   drivePhaseMagEstimate = u4(phase) << drivePhaseMagSubResolution;
 
-  Debug::dout << PSTR("Start: \n") << drivePhaseMagEstimate << '\n';
-
-  Debug::SOUT << Debug::Printer::Special::End;
+//  Debug::dout << PSTR("Start: \n") << drivePhaseMagEstimate << '\n';
+//
+//  Debug::SOUT << Debug::Printer::Special::End;
 
   HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
   MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
