@@ -82,6 +82,10 @@ void MLX90363::init() {
   AVR::SPI::CR->byte = 0b11010111;
 // #endif
 
+  // Make sure SS line is an output. If it is an input, the AVR hardware can kick
+  // in and disable "Master" mode.
+  AVR::SPI::SS::off();
+
 // #ifdef QUANTUM_DRIVE
 //   // Enable SPI2X
 //   AVR::SPI::SR->byte = 1 << SPI2X;
