@@ -41,7 +41,7 @@ void init() {
   wdt_disable();
 
   Debug::init();
-  Debug::dout << PSTR("Beginning Inits \r\n");
+  Debug::dout << PSTR("Beginning Inits\r\n");
 
   // Set up the driver pins
   ThreePhaseDriver::init();
