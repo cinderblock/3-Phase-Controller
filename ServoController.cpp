@@ -83,7 +83,7 @@ void ServoController::update() {
 
     s4 command = lastCommand + ((velocityError * velocityP + velocityDelta * velocityD) >> velocityShift);
 
-    constexpr s4 MAX = ThreePhaseDriver::maxAmplitude;
+    constexpr s4 MAX = 255;
     if (command > MAX) {
       command = MAX;
     } else if (command < -MAX) {
@@ -102,7 +102,7 @@ void ServoController::update() {
 
     s4 command = (distance * positionP + vel * positionD) >> positionShift;
 
-    constexpr s4 MAX = ThreePhaseDriver::maxAmplitude;
+    constexpr s4 MAX = 255;
     if (command > MAX) {
       command = MAX;
     } else if (command < -MAX) {
