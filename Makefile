@@ -61,10 +61,10 @@ MCU = atmega32u4
 all: build-lss
 
 # Program with AVR attached locally
-all: dfu-erase dfu-flash dfu-reset
+# all: dfu-erase dfu-flash dfu-reset
 
-# Program with AVR attached to SleepyPi
-#all: remote_prog
+# Program with AVR attached to some remote host like an rPi
+all: remote_prog
 
 #ASM = $(CPP:%=%.cpp.S)
 
@@ -110,7 +110,8 @@ include $(uMakerPath)tools/dfu.mk
 include $(uMakerPath)tools/mkdir.mk
 
 REMOTE_HEX = $(TARGET).hex
-REMOTE = pi@raspberrysandwich
+# REMOTE = pi@raspberrySandwich
+REMOTE = pi@sleepypi
 
 remote_prog: $(OUT_HEX)
 	$(ECO) Sending $(OUT_HEX) to $(REMOTE)
