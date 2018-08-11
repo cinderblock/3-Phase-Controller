@@ -28,7 +28,7 @@ namespace Calibration {
   #ifdef BED_CONTROLLER
   // 5 mechanical revolutions
   constexpr u2 numberOfSpins = 5*15;
-  constexpr u1 amplitude = 70;
+  constexpr u1 amplitude = 60;
   #endif
 
   #ifdef QUANTUM_DRIVE
