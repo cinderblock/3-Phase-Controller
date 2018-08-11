@@ -15,6 +15,7 @@
 #define CALIBRATION_H
 
 #include <AVR++/basicTypes.h>
+#include "Config.h"
 
 namespace ThreePhaseControllerNamespace {
 
