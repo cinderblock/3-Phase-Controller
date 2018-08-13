@@ -56,6 +56,8 @@ void EVENT_USB_Device_StartOfFrame(void)
 	HID_Device_MillisecondElapsed(&Generic_HID_Interface);
 }
 
+static int16_t debug;
+
 /** HID class driver callback function for the creation of HID reports to the host.
  *
  *  \param[in]     HIDInterfaceInfo  Pointer to the HID class interface configuration structure being referenced
@@ -76,7 +78,8 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 
 	data->position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 	data->velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
-  data->adc = ADC;
+  // data->adc = ADC;
+	data->adc = debug;
 
 	*ReportSize = sizeof(*data);
 
@@ -106,5 +109,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
 		case 1: ThreePhaseController::setAmplitudeTarget(data->command);          return;
 		case 2: ThreePhaseController::setAntiDampingVelocityGain(data->command);	return;
 	  case 3: ServoController::setPosition(data->command);                      return;
+	  case 4: debug = data->command;                                            return;
+	  case 5: debug = data->command * 2;                                        return;
 	}
 }
