@@ -83,6 +83,9 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 	return true;
 }
 
+
+
+
 /** HID class driver callback function for the processing of HID reports from the host.
  *
  *  \param[in] HIDInterfaceInfo  Pointer to the HID class interface configuration structure being referenced

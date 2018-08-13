@@ -22,14 +22,20 @@ extern "C" {
 
 /**
  * Shape of data going OUT of host.
+ * ( From the rPi).
  */
-typedef struct {
-  uint8_t mesgType;
-  int16_t command;
+typedef union {
+  struct {
+    uint8_t mesgType;
+    int16_t command;
+  };
+  // Force the OUTshape to be 8 bytes long
+  uint8_t dummy[8];
 } USBDataOUTShape;
 
 /**
- * Shape of data going IN to host.
+ * Shape of data going IN to host
+ * ( To the rPi).
  */
 typedef struct {
   uint32_t position;

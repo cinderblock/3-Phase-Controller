@@ -65,7 +65,8 @@ void ServoController::init() {
 
 void ServoController::update() {
   // This function is called as often as possible in the main loop.
-  // It looks at its currently available data and calculates a signed amplitude to pass back to the ThreePhaseController
+  // It looks at its currently available data and calculates a signed amplitude
+  // to pass back to the ThreePhaseController
 
   if (servoMode == Mode::Init) {
     // DO NOTHING

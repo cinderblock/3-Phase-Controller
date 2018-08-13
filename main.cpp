@@ -87,7 +87,7 @@ int main() {
       ThreePhaseController::setAmplitudeTarget(msg->getCommand());
     }
 
-    ServoController::update();
+    // ServoController::update();
   }
 
   // loop in case main loop is disabled
