@@ -82,9 +82,12 @@ int main() {
   while (1) {
     HID_Device_USBTask(&Generic_HID_Interface);
 		USB_USBTask();
+
     if (auto msg = SerialInterface::getMessage()) {
       ThreePhaseController::setAmplitudeTarget(msg->getCommand());
     }
+
+    ServoController::update();
   }
 
   // loop in case main loop is disabled

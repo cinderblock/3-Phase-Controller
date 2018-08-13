@@ -98,7 +98,7 @@ void ServoController::update() {
 
     const s2 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
-    const s4 distance = positionCommand - getPosition();
+    const s4 distance = positionCommand - positionCommand; // TODO
 
     s4 command = (distance * positionP + vel * positionD) >> positionShift;
 
@@ -137,7 +137,7 @@ void ServoController::setPosition(s4 position) {
 void ServoController::setDistance(s4 dist) {
   servoMode = Mode::Position;
 
-  positionCommand = getPosition() + dist;
+  positionCommand += dist;
 }
 
 void ServoController::setEnable(bool enable) {
