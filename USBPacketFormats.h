@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   USBPacketFormats.h
  * Author: Cameron
  *
@@ -24,10 +24,8 @@ extern "C" {
  * Shape of data going OUT of host.
  */
 typedef struct {
-  int16_t push;
-  uint8_t gain;
-  uint8_t dummy0;
-  uint32_t dummy1;
+  uint8_t mesgType;
+  int16_t command;
 } USBDataOUTShape;
 
 /**
@@ -44,4 +42,3 @@ typedef struct {
 #endif
 
 #endif /* USBPACKETFORMATS_H */
-

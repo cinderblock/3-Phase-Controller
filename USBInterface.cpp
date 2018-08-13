@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   USBInterface.cpp
  * Author: Cameron
- * 
+ *
  * Created on April 18, 2018, 12:10 PM
  */
 
@@ -15,6 +15,7 @@
 #include "USBDescriptors.h"
 #include "ThreePhaseController.h"
 #include "USBPacketFormats.h"
+#include "ServoController.h"
 
 using namespace ThreePhaseControllerNamespace;
 
@@ -97,7 +98,10 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
                                           const uint16_t ReportSize)
 {
 	USBDataOUTShape const * const data = (USBDataOUTShape*)ReportData;
-	
-	ThreePhaseController::setAmplitudeTarget(data->push);
-  ThreePhaseController::setAntiDampingVelocityGain(data->gain);
+
+	switch (data->mesgType) {
+		case 1: ThreePhaseController::setAmplitudeTarget(data->command);          return;
+		case 2: ThreePhaseController::setAntiDampingVelocityGain(data->command);	return;
+	  case 3: ServoController::setPosition(data->command);                      return;
+	}
 }
