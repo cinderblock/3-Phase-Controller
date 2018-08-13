@@ -1,8 +1,8 @@
 /**
  * The Servo controller for turnigy driver
- * 
+ *
  * Manages the servoing of hardware for 3-phase controller/driver
- * 
+ *
  * Takes in external inputs and outputs commands to ThreePhaseController
  */
 
@@ -120,15 +120,6 @@ namespace ThreePhaseControllerNamespace {
     static void setDistance(s4);
 
     /**
-     * Get our current position
-     * @return
-     */
-    inline static s4 getPosition() {
-      // TODO: implement
-      return 0;
-    }
-
-    /**
      * Get the commanded position
      * @return
      */
@@ -138,7 +129,7 @@ namespace ThreePhaseControllerNamespace {
 
     /**
      * Get the current number of revolutions
-     * @return 
+     * @return
      */
     inline static s2 getRevolution() {
       return onRotation;
