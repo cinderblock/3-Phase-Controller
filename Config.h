@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   Config.h
  * Author: Cameron
  *
@@ -8,7 +8,8 @@
 #ifndef CONFIG_H
 #define	CONFIG_H
 
-#define QUANTUM_DRIVE 2
+// #define QUANTUM_DRIVE 1 // Sterring motor
+#define QUANTUM_DRIVE 2 // traction motor
 //#define BED_CONTROLLER
 
 
