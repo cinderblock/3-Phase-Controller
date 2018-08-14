@@ -56,7 +56,7 @@ void EVENT_USB_Device_StartOfFrame(void)
 	HID_Device_MillisecondElapsed(&Generic_HID_Interface);
 }
 
-static int16_t debug;
+static int16_t debug = 40;
 
 /** HID class driver callback function for the creation of HID reports to the host.
  *
@@ -109,7 +109,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
 		case 1: ThreePhaseController::setAmplitudeTarget(data->command);          return;
 		case 2: ThreePhaseController::setAntiDampingVelocityGain(data->command);	return;
 	  case 3: ServoController::setPosition(data->command);                      return;
-	  case 4: debug = data->command;                                            return;
-	  case 5: debug = data->command * 2;                                        return;
+	  case 4: debug = 42;                                                 return;  // kP
+	  case 5: debug = 43;                                                 return;  // kD
 	}
 }
