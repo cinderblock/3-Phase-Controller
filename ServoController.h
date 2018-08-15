@@ -60,16 +60,18 @@ namespace ThreePhaseControllerNamespace {
      */
     static s2 onRotation;
 
-    static u1 positionP;
-    static u1 positionI;
-    static u1 positionD;
+    static u1 position_P;
+    static u1 position_I;
+    static u1 position_D;
 
-    static u1 velocityP;
-    static u1 velocityI;
-    static u1 velocityD;
+    static u1 velocity_P;
+    static u1 velocity_I;
+    static u1 velocity_D;
 
     static u1 positionShift;
     static u1 velocityShift;
+
+    // static u2 initialPhasePosition;
 
     static const u1 DeadBand = 50;
 
@@ -140,48 +142,48 @@ namespace ThreePhaseControllerNamespace {
      * Set P of position PID
      * @param p
      */
-    static inline void setPositionP(u1 p) {
-      positionP = p;
+    static inline void setPosition_P(u1 p) {
+      position_P = p;
     };
 
     /**
      * Get P of position PID
      * @return
      */
-    static inline u1 getPositionP() {
-      return positionP;
+    static inline u1 getPosition_P() {
+      return position_P;
     };
 
     /**
      * Set I of position PID
      * @param i
      */
-    static inline void setPositionI(u1 i) {
-      positionI = i;
+    static inline void setPosition_I(u1 i) {
+      position_I = i;
     };
 
     /**
      * Get I of position PID
      * @return
      */
-    static inline u1 getPositionI() {
-      return positionI;
+    static inline u1 getPosition_I() {
+      return position_I;
     };
 
     /**
      * Set D of position PID
      * @param d
      */
-    static inline void setPositionD(u1 d) {
-      positionD = d;
+    static inline void setPosition_D(u1 d) {
+      position_D = d;
     };
 
     /**
      * Get D of position PID
      * @return
      */
-    static inline u1 getPositionD() {
-      return positionD;
+    static inline u1 getPositionD_() {
+      return position_D;
     };
 
     /**
@@ -203,48 +205,48 @@ namespace ThreePhaseControllerNamespace {
      * Set P of velocity PID
      * @param p
      */
-    static inline void setVelocityP(u1 p) {
-      velocityP = p;
+    static inline void setVelocity_P(u1 p) {
+      velocity_P = p;
     };
 
     /**
      * Get P of velocity PID
      * @return
      */
-    static inline u1 getVelocityP() {
-      return velocityP;
+    static inline u1 getVelocity_P() {
+      return velocity_P;
     };
 
     /**
      * Set I of velocity PID
      * @param i
      */
-    static inline void setVelocityI(u1 i) {
-      velocityI = i;
+    static inline void setVelocity_I(u1 i) {
+      velocity_I = i;
     };
 
     /**
      * Get I of velocity PID
      * @return
      */
-    static inline u1 getVelocityI() {
-      return velocityI;
+    static inline u1 getVelocity_I() {
+      return velocity_I;
     };
 
     /**
      * Set D of velocity PID
      * @param d
      */
-    static inline void setVelocityD(u1 d) {
-      velocityD = d;
+    static inline void setVelocity_D(u1 d) {
+      velocity_D = d;
     };
 
     /**
      * Get D of velocity PID
      * @return
      */
-    static inline u1 getVelocityD() {
-      return velocityD;
+    static inline u1 getVelocity_D() {
+      return velocity_D;
     };
 
     /**

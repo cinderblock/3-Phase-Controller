@@ -13,16 +13,18 @@ s2 ServoController::velocityCommand;
 s4 ServoController::positionCommand;
 s2 ServoController::onRotation;
 
-u1 ServoController::positionP;
-u1 ServoController::positionI;
-u1 ServoController::positionD;
+u1 ServoController::position_P;
+u1 ServoController::position_I;
+u1 ServoController::position_D;
 
-u1 ServoController::velocityP;
-u1 ServoController::velocityI;
-u1 ServoController::velocityD;
+u1 ServoController::velocity_P;
+u1 ServoController::velocity_I;
+u1 ServoController::velocity_D;
 
 u1 ServoController::positionShift;
 u1 ServoController::velocityShift;
+
+// u2 ServoController::initialPhasePosition;
 
 /**
  * Distance function with a wrap around
@@ -53,25 +55,33 @@ void ServoController::init() {
 
   onRotation = 0;
 
-  positionP = 200;
-  positionI = 0;
-  positionD = 0;
+  position_P = 0;
+  position_I = 0;
+  position_D = 0;   //(float) .12  = 61/512
 
   positionShift = 12;
 
   amplitudeCommand = 0;
   driveAmplitudeScaled = 0;
+
+  // initialPhasePosition = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 }
+
+
 
 void ServoController::update() {
   // This function is called as often as possible in the main loop.
   // It looks at its currently available data and calculates a signed amplitude
   // to pass back to the ThreePhaseController
 
+
+
   if (servoMode == Mode::Init) {
     // DO NOTHING
   } else if (servoMode == Mode::Amplitude) {
     ThreePhaseController::setAmplitudeTarget(amplitudeCommand);
+
+
 
   } else if (servoMode == Mode::Velocity) {
     static s2 lastVel = 0;
@@ -82,7 +92,7 @@ void ServoController::update() {
 
     const s2 velocityError = vel - velocityCommand;
 
-    s4 command = lastCommand + ((velocityError * velocityP + velocityDelta * velocityD) >> velocityShift);
+    s4 command = lastCommand + ((velocityError * velocity_P + velocityDelta * velocity_D) >> velocityShift);
 
     constexpr s4 MAX = 255;
     if (command > MAX) {
@@ -95,13 +105,19 @@ void ServoController::update() {
 
     lastVel = vel;
 
+
+
   } else if (servoMode == Mode::Position) {
+
+    // if(initialPhasePosition == 0) initialPhasePosition = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 
     const s2 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
-    const s4 distance = positionCommand - positionCommand; // TODO
+    const s4 positionError = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate() - positionCommand ;
 
-    s4 command = (distance * positionP + vel * positionD) >> positionShift;
+    // s4 command = (positionError * position_P + vel * position_D / 512) >> positionShift;
+    // s4 command = (positionError * position_P - vel * position_D) / 512;
+    // s4 command = -vel * position_D / 512;
 
     constexpr s4 MAX = 255;
     if (command > MAX) {
@@ -117,27 +133,26 @@ void ServoController::update() {
   }
 }
 
+
+
+
 void ServoController::setAmplitude(s2 amplitude) {
   servoMode = Mode::Amplitude;
-
   amplitudeCommand = amplitude;
 }
 
 void ServoController::setVelocity(s2 velocity) {
   servoMode = Mode::Velocity;
-
   velocityCommand = velocity;
 }
 
 void ServoController::setPosition(s4 position) {
   servoMode = Mode::Position;
-
   positionCommand = position;
 }
 
 void ServoController::setDistance(s4 dist) {
   servoMode = Mode::Position;
-
   positionCommand += dist;
 }
 

@@ -106,10 +106,15 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
 	USBDataOUTShape const * const data = (USBDataOUTShape*)ReportData;
 
 	switch (data->mesgType) {
-		case 1: ThreePhaseController::setAmplitudeTarget(data->command);          return;
-		case 2: ThreePhaseController::setAntiDampingVelocityGain(data->command);	return;
-	  case 3: ServoController::setPosition(data->command);                      return;
-	  case 4: debug = 42;                                                 return;  // kP
-	  case 5: debug = 43;                                                 return;  // kD
+		case 1: ServoController::setAmplitude(data->command); return;
+		case 2: ServoController::setPosition (data->command);	debug = -345; return;
+	  case 3: ServoController::setVelocity (data->command); return;
+
+	  // case 4: debug = -42;                                                 return;  // kP
+	  // case 5: debug = 43;                                                 return;  // kD
+
+		case 11: ServoController::setPosition_P (data->command); return;
+		case 12: ServoController::setPosition_D (data->command); return;
+
 	}
 }
