@@ -140,6 +140,12 @@ void ThreePhasePositionEstimator::getAndProcessNewHallState() {
     drivePhaseHallEstimate = 640;
 }
 
+
+
+
+
+
+
 void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha) {
   // Here, we are receiving a new position reading from the magnetometer.
   // We need to take this new reading, update our running estimates, and be
@@ -174,7 +180,7 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
   // Instead of directly calculating what the velocity should be, for instance doing a dX/dt division,
   // we just keep a running estimate of the velocity and adjust it up or down based on how close we were.
   // This has the effect of doing a low pass filter on the velocity estimate which is desirable.
-  
+
   auto v = driveVelocityMagEstimate;
   u4 estimate;
 
@@ -183,7 +189,21 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
     estimate = drivePhaseMagEstimate;
   }
 
-  const u4 position = u4(Lookup::AlphaToPhase(alpha)) << drivePhaseMagSubResolution;
+  const u4 phase = u4(Lookup::AlphaToPhase(alpha));
+  static u4 lastPhase = 0xFFFFFFFF;
+  if (lastPhase == 0xFFFFFFFF) lastPhase = phase;  // handle first case
+
+  const u4 position = phase << drivePhaseMagSubResolution;
+
+  // check for glitch
+  // if (abs(phase - lastPhase) > 100  ) {
+  //   MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
+  //   Board::LED::on();
+  //   return;
+  // }
+
+
+
 
   // Positive delta likely means our velocity estimate is too fast
   s4 delta = position - estimate;
@@ -196,14 +216,14 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
 //  constexpr u1 MAXerr = 10;
 //  if (deltaError >  MAXerr) deltaError =  MAXerr;
 //  if (deltaError < -MAXerr) deltaError = -MAXerr;
-  
+
   using namespace Debug;
 
   // Scale the error by some factor and adjust our velocity estimate
   v += delta / (cyclesPWMPerMLX * numberOfCycles * 8);
 
   ThreePhaseController::handleNewVelocityEstimate(v);
-  
+
 //  SOUT << Printer::Special::Start
 //      << numberOfCycles << estimate << position << delta << v << MLX90363::getRoll()
 //      << Printer::Special::End;
@@ -214,8 +234,15 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
     // Re-enable this long alpha handler
     MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
 	}
-  
+
+
+
 }
+
+
+
+
+
 
 void ThreePhasePositionEstimator::init() {
   MLX90363::init();
@@ -227,7 +254,7 @@ void ThreePhasePositionEstimator::init() {
     MLX90363::startTransmitting();
 
     while (MLX90363::isTransmitting());
-    
+
     // Delay long enough to guarantee data is ready
     _delay_ms(2);
 
