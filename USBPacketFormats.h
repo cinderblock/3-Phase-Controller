@@ -27,7 +27,7 @@ extern "C" {
 typedef union {
   struct {
     uint8_t mesgType;
-    int16_t command;
+    int32_t command;
   };
   // Force the OUTshape to be 8 bytes long
   uint8_t dummy[8];
