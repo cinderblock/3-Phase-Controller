@@ -107,14 +107,16 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
 
 	switch (data->mesgType) {
 		case 1: ServoController::setAmplitude(data->command); return;
-		case 2: ServoController::setPosition (data->command);	debug = -345; return;
+		case 2: ServoController::setPosition (data->command);	debug = 222; return;
 	  case 3: ServoController::setVelocity (data->command); return;
 
-	  // case 4: debug = -42;                                                 return;  // kP
-	  // case 5: debug = 43;                                                 return;  // kD
-
 		case 11: ServoController::setPosition_P (data->command); return;
-		case 12: ServoController::setPosition_D (data->command); return;
+		case 12: ServoController::setPosition_I (data->command); return;
+		case 13: ServoController::setPosition_D (data->command); return;
 
+		// not used just yet
+		case 21: ServoController::setVelocity_P (data->command); return;
+		case 22: ServoController::setVelocity_I (data->command); return;
+		case 23: ServoController::setVelocity_D (data->command); return;
 	}
 }
