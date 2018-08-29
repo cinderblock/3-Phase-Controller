@@ -182,7 +182,7 @@ namespace ThreePhaseControllerNamespace {
      * Get D of position PID
      * @return
      */
-    static inline u1 getPositionD_() {
+    static inline u1 getPosition_D() {
       return position_D;
     };
 
