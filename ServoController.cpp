@@ -26,17 +26,18 @@ u1 ServoController::velocityShift;
 
 // u2 ServoController::initialPhasePosition;
 
+const s4 fullTurn = 3*7*256*256;
 /**
  * Distance function with a wrap around
  */
-s2 dist(u2 to, u2 from, const u2 wrapdist) {
+s4 wrapdist(u4 to, u4 from) {
 
-  s2 delta = (s2)to - (s2)from;
+  s4 delta = to - from;
 
-  if (delta > (s2)(wrapdist / 2)) {
-    delta = delta - ((s2)wrapdist);
-  } else if (delta < -((s2)wrapdist / 2)) {
-    delta = ((s2)wrapdist) + delta;
+  if (delta > (fullTurn / 2)) {
+    delta = delta - fullTurn;
+  } else if (delta < -(fullTurn / 2)) {
+    delta = fullTurn + delta;
   }
 
   return delta;
