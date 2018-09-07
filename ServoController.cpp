@@ -114,7 +114,7 @@ void ServoController::update() {
 
     const s2 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
-    const s4 positionError = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate() - positionCommand ;
+    const s4 positionError = wrapdist(ThreePhasePositionEstimator::getMagnetometerPhaseEstimate(), positionCommand);
 
     s4 command = (- position_P * positionError >> 18) - (vel * position_D >> 6);  // - vel * position_D;
 
