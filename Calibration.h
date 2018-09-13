@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   Calibration.h
  * Author: Cameron
  *
@@ -39,7 +39,7 @@ namespace Calibration {
 
   constexpr u2 rampSteps = 0x300;
   void main();
-  
+
   void step(u4 i);
 };
 
