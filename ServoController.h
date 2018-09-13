@@ -53,7 +53,7 @@ namespace ThreePhaseControllerNamespace {
     /**
      * The current target position
      */
-    static s4 positionCommand;
+    static u4 positionCommand;
 
     /**
      * Number of full motor mechanical revolutions we've been through
@@ -113,7 +113,7 @@ namespace ThreePhaseControllerNamespace {
      * Put controller into position mode and sets the target
      * @param
      */
-    static void setPosition(s4);
+    static void setPosition(u4);
 
     /**
      * Put controller into position mode and sets the target as a delta from current

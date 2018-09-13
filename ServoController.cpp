@@ -10,7 +10,7 @@ ServoController::Mode ServoController::servoMode = Mode::Init;
 s2 ServoController::amplitudeCommand;
 s4 ServoController::driveAmplitudeScaled;
 s2 ServoController::velocityCommand;
-s4 ServoController::positionCommand;
+u4 ServoController::positionCommand;
 s2 ServoController::onRotation;
 
 u1 ServoController::position_P;
@@ -26,7 +26,6 @@ u1 ServoController::velocityShift;
 
 // u2 ServoController::initialPhasePosition;
 
-const s4 fullTurn = 3*7*256*256;
 /**
  * Distance function with a wrap around
  */
@@ -34,14 +33,13 @@ s4 wrapdist(u4 to, u4 from) {
 
   s4 delta = to - from;
 
-  if (delta > (fullTurn / 2)) {
-    delta = delta - fullTurn;
-  } else if (delta < -(fullTurn / 2)) {
-    delta = fullTurn + delta;
+  if (delta > (ThreePhasePositionEstimator::StepsPerRevolution / 2)) {
+    delta -= ThreePhasePositionEstimator::StepsPerRevolution;
+  } else if (delta < -(ThreePhasePositionEstimator::StepsPerRevolution / 2)) {
+    delta += ThreePhasePositionEstimator::StepsPerRevolution;
   }
 
   return delta;
-
 }
 
 s2 abs2(s2 num) {
@@ -149,7 +147,7 @@ void ServoController::setVelocity(s2 velocity) {
   velocityCommand = velocity;
 }
 
-void ServoController::setPosition(s4 position) {
+void ServoController::setPosition(u4 position) {
   servoMode = Mode::Position;
   positionCommand = position;
 }
