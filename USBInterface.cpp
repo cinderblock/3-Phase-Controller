@@ -78,8 +78,8 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 
 	data->position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 	data->velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
-  // data->adc = ADC;
-	data->adc = debug;
+  data->adc = ADC;
+	// data->adc = debug;
 
 	*ReportSize = sizeof(*data);
 
@@ -107,7 +107,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
 
 	switch (data->mesgType) {
 		case 1: ServoController::setAmplitude(data->command); return;
-		case 2: ServoController::setPosition (data->command);	debug = 222; return;
+		case 2: ServoController::setPosition (data->command);	return;
 	  case 3: ServoController::setVelocity (data->command); return;
 
 		case 11: ServoController::setPosition_P (data->command); return;
