@@ -33,9 +33,9 @@ s4 wrapdist(u4 to, u4 from) {
 
   s4 delta = to - from;
 
-  if (delta > (ThreePhasePositionEstimator::StepsPerRevolution / 2)) {
+  if (delta > s4(ThreePhasePositionEstimator::StepsPerRevolution / 2)) {
     delta -= ThreePhasePositionEstimator::StepsPerRevolution;
-  } else if (delta < -(ThreePhasePositionEstimator::StepsPerRevolution / 2)) {
+  } else if (delta < -s4(ThreePhasePositionEstimator::StepsPerRevolution / 2)) {
     delta += ThreePhasePositionEstimator::StepsPerRevolution;
   }
 
