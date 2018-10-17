@@ -34,6 +34,8 @@ cppNames += SerialInterface
 
 cppNames += USBInterface
 
+cppNames += RotationalQuantity-impl
+
 cNames += USBDescriptors
 
 #MotorID = Motor1
