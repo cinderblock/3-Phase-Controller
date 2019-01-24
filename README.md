@@ -47,5 +47,5 @@ The current Makefile is setup to program an AVR via USB DFU. It is possible to s
 ## Associated documentation
 
 - [Technical Docs](docs/README.md)
-- [3 Phase sine generation](docs/3%20Phase%20Sine%20Generation.md)
+- [3 Phase sine generation](docs/3%20Phase%20Sine%20Wave%20Generation.md)
 - [Triple Buffer](libCameron/Triple%20Buffer.png)
