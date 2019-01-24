@@ -24,6 +24,10 @@ namespace Config {
 
 	// static_assert(i2cSlaveAddress == 51, "Making rear motor");
 	// static_assert(i2cSlaveAddress == 50, "Making front motor");
+
+	bool constexpr forward = true;
+	u1 constexpr MaxTorque = 255;
+	u1 constexpr DefaultPhaseAdvance = 40;
  
  u1 constexpr i2cBufferOutgoingDataSize = 14;
  u1 constexpr i2cBufferIncomingDataSize = 5;
