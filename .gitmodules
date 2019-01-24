@@ -6,7 +6,7 @@
 	url = https://github.com/cinderblock/uMaker.git
 [submodule "libCameron"]
 	path = libCameron
-	url = git@github.com:cinderblock/libCameron.git
+	url = https://github.com/cinderblock/libCameron.git
 [submodule "lufa"]
 	path = lufa
 	url = https://github.com/abcminiuser/lufa.git
