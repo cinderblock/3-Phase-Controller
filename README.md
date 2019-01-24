@@ -48,4 +48,4 @@ The current Makefile is setup to program an AVR via USB DFU. It is possible to s
 
 - [Technical Docs](docs/README.md)
 - [3 Phase sine generation](https://docs.google.com/spreadsheets/d/1I45kGhncSQvR4_B_AG72Bqk7MJlNRIvBI-JD9qAgE8U/edit?usp=sharing)
-- [Triple Buffer](https://drive.draw.io/#G0Bzw2V8vLyJThV1dJRTZ0dXRsODQ)
+- [Triple Buffer](Triple%20Buffer.png)
