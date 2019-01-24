@@ -18,7 +18,7 @@ This is very much a work in progress. The following list is of currently impleme
   - [x] Velocity
   - [x] Position
 - [x] I2C Communication
-- [ ] USB Communication
+- [x] USB Communication
 
 ## Getting Started
 
