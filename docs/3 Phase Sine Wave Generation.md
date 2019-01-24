@@ -24,5 +24,36 @@ Now, that looks like a sine wave still!
 If we remember our trigonometric identities:
 
 ```math
-sin()
+{\displaystyle a\sin x+b\sin(x+\theta )=c\sin(x+\varphi )}
+where
+
+{\displaystyle c={\sqrt {a^{2}+b^{2}+2ab\cos \theta }},}
+and
+
+\varphi =\operatorname {atan2} \left(b\,\sin \theta ,a+b\cos \theta \right).
 ```
+
+And
+
+```math
+a = b = 1
+theta = 2pi / 3
+```
+
+The waveform is therefore, after some simplification:
+
+```math
+cos(pi/6 - x)
+```
+
+Now we take just a 1/6th of a revolution of that function and use that as our main function specifying what average voltage we should be at for any particular rotation angle x.
+
+## Code
+
+All of the functionality described above is captured in the `ThreePhaseDriver.cpp` source file.
+
+The `ThreePhaseDriver` accepts an angle input and configures the hardware to generate the 3 voltages as specified by the above calculations.
+
+
+
+
