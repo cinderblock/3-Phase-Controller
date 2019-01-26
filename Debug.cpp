@@ -25,6 +25,10 @@ void Debug::init() {
   
   UBRR1 = 0;
 
+  #ifndef UCSR1D
+  #define UCSR1D _SFR_MEM8(0xCB)
+  #endif
+
   // Set default
   UCSR1D = 0b00;
 
