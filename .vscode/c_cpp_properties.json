@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}.",
+                "${workspaceFolder}lufa",
+                "${workspaceFolder}AVR++",
+                "${workspaceFolder}libCameron/src"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "__AVR_ATmega32U4__",
+                "AVR",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:\\Program Files (x86)\\avr-gcc-7.2.0-x64-mingw\\bin\\avr-gcc.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}
