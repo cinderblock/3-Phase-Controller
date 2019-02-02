@@ -21,13 +21,9 @@ class Timer {
 	 */
 	static constexpr u1 CLKprescaler = 1;
 	
-	static constexpr u1 dividerShift =
-		CLKprescaler == 1 ?  0 : // /1
-		CLKprescaler == 2 ?  3 : // /8
-		CLKprescaler == 3 ?  6 : // /64
-		CLKprescaler == 4 ?  8 : // /256
-		CLKprescaler == 5 ? 10 : // /1024
-		0xff;
+  static constexpr u1 shiftMap[] = {0xff, 0, 3, 6, 8, 10};
+
+  static constexpr u1 dividerShift = shiftMap[CLKprescaler];
 	
 	static constexpr u2 divider = 1 << dividerShift;
 	
