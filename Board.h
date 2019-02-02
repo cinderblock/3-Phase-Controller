@@ -18,7 +18,9 @@ using namespace AVR;
 
 namespace Board {
     
+
   using namespace Basic;
+
 #ifdef BED_CONTROLLER
  using Sw1 = Input<Ports::F, 1>; // start switch pin
  using LED_L = Output<Ports::F, 4>; // On breakout

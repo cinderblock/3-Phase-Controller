@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   Calibration.h
  * Author: Cameron
  *
@@ -21,15 +21,15 @@ namespace ThreePhaseControllerNamespace {
 namespace Calibration {
 using namespace Basic;
 
-  constexpr bool enabled = false;
-  constexpr u2 numberOfSpins = 7*5;
-  constexpr u1 amplitude = 70;
-  constexpr u2 rampSteps = 0x300;
-  void main();
-  
-  void step(u4 i);
-};
+constexpr bool enabled = false;
+constexpr u2 numberOfSpins = 7 * 5;
+constexpr u1 amplitude = 70;
+constexpr u2 rampSteps = 0x300;
+void main();
 
-};
+void step(u4 i);
+}; // namespace Calibration
+
+}; // namespace ThreePhaseControllerNamespace
 
 #endif /* CALIBRATION_H */

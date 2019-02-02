@@ -6,7 +6,7 @@
  */
 
 #ifndef CLOCK_H
-#define	CLOCK_H
+#define CLOCK_H
 
 #include <AVR++/basicTypes.h>
 
@@ -21,125 +21,124 @@ using namespace Basic;
 ISR(TIMER3_COMPA_vect);
 
 class Clock {
- static u4 time;
- inline static void tick();
- friend void TIMER3_COMPA_vect();
+  static u4 time;
+  inline static void tick();
+  friend void TIMER3_COMPA_vect();
 
 public:
+  static void init();
 
+  class TickTime {
+  protected:
+    u4 ticks;
 
- static void init();
+  public:
+    inline TickTime(u4 const ticks) : ticks(ticks){};
+    inline TickTime() : ticks(){};
+  };
 
- class TickTime {
- protected:
-  u4 ticks;
- public:
-  inline TickTime(u4 const ticks) : ticks(ticks) {};
-  inline TickTime() : ticks() {};
- };
+  class MicroTime : public TickTime {
+    u2 timerCount;
 
- class MicroTime : public TickTime {
-  u2 timerCount;
- public:
+  public:
+    inline MicroTime(u4 const ticks, u2 const timerCount = 0)
+        : TickTime(ticks + timerCount / Timer::CountsPerClear), timerCount(timerCount % Timer::CountsPerClear){};
+    inline MicroTime() : TickTime(){};
 
-  inline MicroTime(u4 const ticks, u2 const timerCount = 0) :
-  TickTime(ticks + timerCount / Timer::CountsPerClear),
-          timerCount(timerCount % Timer::CountsPerClear) {};
-  inline MicroTime() : TickTime() {};
+    /**
+     * Assign a new value to the sub millisecond part of this object
+     * @param val
+     * @return
+     */
+    inline MicroTime &setTimerCount(u2 const val) {
+      timerCount = val;
+      return *this;
+    }
+    inline MicroTime &setTicksCount(u4 const val) {
+      ticks = val;
+      return *this;
+    }
+    inline MicroTime &operator=(MicroTime const &that) {
+      if (&that != this) {
+        ticks = that.ticks;
+        timerCount = that.timerCount;
+      }
+      return *this;
+    }
+
+    inline MicroTime &operator+=(MicroTime const &that) {
+      timerCount += that.timerCount;
+      ticks += that.ticks;
+      if (timerCount >= Timer::CountsPerClear) {
+        timerCount -= Timer::CountsPerClear;
+        ticks++;
+      }
+      return *this;
+    }
+
+    inline bool operator<(MicroTime const &that) const {
+      if (ticks < that.ticks)
+        return true;
+      return (ticks == that.ticks) && (timerCount < that.timerCount);
+    }
+
+    inline bool operator<=(MicroTime const &that) const {
+      if (ticks < that.ticks)
+        return true;
+      return (ticks == that.ticks) && (timerCount <= that.timerCount);
+    }
+
+    inline bool operator>(MicroTime const &that) const {
+      if (ticks > that.ticks)
+        return true;
+      return (ticks == that.ticks) && (timerCount > that.timerCount);
+    }
+
+    inline bool operator>=(MicroTime const &that) const {
+      if (ticks > that.ticks)
+        return true;
+      return (ticks == that.ticks) && (timerCount >= that.timerCount);
+    }
+
+    inline bool isInPast() const {
+      MicroTime now;
+      readTime(now);
+      return *this < now;
+    }
+
+    inline bool isInFuture() const {
+      MicroTime now;
+      readTime(now);
+      return *this > now;
+    }
+  };
 
   /**
-   * Assign a new value to the sub millisecond part of this object
-   * @param val
-   * @return
+   * Read the current time to a destination
+   * @param dest
    */
-  inline MicroTime& setTimerCount(u2 const val) {timerCount = val; return *this;}
-  inline MicroTime& setTicksCount(u4 const val) {ticks = val; return *this;}
-  inline MicroTime& operator=(MicroTime const& that) {
-   if (&that != this) {
-    ticks = that.ticks;
-    timerCount = that.timerCount;
-   }
-   return *this;
-  }
+  static void readTime(u4 &dest);
 
-  inline MicroTime& operator+=(MicroTime const& that) {
-   timerCount += that.timerCount;
-   ticks += that.ticks;
-   if (timerCount >= Timer::CountsPerClear) {
-    timerCount -= Timer::CountsPerClear;
-    ticks++;
-   }
-   return *this;
-  }
+  static void readTime(TickTime &dest);
 
-  inline bool operator<(MicroTime const& that) const {
-   if (ticks < that.ticks)
-    return true;
-   return (ticks == that.ticks) && (timerCount < that.timerCount);
-  }
+  static void readTime(MicroTime &dest);
 
-  inline bool operator<=(MicroTime const& that) const {
-   if (ticks < that.ticks)
-    return true;
-   return (ticks == that.ticks) && (timerCount <= that.timerCount);
-  }
+  static void readTimeISR(MicroTime &dest);
 
-  inline bool operator>(MicroTime const& that) const {
-   if (ticks > that.ticks)
-    return true;
-   return (ticks == that.ticks) && (timerCount > that.timerCount);
-  }
-
-  inline bool operator>=(MicroTime const& that) const {
-   if (ticks > that.ticks)
-    return true;
-   return (ticks == that.ticks) && (timerCount >= that.timerCount);
-  }
-
-  inline bool isInPast() const {
-   MicroTime now;
-   readTime(now);
-   return *this < now;
-  }
-
-  inline bool isInFuture() const {
-   MicroTime now;
-   readTime(now);
-   return *this > now;
-  }
-
- };
-
- /**
-  * Read the current time to a destination
-  * @param dest
-  */
- static void readTime(u4& dest);
-
- static void readTime(TickTime& dest);
-
- static void readTime(MicroTime& dest);
-
- static void readTimeISR(MicroTime& dest);
-
- /**
-  * If reading the time from an interrupt routine (really, anytime the global
-  * interrupts are off) use this version of readTime()
-  * @return the current time
-  */
- inline static u4 readTimeISR() {return time;};
-
-
+  /**
+   * If reading the time from an interrupt routine (really, anytime the global
+   * interrupts are off) use this version of readTime()
+   * @return the current time
+   */
+  inline static u4 readTimeISR() { return time; };
 };
 
-inline static Clock::MicroTime operator"" _ms(unsigned long long i) {
- return {(u4)i,0};
-}
+inline static Clock::MicroTime operator"" _ms(unsigned long long i) { return {(u4)i, 0}; }
 
 inline static Clock::MicroTime operator"" _us(unsigned long long i) {
- return {(u4)(i/1000),((u2)i % 1000) * (Timer::CountsPerClear / 1000)};
+  return {(u4)(i / 1000), ((u2)i % 1000) * (Timer::CountsPerClear / 1000)};
 }
 
-};
+}; // namespace ThreePhaseControllerNamespace
 
-#endif	/* CLOCK_H */
+#endif /* CLOCK_H */

@@ -4,16 +4,16 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   ThreePhaseFaultTester.cpp
  * Author: Cameron
- * 
+ *
  * Created on April 16, 2018, 12:58 PM
  */
 
 #include "ThreePhaseFaultTester.h"
-#include "Board.h"
 #include "AVRClock.h"
+#include "Board.h"
 #include <avr/io.h>
 
 using namespace ThreePhaseControllerNamespace;
@@ -111,20 +111,28 @@ void ThreePhaseFaultTester::init() {
 
   // Set all outputs to ~50%
   constexpr u2 val = 2047 / 2;
-  
+
   TC4H = val >> 8;
   OCR4A = u1(val);
   OCR4B = u1(val);
   OCR4D = u1(val);
 
-  while (!TIFR4);
+  while (!TIFR4)
+    continue;
 }
 
 ThreePhaseFaultTester::FailMode ThreePhaseFaultTester::test(Phase p) {
   switch (p) {
-    case Phase::A: TCCR4E = 0b01000000 | (1 << OC4OE0) | (1 << OC4OE1); break;
-    case Phase::B: TCCR4E = 0b01000000 | (1 << OC4OE2) | (1 << OC4OE3); break;
-    case Phase::C: TCCR4E = 0b01000000 | (1 << OC4OE4) | (1 << OC4OE5); break;
+  case Phase::A:
+    TCCR4E = 0b01000000 | (1 << OC4OE0) | (1 << OC4OE1);
+    break;
+  case Phase::B:
+    TCCR4E = 0b01000000 | (1 << OC4OE2) | (1 << OC4OE3);
+    break;
+  case Phase::C:
+    TCCR4E = 0b01000000 | (1 << OC4OE4) | (1 << OC4OE5);
+    break;
+
   default:
     break;
   }
@@ -134,12 +142,24 @@ ThreePhaseFaultTester::FailMode ThreePhaseFaultTester::test(Phase p) {
 
 ThreePhaseFaultTester::FailMode ThreePhaseFaultTester::test(Channel c) {
   switch (c) {
-    case Channel::AL: TCCR4E = 0b01000000 | (1 << OC4OE0); break;
-    case Channel::AH: TCCR4E = 0b01000000 | (1 << OC4OE1); break;
-    case Channel::BL: TCCR4E = 0b01000000 | (1 << OC4OE2); break;
-    case Channel::BH: TCCR4E = 0b01000000 | (1 << OC4OE3); break;
-    case Channel::CL: TCCR4E = 0b01000000 | (1 << OC4OE4); break;
-    case Channel::CH: TCCR4E = 0b01000000 | (1 << OC4OE5); break;
+  case Channel::AL:
+    TCCR4E = 0b01000000 | (1 << OC4OE0);
+    break;
+  case Channel::AH:
+    TCCR4E = 0b01000000 | (1 << OC4OE1);
+    break;
+  case Channel::BL:
+    TCCR4E = 0b01000000 | (1 << OC4OE2);
+    break;
+  case Channel::BH:
+    TCCR4E = 0b01000000 | (1 << OC4OE3);
+    break;
+  case Channel::CL:
+    TCCR4E = 0b01000000 | (1 << OC4OE4);
+    break;
+  case Channel::CH:
+    TCCR4E = 0b01000000 | (1 << OC4OE5);
+    break;
   }
 
   return FailMode::Fail;

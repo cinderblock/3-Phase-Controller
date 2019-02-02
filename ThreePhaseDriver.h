@@ -6,7 +6,7 @@
  */
 
 #ifndef THREEPHASEDRIVER_H
-#define	THREEPHASEDRIVER_H
+#define THREEPHASEDRIVER_H
 
 #include <AVR++/basicTypes.h>
 #include <avr/interrupt.h>
@@ -19,7 +19,7 @@ using namespace Basic;
 
 /**
  */
-static inline u1 constexpr min(u1 const a, u1 const b){return a > b ? b : a;};
+static inline u1 constexpr min(u1 const a, u1 const b) { return a > b ? b : a; };
 
 /**
  * This static class handles controlling the low level TIMER4 registers.
@@ -41,155 +41,155 @@ class ThreePhaseDriver {
   static volatile u1 amplitude;
 
   static constexpr bool usingPWM6 = false;
-   
+
   friend void ::ADC_vect();
-  
+
   inline static void emergencyDisable();
-  
+
   inline static void emergencyOK();
 
 public:
-
   /**
    * The outputs can be in one of 3 phases
    */
-  enum class Phase : u1 {
-    A = 0, B = 1, C = 2, Brake = 3
-  };
+  enum class Phase : u1 { A = 0, B = 1, C = 2, Brake = 3 };
 
   /**
    * class to store and work with all possible output "angles"
    */
   class PhasePosition {
-   /**
-    * Internal byte + 2 bits that fully describe an output angle
-    */
-   u2 commutation;
+    /**
+     * Internal byte + 2 bits that fully describe an output angle
+     */
+    u2 commutation;
 
-   /**
-    * The maximum valid value commutation can have
-    */
-   static constexpr u2 MAX = 0x2ff;
+    /**
+     * The maximum valid value commutation can have
+     */
+    static constexpr u2 MAX = 0x2ff;
 
-   static constexpr u2 FULL = MAX + 1;
+    static constexpr u2 FULL = MAX + 1;
 
-   friend class ThreePhaseDriver;
+    friend class ThreePhaseDriver;
 
   public:
+    /**
+     * Get the current subphase angle
+     * @return
+     */
+    inline u1 getPosition() const { return (u1)commutation; }
 
-   /**
-    * Get the current subphase angle
-    * @return
-    */
-   inline u1 getPosition() const {
-    return (u1)commutation;
-   }
+    /**
+     * Get the current Phase
+     * @return
+     */
+    inline Phase getPhase() const { return (Phase)(commutation >> 8); }
+    /**
+     * Initialize a commutation angle with some current angle
+     * @param commutation
+     */
+    inline PhasePosition(u2 const commutation = 0) : commutation(commutation % FULL) {}
+    inline PhasePosition(u4 const commutation) : commutation(commutation % FULL) {}
+    inline PhasePosition(int const commutation) : commutation(commutation % FULL) {}
 
-   /**
-    * Get the current Phase
-    * @return
-    */
-   inline Phase getPhase() const {
-    return (Phase)(commutation >> 8);
-   }
-   /**
-    * Initialize a commutation angle with some current angle
-    * @param commutation
-    */
-   inline PhasePosition(u2 const commutation = 0) : commutation(commutation % FULL) {}
-   inline PhasePosition(u4 const commutation) : commutation(commutation % FULL) {}
-   inline PhasePosition(int const commutation) : commutation(commutation % FULL) {}
+    /**
+     * Initialize a commutation angle with a subPhase angle and phase
+     * @param phase
+     * @param commutation
+     */
+    inline PhasePosition(Phase const phase, u1 const commutation) : commutation(((u1)phase << 8) | commutation) {}
 
-   /**
-    * Initialize a commutation angle with a subPhase angle and phase
-    * @param phase
-    * @param commutation
-    */
-   inline PhasePosition(Phase const phase, u1 const commutation) : commutation(((u1)phase << 8) | commutation) {}
+    inline PhasePosition &operator+=(u1 const steps) {
+      if (getPhase() == Phase::Brake)
+        return *this;
+      commutation += steps;
+      if (commutation > MAX)
+        commutation -= FULL;
 
-   inline PhasePosition& operator+=(u1 const steps) {
-     if (getPhase() == Phase::Brake) return *this;
-    commutation += steps;
-    if (commutation > MAX) commutation -= FULL;
-
-    return *this;
-   }
-
-   inline PhasePosition& operator-=(u1 const steps) {
-     if (getPhase() == Phase::Brake) return *this;
-    commutation -= steps;
-    if (commutation > MAX) commutation += FULL;
-
-    return *this;
-   }
-
-   inline PhasePosition& operator+=(u2 const steps) {
-     if (getPhase() == Phase::Brake) return *this;
-     // TODO: This is broken if steps is very large and overflows commutation
-    commutation += steps;
-    commutation %= FULL;
-
-    return *this;
-   }
-
-   inline PhasePosition& operator-=(u2 const steps) {
-    if (getPhase() == Phase::Brake) return *this;
-    commutation -= steps;
-    // TODO: Better & faster math here
-    while (commutation > MAX) commutation += FULL;
-
-    return *this;
-   }
-
-   inline PhasePosition& operator++() {
-    if (getPhase() == Phase::Brake) return *this;
-    if (commutation == MAX) {
-     commutation = 0;
-    } else {
-     commutation++;
+      return *this;
     }
 
-    return *this;
-   }
+    inline PhasePosition &operator-=(u1 const steps) {
+      if (getPhase() == Phase::Brake)
+        return *this;
+      commutation -= steps;
+      if (commutation > MAX)
+        commutation += FULL;
 
-   inline PhasePosition& operator--() {
-    if (commutation == 0) {
-     commutation = MAX;
-    } else {
-     commutation--;
+      return *this;
     }
 
-    return *this;
-   }
+    inline PhasePosition &operator+=(u2 const steps) {
+      if (getPhase() == Phase::Brake)
+        return *this;
+      // TODO: This is broken if steps is very large and overflows commutation
+      commutation += steps;
+      commutation %= FULL;
 
-   inline PhasePosition operator++(int) {
-    PhasePosition ret(commutation);
+      return *this;
+    }
 
-    ++*this;
+    inline PhasePosition &operator-=(u2 const steps) {
+      if (getPhase() == Phase::Brake)
+        return *this;
+      commutation -= steps;
+      // TODO: Better & faster math here
+      while (commutation > MAX)
+        commutation += FULL;
 
-    return ret;
-   }
+      return *this;
+    }
 
-   inline PhasePosition operator--(int) {
-    PhasePosition ret(commutation);
+    inline PhasePosition &operator++() {
+      if (getPhase() == Phase::Brake)
+        return *this;
+      if (commutation == MAX) {
+        commutation = 0;
+      } else {
+        commutation++;
+      }
 
-    --*this;
+      return *this;
+    }
 
-    return ret;
-   }
+    inline PhasePosition &operator--() {
+      if (commutation == 0) {
+        commutation = MAX;
+      } else {
+        commutation--;
+      }
 
-   inline operator u4() const {
-     return commutation;
-   }
+      return *this;
+    }
 
-   inline s2 operator -(PhasePosition &that) {
-     s2 delta = commutation - that.commutation;
+    inline PhasePosition operator++(int) {
+      PhasePosition ret(commutation);
 
-     if (delta > s2(  FULL / 2)) delta -= MAX;
-     if (delta < s2(- FULL / 2)) delta += MAX;
+      ++*this;
 
-     return delta;
-   }
+      return ret;
+    }
+
+    inline PhasePosition operator--(int) {
+      PhasePosition ret(commutation);
+
+      --*this;
+
+      return ret;
+    }
+
+    inline operator u4() const { return commutation; }
+
+    inline s2 operator-(PhasePosition &that) {
+      s2 delta = commutation - that.commutation;
+
+      if (delta > s2(FULL / 2))
+        delta -= MAX;
+      if (delta < s2(-FULL / 2))
+        delta += MAX;
+
+      return delta;
+    }
   };
 
   /**
@@ -233,13 +233,9 @@ public:
   static constexpr u1 calcMaxAmplitude = 0xff - 30;
   static constexpr u1 maxAmplitude = calcMaxAmplitude;
 
-  static inline void setAmplitude(u1 const a) {
-    amplitude = a > maxAmplitude ? maxAmplitude : a;
-  }
+  static inline void setAmplitude(u1 const a) { amplitude = a > maxAmplitude ? maxAmplitude : a; }
 
-  static inline u1 getAmplitude() {
-    return amplitude;
-  };
+  static inline u1 getAmplitude() { return amplitude; };
 
   using DeadTimes = union DT {
     /**
@@ -250,32 +246,28 @@ public:
       /**
        * Leading dead time
        */
-      u1 leading  :4;
+      u1 leading : 4;
 
       /**
        * Trailing dead time
        */
-      u1 trailing :4;
+      u1 trailing : 4;
     };
-    inline DT (u1 c) : combined(c) {}
-    inline DT (u1 lead, u1 trail) : leading(lead), trailing(trail) {}
-    union DT operator+ (u1 b) {
+    inline DT(u1 c) : combined(c) {}
+    inline DT(u1 lead, u1 trail) : leading(lead), trailing(trail) {}
+    union DT operator+(u1 b) {
       return combined + b;
     }
-    union DT operator- (u1 b) {
+    union DT operator-(u1 b) {
       return combined - b;
     }
   };
 
-  static inline void setDeadTimes(DeadTimes dt) {
-    DT4 = dt.combined;
-  };
+  static inline void setDeadTimes(DeadTimes dt) { DT4 = dt.combined; };
 
-  static inline DeadTimes getDeadTimes() {
-    return (DeadTimes)DT4;
-  };
+  static inline DeadTimes getDeadTimes() { return (DeadTimes)DT4; };
 };
 
-};
+}; // namespace ThreePhaseControllerNamespace
 
-#endif	/* THREEPHASEDRIVER_H */
+#endif /* THREEPHASEDRIVER_H */

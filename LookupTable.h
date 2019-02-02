@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   LookupTable.h
  * Author: Cameron
  *
@@ -6,10 +6,10 @@
  */
 
 #ifndef LOOKUPTABLE_H
-#define	LOOKUPTABLE_H
+#define LOOKUPTABLE_H
 
-#include <avr/pgmspace.h>
 #include <AVR++/basicTypes.h>
+#include <avr/pgmspace.h>
 
 #include "ThreePhaseDriver.h"
 
@@ -19,7 +19,6 @@ using namespace Basic;
 
 class Lookup {
 public:
-
   /**
    * Number of bits used by input
    */
@@ -54,18 +53,17 @@ public:
     // Make sure we're working with a 14-bit number
     alpha &= InputMask;
 
-    //divide alpha by 4 to get a reasonable table size
+    // divide alpha by 4 to get a reasonable table size
     alpha >>= ResolutionReductionBits;
 
     // Read the phase number word from the calculated place in the lookup table
     return (ThreePhaseDriver::PhasePosition)pgm_read_word(&Lookup::table[alpha]);
   }
 
-
 private:
   static const u2 table[Size] PROGMEM;
 };
 
-};
+}; // namespace ThreePhaseControllerNamespace
 
-#endif	/* LOOKUPTABLE_H */
+#endif /* LOOKUPTABLE_H */

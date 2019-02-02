@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   Demo.h
  * Author: Cameron
  *
@@ -17,38 +17,38 @@
 #include <AVR++/basicTypes.h>
 
 namespace ThreePhaseControllerNamespace {
-  
+
 using namespace Basic;
 
 namespace Demo {
-  constexpr bool enabled = false;
-  
-  constexpr u1 * const modeLocation = 0;
-  constexpr u1 modesMax = 2;
+constexpr bool enabled = false;
 
-  void main();
-  
-  void timeout();
-  
-  extern void(*timeoutFunc)();
-  
-  void setTimeoutFunc(void(*tf)());
-  
-  namespace dumbSpin {
-    void main();
-    void timeout();
-    extern bool go;
-  };
-  
-  namespace ManualConstantTorque {
-    void main(u1 ampl = 25);
-  };
+constexpr u1 *const modeLocation = 0;
+constexpr u1 modesMax = 2;
 
-  namespace PositionHold {
-    void main();
-  }
+void main();
+
+void timeout();
+
+extern void (*timeoutFunc)();
+
+void setTimeoutFunc(void (*tf)());
+
+namespace dumbSpin {
+void main();
+void timeout();
+extern bool go;
+}; // namespace dumbSpin
+
+namespace ManualConstantTorque {
+void main(u1 ampl = 25);
 };
 
-};
+namespace PositionHold {
+void main();
+}
+}; // namespace Demo
+
+}; // namespace ThreePhaseControllerNamespace
 
 #endif /* DEMO_H */
