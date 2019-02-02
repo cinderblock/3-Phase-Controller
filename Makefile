@@ -51,6 +51,9 @@ DEFINES = USE_LUFA_CONFIG_HEADER
 
 INCLUDES = .
 
+# Make compilation fail on first error
+Build_Flags_Extra = -Wfatal-errors
+
 #BLD_STD_GCC ?= c11
 #BLD_STD_GXX ?= c++11
 
