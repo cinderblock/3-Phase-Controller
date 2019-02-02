@@ -11,6 +11,7 @@
  * Created on February 25, 2018, 10:27 PM
  */
 
+#include <avr/pgmspace.h>
 #include <util/delay.h>
 
 #include "MLXDebug.h"

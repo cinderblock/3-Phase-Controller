@@ -11,6 +11,7 @@
  * Created on April 11, 2017, 6:49 PM
  */
 
+#include <avr/pgmspace.h>
 #include <util/delay.h>
 
 #include "Calibration.h"
