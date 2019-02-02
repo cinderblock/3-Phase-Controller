@@ -113,9 +113,9 @@ void ThreePhaseFaultTester::init() {
   constexpr u2 val = 2047 / 2;
   
   TC4H = val >> 8;
-  OCR4A = val;
-  OCR4B = val;
-  OCR4D = val;
+  OCR4A = u1(val);
+  OCR4B = u1(val);
+  OCR4D = u1(val);
 
   while (!TIFR4);
 }
