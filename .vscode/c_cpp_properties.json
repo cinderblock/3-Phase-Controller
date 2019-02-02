@@ -1,25 +1,28 @@
 {
-    "configurations": [
-        {
-            "name": "Win32",
-            "includePath": [
-                "${workspaceFolder}.",
-                "${workspaceFolder}lufa",
-                "${workspaceFolder}AVR++",
-                "${workspaceFolder}libCameron/src"
-            ],
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "__AVR_ATmega32U4__",
-                "AVR",
-                "_UNICODE"
-            ],
-            "compilerPath": "C:\\Program Files (x86)\\avr-gcc-7.2.0-x64-mingw\\bin\\avr-gcc.exe",
-            "cStandard": "c11",
-            "cppStandard": "c++11",
-            "intelliSenseMode": "clang-x64"
-        }
-    ],
-    "version": 4
+  "configurations": [
+    {
+      "name": "Win64",
+      "compilerPath": "C:\\Program Files (x86)\\avr-gcc-7.2.0-x64-mingw\\bin\\avr-gcc.exe",
+      "intelliSenseMode": "gcc-x64",
+      "includePath": [
+        "${workspaceFolder}/.",
+        "${workspaceFolder}/lufa",
+        "${workspaceFolder}/AVR++",
+        "${workspaceFolder}/libCameron/src"
+      ],
+      "defines": [
+        "_DEBUG",
+        "UNICODE",
+        "__AVR_ATmega32U4__",
+        "_UNICODE",
+        "F_CPU=16000000UL",
+        "F_USB=16000000UL",
+        "USE_LUFA_CONFIG_HEADER",
+        "ARCH=ARCH_AVR8"
+      ],
+      "cStandard": "c11",
+      "cppStandard": "c++11"
+    }
+  ],
+  "version": 4
 }
