@@ -7,7 +7,7 @@
 
 namespace ThreePhaseControllerNamespace {
 
-using namespace AVR;
+using namespace Basic;
 
 /**
  * This class wraps around a rotor position estimate. At some regular interval,

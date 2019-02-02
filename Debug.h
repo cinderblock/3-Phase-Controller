@@ -14,6 +14,7 @@
 namespace ThreePhaseControllerNamespace {
 
 namespace Debug {
+  using namespace Basic;
  using LED = Board::LED;
 
  void init();

@@ -19,7 +19,7 @@
 namespace ThreePhaseControllerNamespace {
 
 namespace Calibration {
-  using namespace AVR;
+using namespace Basic;
 
   constexpr bool enabled = false;
   constexpr u2 numberOfSpins = 7*5;

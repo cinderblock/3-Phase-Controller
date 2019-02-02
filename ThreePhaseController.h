@@ -22,7 +22,7 @@ ISR(TIMER4_OVF_vect);
 
 namespace ThreePhaseControllerNamespace {
 
-  using namespace AVR;
+using namespace Basic;
 
   /**
    * This static class wraps around the ThreePhaseDriver and some position estimation

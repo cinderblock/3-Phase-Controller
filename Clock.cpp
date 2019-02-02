@@ -8,7 +8,7 @@
 #include "Clock.h"
 #include "Timer.h"
 
-using namespace AVR;
+using namespace Basic;
 
 namespace ThreePhaseControllerNamespace {
 

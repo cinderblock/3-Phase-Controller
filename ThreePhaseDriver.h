@@ -15,7 +15,7 @@ ISR(ADC_vect);
 
 namespace ThreePhaseControllerNamespace {
 
-using namespace AVR;
+using namespace Basic;
 
 /**
  */

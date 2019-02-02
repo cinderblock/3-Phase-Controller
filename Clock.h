@@ -16,7 +16,7 @@
 
 namespace ThreePhaseControllerNamespace {
 
-using namespace AVR;
+using namespace Basic;
 
 ISR(TIMER3_COMPA_vect);
 

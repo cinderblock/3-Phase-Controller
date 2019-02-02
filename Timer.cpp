@@ -7,7 +7,7 @@
 
 #include "Timer.h"
 
-using namespace AVR;
+using namespace Basic;
 using namespace ThreePhaseControllerNamespace;
 
 void Timer::init() {

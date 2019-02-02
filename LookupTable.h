@@ -15,7 +15,7 @@
 
 namespace ThreePhaseControllerNamespace {
 
-using namespace AVR;
+using namespace Basic;
 
 class Lookup {
 public:
