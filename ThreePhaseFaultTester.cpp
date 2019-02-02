@@ -125,7 +125,11 @@ ThreePhaseFaultTester::FailMode ThreePhaseFaultTester::test(Phase p) {
     case Phase::A: TCCR4E = 0b01000000 | (1 << OC4OE0) | (1 << OC4OE1); break;
     case Phase::B: TCCR4E = 0b01000000 | (1 << OC4OE2) | (1 << OC4OE3); break;
     case Phase::C: TCCR4E = 0b01000000 | (1 << OC4OE4) | (1 << OC4OE5); break;
+  default:
+    break;
   }
+
+  return FailMode::Fail;
 }
 
 ThreePhaseFaultTester::FailMode ThreePhaseFaultTester::test(Channel c) {
@@ -137,4 +141,6 @@ ThreePhaseFaultTester::FailMode ThreePhaseFaultTester::test(Channel c) {
     case Channel::CL: TCCR4E = 0b01000000 | (1 << OC4OE4); break;
     case Channel::CH: TCCR4E = 0b01000000 | (1 << OC4OE5); break;
   }
+
+  return FailMode::Fail;
 }
