@@ -21,7 +21,7 @@ The motor controller has:
 
 ### Output<a name="output"></a>
 
-The servo simulates the 3 sin waves needed to drive a 3-phase motor with a ~32KHz PWM of 3 half-H bridges.
+The servo simulates the 3 sin waves needed to drive a 3-phase motor with a ~31KHz PWM of 3 half-H bridges.
 
 
 #### Driver<a name="driver"></a>
