@@ -49,7 +49,7 @@ F_CPU = 16000000UL
 
 DEFINES = USE_LUFA_CONFIG_HEADER
 
-INCLUDES = .
+INCLUDES = src
 
 # Make compilation fail on first error
 Build_Flags_Extra = -Wfatal-errors
@@ -76,6 +76,7 @@ all: dfu-erase dfu-flash dfu-reset
 -include local.$(shell hostname).mk
 
 uMakerPath ?= uMaker/
+Source_Path ?= src/
 
 include $(uMakerPath)tools/paths.mk
 

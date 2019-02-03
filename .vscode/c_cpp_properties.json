@@ -5,7 +5,7 @@
       "compilerPath": "C:\\Program Files (x86)\\avr-gcc-7.2.0-x64-mingw\\bin\\avr-gcc.exe",
       "intelliSenseMode": "gcc-x64",
       "includePath": [
-        "${workspaceFolder}/.",
+        "${workspaceFolder}/src",
         "${workspaceFolder}/lufa",
         "${workspaceFolder}/AVR++",
         "${workspaceFolder}/libCameron/src"
