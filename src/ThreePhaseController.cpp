@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   ThreePhaseController.cpp
  * Author: Cameron
- * 
+ *
  * Created on October 22, 2015, 2:21 AM
  */
 
@@ -21,6 +21,8 @@ using namespace ThreePhaseControllerNamespace;
 
 volatile bool ThreePhaseController::enabled = false;
 volatile bool ThreePhaseController::isForwardTorque;
+volatile u1 ThreePhaseController::dampingVelocityGain = 0;
+volatile ThreePhaseController::Amplitude ThreePhaseController::targetAmplitude = 0;
 
 /**
  * This interrupt is triggered on TIMER4 (PWM6) overflow. This happens at the BOTTOM
@@ -35,6 +37,7 @@ void TIMER4_OVF_vect() {
 //  Board::SER::Tx::off();
 }
 
+// This is the loop that happens at 31.25 kHz
 void ThreePhaseController::controlLoop() {
   static volatile bool running = false;
   static volatile u1 stepCount = 0;
@@ -58,7 +61,7 @@ void ThreePhaseController::controlLoop() {
 
   // Advance our position estimate n steps in time
   ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance(steps);
-  
+
   // TODO: more phase advance at higher speeds
   if (isForwardTorque) {
     p += output90DegPhaseShift;
@@ -80,7 +83,8 @@ void ThreePhaseController::init() {
   enable();
 }
 
-void ThreePhaseController::setAmplitude(const Amplitude t) {
+void ThreePhaseController::handleNewVelocityEstimate(s2 const v) {
+  auto t = targetAmplitude + ((s4(v) * dampingVelocityGain >> 8));
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     isForwardTorque = t.forward;
     ThreePhaseDriver::setAmplitude(t.amplitude);

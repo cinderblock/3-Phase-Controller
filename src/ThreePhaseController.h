@@ -17,6 +17,7 @@
 #include "ThreePhaseDriver.h"
 #include "ThreePhasePositionEstimator.h"
 #include <avr/interrupt.h>
+#include <util/atomic.h>
 
 ISR(TIMER4_OVF_vect);
 
@@ -94,21 +95,62 @@ public:
     inline Amplitude(s2 const t) : forward(t >= 0), amplitude(forward ? t : -t){};
 
     inline Amplitude(const bool fwd, u1 const ampl) : forward(fwd), amplitude(ampl){};
+
+    inline Amplitude &operator+=(s1 const d) {
+      s2 ampl = forward ? amplitude : -amplitude;
+      ampl += d;
+      if (ampl > 255)
+        ampl = 255;
+      else if (ampl < -255)
+        ampl = -255;
+      amplitude = (forward = ampl >= 0) ? ampl : -ampl;
+      return *this;
+    }
+
+    inline Amplitude operator+(s1 const d) volatile {
+      s2 ampl = forward ? amplitude : -amplitude;
+      ampl += d;
+      if (ampl > 255)
+        ampl = 255;
+      else if (ampl < -255)
+        ampl = -255;
+      return ampl;
+    }
   };
 
+private:
+  /**
+   * Target "push" amount
+   */
+  static volatile Amplitude targetAmplitude;
+
+public:
   /**
    * Set the desired drive amplitude
    */
-  static void setAmplitude(const Amplitude t);
+  inline static void setAmplitudeTarget(const Amplitude t) {
+    ATOMIC_BLOCK(ATOMIC_FORCEON) {
+      targetAmplitude.amplitude = t.amplitude;
+      targetAmplitude.forward = t.forward;
+    }
+  }
 
   /**
    * Get the current amplitude
    *
    * @return s2 (range [-255, 255])
    */
-  static inline s2 getAmplitude() {
-    return isForwardTorque ? ThreePhaseDriver::getAmplitude() : -(s2)(ThreePhaseDriver::getAmplitude());
+  static inline Amplitude getAmplitudeTarget() {
+    return Amplitude(targetAmplitude.forward, targetAmplitude.amplitude);
   };
+
+  static void handleNewVelocityEstimate(s2 const v);
+
+private:
+  static volatile u1 dampingVelocityGain;
+
+public:
+  inline static void setAntiDampingVelocityGain(u1 const g) { dampingVelocityGain = g; }
 };
 
 }; // namespace ThreePhaseControllerNamespace

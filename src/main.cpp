@@ -41,7 +41,7 @@ void init() {
   wdt_disable();
 
   Debug::init();
-  Debug::dout << PSTR("Beginning Inits \r\n");
+  Debug::dout << PSTR("Beginning Inits\r\n");
 
   // Set up the driver pins
   ThreePhaseDriver::init();
@@ -82,9 +82,12 @@ int main() {
   while (1) {
     HID_Device_USBTask(&Generic_HID_Interface);
 		USB_USBTask();
+
     if (auto msg = SerialInterface::getMessage()) {
-      ThreePhaseController::setAmplitude(msg->getCommand());
+      ThreePhaseController::setAmplitudeTarget(msg->getCommand());
     }
+
+    ServoController::update();
   }
 
   // loop in case main loop is disabled

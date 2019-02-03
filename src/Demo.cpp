@@ -83,7 +83,7 @@ void Demo::dumbSpin::main() {
     while (!go) {
       if (i > iMax) i = iMax;
       do {
-        Board::LED::set(i < alpha);
+//        Board::LED::set(i < alpha);
       } while (i-- && !go);
     }
     go = false;
@@ -99,7 +99,7 @@ void Demo::dumbSpin::timeout() {
 
 void Demo::ManualConstantTorque::main(u1 ampl) {
   ThreePhaseController::init();
-  ThreePhaseController::setAmplitude(ampl);
+  ThreePhaseController::setAmplitudeTarget(ampl);
   while(1);
 }
 

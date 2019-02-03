@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   USBInterface.h
  * Author: Cameron
  *
@@ -54,4 +54,3 @@ namespace ThreePhaseControllerNamespace {
 }
 
 #endif /* USBINTERFACE_H */
-

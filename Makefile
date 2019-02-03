@@ -66,7 +66,7 @@ all: build-lss
 # Program with AVR attached locally
 all: dfu-erase dfu-flash dfu-reset
 
-# Program with AVR attached to SleepyPi
+# Program with AVR attached to some remote host like an rPi
 #all: remote_prog
 
 #ASM = $(CPP:%=%.cpp.S)
@@ -114,12 +114,13 @@ include $(uMakerPath)tools/dfu.mk
 include $(uMakerPath)tools/mkdir.mk
 
 REMOTE_HEX = $(TARGET).hex
-REMOTE = pi@sleepypi
+REMOTE = pi@raspberrySandwich
+# REMOTE = pi@sleepypi
 
 remote_prog: $(OUT_HEX)
+	$(ECO) Sending $(OUT_HEX) to $(REMOTE)
 	pscp -q $(OUT_HEX) $(REMOTE):$(REMOTE_HEX)
-	-plink $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX)
-	-plink $(REMOTE) sudo $(DFU_TARGETED) reset
+	-plink $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
 	plink $(REMOTE) rm $(REMOTE_HEX)
 
 .PHONY: all run remote_prog

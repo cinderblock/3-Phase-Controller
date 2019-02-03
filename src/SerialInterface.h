@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   SerialInterface.h
  * Author: Cameron
  *
@@ -46,13 +46,14 @@ public:
      */
     typedef struct {
       s2 command;
+      // s4 target;  // for example if we used the serial interface
     } block;
 
     /**
      * fix length of message, including crc
      */
     static constexpr size_t length = sizeof(block) + sizeof(crc);
-    
+
     union {
       u1 raw[length];
       block data;
@@ -80,7 +81,7 @@ public:
 public:
   inline static bool isMessageReady() {
     if (!incoming.isNewData()) return false;
-    
+
     incoming.reserveNewestBufferForReading();
 
     return (incoming.getReadBuffer()->checkCRC() == 0);

@@ -38,6 +38,7 @@
 #include "USBDescriptors.h"
 #include "LUFAConfig.h"
 #include "USBPacketFormats.h"
+#include "Config.h"
 
 
 /** HID class report descriptor. This is a special descriptor constructed with values from the
@@ -80,7 +81,7 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 
 	.ManufacturerStrIndex   = STRING_ID_Manufacturer,
 	.ProductStrIndex        = STRING_ID_Product,
-	.SerialNumStrIndex      = NO_DESCRIPTOR,
+	.SerialNumStrIndex      = STRING_ID_Serial,
 
 	.NumberOfConfigurations = 1,
 };
@@ -163,6 +164,25 @@ const USB_Descriptor_String_t PROGMEM ManufacturerString = USB_STRING_DESCRIPTOR
  */
 const USB_Descriptor_String_t PROGMEM ProductString = USB_STRING_DESCRIPTOR(L"LMR Quantum Driver");
 
+
+const USB_Descriptor_String_t PROGMEM SerialString = USB_STRING_DESCRIPTOR(
+#if defined QUANTUM_DRIVE
+#if QUANTUM_DRIVE == 1
+L"LMR-QT-00000001"
+#elif QUANTUM_DRIVE == 2
+L"LMR-QT-00000002"
+#elif QUANTUM_DRIVE == 3
+L"LMR-QT-00000003"
+#else
+L"LMR-QT-00000000"
+#endif
+#elif defined BED_CONTROLLER
+L"CBN-HV-00000001"
+#else
+L"0"
+#endif
+);
+
 /** This function is called by the library when in device mode, and must be overridden (see library "USB Descriptors"
  *  documentation) by the application code so that the address and size of a requested descriptor can be given
  *  to the USB library. When the device receives a Get Descriptor request on the control endpoint, this function
@@ -203,6 +223,10 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 				case STRING_ID_Product:
 					Address = &ProductString;
 					Size    = pgm_read_byte(&ProductString.Header.Size);
+					break;
+				case STRING_ID_Serial:
+					Address = &SerialString;
+					Size    = pgm_read_byte(&SerialString.Header.Size);
 					break;
 			}
 

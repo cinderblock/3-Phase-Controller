@@ -23,10 +23,10 @@ namespace Board {
 
 #ifdef BED_CONTROLLER
  using Sw1 = Input<Ports::F, 1>; // start switch pin
- using LED_L = Output<Ports::F, 4>; // On breakout
- using LED_TX = Output<Ports::D, 5>; // On Simple Controller
+ using LED_L = Output<Ports::F, 4>;
+ using LED_TX = Output<Ports::D, 5>; 
  // LED_RX is SPI_SS (PB0)
- using LED = LED_L;
+ using LED = LED_TX;
 #endif
 
 #ifdef QUANTUM_DRIVE
@@ -48,10 +48,6 @@ namespace Board {
 #endif
  
  namespace SPI {
-  using SCLK = Output<Ports::B, 1>;
-  using MOSI = Output<Ports::B, 2>;
-  using MISO = Input<Ports::B, 3>;
-
   inline void slaveDeselect() __attribute__((always_inline, hot));
   inline void slaveSelect() __attribute__((always_inline, hot));
   inline void slaveDeselect() {MagSel::off();}

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   USBPacketFormats.h
  * Author: Cameron
  *
@@ -22,15 +22,20 @@ extern "C" {
 
 /**
  * Shape of data going OUT of host.
+ * ( From the rPi).
  */
-typedef struct {
-  int16_t push;
-  uint16_t dummy0;
-  uint32_t dummy1;
+typedef union {
+  struct {
+    uint8_t mesgType;
+    int32_t command;
+  };
+  // Force the OUTshape to be 8 bytes long
+  uint8_t dummy[8];
 } USBDataOUTShape;
 
 /**
- * Shape of data going IN to host.
+ * Shape of data going IN to host
+ * ( To the rPi).
  */
 typedef struct {
   uint32_t position;
@@ -43,4 +48,3 @@ typedef struct {
 #endif
 
 #endif /* USBPACKETFORMATS_H */
-

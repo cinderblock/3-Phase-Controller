@@ -80,12 +80,23 @@ void MLXDebug::main() {
   if (!enabled)
     return;
 
+  Debug::dout << PSTR("MLX Debug\r\n");
+
   MLX90363::init();
+
+  Debug::dout << PSTR("MLX90363::init() done\r\n");
+
+  if (MLX90363::isTransmitting()) {
+    Debug::dout << PSTR("Already Transmitting!\r\n");
+  }
+
   MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
+
+  Debug::dout << PSTR("Get 1 Message Ready\r\n");
 
   auto magRoll = MLX90363::getRoll();
 
-  Board::LED::on();
+  //  Board::LED::on();
 
   u1 i = 0;
 
@@ -97,10 +108,19 @@ void MLXDebug::main() {
     printMLXBuffer(MLX90363::getTxBuffer());
     Debug::dout << '\r' << '\n';
 
+    auto state = MLX90363::getResponseState();
+
+    Debug::dout << PSTR("MLX State: ") << state << '\r' << '\n';
+
     MLX90363::startTransmitting();
     // Wait for packet (get1 message) to actually send
-    while (MLX90363::isTransmitting())
-      ;
+    while (MLX90363::isTransmitting()) {
+      auto newState = MLX90363::getResponseState();
+      if (state != newState) {
+        state = newState;
+        Debug::dout << PSTR("New State: ") << state << '\r' << '\n';
+      }
+    }
 
     Debug::dout << PSTR("Rx: ");
     printMLXBuffer(MLX90363::getRxBuffer());

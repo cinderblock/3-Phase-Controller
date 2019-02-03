@@ -69,8 +69,9 @@ void MLX90363::init() {
   // Setup Slave Select line
   Board::SPI::slaveDeselect();
 
-  Board::SPI::MOSI::on();
-  Board::SPI::SCLK::on();
+  AVR::SPI::MOSI::output();
+  AVR::SPI::SCLK::output();
+
   Board::MagSel::off();
 
   // Setup control registers
@@ -81,6 +82,12 @@ void MLX90363::init() {
   // F_CPU/64
   AVR::SPI::CR->byte = 0b11010111;
 // #endif
+
+  // Make sure SS line is an output. If it is an input, the AVR hardware can kick
+  // in and disable "Master" mode.
+  AVR::SPI::SS::output();
+  // Might as well make sure a device connected to SS is disabled.
+  AVR::SPI::SS::set();
 
 // #ifdef QUANTUM_DRIVE
 //   // Enable SPI2X

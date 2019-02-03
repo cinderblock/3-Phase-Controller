@@ -14,6 +14,7 @@
 #ifndef CALIBRATION_H
 #define CALIBRATION_H
 
+#include "Config.h"
 #include <AVR++/basicTypes.h>
 
 namespace ThreePhaseControllerNamespace {
@@ -22,8 +23,19 @@ namespace Calibration {
 using namespace Basic;
 
 constexpr bool enabled = false;
-constexpr u2 numberOfSpins = 7 * 5;
-constexpr u1 amplitude = 70;
+
+#ifdef BED_CONTROLLER
+// 5 mechanical revolutions
+constexpr u2 numberOfSpins = 5 * 15;
+constexpr u1 amplitude = 60;
+#endif
+
+#ifdef QUANTUM_DRIVE
+// 10 mechanical revolutions
+constexpr u2 numberOfSpins = 7 * 10;
+constexpr u1 amplitude = 40;
+#endif
+
 constexpr u2 rampSteps = 0x300;
 void main();
 

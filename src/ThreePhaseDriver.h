@@ -11,6 +11,8 @@
 #include <AVR++/basicTypes.h>
 #include <avr/interrupt.h>
 
+#include "Config.h"
+
 ISR(ADC_vect);
 
 namespace ThreePhaseControllerNamespace {
@@ -50,25 +52,53 @@ class ThreePhaseDriver {
 
 public:
   /**
+   * Internal granularity of sin wave for each phase
+   */
+  static u2 constexpr StepsPerPhase = 256;
+
+  /**
+   * One for each of A, B, and C.
+   */
+  static u1 constexpr PhasesPerCycle = 3;
+
+  /**
+   * One Cycle is one full commutation (aka electrical revolution) of the motor.
+   * This is almost certainly not one actual revolution of the motor shaft.
+   */
+  static u2 constexpr StepsPerCycle = StepsPerPhase * PhasesPerCycle;
+
+  static u2 constexpr CyclesPerRevolution =
+#if defined BED_CONTROLLER
+      15
+#elif defined QUANTUM_DRIVE
+      7
+#else
+      1
+#endif
+      ;
+
+  static u2 constexpr StepsPerRevolution = StepsPerCycle * CyclesPerRevolution;
+
+  /**
    * The outputs can be in one of 3 phases
    */
-  enum class Phase : u1 { A = 0, B = 1, C = 2, Brake = 3 };
+  enum class Phase : u1 { A = 0, B = 1, C = 2 };
 
   /**
    * class to store and work with all possible output "angles"
    */
   class PhasePosition {
     /**
-     * Internal byte + 2 bits that fully describe an output angle
+     * Internal byte + n bits that fully describe an output angle
      */
     u2 commutation;
 
     /**
      * The maximum valid value commutation can have
      */
-    static constexpr u2 MAX = 0x2ff;
+    static constexpr u2 MAX = StepsPerRevolution - 1;
 
-    static constexpr u2 FULL = MAX + 1;
+    static constexpr u2 FULL = StepsPerRevolution;
 
     friend class ThreePhaseDriver;
 
@@ -83,7 +113,7 @@ public:
      * Get the current Phase
      * @return
      */
-    inline Phase getPhase() const { return (Phase)(commutation >> 8); }
+    inline Phase getPhase() const { return (Phase)((commutation >> 8) % PhasesPerCycle); }
     /**
      * Initialize a commutation angle with some current angle
      * @param commutation
@@ -100,8 +130,6 @@ public:
     inline PhasePosition(Phase const phase, u1 const commutation) : commutation(((u1)phase << 8) | commutation) {}
 
     inline PhasePosition &operator+=(u1 const steps) {
-      if (getPhase() == Phase::Brake)
-        return *this;
       commutation += steps;
       if (commutation > MAX)
         commutation -= FULL;
@@ -110,8 +138,6 @@ public:
     }
 
     inline PhasePosition &operator-=(u1 const steps) {
-      if (getPhase() == Phase::Brake)
-        return *this;
       commutation -= steps;
       if (commutation > MAX)
         commutation += FULL;
@@ -120,8 +146,6 @@ public:
     }
 
     inline PhasePosition &operator+=(u2 const steps) {
-      if (getPhase() == Phase::Brake)
-        return *this;
       // TODO: This is broken if steps is very large and overflows commutation
       commutation += steps;
       commutation %= FULL;
@@ -130,8 +154,6 @@ public:
     }
 
     inline PhasePosition &operator-=(u2 const steps) {
-      if (getPhase() == Phase::Brake)
-        return *this;
       commutation -= steps;
       // TODO: Better & faster math here
       while (commutation > MAX)
@@ -141,8 +163,6 @@ public:
     }
 
     inline PhasePosition &operator++() {
-      if (getPhase() == Phase::Brake)
-        return *this;
       if (commutation == MAX) {
         commutation = 0;
       } else {
@@ -193,27 +213,6 @@ public:
   };
 
   /**
-   * Internal granularity of sin wave for each phase
-   */
-  static u2 constexpr StepsPerPhase = 256;
-
-  /**
-   * One for each of A, B, and C.
-   */
-  static u1 constexpr PhasesPerCycle = 3;
-
-  /**
-   * One Cycle is one full commutation (aka electrical revolution) of the motor.
-   * This is almost certainly not one actual revolution of the motor shaft.
-   */
-  static u2 constexpr StepsPerCycle = StepsPerPhase * PhasesPerCycle;
-
-  /**
-   * Highest possible timer value
-   */
-  static u2 constexpr MAX = 0x7ff;
-
-  /**
    * Initialize the AVR hardware
    */
   static void init();
@@ -226,14 +225,7 @@ public:
    */
   static void advanceTo(PhasePosition const phase) __attribute__((hot));
 
-  /**
-   * Magic number to ensure we don't miss a tick of a phase
-   * TODO: confirm this is still needed.
-   */
-  static constexpr u1 calcMaxAmplitude = 0xff - 30;
-  static constexpr u1 maxAmplitude = calcMaxAmplitude;
-
-  static inline void setAmplitude(u1 const a) { amplitude = a > maxAmplitude ? maxAmplitude : a; }
+  static inline void setAmplitude(u1 const a) { amplitude = a; }
 
   static inline u1 getAmplitude() { return amplitude; };
 
