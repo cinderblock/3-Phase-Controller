@@ -10,3 +10,6 @@
 [submodule "lufa"]
 	path = lufa
 	url = https://github.com/abcminiuser/lufa.git
+[submodule "bootloader"]
+	path = bootloader
+	url = https://github.com/cinderblock/usb-dfu.git
