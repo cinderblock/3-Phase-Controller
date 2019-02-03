@@ -56,7 +56,7 @@ AVRpp_SRC ?= gccGuard
 # Make compilation fail on first error
 Build_Flags_Extra = -Wfatal-errors
 
-TARGET = turnigy
+TARGET = controller
 
 MCU = atmega32u4
 
