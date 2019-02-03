@@ -51,6 +51,8 @@ DEFINES = USE_LUFA_CONFIG_HEADER
 
 INCLUDES = src calibrations
 
+AVRpp_SRC ?= gccGuard
+
 # Make compilation fail on first error
 Build_Flags_Extra = -Wfatal-errors
 
