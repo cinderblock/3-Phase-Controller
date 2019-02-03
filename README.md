@@ -40,6 +40,38 @@ git submodule init
 git submodule update
 ```
 
+### Build Requirements
+
+Only real requirement is running the main `Makefile`.
+All build steps are configurable on a per machine hostname basis.
+Create a file named `local.<hostname>.mk` in the project root, next to the main `Makefile`.
+This file will be automatically loaded and can be used to override any make variables.
+The primary use for this is to enable the ability to not have all the needed binaries in the PATH.
+
+#### Compiler
+
+While we endeavour to be standards compliant, the reality is that it is difficult to ensure all possible compilers work.
+
+Known working compilers:
+
+- [AVR 8-bit Toolchain](https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers) v3.6.2
+
+#### Common `local.<hostname>.mk` options
+
+```make
+GCC_RootDir = C:/Program Files (x86)/avr8-gnu-toolchain
+mkdirCommand = mkdir
+```
+
+#### Windows
+
+All paths in uMaker use `/` as a directory separator.
+
+Windows's `mkdir`/`md` does not support `/` directory separator.
+
+Installing cygwin is the easiest way to get building on Windows working.
+Make sure `make` is "selected for installation".
+
 ### Bootloader
 
 The current Makefile is setup to program an AVR via USB DFU. It is possible to switch to using an ISP or other bootloader/programmer easily as well.
