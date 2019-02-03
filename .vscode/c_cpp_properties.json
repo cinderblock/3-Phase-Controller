@@ -2,7 +2,7 @@
   "configurations": [
     {
       "name": "Win64",
-      "compilerPath": "C:\\Program Files (x86)\\avr-gcc-7.2.0-x64-mingw\\bin\\avr-gcc.exe",
+      "compilerPath": "C:\\Program Files (x86)\\avr8-gnu-toolchain-win32_x86-3.6.2\\bin\\avr-gcc.exe",
       "intelliSenseMode": "gcc-x64",
       "includePath": [
         "${workspaceFolder}/src",
