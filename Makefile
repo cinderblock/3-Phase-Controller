@@ -49,7 +49,7 @@ F_CPU = 16000000UL
 
 DEFINES = USE_LUFA_CONFIG_HEADER
 
-INCLUDES = src
+INCLUDES = src calibrations
 
 # Make compilation fail on first error
 Build_Flags_Extra = -Wfatal-errors
