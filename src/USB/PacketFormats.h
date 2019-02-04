@@ -24,20 +24,18 @@ using reportSize = uint8_t[REPORT_SIZE];
 
 /**
  * Shape of data going OUT of host.
- * ( From the rPi).
  */
 typedef union {
   struct {
     uint8_t mesgType;
     int32_t command;
   };
-  // Force the OUTshape to be 8 bytes long
+  // Force the OUTshape to be REPORT_SIZE long
   reportSize rawReport;
 } USBDataOUTShape;
 
 /**
  * Shape of data going IN to host
- * ( To the rPi).
  */
 typedef union {
   struct {
@@ -48,7 +46,7 @@ typedef union {
     int16_t current;
     uint16_t rawAngle;
   };
-  // Force the OUTshape to be 8 bytes long
+  // Force the OUTshape to be REPORT_SIZE long
   reportSize rawReport;
 } USBDataINShape;
 
