@@ -58,8 +58,6 @@ INCLUDES = src
 # Store calibrations in a different folder
 INCLUDES += calibrations
 
-AVRpp_SRC ?= gccGuard
-
 # Make compilation fail on first error
 Build_Flags_Extra = -Wfatal-errors
 
