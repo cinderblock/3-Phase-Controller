@@ -15,260 +15,215 @@
 
 namespace ThreePhaseControllerNamespace {
 
-  using namespace AVR;
+using namespace AVR;
 
-  /*
-   * Static class for handling the various servo modes
+/*
+ * Static class for handling the various servo modes
+ */
+class ServoController {
+private:
+  /**
+   * The different modes that we can use to servo
    */
-  class ServoController {
-  private:
-    /**
-     * The different modes that we can use to servo
-     */
-    enum class Mode : u1 {
-      Init, Amplitude, Velocity, Position
-    };
+  enum class Mode : u1 { Init, Amplitude, Velocity, Position };
 
-    /**
-     * Which mode are we currently in
-     */
-    static Mode servoMode;
+  /**
+   * Which mode are we currently in
+   */
+  static Mode servoMode;
 
-    /**
-     * Current command for simple amplitude control
-     */
-    static s2 amplitudeCommand;
+  /**
+   * Current command for simple amplitude control
+   */
+  static s2 amplitudeCommand;
 
-    /**
-     * Current drive amplitude in higher resolution than we can actually use
-     */
-    static s4 driveAmplitudeScaled;
+  /**
+   * Current drive amplitude in higher resolution than we can actually use
+   */
+  static s4 driveAmplitudeScaled;
 
-    /**
-     * The current target velocity
-     */
-    static s2 velocityCommand;
+  /**
+   * The current target velocity
+   */
+  static s2 velocityCommand;
 
-    /**
-     * The current target position
-     */
-    static u4 positionCommand;
+  /**
+   * The current target position
+   */
+  static u4 positionCommand;
 
-    /**
-     * Number of full motor mechanical revolutions we've been through
-     */
-    static s2 onRotation;
+  /**
+   * Number of full motor mechanical revolutions we've been through
+   */
+  static s2 onRotation;
 
-    static u1 position_P;
-    static u1 position_I;
-    static u1 position_D;
+  static u1 position_P;
+  static u1 position_I;
+  static u1 position_D;
 
-    static u1 velocity_P;
-    static u1 velocity_I;
-    static u1 velocity_D;
+  static u1 velocity_P;
+  static u1 velocity_I;
+  static u1 velocity_D;
 
-    static u1 positionShift;
-    static u1 velocityShift;
+  static u1 positionShift;
+  static u1 velocityShift;
 
-    // static u2 initialPhasePosition;
+  // static u2 initialPhasePosition;
 
-    static const u1 DeadBand = 50;
+  static const u1 DeadBand = 50;
 
-  public:
+public:
+  /**
+   * Update amplitude command in ThreePhaseController based on current servo target parameters.
+   */
+  static void update();
 
-    /**
-     * Update amplitude command in ThreePhaseController based on current servo target parameters.
-     */
-    static void update();
+  /**
+   * Initialize all the hardware. Also run init() functions of lower level software.
+   */
+  static void init();
 
-    /**
-     * Initialize all the hardware. Also run init() functions of lower level software.
-     */
-    static void init();
+  /**
+   * Set the controller into constant amplitude mode with some amplitude
+   */
+  static void setAmplitude(s2);
 
-    /**
-     * Set the controller into constant amplitude mode with some amplitude
-     */
-    static void setAmplitude(s2);
+  /**
+   * Puts the controller into constant velocity mode and sets the target
+   * @param
+   */
+  static void setVelocity(s2);
 
-    /**
-     * Puts the controller into constant velocity mode and sets the target
-     * @param
-     */
-    static void setVelocity(s2);
+  /**
+   * Get the commanded velocity
+   * @return
+   */
+  inline static s2 getVelocityCommand() { return velocityCommand; };
 
-    /**
-     * Get the commanded velocity
-     * @return
-     */
-    inline static s2 getVelocityCommand() {
-      return velocityCommand;
-    };
+  //////////// angular position commands ////////////////
 
+  /**
+   * Put controller into position mode and sets the target
+   * @param
+   */
+  static void setPosition(u4);
 
-    //////////// angular position commands ////////////////
+  /**
+   * Put controller into position mode and sets the target as a delta from current
+   * @param
+   */
+  static void setDistance(s4);
 
-    /**
-     * Put controller into position mode and sets the target
-     * @param
-     */
-    static void setPosition(u4);
+  /**
+   * Get the commanded position
+   * @return
+   */
+  inline static s4 getPositionCommand() { return positionCommand; };
 
-    /**
-     * Put controller into position mode and sets the target as a delta from current
-     * @param
-     */
-    static void setDistance(s4);
+  /**
+   * Get the current number of revolutions
+   * @return
+   */
+  inline static s2 getRevolution() { return onRotation; };
 
-    /**
-     * Get the commanded position
-     * @return
-     */
-    inline static s4 getPositionCommand() {
-      return positionCommand;
-    };
+  /**
+   * Set P of position PID
+   * @param p
+   */
+  static inline void setPosition_P(u1 p) { position_P = p; };
 
-    /**
-     * Get the current number of revolutions
-     * @return
-     */
-    inline static s2 getRevolution() {
-      return onRotation;
-    };
+  /**
+   * Get P of position PID
+   * @return
+   */
+  static inline u1 getPosition_P() { return position_P; };
 
+  /**
+   * Set I of position PID
+   * @param i
+   */
+  static inline void setPosition_I(u1 i) { position_I = i; };
 
-    /**
-     * Set P of position PID
-     * @param p
-     */
-    static inline void setPosition_P(u1 p) {
-      position_P = p;
-    };
+  /**
+   * Get I of position PID
+   * @return
+   */
+  static inline u1 getPosition_I() { return position_I; };
 
-    /**
-     * Get P of position PID
-     * @return
-     */
-    static inline u1 getPosition_P() {
-      return position_P;
-    };
+  /**
+   * Set D of position PID
+   * @param d
+   */
+  static inline void setPosition_D(u1 d) { position_D = d; };
 
-    /**
-     * Set I of position PID
-     * @param i
-     */
-    static inline void setPosition_I(u1 i) {
-      position_I = i;
-    };
+  /**
+   * Get D of position PID
+   * @return
+   */
+  static inline u1 getPosition_D() { return position_D; };
 
-    /**
-     * Get I of position PID
-     * @return
-     */
-    static inline u1 getPosition_I() {
-      return position_I;
-    };
+  /**
+   * Set the shifted amount for scaling the position PID values
+   */
+  static inline void setPositionShift(u1 p) { positionShift = p; };
 
-    /**
-     * Set D of position PID
-     * @param d
-     */
-    static inline void setPosition_D(u1 d) {
-      position_D = d;
-    };
+  /**
+   * Get the shift amount
+   */
+  static inline u1 getPositionShift() { return positionShift; };
 
-    /**
-     * Get D of position PID
-     * @return
-     */
-    static inline u1 getPosition_D() {
-      return position_D;
-    };
+  /**
+   * Set P of velocity PID
+   * @param p
+   */
+  static inline void setVelocity_P(u1 p) { velocity_P = p; };
 
-    /**
-     * Set the shifted amount for scaling the position PID values
-     */
-    static inline void setPositionShift(u1 p) {
-      positionShift = p;
-    };
+  /**
+   * Get P of velocity PID
+   * @return
+   */
+  static inline u1 getVelocity_P() { return velocity_P; };
 
-    /**
-     * Get the shift amount
-     */
-    static inline u1 getPositionShift() {
-      return positionShift;
-    };
+  /**
+   * Set I of velocity PID
+   * @param i
+   */
+  static inline void setVelocity_I(u1 i) { velocity_I = i; };
 
+  /**
+   * Get I of velocity PID
+   * @return
+   */
+  static inline u1 getVelocity_I() { return velocity_I; };
 
-    /**
-     * Set P of velocity PID
-     * @param p
-     */
-    static inline void setVelocity_P(u1 p) {
-      velocity_P = p;
-    };
+  /**
+   * Set D of velocity PID
+   * @param d
+   */
+  static inline void setVelocity_D(u1 d) { velocity_D = d; };
 
-    /**
-     * Get P of velocity PID
-     * @return
-     */
-    static inline u1 getVelocity_P() {
-      return velocity_P;
-    };
+  /**
+   * Get D of velocity PID
+   * @return
+   */
+  static inline u1 getVelocity_D() { return velocity_D; };
 
-    /**
-     * Set I of velocity PID
-     * @param i
-     */
-    static inline void setVelocity_I(u1 i) {
-      velocity_I = i;
-    };
+  /**
+   * Set the shifted amount for scaling the velocity to be set
+   */
+  static inline void setVelocityShift(u1 p) { velocityShift = p; };
 
-    /**
-     * Get I of velocity PID
-     * @return
-     */
-    static inline u1 getVelocity_I() {
-      return velocity_I;
-    };
+  /**
+   * Get the velocity shift amount
+   */
+  static inline u1 getVelocityShift() { return velocityShift; };
 
-    /**
-     * Set D of velocity PID
-     * @param d
-     */
-    static inline void setVelocity_D(u1 d) {
-      velocity_D = d;
-    };
-
-    /**
-     * Get D of velocity PID
-     * @return
-     */
-    static inline u1 getVelocity_D() {
-      return velocity_D;
-    };
-
-    /**
-     * Set the shifted amount for scaling the velocity to be set
-     */
-    static inline void setVelocityShift(u1 p) {
-      velocityShift = p;
-    };
-
-    /**
-     * Get the velocity shift amount
-     */
-    static inline u1 getVelocityShift() {
-      return velocityShift;
-    };
-
-    /**
-     * Enable or disable servo controller
-     */
-    static void setEnable(bool);
-
-  };
-
+  /**
+   * Enable or disable servo controller
+   */
+  static void setEnable(bool);
 };
+
+}; // namespace ThreePhaseControllerNamespace
 
 #endif /* SERVOCONTROLLER_H */

@@ -43,7 +43,8 @@ s4 wrapdist(u4 to, u4 from) {
 }
 
 s2 abs2(s2 num) {
-  if (num < 0) return -num;
+  if (num < 0)
+    return -num;
   return num;
 }
 
@@ -56,7 +57,7 @@ void ServoController::init() {
 
   position_P = 0;
   position_I = 0;
-  position_D = 0;   //(float) .12  = 61/512
+  position_D = 0; //(float) .12  = 61/512
 
   positionShift = 12;
 
@@ -66,21 +67,15 @@ void ServoController::init() {
   // initialPhasePosition = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 }
 
-
-
 void ServoController::update() {
   // This function is called as often as possible in the main loop.
   // It looks at its currently available data and calculates a signed amplitude
   // to pass back to the ThreePhaseController
 
-
-
   if (servoMode == Mode::Init) {
     // DO NOTHING
   } else if (servoMode == Mode::Amplitude) {
     ThreePhaseController::setAmplitudeTarget(amplitudeCommand);
-
-
 
   } else if (servoMode == Mode::Velocity) {
     static s2 lastVel = 0;
@@ -104,8 +99,6 @@ void ServoController::update() {
 
     lastVel = vel;
 
-
-
   } else if (servoMode == Mode::Position) {
 
     // if(initialPhasePosition == 0) initialPhasePosition = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
@@ -114,7 +107,7 @@ void ServoController::update() {
 
     const s4 positionError = wrapdist(ThreePhasePositionEstimator::getMagnetometerPhaseEstimate(), positionCommand);
 
-    s4 command = (- position_P * positionError >> 18) - (vel * position_D >> 6);  // - vel * position_D;
+    s4 command = (-position_P * positionError >> 18) - (vel * position_D >> 6); // - vel * position_D;
 
     // s4 command = positionError / (1024 * 4);
     // s4 command = (positionError * position_P + vel * position_D / 512) >> positionShift;
@@ -130,12 +123,8 @@ void ServoController::update() {
     ThreePhaseController::setAmplitudeTarget((s2)command);
 
   } else {
-
   }
 }
-
-
-
 
 void ServoController::setAmplitude(s2 amplitude) {
   servoMode = Mode::Amplitude;
