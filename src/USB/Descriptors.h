@@ -71,7 +71,7 @@ extern const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor;
 extern const USB_Descriptor_String_t PROGMEM LanguageString;
 extern const USB_Descriptor_String_t PROGMEM ManufacturerString;
 extern const USB_Descriptor_String_t PROGMEM ProductString;
-extern const USB_Descriptor_String_t PROGMEM SerialString;
+extern const USB_Descriptor_String_t PROGMEM DefaultSerialString;
 extern const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericReport[32];
 
 extern USB_ClassInfo_HID_Device_t Generic_HID_Interface;

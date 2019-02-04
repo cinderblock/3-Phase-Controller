@@ -3,6 +3,9 @@
  */
 
 #include "Descriptors.h"
+#include "idBlock.h"
+
+using namespace ThreePhaseControllerNamespace;
 
 /** This function is called by the library when in device mode, and must be overridden (see library "USB Descriptors"
  *  documentation) by the application code so that the address and size of a requested descriptor can be given
@@ -42,8 +45,13 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue, const uint16_t wIndex
       Size = pgm_read_byte(&ProductString.Header.Size);
       break;
     case STRING_ID_Serial:
-      Address = &SerialString;
-      Size = pgm_read_byte(&SerialString.Header.Size);
+      if (ID::valid) {
+        Address = (const void *)(ID::usbSerial::address);
+        Size = pgm_read_byte(Address);
+      } else {
+        Address = &DefaultSerialString;
+        Size = pgm_read_byte(&DefaultSerialString.Header.Size);
+      }
       break;
     }
 

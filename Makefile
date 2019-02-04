@@ -32,6 +32,8 @@ cppNames += LookupTable
 
 cppNames += SerialInterface
 
+cppNames += idBlock
+
 cppNames += USB/Interface
 
 cppNames += USB/Descriptors
@@ -39,7 +41,7 @@ cNames += USB/Descriptors
 
 #MotorID = Motor1
 
-AVRpp_SRC = TimerTimeout USART gccGuard #ADC
+AVRpp_SRC = TimerTimeout USART gccGuard FlashCRC
 
 libCameron_SRC = CRC8 DecPrintFormatter
 

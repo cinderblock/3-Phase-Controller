@@ -171,23 +171,7 @@ const USB_Descriptor_String_t PROGMEM ManufacturerString = USB_STRING_DESCRIPTOR
  */
 const USB_Descriptor_String_t PROGMEM ProductString = USB_STRING_DESCRIPTOR(L"LMR Quantum Driver");
 
-const USB_Descriptor_String_t PROGMEM SerialString = USB_STRING_DESCRIPTOR(
-#if defined QUANTUM_DRIVE
-#if QUANTUM_DRIVE == 1
-    L"LMR-QT-00000001"
-#elif QUANTUM_DRIVE == 2
-    L"LMR-QT-00000002"
-#elif QUANTUM_DRIVE == 3
-    L"LMR-QT-00000003"
-#else
-    L"LMR-QT-00000000"
-#endif
-#elif defined BED_CONTROLLER
-    L"CBN-HV-00000001"
-#else
-    L"0"
-#endif
-);
+const USB_Descriptor_String_t PROGMEM DefaultSerialString = USB_STRING_DESCRIPTOR(L"None");
 
 /** LUFA HID Class driver interface configuration and state information. This structure is
  *  passed to all HID Class driver functions, so that multiple instances of the same class
