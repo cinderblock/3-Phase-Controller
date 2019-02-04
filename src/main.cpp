@@ -17,9 +17,8 @@
 #include "MLXDebug.h"
 #include "SerialInterface.h"
 #include "ServoController.h"
-#include "ThreePhaseController.h"
-
-#include "ThreePhaseFaultTester.h"
+#include "ThreePhase/Controller.h"
+#include "ThreePhase/FaultTester.h"
 #include "USB/Descriptors.h"
 #include <AVR++/FlashData.h>
 #include <LUFA/Drivers/USB/USB.h>

@@ -12,7 +12,7 @@
 #include "MLX90363.h"
 
 #include "Clock.h"
-#include "ThreePhasePositionEstimator.h"
+#include "ThreePhase/PositionEstimator.h"
 #include <AVR++/SPI.h>
 
 using namespace AVR;

@@ -2,7 +2,7 @@
 #ifndef THREEPHASEPOSITIONESTIMATOR_H
 #define THREEPHASEPOSITIONESTIMATOR_H
 
-#include "ThreePhaseDriver.h"
+#include "Driver.h"
 #include <AVR++/basicTypes.h>
 
 namespace ThreePhaseControllerNamespace {
@@ -89,7 +89,6 @@ class ThreePhasePositionEstimator {
    */
   static u1 lastHallState;
 
-
   /**
    *
    */
@@ -115,7 +114,7 @@ public:
   static void init();
 
   static constexpr u4 StepsPerRevolution = u4(ThreePhaseDriver::StepsPerRevolution) << drivePhaseMagSubResolution;
-  
+
   /**
    * Advance our prediction of where we currently are by one dt.
    *

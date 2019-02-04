@@ -18,7 +18,7 @@
 #include "Debug.h"
 #include "HallWatcher.h"
 #include "MLX90363.h"
-#include "ThreePhaseDriver.h"
+#include "ThreePhase/Driver.h"
 
 using namespace ThreePhaseControllerNamespace;
 using namespace Calibration;

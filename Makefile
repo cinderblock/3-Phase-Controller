@@ -10,10 +10,10 @@ cNames =
 # List of CPP file basenames to build
 cppNames = main Board Debug Timer Clock
 
-cppNames += ThreePhaseDriver
-cppNames += MLX90363 ThreePhasePositionEstimator ThreePhaseController
+cppNames += ThreePhase/Driver
+cppNames += MLX90363 ThreePhase/PositionEstimator ThreePhase/Controller
 
-cppNames += ThreePhaseFaultTester
+cppNames += ThreePhase/FaultTester
 
 cppNames += ServoController
 

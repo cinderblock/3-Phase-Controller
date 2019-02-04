@@ -1,12 +1,13 @@
 
+#include "PositionEstimator.h"
 #include "LookupTable.h"
-#include "ThreePhasePositionEstimator.h"
 // #include "Debug.h"
 #include "Config.h"
+#include "Controller.h"
+#include "Debug.h"
 #include "HallWatcher.h"
 #include "MLX90363.h"
 #include "ServoController.h"
-#include "Debug.h"
 #include <util/atomic.h>
 #include <util/delay.h>
 
@@ -26,7 +27,8 @@ typeof(ThreePhasePositionEstimator::drivePhaseMagEstimate) ThreePhasePositionEst
 typeof(ThreePhasePositionEstimator::driveVelocityMagEstimate) ThreePhasePositionEstimator::driveVelocityMagEstimate = 0;
 
 typeof(ThreePhasePositionEstimator::phaseAdvanceMagRatio) ThreePhasePositionEstimator::phaseAdvanceMagRatio = 100;
-typeof(ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount) ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount = 0;
+typeof(ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount)
+    ThreePhasePositionEstimator::phaseAdvanceMagCachedAmount = 0;
 typeof(ThreePhasePositionEstimator::mlxPeriodsSinceLastValid) ThreePhasePositionEstimator::mlxPeriodsSinceLastValid = 0;
 typeof(ThreePhasePositionEstimator::qualityMagEstimate) ThreePhasePositionEstimator::qualityMagEstimate = 0;
 
@@ -47,31 +49,31 @@ inline static void limit(u4 &value, u4 MAX, bool forward) {
 /**
  * Class to help trigger a periodic task based on potentially arbitrary steps in time
  */
-template <u1 period>
-class Counter {
+template <u1 period> class Counter {
   u1 count;
-  public:
-    Counter() : count(period) {}
 
-    u1 advanceAndCheckOverflow(u1 i) {
+public:
+  Counter() : count(period) {}
 
-      u1 ret = 0;
+  u1 advanceAndCheckOverflow(u1 i) {
 
-      while (i) {
-        if (count > i) {
-          count -= i;
-          break;
-        }
+    u1 ret = 0;
 
-        ret++;
+    while (i) {
+      if (count > i) {
+        count -= i;
+        break;
+      }
 
-        i -= count;
+      ret++;
 
-        count = period;
-      };
+      i -= count;
 
-      return ret;
-    }
+      count = period;
+    };
+
+    return ret;
+  }
 };
 
 ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
@@ -92,11 +94,11 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
     mlxPeriodsSinceLastValid += overflows;
   }
 
-//  HallWatcher::checkH1();
-//  HallWatcher::checkH2();
-//  HallWatcher::checkH3();
-//
-//  return drivePhaseHallEstimate;
+  //  HallWatcher::checkH1();
+  //  HallWatcher::checkH2();
+  //  HallWatcher::checkH3();
+  //
+  //  return drivePhaseHallEstimate;
 
   u4 newPhaseEstimate = drivePhaseMagEstimate;
   newPhaseEstimate += driveVelocityMagEstimate * steps;
@@ -110,15 +112,15 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
   drivePhaseMagEstimate = newPhaseEstimate;
 
   // Adjust output for velocity lag
-   newPhaseEstimate += phaseAdvanceMagCachedAmount;
+  newPhaseEstimate += phaseAdvanceMagCachedAmount;
 
   // Check if ph(ase) value is out of range again
-   limit(newPhaseEstimate, StepsPerRevolution, forward);
+  limit(newPhaseEstimate, StepsPerRevolution, forward);
 
   // If we're going fast, use Hall position readings directly
-//  if (qualityMagEstimate < 100) {
-//    return drivePhaseHallEstimate;
-//  }
+  //  if (qualityMagEstimate < 100) {
+  //    return drivePhaseHallEstimate;
+  //  }
 
   return (newPhaseEstimate >> drivePhaseMagSubResolution);
 }
@@ -140,12 +142,6 @@ void ThreePhasePositionEstimator::getAndProcessNewHallState() {
     drivePhaseHallEstimate = 640;
 }
 
-
-
-
-
-
-
 void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha) {
   // Here, we are receiving a new position reading from the magnetometer.
   // We need to take this new reading, update our running estimates, and be
@@ -157,12 +153,8 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
   // re-enabled. Therefore we need to consider the interplay between the 3 phase
   // ISR and this position estimator.
 
-
   // Disable this long handler. Re enabled at the end.
-	ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    MLX90363::setAlphaHandler(nullptr);
-  }
-
+  ATOMIC_BLOCK(ATOMIC_FORCEON) { MLX90363::setAlphaHandler(nullptr); }
 
   // static u1 tick = 0;
 
@@ -185,13 +177,12 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
   u4 estimate;
 
   // Capture our current position estimate
-	ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    estimate = drivePhaseMagEstimate;
-  }
+  ATOMIC_BLOCK(ATOMIC_FORCEON) { estimate = drivePhaseMagEstimate; }
 
   const u4 phase = u4(Lookup::AlphaToPhase(alpha));
   static u4 lastPhase = 0xFFFFFFFF;
-  if (lastPhase == 0xFFFFFFFF) lastPhase = phase;  // handle first case
+  if (lastPhase == 0xFFFFFFFF)
+    lastPhase = phase; // handle first case
 
   const u4 position = phase << drivePhaseMagSubResolution;
 
@@ -202,20 +193,18 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
   //   return;
   // }
 
-
-
-
   // Positive delta likely means our velocity estimate is too fast
   s4 delta = position - estimate;
 
   // Fix delta range
-  if ( delta > s4(StepsPerRevolution/2)) delta -= StepsPerRevolution;
-  if (-delta > s4(StepsPerRevolution/2)) delta += StepsPerRevolution;
+  if (delta > s4(StepsPerRevolution / 2))
+    delta -= StepsPerRevolution;
+  if (-delta > s4(StepsPerRevolution / 2))
+    delta += StepsPerRevolution;
 
-
-//  constexpr u1 MAXerr = 10;
-//  if (deltaError >  MAXerr) deltaError =  MAXerr;
-//  if (deltaError < -MAXerr) deltaError = -MAXerr;
+  //  constexpr u1 MAXerr = 10;
+  //  if (deltaError >  MAXerr) deltaError =  MAXerr;
+  //  if (deltaError < -MAXerr) deltaError = -MAXerr;
 
   using namespace Debug;
 
@@ -224,25 +213,17 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
 
   ThreePhaseController::handleNewVelocityEstimate(v);
 
-//  SOUT << Printer::Special::Start
-//      << numberOfCycles << estimate << position << delta << v << MLX90363::getRoll()
-//      << Printer::Special::End;
+  //  SOUT << Printer::Special::Start
+  //      << numberOfCycles << estimate << position << delta << v << MLX90363::getRoll()
+  //      << Printer::Special::End;
 
-	ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
     driveVelocityMagEstimate = v;
-		drivePhaseMagEstimate = position;
+    drivePhaseMagEstimate = position;
     // Re-enable this long alpha handler
     MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
-	}
-
-
-
+  }
 }
-
-
-
-
-
 
 void ThreePhasePositionEstimator::init() {
   MLX90363::init();
@@ -253,7 +234,8 @@ void ThreePhasePositionEstimator::init() {
   do {
     MLX90363::startTransmitting();
 
-    while (MLX90363::isTransmitting());
+    while (MLX90363::isTransmitting())
+      ;
 
     // Delay long enough to guarantee data is ready
     _delay_ms(2);
@@ -266,12 +248,12 @@ void ThreePhasePositionEstimator::init() {
   // Set up the hall sensor interrupts
   HallWatcher::init();
 
-//  lastMagPhase = phase.getMechanicalPosition();
+  //  lastMagPhase = phase.getMechanicalPosition();
   drivePhaseMagEstimate = u4(phase) << drivePhaseMagSubResolution;
 
-//  Debug::dout << PSTR("Start: \n") << drivePhaseMagEstimate << '\n';
-//
-//  Debug::SOUT << Debug::Printer::Special::End;
+  //  Debug::dout << PSTR("Start: \n") << drivePhaseMagEstimate << '\n';
+  //
+  //  Debug::SOUT << Debug::Printer::Special::End;
 
   HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
   MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);

@@ -11,7 +11,7 @@
 #include <AVR++/basicTypes.h>
 #include <avr/pgmspace.h>
 
-#include "ThreePhaseDriver.h"
+#include "ThreePhase/Driver.h"
 
 namespace ThreePhaseControllerNamespace {
 

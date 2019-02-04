@@ -9,10 +9,9 @@
 #ifndef SERVOCONTROLLER_H
 #define SERVOCONTROLLER_H
 
-#include <AVR++/basicTypes.h>
 #include "MLX90363.h"
-#include "ThreePhaseDriver.h"
-#include "ThreePhaseController.h"
+#include "ThreePhase/Driver.h"
+#include <AVR++/basicTypes.h>
 
 namespace ThreePhaseControllerNamespace {
 

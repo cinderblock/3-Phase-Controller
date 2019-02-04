@@ -1,6 +1,6 @@
 
 #include "ServoController.h"
-#include "ThreePhaseController.h"
+#include "ThreePhase/Controller.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;

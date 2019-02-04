@@ -15,7 +15,7 @@
 #include "Descriptors.h"
 #include "PacketFormats.h"
 #include "ServoController.h"
-#include "ThreePhaseController.h"
+#include "ThreePhase/Controller.h"
 
 using namespace ThreePhaseControllerNamespace;
 

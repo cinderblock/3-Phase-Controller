@@ -8,13 +8,13 @@
 #include <util/atomic.h>
 #include <util/delay.h>
 
-#include "ThreePhaseController.h"
-#include "ThreePhaseDriver.h"
-#include "Debug.h"
-#include "ThreePhasePositionEstimator.h"
-#include "LookupTable.h"
-#include "ServoController.h"
 #include "Config.h"
+#include "Controller.h"
+#include "Debug.h"
+#include "Driver.h"
+#include "LookupTable.h"
+#include "PositionEstimator.h"
+#include "ServoController.h"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
@@ -32,9 +32,9 @@ volatile ThreePhaseController::Amplitude ThreePhaseController::targetAmplitude =
  * a multiple of this interval to trigger new MLX readings.
  */
 void TIMER4_OVF_vect() {
-//  Board::SER::Tx::on();
+  //  Board::SER::Tx::on();
   ThreePhaseController::controlLoop();
-//  Board::SER::Tx::off();
+  //  Board::SER::Tx::off();
 }
 
 // This is the loop that happens at 31.25 kHz
@@ -43,7 +43,7 @@ void ThreePhaseController::controlLoop() {
   static volatile u1 stepCount = 0;
 
   stepCount++;
-  if (running)  {
+  if (running) {
     return;
   }
 
@@ -57,7 +57,6 @@ void ThreePhaseController::controlLoop() {
 
   // Re-enable interrupts
   sei();
-
 
   // Advance our position estimate n steps in time
   ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance(steps);

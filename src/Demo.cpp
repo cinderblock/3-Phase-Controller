@@ -12,10 +12,10 @@
  */
 
 #include "Demo.h"
-#include "ThreePhaseDriver.h"
-#include "MLX90363.h"
-#include "ThreePhaseController.h"
 #include "LookupTable.h"
+#include "MLX90363.h"
+#include "ThreePhase/Controller.h"
+#include "ThreePhase/Driver.h"
 #include <AVR++/TimerTimeout.h>
 #include <util/atomic.h>
 #include <avr/eeprom.h>

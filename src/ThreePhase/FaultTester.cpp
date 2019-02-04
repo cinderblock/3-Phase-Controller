@@ -11,7 +11,7 @@
  * Created on April 16, 2018, 12:58 PM
  */
 
-#include "ThreePhaseFaultTester.h"
+#include "FaultTester.h"
 #include "AVRClock.h"
 #include "Board.h"
 #include <avr/io.h>

@@ -14,8 +14,8 @@
 
 #include <AVR++/basicTypes.h>
 
-#include "ThreePhaseDriver.h"
-#include "ThreePhasePositionEstimator.h"
+#include "Driver.h"
+#include "PositionEstimator.h"
 #include <avr/interrupt.h>
 #include <util/atomic.h>
 
