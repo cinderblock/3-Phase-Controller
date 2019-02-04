@@ -52,8 +52,8 @@ typedef union {
   reportSize rawReport;
 } USBDataINShape;
 
-static_assert(sizeof(USBDataOUTShape) <= REPORT_SIZE, "");
-static_assert(sizeof(USBDataINShape) <= REPORT_SIZE, "");
+static_assert(sizeof(USBDataOUTShape) <= REPORT_SIZE, "Data going OUT of HOST must be shorter than REPORT_SIZE");
+static_assert(sizeof(USBDataINShape) <= REPORT_SIZE, "Data going IN to HOST must be shorter than REPORT_SIZE");
 
 } // namespace ThreePhaseControllerNamespace
 
