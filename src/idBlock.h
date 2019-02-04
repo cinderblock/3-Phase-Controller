@@ -7,7 +7,7 @@
 namespace ThreePhaseControllerNamespace {
 namespace ID {
 
-// See Boot map.svg
+// See Boot Map.svg
 constexpr size_t address = 0x6f80;
 constexpr size_t length = 128;
 

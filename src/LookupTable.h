@@ -46,7 +46,7 @@ public:
   static constexpr u2 Size = 1 << TableBits;
 
 private:
-  // See Boot map.svg
+  // See Boot Map.svg
   static constexpr size_t Location = 0x4F80;
 
   static const AVR::FlashArray<Location, Size, u2> table;
