@@ -5,7 +5,7 @@ Our current use case is on the [3 Phase Driver Board](https://github.com/cinderb
 
 ## General System
 
-![Software Map](Software%20Map.png)
+![Software Map](Software%20Map.svg)
 
 The motor controller has:
 - [Output](#output)
