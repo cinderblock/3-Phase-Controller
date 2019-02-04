@@ -49,7 +49,11 @@ F_CPU = 16000000UL
 
 DEFINES = USE_LUFA_CONFIG_HEADER
 
-INCLUDES = src calibrations
+# LUFA needs this
+INCLUDES = src
+
+# Store calibrations in a different folder
+INCLUDES += calibrations
 
 AVRpp_SRC ?= gccGuard
 
