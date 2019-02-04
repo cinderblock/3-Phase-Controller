@@ -14,11 +14,13 @@
 #ifndef USBPACKETFORMATS_H
 #define USBPACKETFORMATS_H
 
+#include "Descriptors.h"
+#include "main.h"
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace ThreePhaseControllerNamespace {
+
+using reportSize = uint8_t[REPORT_SIZE];
 
 /**
  * Shape of data going OUT of host.
@@ -30,21 +32,29 @@ typedef union {
     int32_t command;
   };
   // Force the OUTshape to be 8 bytes long
-  uint8_t dummy[8];
+  reportSize rawReport;
 } USBDataOUTShape;
 
 /**
  * Shape of data going IN to host
  * ( To the rPi).
  */
-typedef struct {
-  uint32_t position;
-  int16_t velocity;
-  uint16_t adc;
+typedef union {
+  struct {
+    statusType status;
+    uint32_t position;
+    int16_t velocity;
+    uint16_t cpuTemp;
+    uint16_t current;
+    uint16_t rawAngle;
+  };
+  // Force the OUTshape to be 8 bytes long
+  reportSize rawReport;
 } USBDataINShape;
 
-#ifdef __cplusplus
-}
-#endif
+static_assert(sizeof(USBDataOUTShape) <= REPORT_SIZE, "");
+static_assert(sizeof(USBDataINShape) <= REPORT_SIZE, "");
+
+} // namespace ThreePhaseControllerNamespace
 
 #endif /* USBPACKETFORMATS_H */

@@ -80,6 +80,6 @@ extern USB_ClassInfo_HID_Device_t Generic_HID_Interface;
 }
 #endif
 
-#define GENERIC_REPORT_SIZE 8
+#define REPORT_SIZE 64
 
 #endif

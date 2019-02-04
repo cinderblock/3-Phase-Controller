@@ -11,7 +11,6 @@
  * Created on April 18, 2018, 12:10 PM
  */
 
-#include "Descriptors.h"
 #include "PacketFormats.h"
 #include "ServoController.h"
 #include "ThreePhase/Controller.h"
@@ -68,7 +67,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
 
   data->position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
   data->velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
-  data->adc = ADC;
+  // data->adc = ADC;
   // data->adc = debug;
 
   *ReportSize = sizeof(*data);
