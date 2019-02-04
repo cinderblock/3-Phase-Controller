@@ -76,6 +76,10 @@ Make sure `make` is "selected for installation".
 
 The current Makefile is setup to program an AVR via USB DFU. It is possible to switch to using an ISP or other bootloader/programmer easily as well.
 
+## VSCode
+
+To get VSCode IntelliSense to work, `avr.gcc.binPath` must be set in your User Settings.
+
 ## Associated documentation
 
 - [Technical Docs](docs/README.md)

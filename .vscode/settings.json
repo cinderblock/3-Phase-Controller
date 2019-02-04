@@ -1,4 +1,5 @@
 {
   "editor.formatOnSave": true,
+  "avr.gcc.binPath": "",
   "C_Cpp.intelliSenseEngineFallback": "Disabled"
 }
