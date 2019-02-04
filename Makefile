@@ -34,6 +34,7 @@ cppNames += SerialInterface
 
 cppNames += USB/Interface
 
+cppNames += USB/Descriptors
 cNames += USB/Descriptors
 
 #MotorID = Motor1
