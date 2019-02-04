@@ -1,13 +1,14 @@
 # Three phase motor controller
 
 The following is the documentation for the three phase motor controller, an open source project.
-Our current use case is on the [3 Phase Driver Board](https://github.com/cinderblock/3-Phase-Driver) with the [Quanum MT5206](https://hobbyking.com/en_us/quanum-mt-series-5206-320kv-brushless-multirotor-motor-built-by-dys.html). 
+Our current use case is on the [3 Phase Driver Board](https://github.com/cinderblock/3-Phase-Driver) with the [Quanum MT5206](https://hobbyking.com/en_us/quanum-mt-series-5206-320kv-brushless-multirotor-motor-built-by-dys.html).
 
 ## General System
 
 ![Software Map](Software%20Map.svg)
 
 The motor controller has:
+
 - [Output](#output)
   - [Servo](#servo)
   - [Controller](#controller)
@@ -17,18 +18,17 @@ The motor controller has:
   - [Predictor](#predictor)
   - [Back EMF Sensing](#emf)
 
-------
+---
 
 ### Output<a name="output"></a>
 
 The servo simulates the 3 sin waves needed to drive a 3-phase motor with a ~31KHz PWM of 3 half-H bridges.
 
-
 #### Driver<a name="driver"></a>
 
 code [here](../ThreePhaseDriver.h)
 
-The driver handles the sin wave generation based on a `[0-767]` integer. 
+The driver handles the sin wave generation based on a `[0-767]` integer.
 It also uses an amplitude `[0-255]`.
 
 Based on the math of [3 Phase sine generation](https://docs.google.com/spreadsheets/d/1I45kGhncSQvR4_B_AG72Bqk7MJlNRIvBI-JD9qAgE8U/edit?usp=sharing), one output can be held at ground and the other 2 are the difference between themselves and the low phase. Each of the two non-ground phases are symmetric and therefore can use the same table (aka limitedSinTable).
@@ -50,6 +50,7 @@ Controller passes along amplitude command to driver.
 code [here](../ServoController.h)
 
 Recieves the input commands for amplitude, velocity, or positional commands.
+
 - Amplitude passes values along to controller
 - Velocity command has a deadband and a step change in amplitude if outside of the deadband
 - Positional command uses a PID controller. Sum of P, I, and D terms.
@@ -58,7 +59,7 @@ Recieves the input commands for amplitude, velocity, or positional commands.
   - D value (default: ?) multiplied by velocity in [velocity units](units.md#velocity).
 - Distance command resets the rotation counter and sets a position command of current position + distance
 
------- 
+---
 
 ### Sensing<a name="sense"></a>
 
@@ -82,4 +83,4 @@ NOT YET IMPLEMENTED
 
 [Magnetometer](#mlx) has sensor lag and slow reads compared to [pwm cycles](units.md#pwm). Therefore, we must attempt to predict current position and velocity when the [controller](#controller) requests it.
 
-Predictor estimates velocity by having a current estimate (initially 0). Every [Magnetometer](#mlx) reading, if the estimate was incorrect shift the estimate by a step (currently 5 [velocity units](units.md#velocity)) in the correct direction. 
+Predictor estimates velocity by having a current estimate (initially 0). Every [Magnetometer](#mlx) reading, if the estimate was incorrect shift the estimate by a step (currently 5 [velocity units](units.md#velocity)) in the correct direction.
