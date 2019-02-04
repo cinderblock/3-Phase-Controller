@@ -15,6 +15,7 @@
 #include <AVR++/basicTypes.h>
 
 #include "Driver.h"
+#include "LookupTable.h"
 #include "PositionEstimator.h"
 #include <avr/interrupt.h>
 #include <util/atomic.h>
@@ -65,6 +66,10 @@ public:
    * Enable the controller
    */
   inline static void enable() {
+    // Do not enable if not calibrated
+    if (!Lookup::isValid)
+      return;
+
     // Enable Timer4 Overflow Interrupt so that controlLoop runs
     // Also disables any other Timer4 interrupts but they aren't being used.
     TIMSK4 = 1 << TOIE4;
