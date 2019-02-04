@@ -45,7 +45,7 @@ typedef union {
     uint32_t position;
     int16_t velocity;
     uint16_t cpuTemp;
-    uint16_t current;
+    int16_t current;
     uint16_t rawAngle;
   };
   // Force the OUTshape to be 8 bytes long
