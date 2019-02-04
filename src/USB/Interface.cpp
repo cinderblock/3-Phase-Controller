@@ -11,11 +11,14 @@
  * Created on April 18, 2018, 12:10 PM
  */
 
-#include "Interface.h"
 #include "Descriptors.h"
 #include "PacketFormats.h"
 #include "ServoController.h"
 #include "ThreePhase/Controller.h"
+
+#include <LUFA/Drivers/Board/LEDs.h>
+#include <LUFA/Drivers/USB/USB.h>
+#include <LUFA/Platform/Platform.h>
 
 using namespace ThreePhaseControllerNamespace;
 
