@@ -32,9 +32,9 @@ cppNames += LookupTable
 
 cppNames += SerialInterface
 
-cppNames += USBInterface
+cppNames += USB/Interface
 
-cNames += USBDescriptors
+cNames += USB/Descriptors
 
 #MotorID = Motor1
 
