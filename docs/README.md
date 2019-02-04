@@ -3,6 +3,10 @@
 The following is the documentation for the three phase motor controller, an open source project.
 Our current use case is on the [3 Phase Driver Board](https://github.com/cinderblock/3-Phase-Driver) with the [Quanum MT5206](https://hobbyking.com/en_us/quanum-mt-series-5206-320kv-brushless-multirotor-motor-built-by-dys.html).
 
+## Boot and Memory Map
+
+![Boot Map](Boot%20Map.svg)
+
 ## General System
 
 ![Software Map](Software%20Map.svg)

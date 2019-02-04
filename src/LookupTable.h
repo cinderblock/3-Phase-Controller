@@ -8,6 +8,7 @@
 #ifndef LOOKUPTABLE_H
 #define LOOKUPTABLE_H
 
+#include <AVR++/FlashArray.h>
 #include <AVR++/basicTypes.h>
 #include <avr/pgmspace.h>
 
@@ -44,6 +45,15 @@ public:
    */
   static constexpr u2 Size = 1 << TableBits;
 
+private:
+  // See Boot map.svg
+  static constexpr size_t Location = 0x4F80;
+
+  static const AVR::FlashArray<Location, Size, u2> table;
+
+public:
+  static bool const isValid;
+
   /**
    * Converts the magnetometer to a phase value
    * @param alpha 14-bit value from magnetometer
@@ -57,11 +67,8 @@ public:
     alpha >>= ResolutionReductionBits;
 
     // Read the phase number word from the calculated place in the lookup table
-    return (ThreePhaseDriver::PhasePosition)pgm_read_word(&Lookup::table[alpha]);
+    return table[alpha];
   }
-
-private:
-  static const u2 table[Size] PROGMEM;
 };
 
 }; // namespace ThreePhaseControllerNamespace
