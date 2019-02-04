@@ -9,19 +9,20 @@
 #include <avr/wdt.h>
 #include <util/delay.h>
 
-#include "MLX90363.h"
-#include "ThreePhaseController.h"
 #include "Calibration.h"
 #include "Clock.h"
 #include "Debug.h"
 #include "Demo.h"
-#include "ServoController.h"
+#include "MLX90363.h"
 #include "MLXDebug.h"
 #include "SerialInterface.h"
+#include "ServoController.h"
+#include "ThreePhaseController.h"
 
-#include <LUFA/Drivers/USB/USB.h>
-#include "USBDescriptors.h"
 #include "ThreePhaseFaultTester.h"
+#include "USBDescriptors.h"
+#include <AVR++/FlashData.h>
+#include <LUFA/Drivers/USB/USB.h>
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
@@ -52,7 +53,7 @@ void init() {
 
   ThreePhaseDriver::init();
 
-	USB_Init();
+  USB_Init();
 
   // Set Enable Interrupts.
   sei();
@@ -65,11 +66,11 @@ void init() {
  *
  */
 int main() {
-//  constexpr auto test = ThreePhaseFaultTester::Channel::AH;
-////  constexpr auto test = ThreePhaseFaultTester::Phase::C;
-//  ThreePhaseFaultTester::init();
-//  ThreePhaseFaultTester::test(test);
-//  while (1);
+  //  constexpr auto test = ThreePhaseFaultTester::Channel::AH;
+  ////  constexpr auto test = ThreePhaseFaultTester::Phase::C;
+  //  ThreePhaseFaultTester::init();
+  //  ThreePhaseFaultTester::test(test);
+  //  while (1);
 
   // These don't do anything if they're not enabled
   Calibration::main();
@@ -81,7 +82,7 @@ int main() {
 
   while (1) {
     HID_Device_USBTask(&Generic_HID_Interface);
-		USB_USBTask();
+    USB_USBTask();
 
     if (auto msg = SerialInterface::getMessage()) {
       ThreePhaseController::setAmplitudeTarget(msg->getCommand());
@@ -92,5 +93,6 @@ int main() {
 
   // loop in case main loop is disabled
   // allows for interrupts to continue
-  while (1);
+  while (1)
+    continue;
 }
