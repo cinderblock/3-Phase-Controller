@@ -72,6 +72,10 @@ Windows's `mkdir`/`md` does not support `/` directory separator.
 Installing cygwin is the easiest way to get building on Windows working.
 Make sure `make` is "selected for installation".
 
+#### Troubleshooting
+
+Try `make clean` first.
+
 ### Bootloader
 
 The current Makefile is setup to program an AVR via USB DFU. It is possible to switch to using an ISP or other bootloader/programmer easily as well.
