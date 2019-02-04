@@ -2,7 +2,7 @@
   "configurations": [
     {
       "name": "Win64",
-      "compilerPath": "C:\\Program Files (x86)\\avr8-gnu-toolchain-win32_x86-3.6.2\\bin\\avr-gcc.exe",
+      "compilerPath": "\"C:/Program Files (x86)/avr8-gnu-toolchain-win32_x86-3.6.2/bin/avr-g++.exe\" -mmcu=atmega32u4",
       "intelliSenseMode": "gcc-x64",
       "includePath": [
         "${workspaceFolder}/src",
@@ -13,12 +13,10 @@
       "defines": [
         "_DEBUG",
         "UNICODE",
-        "__AVR_ATmega32U4__",
         "_UNICODE",
         "F_CPU=16000000UL",
         "F_USB=16000000UL",
-        "USE_LUFA_CONFIG_HEADER",
-        "ARCH=ARCH_AVR8"
+        "USE_LUFA_CONFIG_HEADER"
       ],
       "cStandard": "c11",
       "cppStandard": "c++11"
