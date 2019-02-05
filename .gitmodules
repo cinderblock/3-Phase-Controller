@@ -13,3 +13,6 @@
 [submodule "bootloader"]
 	path = bootloader
 	url = https://github.com/cinderblock/usb-dfu.git
+[submodule "Calibration-Tool"]
+	path = Calibration-Tool
+	url = https://github.com/cinderblock/3-Phase-Calibration-Tool.git
