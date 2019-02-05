@@ -40,7 +40,6 @@ typedef struct {
       s4 command;
     } servo;
   } command;
-
 } USBDataOUTShape;
 
 /**
@@ -49,10 +48,10 @@ typedef struct {
 typedef struct {
   State state;
   Fault fault;
-  u4 position;
-  s2 velocity;
-  u2 cpuTemp;
-  s2 current;
+  u1 position;
+  s1 velocity;
+  u1 cpuTemp;
+  s1 current;
   u2 rawAngle;
 } USBDataINShape;
 

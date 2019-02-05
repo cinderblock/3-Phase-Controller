@@ -73,7 +73,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
   data->current = 0xc0ff;
   data->rawAngle = MLX90363::getAlpha() | (Lookup::isValid << 15);
 
-  *ReportSize = sizeof(*data);
+  *ReportSize = REPORT_SIZE;
 
   return true;
 }
@@ -101,8 +101,8 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
     ThreePhaseController::setAmplitudeTarget(data->command.push.command);
     return;
   case CommandMode::Servo:
+    setState(State::Servo);
     switch (data->command.servo.mode) {
-
     case 1:
       ServoController::setAmplitude(data->command.servo.command);
       return;

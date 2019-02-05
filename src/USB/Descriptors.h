@@ -38,6 +38,8 @@
 
 #include <LUFA/Drivers/USB/USB.h>
 
+#define REPORT_SIZE 8
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -79,7 +81,5 @@ extern USB_ClassInfo_HID_Device_t Generic_HID_Interface;
 #ifdef __cplusplus
 }
 #endif
-
-#define REPORT_SIZE 64
 
 #endif
