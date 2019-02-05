@@ -52,22 +52,6 @@ enum InterfaceDescriptors_t {
 /** Endpoint address of the Generic HID reporting IN endpoint. */
 #define GENERIC_IN_EPADDR (ENDPOINT_DIR_IN | 1)
 
-/** HID class report descriptor. This is a special descriptor constructed with values from the
- *  USBIF HID class specification to describe the reports and capabilities of the HID device. This
- *  descriptor is parsed by the host and its contents used to determine what data (and in what encoding)
- *  the device will send, and what it may be sent back from the host. Refer to the HID specification for
- *  more details on HID report descriptors.
- */
-const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericReport[] = {
-    /* Use the HID class driver's standard Vendor HID report.
-     *  Vendor Usage Page: 0
-     *  Vendor Collection Usage: 1
-     *  Vendor Report IN Usage: 2
-     *  Vendor Report OUT Usage: 3
-     *  Vendor Report Size: REPORT_SIZE
-     */
-    HID_DESCRIPTOR_VENDOR(0x00, 0x01, 0x02, 0x03, REPORT_SIZE)};
-
 /** Device descriptor structure. This descriptor, located in FLASH memory, describes the overall
  *  device characteristics, including the supported USB version, control endpoint size and the
  *  number of device configurations. The descriptor is read out by the USB host when the enumeration
