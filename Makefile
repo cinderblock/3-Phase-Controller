@@ -55,9 +55,6 @@ DEFINES = USE_LUFA_CONFIG_HEADER
 # LUFA needs this with USE_LUFA_CONFIG_HEADER so that it can find LUFAConfig.h
 INCLUDES = src
 
-# Store calibrations in a different folder
-INCLUDES += calibrations
-
 # Make compilation fail on first error
 Build_Flags_Extra = -Wfatal-errors
 
