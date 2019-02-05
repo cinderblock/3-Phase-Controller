@@ -2,7 +2,7 @@
   "configurations": [
     {
       "name": "avr-gcc",
-      "compilerPath": "\"${config:local.avr-gcc.compilerPath}avr-gcc\" -mmcu=atmega32u4",
+      "compilerPath": "\"${config:local.avr-gcc.compilerPath}avr-gcc\" -mmcu=atmega32u4 -fshort-enums -funsigned-char -funsigned-bitfields -fno-inline-small-functions -fno-strict-aliasing -fpack-struct",
       "intelliSenseMode": "gcc-x64",
       "includePath": [
         "${workspaceFolder}/src",
