@@ -82,7 +82,9 @@ The current Makefile is setup to program an AVR via USB DFU. It is possible to s
 
 ## VSCode
 
-To get VSCode IntelliSense to work, `avr.gcc.binPath` must be set in your User Settings.
+To get VSCode IntelliSense to work, `local.avr-gcc.compilerPath` must be set in your User Settings.
+It should be set to the full path prefix needed so that `avr-gcc` can be called on your system.
+Likely something like `"/path/to/avr8-gnu-toolchain/bin/"` or `"C:/Program Files/avr8-win64/bin/"` is recommended however empty string (`""`) is a valid value if `avr-gcc` is on your path.
 
 ## Associated documentation
 

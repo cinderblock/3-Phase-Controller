@@ -1,8 +1,8 @@
 {
   "configurations": [
     {
-      "name": "Win64",
-      "compilerPath": "\"${config:avr.gcc.binPath}avr-gcc.exe\" -mmcu=atmega32u4",
+      "name": "avr-gcc",
+      "compilerPath": "\"${config:local.avr-gcc.compilerPath}avr-gcc\" -mmcu=atmega32u4",
       "intelliSenseMode": "gcc-x64",
       "includePath": [
         "${workspaceFolder}/src",
