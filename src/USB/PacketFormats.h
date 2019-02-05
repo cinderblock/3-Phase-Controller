@@ -37,7 +37,7 @@ typedef struct {
     } push;
     struct {
       u1 mode;
-      s2 command;
+      s4 command;
     } servo;
   } command;
 
