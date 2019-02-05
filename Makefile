@@ -52,7 +52,7 @@ F_CPU = 16000000UL
 
 DEFINES = USE_LUFA_CONFIG_HEADER
 
-# LUFA needs this
+# LUFA needs this with USE_LUFA_CONFIG_HEADER so that it can find LUFAConfig.h
 INCLUDES = src
 
 # Store calibrations in a different folder
