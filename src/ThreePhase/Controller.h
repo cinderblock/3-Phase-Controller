@@ -70,19 +70,13 @@ public:
     if (!Lookup::isValid)
       return;
 
-    // Enable Timer4 Overflow Interrupt so that controlLoop runs
-    // Also disables any other Timer4 interrupts but they aren't being used.
-    TIMSK4 = 1 << TOIE4;
+    enabled = true;
   }
 
   /**
    * Disable the controller
    */
-  inline static void disable() {
-    // Disable Timer4 Overflow Interrupt
-    // and all the other Timer4 interrupts because none of them are being used
-    TIMSK4 = 0;
-  }
+  inline static void disable() { enabled = false; }
 
   /**
    * Abstraction around possible amplitude values.

@@ -143,6 +143,10 @@ void ThreePhasePositionEstimator::getAndProcessNewHallState() {
 }
 
 void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha) {
+  // Nothing to do if lookup table is invalid
+  if (!Lookup::isValid)
+    return;
+
   // Here, we are receiving a new position reading from the magnetometer.
   // We need to take this new reading, update our running estimates, and be
   // done. This is called by the magnetometer software after a new reading has

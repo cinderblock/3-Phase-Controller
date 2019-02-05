@@ -65,10 +65,13 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
                                          const uint8_t ReportType, void *ReportData, uint16_t *const ReportSize) {
   USBDataINShape *const data = (USBDataINShape *)ReportData;
 
+  data->state = state;
+  data->fault = fault;
   data->position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
   data->velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
-  // data->adc = ADC;
-  // data->adc = debug;
+  data->cpuTemp = 0xc0ff;
+  data->current = 0xc0ff;
+  data->rawAngle = MLX90363::getAlpha() | (Lookup::isValid << 15);
 
   *ReportSize = sizeof(*data);
 
@@ -87,36 +90,49 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
                                           const uint8_t ReportType, const void *ReportData, const uint16_t ReportSize) {
   USBDataOUTShape const *const data = (USBDataOUTShape *)ReportData;
 
-  switch (data->mesgType) {
-  case 1:
-    ServoController::setAmplitude(data->command);
+  switch (data->mode) {
+  case CommandMode::Calibration:
+    setState(State::Calibration);
+    ThreePhaseDriver::setAmplitude(data->command.calibrate.amplitude);
+    ThreePhaseDriver::advanceTo(data->command.calibrate.angle);
     return;
-  case 2:
-    ServoController::setPosition(data->command);
+  case CommandMode::Push:
+    setState(State::Push);
+    ThreePhaseController::setAmplitudeTarget(data->command.push.command);
     return;
-  case 3:
-    ServoController::setVelocity(data->command);
-    return;
+  case CommandMode::Servo:
+    switch (data->command.servo.mode) {
 
-  case 11:
-    ServoController::setPosition_P(data->command);
-    return;
-  case 12:
-    ServoController::setPosition_I(data->command);
-    return;
-  case 13:
-    ServoController::setPosition_D(data->command);
-    return;
+    case 1:
+      ServoController::setAmplitude(data->command.servo.command);
+      return;
+    case 2:
+      ServoController::setPosition(data->command.servo.command);
+      return;
+    case 3:
+      ServoController::setVelocity(data->command.servo.command);
+      return;
 
-  // not used just yet
-  case 21:
-    ServoController::setVelocity_P(data->command);
-    return;
-  case 22:
-    ServoController::setVelocity_I(data->command);
-    return;
-  case 23:
-    ServoController::setVelocity_D(data->command);
-    return;
+    case 11:
+      ServoController::setPosition_P(data->command.servo.command);
+      return;
+    case 12:
+      ServoController::setPosition_I(data->command.servo.command);
+      return;
+    case 13:
+      ServoController::setPosition_D(data->command.servo.command);
+      return;
+
+    // not used just yet
+    case 21:
+      ServoController::setVelocity_P(data->command.servo.command);
+      return;
+    case 22:
+      ServoController::setVelocity_I(data->command.servo.command);
+      return;
+    case 23:
+      ServoController::setVelocity_D(data->command.servo.command);
+      return;
+    }
   }
 }

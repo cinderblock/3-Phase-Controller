@@ -20,6 +20,7 @@
 #include "ThreePhase/Controller.h"
 #include "ThreePhase/FaultTester.h"
 #include "USB/Descriptors.h"
+#include "main.h"
 #include <AVR++/FlashData.h>
 #include <LUFA/Drivers/USB/USB.h>
 
@@ -61,6 +62,46 @@ void init() {
   ::Clock::init();
 }
 
+State ThreePhaseControllerNamespace::state = State::Fault;
+Fault ThreePhaseControllerNamespace::fault = Fault::Init;
+
+bool ThreePhaseControllerNamespace::setState(State const s) {
+
+  // Don't do anything if we're already in that mode, or trying to go to an invalid mode...
+  if (state == s)
+    return false;
+
+  // Disable Interrupts
+  cli();
+
+  switch (s) {
+  case State::Fault:
+    ThreePhaseController::disable();
+    ServoController::setEnable(false);
+    break;
+
+  case State::Calibration:
+    ThreePhaseController::disable();
+    ServoController::setEnable(false);
+    break;
+
+  case State::Push:
+    ThreePhaseController::enable();
+    ServoController::setEnable(false);
+    break;
+  case State::Servo:
+    ThreePhaseController::enable();
+    break;
+  }
+
+  state = s;
+
+  // Enable Interrupts
+  cli();
+
+  return true;
+}
+
 /**
  *
  */
@@ -72,7 +113,6 @@ int main() {
   //  while (1);
 
   // These don't do anything if they're not enabled
-  Calibration::main();
   Demo::main();
   MLXDebug::main();
 
@@ -80,6 +120,7 @@ int main() {
   ThreePhaseController::init();
 
   while (1) {
+    // These are very cheap calls if USB is not connected
     HID_Device_USBTask(&Generic_HID_Interface);
     USB_USBTask();
 
@@ -87,7 +128,18 @@ int main() {
       ThreePhaseController::setAmplitudeTarget(msg->getCommand());
     }
 
-    ServoController::update();
+    switch (state) {
+    case State::Fault:
+      break;
+    case State::Calibration:
+      // TODO: Check for fault?
+      break;
+    case State::Push:
+      // TODO: Check for fault?
+      break;
+    case State::Servo:
+      ServoController::update();
+    }
   }
 
   // loop in case main loop is disabled

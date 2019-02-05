@@ -61,14 +61,16 @@ void ThreePhaseController::controlLoop() {
   // Advance our position estimate n steps in time
   ThreePhaseDriver::PhasePosition p = ThreePhasePositionEstimator::advance(steps);
 
-  // TODO: more phase advance at higher speeds
-  if (isForwardTorque) {
-    p += output90DegPhaseShift;
-  } else {
-    p -= output90DegPhaseShift;
-  }
+  if (enabled) {
+    // TODO: more phase advance at higher speeds
+    if (isForwardTorque) {
+      p += output90DegPhaseShift;
+    } else {
+      p -= output90DegPhaseShift;
+    }
 
-  ThreePhaseDriver::advanceTo(p);
+    ThreePhaseDriver::advanceTo(p);
+  }
 
   running = false;
 }
@@ -78,11 +80,14 @@ void ThreePhaseController::init() {
 
   ThreePhasePositionEstimator::init();
 
-  // Let the controlLoop() run
-  enable();
+  // controlLoop() is called by TIMER4_OVF_vect
+  TIMSK4 = 1 << TOIE4;
 }
 
 void ThreePhaseController::handleNewVelocityEstimate(s2 const v) {
+  if (!enabled)
+    return;
+
   auto t = targetAmplitude + ((s4(v) * dampingVelocityGain >> 8));
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     isForwardTorque = t.forward;

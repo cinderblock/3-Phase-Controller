@@ -20,34 +20,40 @@
 
 namespace ThreePhaseControllerNamespace {
 
-using reportSize = uint8_t[REPORT_SIZE];
+enum class CommandMode : u1 { Calibration, Push, Servo };
 
 /**
  * Shape of data going OUT of host.
  */
-typedef union {
-  struct {
-    uint8_t mesgType;
-    int32_t command;
-  };
-  // Force the OUTshape to be REPORT_SIZE long
-  reportSize rawReport;
+typedef struct {
+  CommandMode mode;
+  union {
+    struct {
+      u2 angle;
+      u1 amplitude;
+    } calibrate;
+    struct {
+      s2 command;
+    } push;
+    struct {
+      u1 mode;
+      s2 command;
+    } servo;
+  } command;
+
 } USBDataOUTShape;
 
 /**
  * Shape of data going IN to host
  */
-typedef union {
-  struct {
-    statusType status;
-    uint32_t position;
-    int16_t velocity;
-    uint16_t cpuTemp;
-    int16_t current;
-    uint16_t rawAngle;
-  };
-  // Force the OUTshape to be REPORT_SIZE long
-  reportSize rawReport;
+typedef struct {
+  State state;
+  Fault fault;
+  u4 position;
+  s2 velocity;
+  u2 cpuTemp;
+  s2 current;
+  u2 rawAngle;
 } USBDataINShape;
 
 static_assert(sizeof(USBDataOUTShape) <= REPORT_SIZE, "Data going OUT of HOST must be shorter than REPORT_SIZE");
