@@ -50,7 +50,7 @@ void ThreePhaseController::controlLoop() {
   running = true;
 
   // Record number of steps
-  u1 steps = stepCount;
+  u1 const steps = stepCount;
 
   // Reset missed step count
   stepCount = 0;
