@@ -253,7 +253,7 @@ void ThreePhasePositionEstimator::init() {
   const auto phase = Lookup::AlphaToPhase(MLX90363::getAlpha());
 
   // Set up the hall sensor interrupts
-  HallWatcher::init();
+  // HallWatcher::init();
 
   //  lastMagPhase = phase.getMechanicalPosition();
   drivePhaseMagEstimate = u4(phase) << drivePhaseMagSubResolution;
@@ -262,6 +262,6 @@ void ThreePhasePositionEstimator::init() {
   //
   //  Debug::SOUT << Debug::Printer::Special::End;
 
-  HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
+  // HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
   MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
 }
