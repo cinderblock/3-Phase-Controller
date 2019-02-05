@@ -11,12 +11,12 @@
  * Created on April 11, 2017, 6:32 PM
  */
 
-#include "Demo.h"
-#include "LookupTable.h"
-#include "MLX90363.h"
-#include "ThreePhase/Controller.h"
-#include "ThreePhase/Driver.h"
-#include <AVR++/TimerTimeout.h>
+#include "Demo.hpp"
+#include "LookupTable.hpp"
+#include "MLX90363.hpp"
+#include "ThreePhase/Controller.hpp"
+#include "ThreePhase/Driver.hpp"
+#include <AVR++/TimerTimeout.hpp>
 #include <avr/eeprom.h>
 #include <util/atomic.h>
 #include <util/delay.h>

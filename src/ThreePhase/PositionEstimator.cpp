@@ -1,20 +1,20 @@
 
-#include "PositionEstimator.h"
-#include "LookupTable.h"
-// #include "Debug.h"
-#include "Config.h"
-#include "Controller.h"
-#include "Debug.h"
-#include "HallWatcher.h"
-#include "MLX90363.h"
-#include "ServoController.h"
+#include "PositionEstimator.hpp"
+#include "LookupTable.hpp"
+// #include "Debug.hpp"
+#include "Config.hpp"
+#include "Controller.hpp"
+#include "Debug.hpp"
+#include "HallWatcher.hpp"
+#include "MLX90363.hpp"
+#include "ServoController.hpp"
 #include <util/atomic.h>
 #include <util/delay.h>
 
-// #include "Board.h"
+// #include "Board.hpp"
 // #include <iostream>
 // #include <cmath>
-// #include "common.h"
+// #include "common.hpp"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;

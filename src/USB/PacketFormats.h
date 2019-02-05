@@ -15,7 +15,7 @@
 #define USBPACKETFORMATS_H
 
 #include "Descriptors.h"
-#include "main.h"
+#include "main.hpp"
 #include <stdint.h>
 
 namespace ThreePhaseControllerNamespace {

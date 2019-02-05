@@ -8,13 +8,13 @@
 #include <util/atomic.h>
 #include <util/delay.h>
 
-#include "Config.h"
-#include "Controller.h"
-#include "Debug.h"
-#include "Driver.h"
-#include "LookupTable.h"
-#include "PositionEstimator.h"
-#include "ServoController.h"
+#include "Config.hpp"
+#include "Controller.hpp"
+#include "Debug.hpp"
+#include "Driver.hpp"
+#include "LookupTable.hpp"
+#include "PositionEstimator.hpp"
+#include "ServoController.hpp"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;

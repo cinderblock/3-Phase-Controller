@@ -10,10 +10,10 @@
 
 #include <avr/interrupt.h>
 
-#include <AVR++/bitTypes.h>
-#include <AVR++/IOpin.h>
-#include "Board.h"
-#include "Clock.h"
+#include <AVR++/bitTypes.hpp>
+#include <AVR++/IOpin.hpp>
+#include "Board.hpp"
+#include "Clock.hpp"
 
 // Declare interrupt. Doesn't need to block others.
 ISR(SPI_STC_vect, ISR_NOBLOCK);

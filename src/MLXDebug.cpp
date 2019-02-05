@@ -14,10 +14,10 @@
 #include <avr/pgmspace.h>
 #include <util/delay.h>
 
-#include "Debug.h"
-#include "MLX90363.h"
-#include "MLXDebug.h"
-#include <AVR++/USART.h>
+#include "Debug.hpp"
+#include "MLX90363.hpp"
+#include "MLXDebug.hpp"
+#include <AVR++/USART.hpp>
 
 using namespace ThreePhaseControllerNamespace;
 using namespace AVR;

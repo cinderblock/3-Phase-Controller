@@ -1,6 +1,6 @@
 #pragma once
 
-#include <basicTypes.h>
+#include <basicTypes.hpp>
 #include <stddef.h>
 #include <stdint.h>
 

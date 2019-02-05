@@ -1,6 +1,6 @@
 
-#include "idBlock.h"
-#include <AVR++/FlashCRC.h>
+#include "idBlock.hpp"
+#include <AVR++/FlashCRC.hpp>
 
 using namespace ThreePhaseControllerNamespace;
 

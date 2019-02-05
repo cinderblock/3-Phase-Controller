@@ -10,7 +10,7 @@
 
 #include <avr/io.h>
 
-#include "Board.h"
+#include "Board.hpp"
 
 namespace AVR {
  namespace Clock {

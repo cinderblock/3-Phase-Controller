@@ -12,8 +12,8 @@
  */
 
 #include "PacketFormats.h"
-#include "ServoController.h"
-#include "ThreePhase/Controller.h"
+#include "ServoController.hpp"
+#include "ThreePhase/Controller.hpp"
 
 #include <LUFA/Drivers/Board/LEDs.h>
 #include <LUFA/Drivers/USB/USB.h>

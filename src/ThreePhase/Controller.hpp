@@ -12,11 +12,11 @@
 #ifndef THREEPHASECONTROLLER_H
 #define THREEPHASECONTROLLER_H
 
-#include <AVR++/basicTypes.h>
+#include <AVR++/basicTypes.hpp>
 
-#include "Driver.h"
-#include "LookupTable.h"
-#include "PositionEstimator.h"
+#include "Driver.hpp"
+#include "LookupTable.hpp"
+#include "PositionEstimator.hpp"
 #include <avr/interrupt.h>
 #include <util/atomic.h>
 

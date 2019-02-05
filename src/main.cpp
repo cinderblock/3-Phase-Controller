@@ -5,23 +5,23 @@
  * Created on Nov 28, 2014, 2:02 PM
  */
 
-#include "Board.h"
+#include "Board.hpp"
 #include <avr/wdt.h>
 #include <util/delay.h>
 
-#include "Calibration.h"
-#include "Clock.h"
-#include "Debug.h"
-#include "Demo.h"
-#include "MLX90363.h"
-#include "MLXDebug.h"
-#include "SerialInterface.h"
-#include "ServoController.h"
-#include "ThreePhase/Controller.h"
-#include "ThreePhase/FaultTester.h"
+#include "Calibration.hpp"
+#include "Clock.hpp"
+#include "Debug.hpp"
+#include "Demo.hpp"
+#include "MLX90363.hpp"
+#include "MLXDebug.hpp"
+#include "SerialInterface.hpp"
+#include "ServoController.hpp"
+#include "ThreePhase/Controller.hpp"
+#include "ThreePhase/FaultTester.hpp"
 #include "USB/Descriptors.h"
-#include "main.h"
-#include <AVR++/FlashData.h>
+#include "main.hpp"
+#include <AVR++/FlashData.hpp>
 #include <LUFA/Drivers/USB/USB.h>
 
 using namespace AVR;

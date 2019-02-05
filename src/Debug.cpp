@@ -5,11 +5,11 @@
  * Created on January 9, 2015, 4:09 PM
  */
 
-#include "Debug.h"
-#include "Clock.h"
+#include "Debug.hpp"
+#include "Clock.hpp"
 #include <avr/io.h>
 
-#include <CRC8.h>
+#include <CRC8.hpp>
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;

@@ -14,7 +14,7 @@
 #ifndef DEMO_H
 #define DEMO_H
 
-#include <AVR++/basicTypes.h>
+#include <AVR++/basicTypes.hpp>
 
 namespace ThreePhaseControllerNamespace {
 

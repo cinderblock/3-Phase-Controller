@@ -8,8 +8,8 @@
 #ifndef BOARD_H
 #define	BOARD_H
 
-#include <AVR++/IOpin.h>
-#include "Config.h"
+#include <AVR++/IOpin.hpp>
+#include "Config.hpp"
 #include <avr/io.h>
 
 namespace ThreePhaseControllerNamespace {

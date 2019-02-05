@@ -2,8 +2,8 @@
 #ifndef THREEPHASEPOSITIONESTIMATOR_H
 #define THREEPHASEPOSITIONESTIMATOR_H
 
-#include "Driver.h"
-#include <AVR++/basicTypes.h>
+#include "Driver.hpp"
+#include <AVR++/basicTypes.hpp>
 
 namespace ThreePhaseControllerNamespace {
 

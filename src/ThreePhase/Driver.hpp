@@ -8,10 +8,10 @@
 #ifndef THREEPHASEDRIVER_H
 #define THREEPHASEDRIVER_H
 
-#include <AVR++/basicTypes.h>
+#include <AVR++/basicTypes.hpp>
 #include <avr/interrupt.h>
 
-#include "Config.h"
+#include "Config.hpp"
 
 ISR(ADC_vect);
 

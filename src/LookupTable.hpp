@@ -8,11 +8,11 @@
 #ifndef LOOKUPTABLE_H
 #define LOOKUPTABLE_H
 
-#include <AVR++/FlashArray.h>
-#include <AVR++/basicTypes.h>
+#include <AVR++/FlashArray.hpp>
+#include <AVR++/basicTypes.hpp>
 #include <avr/pgmspace.h>
 
-#include "ThreePhase/Driver.h"
+#include "ThreePhase/Driver.hpp"
 
 namespace ThreePhaseControllerNamespace {
 

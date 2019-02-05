@@ -11,11 +11,11 @@
  * Created on March 26, 2018, 6:45 PM
  */
 
-#include "SerialInterface.h"
+#include "SerialInterface.hpp"
 
 #include <avr/io.h>
 
-#include <CRC8.h>
+#include <CRC8.hpp>
 
 using namespace ThreePhaseControllerNamespace;
 using namespace libCameron;

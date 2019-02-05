@@ -15,13 +15,13 @@
 #define SERIALINTERFACE_H
 
 #include <stddef.h>
-#include <AVR++/basicTypes.h>
-#include <TripleBuffer.h>
+#include <AVR++/basicTypes.hpp>
+#include <TripleBuffer.hpp>
 #include <avr/interrupt.h>
 
-#include <CRC8.h>
+#include <CRC8.hpp>
 
-#include "Board.h"
+#include "Board.hpp"
 
 ISR(USART1_RX_vect);
 

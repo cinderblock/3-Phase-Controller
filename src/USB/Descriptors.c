@@ -36,7 +36,7 @@
  */
 
 #include "Descriptors.h"
-#include "Config.h"
+#include "Config.hpp"
 #include "LUFAConfig.h"
 
 #include <avr/pgmspace.h>

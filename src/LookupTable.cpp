@@ -1,5 +1,5 @@
-#include "LookupTable.h"
-#include <AVR++/FlashCRC.h>
+#include "LookupTable.hpp"
+#include <AVR++/FlashCRC.hpp>
 
 using namespace ThreePhaseControllerNamespace;
 

@@ -14,7 +14,7 @@
 #ifndef THREEPHASEFAULTTESTER_H
 #define THREEPHASEFAULTTESTER_H
 
-#include "Driver.h"
+#include "Driver.hpp"
 
 namespace ThreePhaseControllerNamespace {
 

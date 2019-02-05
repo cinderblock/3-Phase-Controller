@@ -14,11 +14,11 @@
 #include <avr/pgmspace.h>
 #include <util/delay.h>
 
-#include "Calibration.h"
-#include "Debug.h"
-#include "HallWatcher.h"
-#include "MLX90363.h"
-#include "ThreePhase/Driver.h"
+#include "Calibration.hpp"
+#include "Debug.hpp"
+#include "HallWatcher.hpp"
+#include "MLX90363.hpp"
+#include "ThreePhase/Driver.hpp"
 
 using namespace ThreePhaseControllerNamespace;
 using namespace Calibration;

@@ -8,7 +8,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include <AVR++/basicTypes.h>
+#include <AVR++/basicTypes.hpp>
 #include <avr/io.h>
 
 namespace ThreePhaseControllerNamespace {

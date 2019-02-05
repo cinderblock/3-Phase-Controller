@@ -11,7 +11,7 @@
  * Created on October 12, 2017, 1:53 PM
  */
 
-#include "HallWatcher.h"
+#include "HallWatcher.hpp"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;

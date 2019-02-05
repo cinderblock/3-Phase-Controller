@@ -5,8 +5,8 @@
  * Created on October 20, 2015, 12:16 AM
  */
 
-#include "Clock.h"
-#include "Timer.h"
+#include "Clock.hpp"
+#include "Timer.hpp"
 
 using namespace Basic;
 

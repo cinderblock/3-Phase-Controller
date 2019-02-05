@@ -16,7 +16,7 @@
 
 #include <avr/interrupt.h>
 
-#include "Board.h"
+#include "Board.hpp"
 
 #ifdef QUANTUM_DRIVE
 ISR(INT0_vect); // H1

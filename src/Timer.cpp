@@ -5,7 +5,7 @@
  * Created on August 31, 2015, 5:55 PM
  */
 
-#include "Timer.h"
+#include "Timer.hpp"
 
 using namespace Basic;
 using namespace ThreePhaseControllerNamespace;

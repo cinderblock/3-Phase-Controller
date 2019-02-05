@@ -11,9 +11,9 @@
  * Created on April 16, 2018, 12:58 PM
  */
 
-#include "FaultTester.h"
-#include "AVRClock.h"
-#include "Board.h"
+#include "FaultTester.hpp"
+#include "AVRClock.hpp"
+#include "Board.hpp"
 #include <avr/io.h>
 
 using namespace ThreePhaseControllerNamespace;

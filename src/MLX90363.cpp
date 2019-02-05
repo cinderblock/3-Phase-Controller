@@ -7,13 +7,13 @@
 
 #include <avr/pgmspace.h>
 
-#include "Board.h"
-#include "Debug.h"
-#include "MLX90363.h"
+#include "Board.hpp"
+#include "Debug.hpp"
+#include "MLX90363.hpp"
 
-#include "Clock.h"
-#include "ThreePhase/PositionEstimator.h"
-#include <AVR++/SPI.h>
+#include "Clock.hpp"
+#include "ThreePhase/PositionEstimator.hpp"
+#include <AVR++/SPI.hpp>
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;

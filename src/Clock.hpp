@@ -8,11 +8,11 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
-#include <AVR++/basicTypes.h>
+#include <AVR++/basicTypes.hpp>
 
 #include <avr/interrupt.h>
 
-#include "Timer.h"
+#include "Timer.hpp"
 
 namespace ThreePhaseControllerNamespace {
 
