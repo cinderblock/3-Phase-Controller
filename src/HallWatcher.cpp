@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   HallWatcher.cpp
  * Author: Cameron
- * 
+ *
  * Created on October 12, 2017, 1:53 PM
  */
 
@@ -20,9 +20,7 @@ u1 volatile HallWatcher::state = 0b111;
 void (*HallWatcher::stateChangeReceiver)() = nullptr;
 
 #ifdef BED_CONTROLLER
-void INT6_vect() {
-  HallWatcher::checkH1();
-}
+void INT6_vect() { HallWatcher::checkH1(); }
 
 void PCINT0_vect() {
   HallWatcher::checkH2();
@@ -40,33 +38,31 @@ void HallWatcher::init() {
 #endif
 
 #ifdef QUANTUM_DRIVE
-void INT0_vect() {
-  HallWatcher::checkH1();
-}
-void INT1_vect() {
-  HallWatcher::checkH2();
-}
-void PCINT0_vect() {
-  HallWatcher::checkH3();
-}
+  void INT0_vect() { HallWatcher::checkH1(); }
+  void INT1_vect() { HallWatcher::checkH2(); }
+  void PCINT0_vect() { HallWatcher::checkH3(); }
 
-void HallWatcher::init() {
-  // set edge detection INT0 & INT1
-  EICRA = 0b00000101;
-  // Enable INT0 & INT1
-  EIMSK = 0b00000011;
+  void HallWatcher::init() {
+    // set edge detection INT0 & INT1
+    EICRA = 0b00000101;
+    // Enable INT0 & INT1
+    EIMSK = 0b00000011;
 
-  // Enable PCINT4
-  PCMSK0 = 0b00010000;
+    // Enable PCINT4
+    PCMSK0 = 0b00010000;
 #endif
-  
-// TODO: Make the above ifdef/endif less hacky
-  
-  
-  // Enable pin change interrupts in general
-  PCICR = 0b00000001;
 
-  checkH1();
-  checkH2();
-  checkH3();
-}
+#ifdef HOVER_DRIVE
+    void HallWatcher::init() {
+      return;
+#endif
+
+      // TODO: Make the above ifdef/endif less hacky
+
+      // Enable pin change interrupts in general
+      PCICR = 0b00000001;
+
+      checkH1();
+      checkH2();
+      checkH3();
+    }

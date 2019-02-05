@@ -6,13 +6,14 @@
  */
 
 #ifndef CONFIG_H
-#define	CONFIG_H
+#define CONFIG_H
 
 // #define QUANTUM_DRIVE 1 // Sterring motor
 // #define QUANTUM_DRIVE 2 // traction motor
-#define QUANTUM_DRIVE 3 // alternate traction motor
+// #define QUANTUM_DRIVE 3 // alternate traction motor
 //#define BED_CONTROLLER
 
+#define HOVER_DRIVE
 
 #ifdef BED_CONTROLLER
 #ifdef QUANTUM_DRIVE
@@ -20,4 +21,4 @@
 #endif
 #endif
 
-#endif	/* CONFIG_H */
+#endif /* CONFIG_H */

@@ -15,6 +15,7 @@
 #define CALIBRATION_H
 
 #include "Config.hpp"
+#include "ThreePhase/Driver.hpp"
 #include <AVR++/basicTypes.hpp>
 
 namespace ThreePhaseControllerNamespace {
@@ -22,17 +23,23 @@ namespace ThreePhaseControllerNamespace {
 namespace Calibration {
 using namespace Basic;
 
-constexpr bool enabled = false;
+constexpr bool enabled = true;
 
 #ifdef BED_CONTROLLER
 // 5 mechanical revolutions
-constexpr u2 numberOfSpins = 5 * 15;
+constexpr u2 numberOfSpins = 5 * ThreePhaseDriver::CyclesPerRevolution;
 constexpr u1 amplitude = 60;
+#endif
+
+#ifdef HOVER_DRIVE
+// 5 mechanical revolutions
+constexpr u2 numberOfSpins = 5 * ThreePhaseDriver::CyclesPerRevolution;
+constexpr u1 amplitude = 20;
 #endif
 
 #ifdef QUANTUM_DRIVE
 // 10 mechanical revolutions
-constexpr u2 numberOfSpins = 7 * 10;
+constexpr u2 numberOfSpins = 10 * ThreePhaseDriver::CyclesPerRevolution;
 constexpr u1 amplitude = 40;
 #endif
 
