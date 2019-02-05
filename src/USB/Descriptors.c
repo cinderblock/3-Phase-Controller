@@ -83,8 +83,8 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor = {
 
     .Endpoint0Size = REPORT_SIZE, // sizeof(USBDataOUTShape),
 
-    .VendorID = 0x03EB,
-    .ProductID = 0x204F,
+    .VendorID = 0xDEAD,
+    .ProductID = 0xBEEF,
     .ReleaseNumber = VERSION_BCD(0, 0, 1),
 
     .ManufacturerStrIndex = STRING_ID_Manufacturer,
