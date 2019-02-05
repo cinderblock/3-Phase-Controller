@@ -11,9 +11,6 @@
         "${workspaceFolder}/libCameron/src"
       ],
       "defines": [
-        "_DEBUG",
-        "UNICODE",
-        "_UNICODE",
         "F_CPU=16000000UL",
         "F_USB=16000000UL",
         "USE_LUFA_CONFIG_HEADER"
