@@ -10,11 +10,7 @@
         "${workspaceFolder}/AVR++",
         "${workspaceFolder}/libCameron/src"
       ],
-      "defines": [
-        "F_CPU=16000000UL",
-        "F_USB=16000000UL",
-        "USE_LUFA_CONFIG_HEADER"
-      ],
+      "defines": ["F_CPU=16000000UL", "F_USB=F_CPU", "USE_LUFA_CONFIG_HEADER"],
       "cStandard": "c11",
       "cppStandard": "c++11"
     }
