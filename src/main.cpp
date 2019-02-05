@@ -124,9 +124,9 @@ int main() {
     HID_Device_USBTask(&Generic_HID_Interface);
     USB_USBTask();
 
-    if (auto msg = SerialInterface::getMessage()) {
-      ThreePhaseController::setAmplitudeTarget(msg->getCommand());
-    }
+    // if (auto msg = SerialInterface::getMessage()) {
+    //   ThreePhaseController::setAmplitudeTarget(msg->getCommand());
+    // }
 
     switch (state) {
     case State::Fault:
