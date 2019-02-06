@@ -218,6 +218,8 @@ public:
    */
   static void prepareGET1Message(MessageType const type, const u2 timeout = 0xffff, bool const resetRoll = false);
 
+  static void prepareReadMessage(u2 const addr0, u2 const addr1);
+
   static constexpr u1 resolutionBits = 14;
 
   static inline void setAlphaHandler(void (*handler)(u2 const)) { alphaHandler = handler; }

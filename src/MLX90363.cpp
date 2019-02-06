@@ -236,6 +236,20 @@ void MLX90363::handleXYZ() {
   ROLL = RxBuffer[6] & 0x3f;
 }
 
+void MLX90363::prepareReadMessage(u2 const addr0, u2 const addr1) {
+  if (isTransmitting())
+    return;
+
+  TxBuffer[0] = (u1)addr0;
+  TxBuffer[1] = (u1)(addr0 >> 8);
+  TxBuffer[2] = (u1)addr1;
+  TxBuffer[3] = (u1)(addr1 >> 8);
+  TxBuffer[4] = 0;
+  TxBuffer[5] = 0;
+  setCommandUnsafe(Opcode::MemoryRead);
+  fillTxBufferCRC();
+}
+
 void MLX90363::prepareGET1Message(MessageType const type, const u2 timeout, bool const resetRoll) {
   if (isTransmitting())
     return;
