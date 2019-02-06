@@ -134,7 +134,7 @@ public:
   enum class ResponseState : u1 { Init, Ready, Receiving, Received, failedCRC, TypeA, TypeAB, TypeXYZ, Other };
 
   /**
-   * The 2-bit marker attached to all incoming messages for easy processing
+   * The 2-bit marker attached to all messages for easy processing
    */
   enum class MessageType : b2 { Alpha = 0, AlphaBeta = 1, XYZ = 2, Other = 3 };
 
@@ -226,6 +226,10 @@ public:
 
   static inline u1 const *const getTxBuffer() { return TxBuffer; }
   static inline u1 const *const getRxBuffer() { return RxBuffer; }
+
+private:
+  static inline void setCommandUnsafe(MessageType t, Opcode c) { TxBuffer[6] = (((u1)t) << 6) | (u1)c; }
+  static inline void setCommandUnsafe(Opcode c) { setCommandUnsafe(MessageType::Other, c); }
 };
 
 }; // namespace ThreePhaseControllerNamespace

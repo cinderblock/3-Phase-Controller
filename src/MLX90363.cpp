@@ -239,13 +239,14 @@ void MLX90363::handleXYZ() {
 void MLX90363::prepareGET1Message(MessageType const type, const u2 timeout, bool const resetRoll) {
   if (isTransmitting())
     return;
+
   TxBuffer[0] = 0;
   TxBuffer[1] = resetRoll;
   TxBuffer[2] = timeout & 0xff;
   TxBuffer[3] = timeout >> 8;
   TxBuffer[4] = 0;
   TxBuffer[5] = 0;
-  TxBuffer[6] = (u1)type << 6 | (u1)Opcode::GET1;
+  setCommandUnsafe(type, Opcode::GET1);
   fillTxBufferCRC();
 }
 
