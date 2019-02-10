@@ -12,6 +12,7 @@
 
 #include "Board.hpp"
 #include "Clock.hpp"
+#include <AVR++/Atomic.hpp>
 #include <AVR++/IOpin.hpp>
 #include <AVR++/bitTypes.hpp>
 
@@ -55,14 +56,14 @@ public:
 private:
   static ResponseState responseState;
 
-  volatile static u2 alpha;
-  volatile static u2 beta;
-  volatile static u2 X;
-  volatile static u2 Y;
-  volatile static u2 Z;
-  volatile static u1 err;
-  volatile static u1 VG;
-  volatile static u1 ROLL;
+  static volatile Atomic<u2> alpha;
+  static volatile Atomic<u2> beta;
+  static volatile Atomic<u2> X;
+  static volatile Atomic<u2> Y;
+  static volatile Atomic<u2> Z;
+  static volatile u1 err;
+  static volatile u1 VG;
+  static volatile u1 ROLL;
 
   /**
    * INTERNAL: Reset the buffer position and start the transmission sequence.
@@ -193,12 +194,7 @@ public:
   static void handleResponse();
 
   // inline static u2 getAlpha() {return (u2 const) alpha;}
-  inline static u2 getAlpha() {
-    cli();
-    u2 const a = alpha;
-    sei();
-    return a;
-  }
+  inline static u2 getAlpha() { return alpha; }
 
   inline static u2 getBeta() { return beta; }
 
@@ -207,6 +203,28 @@ public:
   inline static u2 getY() { return Y; }
 
   inline static u2 getZ() { return Z; }
+
+  inline static u2 getAlphaUnsafe() { return alpha.getUnsafe(); }
+
+  inline static u2 getBetaUnsafe() { return beta.getUnsafe(); }
+
+  inline static u2 getXUnsafe() { return X.getUnsafe(); }
+
+  inline static u2 getYUnsafe() { return Y.getUnsafe(); }
+
+  inline static u2 getZUnsafe() { return Z.getUnsafe(); }
+
+  // Slightly more efficient versions of the safe ones above
+
+  inline static u2 getAlphaForceInterruptsOn() { return alpha.getForceInterruptsOn(); }
+
+  inline static u2 getBetaForceInterruptsOn() { return beta.getForceInterruptsOn(); }
+
+  inline static u2 getXForceInterruptsOn() { return X.getForceInterruptsOn(); }
+
+  inline static u2 getYForceInterruptsOn() { return Y.getForceInterruptsOn(); }
+
+  inline static u2 getZForceInterruptsOn() { return Z.getForceInterruptsOn(); }
 
   inline static u1 getRoll() { return ROLL; }
 

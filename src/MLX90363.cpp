@@ -50,11 +50,11 @@ void (*volatile MLX90363::alphaHandler)(u2 const alpha) = nullptr;
 
 MLX90363::ResponseState MLX90363::responseState = MLX90363::ResponseState::Init;
 
-volatile u2 MLX90363::alpha;
-volatile u2 MLX90363::beta;
-volatile u2 MLX90363::X;
-volatile u2 MLX90363::Y;
-volatile u2 MLX90363::Z;
+volatile Atomic<u2> MLX90363::alpha;
+volatile Atomic<u2> MLX90363::beta;
+volatile Atomic<u2> MLX90363::X;
+volatile Atomic<u2> MLX90363::Y;
+volatile Atomic<u2> MLX90363::Z;
 
 volatile u1 MLX90363::err;
 volatile u1 MLX90363::VG;
@@ -188,7 +188,7 @@ void MLX90363::handleResponse() {
     // Get one copy of volatile pointer
     void (*handler)(u2 const alpha) = alphaHandler;
     if (handler)
-      handler(alpha);
+      handler(alpha.getUnsafe());
 
     return;
   }
@@ -211,27 +211,30 @@ void MLX90363::handleResponse() {
 b6 MLX90363::getReceivedOpCode() { return RxBuffer[6] & 0x3f; }
 
 void MLX90363::handleAlpha() {
-  alpha = RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8;
+  alpha.setUnsafe(RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8);
 
+  // Single byte read/write are atomic
   err = RxBuffer[1] >> 6;
   VG = RxBuffer[4];
   ROLL = RxBuffer[6] & 0x3f;
 }
 
 void MLX90363::handleAlphaBeta() {
-  alpha = RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8;
-  beta = RxBuffer[2] | (RxBuffer[3] & 0x3f) << 8;
+  alpha.setUnsafe(RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8);
+  beta.setUnsafe(RxBuffer[2] | (RxBuffer[3] & 0x3f) << 8);
 
+  // Single byte read/write are atomic
   err = RxBuffer[1] >> 6;
   VG = RxBuffer[4];
   ROLL = RxBuffer[6] & 0x3f;
 }
 
 void MLX90363::handleXYZ() {
-  X = RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8;
-  Y = RxBuffer[2] | (RxBuffer[3] & 0x3f) << 8;
-  Z = RxBuffer[4] | (RxBuffer[5] & 0x3f) << 8;
+  X.setUnsafe(RxBuffer[0] | (RxBuffer[1] & 0x3f) << 8);
+  Y.setUnsafe(RxBuffer[2] | (RxBuffer[3] & 0x3f) << 8);
+  Z.setUnsafe(RxBuffer[4] | (RxBuffer[5] & 0x3f) << 8);
 
+  // Single byte read/write are atomic
   err = RxBuffer[1] >> 6;
   ROLL = RxBuffer[6] & 0x3f;
 }
