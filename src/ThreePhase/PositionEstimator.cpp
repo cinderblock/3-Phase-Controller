@@ -234,6 +234,7 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
 
 void ThreePhasePositionEstimator::init() {
   MLX90363::init();
+
   MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
 
   auto magRoll = MLX90363::getRoll();
