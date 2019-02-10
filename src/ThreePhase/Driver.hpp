@@ -11,7 +11,7 @@
 #include <AVR++/basicTypes.hpp>
 #include <avr/interrupt.h>
 
-#include "Config.hpp"
+#include "Config.h"
 
 ISR(ADC_vect);
 

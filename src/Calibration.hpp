@@ -14,7 +14,7 @@
 #ifndef CALIBRATION_H
 #define CALIBRATION_H
 
-#include "Config.hpp"
+#include "Config.h"
 #include "ThreePhase/Driver.hpp"
 #include <AVR++/basicTypes.hpp>
 

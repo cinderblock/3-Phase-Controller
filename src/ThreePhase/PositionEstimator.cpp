@@ -2,7 +2,7 @@
 #include "PositionEstimator.hpp"
 #include "LookupTable.hpp"
 // #include "Debug.hpp"
-#include "Config.hpp"
+#include "Config.h"
 #include "Controller.hpp"
 #include "Debug.hpp"
 #include "HallWatcher.hpp"

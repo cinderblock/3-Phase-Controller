@@ -8,7 +8,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#include "Config.hpp"
+#include "Config.h"
 #include <AVR++/IOpin.hpp>
 #include <avr/io.h>
 

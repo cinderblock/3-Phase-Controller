@@ -15,10 +15,6 @@
 
 #define HOVER_DRIVE
 
-#ifdef BED_CONTROLLER
-#ifdef QUANTUM_DRIVE
-#error "Can't have both BED_CONTROLLER and QUANTUM_DRIVE defined at once!"
-#endif
-#endif
+#include "ConfigCheck.h"
 
 #endif /* CONFIG_H */

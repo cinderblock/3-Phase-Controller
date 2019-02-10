@@ -8,7 +8,7 @@
 #include <util/atomic.h>
 #include <util/delay.h>
 
-#include "Config.hpp"
+#include "Config.h"
 #include "Controller.hpp"
 #include "Debug.hpp"
 #include "Driver.hpp"

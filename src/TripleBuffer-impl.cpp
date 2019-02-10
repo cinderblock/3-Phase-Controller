@@ -1,2 +1,2 @@
-#include "Config.hpp"
+#include "Config.h"
 #include <TripleBuffer.cpp>
