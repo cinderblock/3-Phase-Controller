@@ -272,3 +272,70 @@ void MLX90363::startTransmitting() {
     return;
   startTransmittingUnsafe();
 }
+
+void MLX90363::transmitAndGetDoneTime(Clock::MicroTime &done) {
+  transmitWaitUnsafe();
+
+  Clock::readTime(done);
+}
+
+bool MLX90363::transmitAndCheckResult(const ResponseState expected, const Clock::MicroTime wait) {
+  Clock::MicroTime ready;
+
+  transmitAndGetDoneTime(ready);
+  ready += wait;
+
+  while (ready.isInFuture())
+    continue;
+
+  // Just send the same thing again
+  transmitWaitUnsafe();
+
+  return responseState == expected;
+}
+
+MLX90363::Result MLX90363::PingCheck(const u2 key) {
+  if (isTransmitting())
+    return Result::Error;
+
+  TxBuffer[2] = key | 0xff;
+  TxBuffer[3] = key >> 8;
+
+  setCommandUnsafe(Opcode::NOP__Challenge);
+  fillTxBufferCRC();
+
+  if (!transmitAndCheckResult())
+    return Result::Fail;
+
+  if (TxBuffer[2] != RxBuffer[2])
+    return Result::Fail;
+  if (TxBuffer[3] != RxBuffer[3])
+    return Result::Fail;
+
+  if (TxBuffer[2] != ~RxBuffer[4])
+    return Result::Fail;
+  if (TxBuffer[3] != ~RxBuffer[5])
+    return Result::Fail;
+
+  return Result::OK;
+}
+
+MLX90363::Result MLX90363::ReadMemory(const u2 addr[2], u2 res[2]) {
+  if (isTransmitting())
+    return Result::Error;
+
+  prepareReadMessage(addr[0], addr[1]);
+
+  if (!transmitAndCheckResult())
+    return Result::Fail;
+
+  auto dest = (u1 *)res;
+
+  // Little Endian response from MLX let's us just copy all the bytes directly
+  dest[0] = RxBuffer[0];
+  dest[1] = RxBuffer[1];
+  dest[2] = RxBuffer[2];
+  dest[3] = RxBuffer[3];
+
+  return Result::OK;
+}

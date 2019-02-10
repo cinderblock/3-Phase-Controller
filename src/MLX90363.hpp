@@ -343,7 +343,34 @@ public:
   static inline u1 const *const getTxBuffer() { return TxBuffer; }
   static inline u1 const *const getRxBuffer() { return RxBuffer; }
 
+  enum class Result : u1 {
+    /**
+     * Operation completed succesfully on remote
+     */
+    OK,
+    /**
+     * Operation failed on remote somewhere
+     */
+    Fail,
+    /**
+     * Local error, likely with parameter
+     */
+    Error
+  };
+
+  static Result PingCheck(const u2 key = 0x1234);
+
+  static Result ReadMemory(const u2 addr[2], u2 res[2]);
+
 private:
+  static bool transmitAndCheckResult(const ResponseState expected = ResponseState::Other,
+                                     const Clock::MicroTime wait = tShort);
+  inline static void transmitAndGetDoneTime(Clock::MicroTime &timeout);
+  inline static void transmitWaitUnsafe() {
+    startTransmittingUnsafe();
+    while (isTransmitting())
+      continue;
+  }
   static inline void setCommandUnsafe(MessageType t, Opcode c) { TxBuffer[6] = (((u1)t) << 6) | (u1)c; }
   static inline void setCommandUnsafe(Opcode c) { setCommandUnsafe(MessageType::Other, c); }
 };
