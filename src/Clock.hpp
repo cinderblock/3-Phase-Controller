@@ -33,17 +33,21 @@ public:
     u4 ticks;
 
   public:
-    inline TickTime(u4 const ticks) : ticks(ticks){};
-    inline TickTime() : ticks(){};
+    inline constexpr TickTime(u4 const ticks) : ticks(ticks){};
+    inline constexpr TickTime() : ticks(){};
   };
 
   class MicroTime : public TickTime {
     u2 timerCount;
 
   public:
-    inline MicroTime(u4 const ticks, u2 const timerCount = 0)
+    inline constexpr MicroTime(u4 const ticks, u2 const timerCount = 0)
         : TickTime(ticks + timerCount / Timer::CountsPerClear), timerCount(timerCount % Timer::CountsPerClear){};
-    inline MicroTime() : TickTime(){};
+    inline constexpr MicroTime(unsigned long long const us)
+        : TickTime(us / 1000), timerCount(((u2)(us % 1000)) * (Timer::CountsPerClear / 1000)){};
+    inline constexpr MicroTime(long double const us)
+        : TickTime(us / 1000), timerCount(((u2)((long long)us % 1000)) * (Timer::CountsPerClear / 1000)){};
+    inline constexpr MicroTime() : TickTime(), timerCount(){};
 
     /**
      * Assign a new value to the sub millisecond part of this object
@@ -133,11 +137,11 @@ public:
   inline static u4 readTimeISR() { return time; };
 };
 
-inline static Clock::MicroTime operator"" _ms(unsigned long long i) { return {(u4)i, 0}; }
+inline static constexpr const Clock::MicroTime operator"" _ms(unsigned long long const i) { return i * 1000; }
 
-inline static Clock::MicroTime operator"" _us(unsigned long long i) {
-  return {(u4)(i / 1000), ((u2)i % 1000) * (Timer::CountsPerClear / 1000)};
-}
+inline static constexpr const Clock::MicroTime operator"" _ms(long double const i) { return i * 1000; }
+
+inline static constexpr const Clock::MicroTime operator"" _us(unsigned long long const i) { return i; }
 
 }; // namespace ThreePhaseControllerNamespace
 
