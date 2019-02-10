@@ -20,6 +20,8 @@ ISR(SPI_STC_vect, ISR_NOBLOCK);
 
 namespace ThreePhaseControllerNamespace {
 
+using namespace Basic;
+
 class MLX90363 {
   friend void ::SPI_STC_vect();
   static inline void isr();
