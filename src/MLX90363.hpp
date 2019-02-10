@@ -118,6 +118,100 @@ private:
     Ready_Message = 0x2C,
   };
 
+#ifndef MLX90363_3V3_TIMINGS
+  // 5V Timings (default)
+
+  static constexpr auto tStartUp = 20_ms; // min
+
+  static constexpr auto tShort = 120_us; // min
+
+  static constexpr auto teewrite = 32_ms; // min
+
+  static constexpr auto tDiag_1000Hz = 40_ms; // max
+  static constexpr auto tDiag_500Hz = 20_ms;  // max
+  static constexpr auto tDiag_200Hz = 10_ms;  // max
+
+  static constexpr auto t1us = 1_us; // typ
+
+  static constexpr auto tREFE_mod1_Alpha = 920_us;      // min
+  static constexpr auto tREFE_mod1_AlphaBeta = 1050_us; // min
+  static constexpr auto tREFE_mod1_XYZ = 920_us;        // min
+
+  static constexpr auto tReady_mod1_Alpha = 920_us;      // max
+  static constexpr auto tReady_mod1_AlphaBeta = 1050_us; // max
+  static constexpr auto tReady_mod1_XYZ = 920_us;        // max
+
+  static constexpr auto tSyncFE_Alpha = 874_us;      // min
+  static constexpr auto tSyncFE_AlphaBeta = 1004_us; // min
+  static constexpr auto tSyncFE_XYZ = 874_us;        // min
+
+  static constexpr auto tReady_mod2_Alpha = 874_us;      // max
+  static constexpr auto tReady_mod2_AlphaBeta = 1004_us; // max
+  static constexpr auto tReady_mod2_XYZ = 874_us;        // max
+
+  static constexpr auto tRESync = 80_us; // min
+
+  static constexpr auto tRERE_mod3_Alpha = 950_us;      // min
+  static constexpr auto tRERE_mod3_AlphaBeta = 1080_us; // min
+  static constexpr auto tRERE_mod3_XYZ = 950_us;        // min
+
+  static constexpr auto tReadyRE_mod3_Alpha = 950_us;      // max
+  static constexpr auto tReadyRE_mod3_AlphaBeta = 1080_us; // max
+  static constexpr auto tReadyRE_mod3_XYZ = 950_us;        // max
+
+  static constexpr auto tREFE_mod3 = 90_us; // min
+
+  static constexpr auto tReadyFE_mod3 = 90_us; // min
+#else
+  // 3V3 Timings
+
+  static constexpr auto tStartUp = 23.2_ms; // min
+
+  static constexpr auto tShort = 139_us; // min
+
+  static constexpr auto teewrite = 37_ms; // min
+
+  static constexpr auto tDiag_1000Hz = 46.4_ms; // max
+  static constexpr auto tDiag_500Hz = 23.2_ms;  // max
+  static constexpr auto tDiag_200Hz = 11.6_ms;  // max
+
+  static constexpr auto t1us = 1_us; // typ
+
+  static constexpr auto tREFE_mod1_Alpha = 1067_us;     // min
+  static constexpr auto tREFE_mod1_AlphaBeta = 1218_us; // min
+  static constexpr auto tREFE_mod1_XYZ = 1067_us;       // min
+
+  static constexpr auto tReady_mod1_Alpha = 1067_us;     // max
+  static constexpr auto tReady_mod1_AlphaBeta = 1218_us; // max
+  static constexpr auto tReady_mod1_XYZ = 1067_us;       // max
+
+  static constexpr auto tSyncFE_Alpha = 1014_us;     // min
+  static constexpr auto tSyncFE_AlphaBeta = 1165_us; // min
+  static constexpr auto tSyncFE_XYZ = 1014_us;       // min
+
+  static constexpr auto tReady_mod2_Alpha = 1014_us;     // max
+  static constexpr auto tReady_mod2_AlphaBeta = 1165_us; // max
+  static constexpr auto tReady_mod2_XYZ = 1014_us;       // max
+
+  static constexpr auto tRESync = 93_us; // min
+
+  static constexpr auto tRERE_mod3_Alpha = 1102_us;     // min
+  static constexpr auto tRERE_mod3_AlphaBeta = 1253_us; // min
+  static constexpr auto tRERE_mod3_XYZ = 1102_us;       // min
+
+  static constexpr auto tReadyRE_mod3_Alpha = 1102_us;     // max
+  static constexpr auto tReadyRE_mod3_AlphaBeta = 1253_us; // max
+  static constexpr auto tReadyRE_mod3_XYZ = 1102_us;       // max
+
+  static constexpr auto tREFE_mod3 = 105_us; // min
+
+  static constexpr auto tReadyFE_mod3 = 105_us; // min
+#endif
+
+  static constexpr auto tOscCounter_min = 500_us;
+  static constexpr auto tOscCounter_typ = 1000_us;
+  static constexpr auto tOscCounter_max = 30000_us;
+
   /**
    * Handle a standard Alpha response from the MLX90363
    */
