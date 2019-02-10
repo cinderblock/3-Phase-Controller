@@ -48,8 +48,6 @@ void EVENT_USB_Device_ControlRequest(void) { HID_Device_ProcessControlRequest(&G
 /** Event handler for the USB device Start Of Frame event. */
 void EVENT_USB_Device_StartOfFrame(void) { HID_Device_MillisecondElapsed(&Generic_HID_Interface); }
 
-static int16_t debug = 40;
-
 /** HID class driver callback function for the creation of HID reports to the host.
  *
  *  \param[in]     HIDInterfaceInfo  Pointer to the HID class interface configuration structure being referenced
