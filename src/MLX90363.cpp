@@ -312,9 +312,9 @@ MLX90363::Result MLX90363::PingCheck(const u2 key) {
   if (TxBuffer[3] != RxBuffer[3])
     return Result::Fail;
 
-  if (TxBuffer[2] != ~RxBuffer[4])
+  if (TxBuffer[2] != (u1)~RxBuffer[4])
     return Result::Fail;
-  if (TxBuffer[3] != ~RxBuffer[5])
+  if (TxBuffer[3] != (u1)~RxBuffer[5])
     return Result::Fail;
 
   return Result::OK;
