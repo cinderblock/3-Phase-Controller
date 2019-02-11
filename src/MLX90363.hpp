@@ -29,11 +29,13 @@ class MLX90363 {
 
   static void (*volatile alphaHandler)(u2 const alpha);
 
+public:
   /**
    * The fixed message length that the MLX90363 sends
    */
   static constexpr u1 messageLength = 8;
 
+private:
   /**
    * Staged transmit buffer. Will be sent automatically by the interrupt routine.
    * If properly started and left alone, repeat messages are trivial.
