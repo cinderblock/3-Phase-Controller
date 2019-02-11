@@ -20,7 +20,7 @@
 
 namespace ThreePhaseControllerNamespace {
 
-enum class CommandMode : u1 { Calibration, Push, Servo };
+enum class CommandMode : u1 { MLXDebug, ThreePhaseDebug, Calibration, Push, Servo };
 
 /**
  * Shape of data going OUT of host.
@@ -28,6 +28,20 @@ enum class CommandMode : u1 { Calibration, Push, Servo };
 typedef struct {
   CommandMode mode;
   union {
+
+    // MLXCommand
+    struct {
+      u1 mlxData[8];
+      // Should CRC be calculated locally
+      bool crc;
+    } mlx;
+
+    // ThreePhaseCommand
+    struct {
+      u2 A;
+      u2 B;
+      u2 C;
+    } ThreePhase;
 
     // CalibrationCommand
     struct {
@@ -54,11 +68,21 @@ typedef struct {
 typedef struct {
   State state;
   Fault fault;
-  u1 position;
-  s1 velocity;
-  u1 cpuTemp;
-  s1 current;
+  u2 position;
+  s2 velocity;
+
   u2 rawAngle;
+
+  u2 cpuTemp;
+  s2 current;
+
+  u2 ain0;
+  u2 AS;
+  u2 BS;
+  u2 CS;
+
+  u1 mlxResponse[1];
+  bool localMLXCRC;
 } USBDataINShape;
 
 static_assert(sizeof(USBDataOUTShape) <= REPORT_SIZE, "Data going OUT of HOST must be shorter than REPORT_SIZE");

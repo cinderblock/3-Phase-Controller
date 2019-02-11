@@ -74,6 +74,17 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
 
   switch (s) {
   case State::Fault:
+    ThreePhaseController::stop();
+    ThreePhaseDriver::advanceTo(-1);
+    ServoController::setEnable(false);
+    break;
+
+  case State::MLXSetup:
+    ThreePhaseController::stop();
+    ServoController::setEnable(false);
+    break;
+
+  case State::Manual:
     ThreePhaseController::disable();
     ServoController::setEnable(false);
     break;
@@ -127,6 +138,7 @@ int main() {
     // }
 
     switch (state) {
+    default:
     case State::Fault:
       break;
     case State::Calibration:

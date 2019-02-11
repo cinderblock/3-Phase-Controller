@@ -63,15 +63,26 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
                                          const uint8_t ReportType, void *ReportData, uint16_t *const ReportSize) {
   USBDataINShape *const data = (USBDataINShape *)ReportData;
 
+  *ReportSize = REPORT_SIZE;
+
+  return true;
+
   data->state = state;
   data->fault = fault;
   data->position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
   data->velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
-  data->cpuTemp = 0xc0ff;
-  data->current = 0xc0ff;
+  data->cpuTemp = 0x0ff;
+  data->current = 0x0ff;
+  data->ain0 = 0x0ff;
+  data->AS = 0x0ff;
+  data->BS = 0x0ff;
+  data->CS = 0x0ff;
   data->rawAngle = MLX90363::getAlpha() | (Lookup::isValid << 15);
 
-  *ReportSize = REPORT_SIZE;
+  if (!MLX90363::isTransmitting()) {
+    memcpy(data->mlxResponse, MLX90363::getRxBuffer(), MLX90363::messageLength);
+    data->localMLXCRC = MLX90363::getResponseState() != MLX90363::ResponseState::failedCRC;
+  }
 
   return true;
 }
@@ -89,6 +100,18 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
   USBDataOUTShape const *const data = (USBDataOUTShape *)ReportData;
 
   switch (data->mode) {
+  case CommandMode::MLXDebug:
+    setState(State::MLXSetup);
+    MLX90363::stopTransmitting();
+    memcpy(MLX90363::getTxBuffer(), data->mlx.mlxData, MLX90363::messageLength);
+    if (data->mlx.crc)
+      MLX90363::fillTxBufferCRC();
+    MLX90363::startTransmittingUnsafe();
+    return;
+  case CommandMode::ThreePhaseDebug:
+    setState(State::Manual);
+    // TODO: Implement body of this "method"
+    return;
   case CommandMode::Calibration:
     setState(State::Calibration);
     ThreePhaseDriver::setAmplitude(data->calibrate.amplitude);
