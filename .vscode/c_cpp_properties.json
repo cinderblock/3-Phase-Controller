@@ -2,13 +2,14 @@
   "configurations": [
     {
       "name": "avr-gcc",
-      "compilerPath": "\"${config:local.avr-gcc.compilerPath}avr-gcc\" -mmcu=atmega32u4 -fshort-enums -funsigned-char -funsigned-bitfields -fno-inline-small-functions -fno-strict-aliasing -fpack-struct",
+      "compilerPath": "\"${config:local.avr-gcc.compilerDir}/bin/avr-gcc\" -mmcu=atmega32u4 -fshort-enums -funsigned-char -funsigned-bitfields -fno-inline-small-functions -fno-strict-aliasing -fpack-struct",
       "intelliSenseMode": "gcc-x64",
       "includePath": [
         "${workspaceFolder}/src",
         "${workspaceFolder}/lufa",
         "${workspaceFolder}/AVR++",
-        "${workspaceFolder}/libCameron/src"
+        "${workspaceFolder}/libCameron/src",
+        "${config:local.avr-gcc.compilerDir}/avr/include"
       ],
       "defines": ["F_CPU=16000000UL", "F_USB=F_CPU", "USE_LUFA_CONFIG_HEADER"],
       "cStandard": "c11",
