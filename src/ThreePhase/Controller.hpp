@@ -63,6 +63,19 @@ public:
   static void init();
 
   /**
+   * Start the controller interrupt
+   */
+  inline static void start() {
+    // controlLoop() is called by TIMER4_OVF_vect
+    TIMSK4 = 1 << TOIE4;
+  }
+
+  /**
+   * Stop the controller interrupt
+   */
+  inline static void stop() { TIMSK4 = 0; }
+
+  /**
    * Enable the controller
    */
   inline static void enable() {

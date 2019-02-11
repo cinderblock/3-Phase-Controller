@@ -80,8 +80,7 @@ void ThreePhaseController::init() {
 
   ThreePhasePositionEstimator::init();
 
-  // controlLoop() is called by TIMER4_OVF_vect
-  TIMSK4 = 1 << TOIE4;
+  start();
 }
 
 void ThreePhaseController::handleNewVelocityEstimate(s2 const v) {
