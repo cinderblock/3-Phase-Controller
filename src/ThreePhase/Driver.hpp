@@ -42,6 +42,11 @@ class ThreePhaseDriver {
    */
   static volatile u1 amplitude;
 
+  /**
+   * Should we use ATmega32u4's PWM6 mode?
+   *
+   * This may seem like it is correct for us by name but it is not quite what we want.
+   */
   static constexpr bool usingPWM6 = false;
 
   friend void ::ADC_vect();
