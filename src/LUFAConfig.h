@@ -62,6 +62,9 @@
 //		#define NO_LIMITED_CONTROLLER_CONNECT
 //		#define NO_SOF_EVENTS
 
+// Seems to need to be 8, 16, or 32
+#define FIXED_CONTROL_ENDPOINT_SIZE 32
+
 /* USB Device Mode Driver Related Tokens: */
 #define USE_FLASH_DESCRIPTORS
 //		#define DEVICE_STATE_AS_GPIOR            {Insert Value Here}
