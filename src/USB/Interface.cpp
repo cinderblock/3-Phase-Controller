@@ -91,45 +91,45 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
   switch (data->mode) {
   case CommandMode::Calibration:
     setState(State::Calibration);
-    ThreePhaseDriver::setAmplitude(data->command.calibrate.amplitude);
-    ThreePhaseDriver::advanceTo(data->command.calibrate.angle);
+    ThreePhaseDriver::setAmplitude(data->calibrate.amplitude);
+    ThreePhaseDriver::advanceTo(data->calibrate.angle);
     return;
   case CommandMode::Push:
     setState(State::Push);
-    ThreePhaseController::setAmplitudeTarget(data->command.push.command);
+    ThreePhaseController::setAmplitudeTarget(data->push.command);
     return;
   case CommandMode::Servo:
     setState(State::Servo);
-    switch (data->command.servo.mode) {
+    switch (data->servo.mode) {
     case 1:
-      ServoController::setAmplitude(data->command.servo.command);
+      ServoController::setAmplitude(data->servo.command);
       return;
     case 2:
-      ServoController::setPosition(data->command.servo.command);
+      ServoController::setPosition(data->servo.command);
       return;
     case 3:
-      ServoController::setVelocity(data->command.servo.command);
+      ServoController::setVelocity(data->servo.command);
       return;
 
     case 11:
-      ServoController::setPosition_P(data->command.servo.command);
+      ServoController::setPosition_P(data->servo.command);
       return;
     case 12:
-      ServoController::setPosition_I(data->command.servo.command);
+      ServoController::setPosition_I(data->servo.command);
       return;
     case 13:
-      ServoController::setPosition_D(data->command.servo.command);
+      ServoController::setPosition_D(data->servo.command);
       return;
 
     // not used just yet
     case 21:
-      ServoController::setVelocity_P(data->command.servo.command);
+      ServoController::setVelocity_P(data->servo.command);
       return;
     case 22:
-      ServoController::setVelocity_I(data->command.servo.command);
+      ServoController::setVelocity_I(data->servo.command);
       return;
     case 23:
-      ServoController::setVelocity_D(data->command.servo.command);
+      ServoController::setVelocity_D(data->servo.command);
       return;
     }
   }

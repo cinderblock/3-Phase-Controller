@@ -28,18 +28,24 @@ enum class CommandMode : u1 { Calibration, Push, Servo };
 typedef struct {
   CommandMode mode;
   union {
+
+    // CalibrationCommand
     struct {
       u2 angle;
       u1 amplitude;
     } calibrate;
+
+    // PushCommand
     struct {
       s2 command;
     } push;
+
+    // ServoCommand
     struct {
       u1 mode;
       s4 command;
     } servo;
-  } command;
+  };
 } USBDataOUTShape;
 
 /**
