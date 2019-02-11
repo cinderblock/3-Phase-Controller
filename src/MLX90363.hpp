@@ -68,24 +68,6 @@ private:
   static volatile u1 ROLL;
 
   /**
-   * INTERNAL: Reset the buffer position and start the transmission sequence.
-   *
-   * Unsafe because it does not check if there is already a transmission running.
-   */
-  static void startTransmittingUnsafe();
-
-  /**
-   * Calculate and write the correct CRC for the message in and to the TxBuffer
-   */
-  static void fillTxBufferCRC();
-
-  /**
-   * Check the checksum of the data in the RxBuffer
-   * @return
-   */
-  static bool checkRxBufferCRC();
-
-  /**
    * OpCodes from the MLX90363 datasheet.
    *
    */
@@ -283,6 +265,24 @@ public:
    */
   static void stopTransmitting();
 
+  /**
+   * INTERNAL: Reset the buffer position and start the transmission sequence.
+   *
+   * Unsafe because it does not check if there is already a transmission running.
+   */
+  static void startTransmittingUnsafe();
+
+  /**
+   * Calculate and write the correct CRC for the message in and to the TxBuffer
+   */
+  static void fillTxBufferCRC();
+
+  /**
+   * Check the checksum of the data in the RxBuffer
+   * @return
+   */
+  static bool checkRxBufferCRC();
+
   static b6 getReceivedOpCode();
 
   /**
@@ -347,7 +347,7 @@ public:
 
   static inline ResponseState getResponseState() { return responseState; }
 
-  static inline u1 const *const getTxBuffer() { return TxBuffer; }
+  static inline u1 *const getTxBuffer() { return TxBuffer; }
   static inline u1 const *const getRxBuffer() { return RxBuffer; }
 
   enum class Result : u1 {
