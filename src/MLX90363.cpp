@@ -63,6 +63,9 @@ volatile u1 MLX90363::VG;
 // first roll is easy
 volatile u1 MLX90363::ROLL = 0xff;
 
+constexpr u1 setupSRValue = 0 << SPI2X;
+constexpr u1 NormalCRValue = 0b11010111;
+
 void MLX90363::init() {
   // Setup Slave Select line
   Board::SPI::slaveDeselect();
@@ -72,13 +75,14 @@ void MLX90363::init() {
 
   Board::MagSel::off();
 
-  // Setup control registers
+  // Stop any running transfer
+  AVR::SPI::CR->byte = 0;
 
   // #ifdef BED_CONTROLLER
   // Disable SPI2X
-  AVR::SPI::SR->byte = 0 << SPI2X;
+  AVR::SPI::SR->byte = setupSRValue;
   // F_CPU/64
-  AVR::SPI::CR->byte = 0b11010111;
+  AVR::SPI::CR->byte = NormalCRValue;
   // #endif
 
   // Make sure SS line is an output. If it is an input, the AVR hardware can kick
@@ -104,6 +108,25 @@ void MLX90363::startTransmittingUnsafe() {
   Board::SPI::slaveSelect();
   sendSPI(TxBuffer[bufferPosition]);
   responseState = ResponseState::Receiving;
+}
+
+void MLX90363::stopTransmitting() {
+  // Don't do anything if we don't need to
+  if (!isTransmitting())
+    return;
+
+  // Shutdown any running transfer
+  AVR::SPI::CR->byte = 0;
+  Board::SPI::slaveDeselect();
+
+  // Clear flag
+  AVR::SPI::SR->byte = setupSRValue;
+  SPDR;
+
+  // Restore state
+  AVR::SPI::CR->byte = NormalCRValue;
+
+  responseState = ResponseState::Ready;
 }
 
 /**

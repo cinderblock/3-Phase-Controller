@@ -276,6 +276,11 @@ public:
    */
   static void startTransmitting();
 
+  /**
+   * Abandon any running transmission
+   */
+  static void stopTransmitting();
+
   static b6 getReceivedOpCode();
 
   /**
