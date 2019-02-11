@@ -44,13 +44,11 @@ void init() {
   Debug::init();
   Debug::dout << PSTR("Beginning Inits\r\n");
 
-  // Set up the driver pins
-  ThreePhaseDriver::init();
-
   // Save and Clear the MCU Status Register. Indicates previous reset's source.
   resetCause = MCUSR;
   MCUSR = 0;
 
+  // Set up the driver pins
   ThreePhaseDriver::init();
 
   USB_Init();
