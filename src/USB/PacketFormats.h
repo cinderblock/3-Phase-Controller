@@ -14,6 +14,7 @@
 #ifndef USBPACKETFORMATS_H
 #define USBPACKETFORMATS_H
 
+#include "../MLX90363.hpp"
 #include "Descriptors.h"
 #include "main.hpp"
 #include <stdint.h>
@@ -82,7 +83,7 @@ typedef struct {
   u2 CS;
 
   u1 mlxResponse[8];
-  bool localMLXCRC;
+  MLX90363::ResponseState mlxResponseState;
 } USBDataINShape;
 
 static_assert(sizeof(USBDataOUTShape) <= REPORT_SIZE, "Data going OUT of HOST must be shorter than REPORT_SIZE");
