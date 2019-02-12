@@ -80,6 +80,7 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
     break;
 
   case State::MLXSetup:
+    MLX90363::init();
     ThreePhaseController::stop();
     ServoController::setEnable(false);
     break;
@@ -124,9 +125,6 @@ int main() {
   // These don't do anything if they're not enabled
   Demo::main();
   MLXDebug::main();
-
-  SerialInterface::init();
-  ThreePhaseController::init();
 
   while (1) {
     // These are very cheap calls if USB is not connected
