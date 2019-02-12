@@ -107,6 +107,8 @@ class ThreePhasePositionEstimator {
    */
   static void handleNewMagnetometerPositionReading(u2 alpha);
 
+  static void finishInit(u2 alpha);
+
 public:
   /**
    * Initialize hardware and internal variables to match initial hardware state

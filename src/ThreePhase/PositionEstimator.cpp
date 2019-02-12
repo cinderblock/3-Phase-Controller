@@ -232,37 +232,40 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
   }
 }
 
+static u1 roll;
+
 void ThreePhasePositionEstimator::init() {
   MLX90363::init();
 
   MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
 
-  auto magRoll = MLX90363::getRoll();
+  roll = MLX90363::getRoll();
 
-  do {
-    MLX90363::startTransmitting();
-
-    while (MLX90363::isTransmitting())
-      ;
-
-    // Delay long enough to guarantee data is ready
-    _delay_ms(2);
-
-    // Loop until we actually receive real data
-  } while (!MLX90363::hasNewData(magRoll));
-
-  const auto phase = Lookup::AlphaToPhase(MLX90363::getAlpha());
+  MLX90363::startTransmitting();
 
   // Set up the hall sensor interrupts
   // HallWatcher::init();
-
-  //  lastMagPhase = phase.getMechanicalPosition();
-  drivePhaseMagEstimate = u4(phase) << drivePhaseMagSubResolution;
 
   //  Debug::dout << PSTR("Start: \n") << drivePhaseMagEstimate << '\n';
   //
   //  Debug::SOUT << Debug::Printer::Special::End;
 
   // HallWatcher::setStateChangeReceiver(&getAndProcessNewHallState);
+
+  MLX90363::setAlphaHandler(&finishInit);
+}
+
+void ThreePhasePositionEstimator::finishInit(u2 const alpha) {
+  if (!MLX90363::hasNewData(roll))
+    return;
+
+  // Disable alpha handler
+  MLX90363::setAlphaHandler(nullptr);
+
+  const auto phase = Lookup::AlphaToPhase(alpha);
+
+  // lastMagPhase = phase.getMechanicalPosition();
+  drivePhaseMagEstimate = u4(phase) << drivePhaseMagSubResolution;
+
   MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
 }
