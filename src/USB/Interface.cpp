@@ -80,6 +80,8 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
   if (!MLX90363::isTransmitting()) {
     memcpy(data->mlxResponse, MLX90363::getRxBuffer(), MLX90363::messageLength);
     data->mlxResponseState = MLX90363::getResponseState();
+  } else {
+    data->mlxResponseState = (MLX90363::ResponseState)(-1);
   }
 
   return true;
