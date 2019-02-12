@@ -81,7 +81,7 @@ typedef struct {
   u2 BS;
   u2 CS;
 
-  u1 mlxResponse[1];
+  u1 mlxResponse[8];
   bool localMLXCRC;
 } USBDataINShape;
 
