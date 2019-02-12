@@ -15,8 +15,8 @@
 #define USBPACKETFORMATS_H
 
 #include "../MLX90363.hpp"
+#include "../main.hpp"
 #include "Descriptors.h"
-#include "main.hpp"
 #include <stdint.h>
 
 namespace ThreePhaseControllerNamespace {
