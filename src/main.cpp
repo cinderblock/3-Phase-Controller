@@ -98,8 +98,10 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
     break;
 
   case State::Push:
-    ThreePhaseController::enable();
     ServoController::setEnable(false);
+    ThreePhaseDriver::init();
+    ThreePhaseController::init();
+    ThreePhaseController::enable();
     break;
   case State::Servo:
     ThreePhaseController::enable();
