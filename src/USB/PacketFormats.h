@@ -72,7 +72,14 @@ typedef struct {
   u2 position;
   s2 velocity;
 
-  u2 rawAngle;
+  union {
+    u2 statusBitsWord;
+    struct {
+      u2 : 14;
+      bool mlxDataValid : 1;
+      bool lookupValid : 1;
+    };
+  };
 
   u2 cpuTemp;
   s2 current;

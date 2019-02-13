@@ -50,6 +50,7 @@ void init() {
 
   // Set up the driver pins
   ThreePhaseDriver::init();
+  MLX90363::init();
 
   USB_Init();
 
@@ -79,31 +80,14 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
     ServoController::setEnable(false);
     break;
 
-  case State::MLXSetup:
-    MLX90363::init();
-    ThreePhaseController::stop();
-    ServoController::setEnable(false);
-    break;
-
   case State::Manual:
-    ThreePhaseController::disable();
     ServoController::setEnable(false);
+    ThreePhaseController::stop();
+    MLX90363::stopTransmitting();
     break;
 
-  case State::Calibration:
-    ServoController::setEnable(false);
-    ThreePhaseDriver::init();
+  case State::Normal:
     ThreePhaseController::init();
-    ThreePhaseController::disable();
-    break;
-
-  case State::Push:
-    ServoController::setEnable(false);
-    ThreePhaseDriver::init();
-    ThreePhaseController::init();
-    ThreePhaseController::enable();
-    break;
-  case State::Servo:
     ThreePhaseController::enable();
     break;
   }
@@ -143,14 +127,13 @@ int main() {
     default:
     case State::Fault:
       break;
-    case State::Calibration:
+    case State::Manual:
       // TODO: Check for fault?
       break;
-    case State::Push:
+    case State::Normal:
       // TODO: Check for fault?
-      break;
-    case State::Servo:
       ServoController::update();
+      break;
     }
   }
 

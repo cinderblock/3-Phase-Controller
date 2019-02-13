@@ -75,13 +75,11 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
   data->AS = 0x0ff;
   data->BS = 0x0ff;
   data->CS = 0x0ff;
-  data->rawAngle = MLX90363::getAlpha() | (Lookup::isValid << 15);
+  data->lookupValid = Lookup::isValid;
 
-  if (!MLX90363::isTransmitting()) {
+  if (data->mlxDataValid = !MLX90363::isTransmitting()) {
     memcpy(data->mlxResponse, MLX90363::getRxBuffer(), MLX90363::messageLength);
     data->mlxResponseState = MLX90363::getResponseState();
-  } else {
-    data->mlxResponseState = (MLX90363::ResponseState)(-1);
   }
 
   return true;
@@ -101,7 +99,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
 
   switch (data->mode) {
   case CommandMode::MLXDebug:
-    setState(State::MLXSetup);
+    setState(State::Manual);
     MLX90363::stopTransmitting();
     memcpy(MLX90363::getTxBuffer(), data->mlx.mlxData, MLX90363::messageLength);
     if (data->mlx.crc)
@@ -113,16 +111,16 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
     // TODO: Implement body of this "method"
     return;
   case CommandMode::Calibration:
-    setState(State::Calibration);
+    setState(State::Manual);
     ThreePhaseDriver::setAmplitude(data->calibrate.amplitude);
     ThreePhaseDriver::advanceTo(data->calibrate.angle);
     return;
   case CommandMode::Push:
-    setState(State::Push);
+    setState(State::Normal);
     ThreePhaseController::setAmplitudeTarget(data->push.command);
     return;
   case CommandMode::Servo:
-    setState(State::Servo);
+    setState(State::Normal);
     switch (data->servo.mode) {
     case 1:
       ServoController::setAmplitude(data->servo.command);

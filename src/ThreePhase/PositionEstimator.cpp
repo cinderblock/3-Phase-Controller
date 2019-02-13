@@ -235,7 +235,8 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
 static u1 roll;
 
 void ThreePhasePositionEstimator::init() {
-  MLX90363::init();
+
+  MLX90363::stopTransmitting();
 
   MLX90363::prepareGET1Message(MLX90363::MessageType::Alpha);
 
