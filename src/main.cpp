@@ -116,7 +116,7 @@ int main() {
   while (1) {
     // These are very cheap calls if USB is not connected
     HID_Device_USBTask(&Generic_HID_Interface);
-    // USB_USBTask();
+    USB_USBTask();
 
     // if (auto msg = SerialInterface::getMessage()) {
     //   ThreePhaseController::setAmplitudeTarget(msg->getCommand());
