@@ -34,7 +34,7 @@ using namespace ThreePhaseControllerNamespace;
 void init() __attribute__((constructor));
 
 // Save reset cause
-u1 resetCause;
+const u1 resetCause = MCUSR;
 
 void init() {
   // Watch Dog Timer
@@ -44,8 +44,7 @@ void init() {
   Debug::init();
   Debug::dout << PSTR("Beginning Inits\r\n");
 
-  // Save and Clear the MCU Status Register. Indicates previous reset's source.
-  resetCause = MCUSR;
+  // Clear the MCU Status Register. Indicates previous reset's source.
   MCUSR = 0;
 
   // Set up the driver pins
