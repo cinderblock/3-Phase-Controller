@@ -27,4 +27,6 @@ extern Fault fault;
 
 bool setState(State s);
 
+extern const u1 resetCause;
+
 } // namespace ThreePhaseControllerNamespace
