@@ -94,7 +94,7 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
   state = s;
 
   // Enable Interrupts
-  cli();
+  sei();
 
   return true;
 }
