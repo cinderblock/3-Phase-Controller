@@ -27,16 +27,14 @@
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
+// Save reset cause
+const u1 resetCause = MCUSR;
+
 /**
  * All the init functions should go in here.
  * gcc will automatically call it for us because of the constructor attribute.
  */
-void init() __attribute__((constructor));
-
-// Save reset cause
-const u1 resetCause = MCUSR;
-
-void init() {
+__attribute__((constructor)) void init() {
   // Watch Dog Timer
   wdt_reset();
   wdt_disable();
