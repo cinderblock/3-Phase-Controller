@@ -29,4 +29,15 @@ bool setState(State s);
 
 extern const u1 resetCause;
 
+namespace Analog {
+void temperature();
+void current();
+void currentRef();
+void battery();
+void drive();
+void AS();
+void BS();
+void CS();
+} // namespace Analog
+
 } // namespace ThreePhaseControllerNamespace

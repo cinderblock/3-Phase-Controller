@@ -13,8 +13,6 @@
 
 #include "Config.h"
 
-ISR(ADC_vect);
-
 namespace ThreePhaseControllerNamespace {
 
 using namespace Basic;
@@ -48,8 +46,6 @@ class ThreePhaseDriver {
    * This may seem like it is correct for us by name but it is not quite what we want.
    */
   static constexpr bool usingPWM6 = false;
-
-  friend void ::ADC_vect();
 
   inline static void emergencyDisable();
 

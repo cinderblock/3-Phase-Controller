@@ -25,39 +25,6 @@ inline static void setUpdateLock(const bool lock) {
   TCCR4E = ((lock ? 1 : 0) << TLOCK4) | 0b01000000;
 }
 
-//#define USE_DISABLED_FLAG
-
-ISR(ADC_vect) {
-#ifdef USE_DISABLED_FLAG
-  static bool disabled = false;
-#endif
-
-  if (ADC < 350
-#ifdef USE_DISABLED_FLAG
-      && !disabled
-#endif
-  ) {
-    ThreePhaseDriver::emergencyDisable();
-#ifdef USE_DISABLED_FLAG
-    disabled = true;
-#endif
-    //    Debug::LED::on();
-    return;
-  }
-
-  if (ADC > 500
-#ifdef USE_DISABLED_FLAG
-      && disabled
-#endif
-  ) {
-#ifdef USE_DISABLED_FLAG
-    disabled = false;
-#endif
-    //    Debug::LED::off();
-    ThreePhaseDriver::emergencyOK();
-  }
-}
-
 void ThreePhaseDriver::init() {
   AVR::Clock::enablePLL();
 
@@ -164,12 +131,6 @@ void ThreePhaseDriver::init() {
 
   // 7.8kHz
   // TCCR4B = 0b01000011;
-
-  u1 constexpr mux = Board::MUX::VBATS;
-
-  ADMUX = 0b11000000 | (mux & 0b011111);
-  ADCSRB = 0b10000000 | (mux & 0b100000);
-  ADCSRA = 0b11110111;
 }
 
 /**

@@ -97,6 +97,22 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
   return true;
 }
 
+void Analog::AS() {}
+
+void Analog::BS() {}
+
+void Analog::CS() {}
+
+void Analog::battery() {}
+
+void Analog::drive() {}
+
+void Analog::temperature() {}
+
+void Analog::current() {}
+
+void Analog::currentRef() {}
+
 /**
  *
  */

@@ -42,6 +42,7 @@ cNames += USB/Descriptors
 #MotorID = Motor1
 
 AVRpp_SRC = TimerTimeout USART gccGuard FlashCRC
+cppNames += ScanningADC-impl
 
 libCameron_SRC = CRC8 DecPrintFormatter
 
