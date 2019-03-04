@@ -47,11 +47,10 @@ class ThreePhaseDriver {
    */
   static constexpr bool usingPWM6 = false;
 
+public:
   inline static void emergencyDisable();
 
   inline static void emergencyOK();
-
-public:
   /**
    * Internal granularity of sin wave for each phase
    */

@@ -97,21 +97,37 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
   return true;
 }
 
-void Analog::AS() {}
+volatile Atomic<u2> ADCValues::AS;
+volatile Atomic<u2> ADCValues::BS;
+volatile Atomic<u2> ADCValues::CS;
+volatile Atomic<u2> ADCValues::current;
+volatile Atomic<u2> ADCValues::currentRef;
+volatile Atomic<u2> ADCValues::battery;
+volatile Atomic<u2> ADCValues::drive;
+volatile Atomic<u2> ADCValues::temperature;
 
-void Analog::BS() {}
+void Analog::AS() { ADCValues::AS.setUnsafe(ADC); }
 
-void Analog::CS() {}
+void Analog::BS() { ADCValues::BS.setUnsafe(ADC); }
 
-void Analog::battery() {}
+void Analog::CS() { ADCValues::CS.setUnsafe(ADC); }
 
-void Analog::drive() {}
+void Analog::battery() { ADCValues::battery.setUnsafe(ADC); }
 
-void Analog::temperature() {}
+void Analog::drive() {
+  const auto adc = ADC;
 
-void Analog::current() {}
+  if (adc < 350)
+    ThreePhaseDriver::emergencyDisable();
 
-void Analog::currentRef() {}
+  ADCValues::drive.setUnsafe(adc);
+}
+
+void Analog::temperature() { ADCValues::temperature.setUnsafe(ADC); }
+
+void Analog::current() { ADCValues::current.setUnsafe(ADC); }
+
+void Analog::currentRef() { ADCValues::currentRef.setUnsafe(ADC); }
 
 /**
  *

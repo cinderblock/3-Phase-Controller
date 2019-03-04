@@ -1,5 +1,6 @@
 #pragma once
 
+#include <AVR++/Atomic.hpp>
 #include <basicTypes.hpp>
 
 namespace ThreePhaseControllerNamespace {
@@ -39,5 +40,17 @@ void AS();
 void BS();
 void CS();
 } // namespace Analog
+
+namespace ADCValues {
+extern volatile Atomic<u2> AS;
+extern volatile Atomic<u2> BS;
+extern volatile Atomic<u2> CS;
+extern volatile Atomic<u2> current;
+extern volatile Atomic<u2> currentRef;
+extern volatile Atomic<u2> battery;
+extern volatile Atomic<u2> drive;
+extern volatile Atomic<u2> temperature;
+
+} // namespace ADCValues
 
 } // namespace ThreePhaseControllerNamespace
