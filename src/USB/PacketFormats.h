@@ -84,7 +84,7 @@ typedef struct {
   u2 cpuTemp;
   s2 current;
 
-  u2 ain0;
+  u2 battery;
   u2 AS;
   u2 BS;
   u2 CS;
