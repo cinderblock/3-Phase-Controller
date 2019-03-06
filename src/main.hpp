@@ -28,7 +28,22 @@ extern Fault fault;
 
 bool setState(State s);
 
-extern const u1 resetCause;
+struct ResetCauses {
+  union {
+    struct {
+      bool PowerOn : 1;
+      bool External : 1;
+      bool BrownOut : 1;
+      bool WatchDog : 1;
+      bool JTAG : 1;
+      bool USB : 1;
+    };
+    u1 byte;
+  };
+
+  inline ResetCauses(u1 v = MCUSR) : byte(v) {}
+};
+extern const ResetCauses resetCauses;
 
 namespace Analog {
 void temperature();

@@ -27,8 +27,8 @@
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
-// Save reset cause
-const u1 resetCause = MCUSR;
+// Save reset causes
+const ResetCauses ThreePhaseControllerNamespace::resetCauses;
 
 /**
  * All the init functions should go in here.
