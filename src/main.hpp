@@ -21,6 +21,8 @@ enum class Fault : u1 {
   UndervoltageLockout,
   OverCurrent,
   OverTemperature,
+  WatchdogReset,
+  BrownOutReset,
 };
 
 extern State state;

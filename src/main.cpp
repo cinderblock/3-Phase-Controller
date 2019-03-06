@@ -43,8 +43,15 @@ __attribute__((constructor)) void init() {
   if (resetCauses.byte != MCUSR)
     Board::LED::on();
 
-  if (resetCauses.WatchDog)
+  if (resetCauses.WatchDog) {
     Board::LED::on();
+    fault = Fault::WatchdogReset;
+  }
+
+  if (resetCauses.BrownOut) {
+    Board::LED::on();
+    fault = Fault::BrownOutReset;
+  }
 
   Debug::init();
   Debug::dout << PSTR("Beginning Inits\r\n");
