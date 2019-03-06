@@ -6,6 +6,9 @@ using namespace ThreePhaseControllerNamespace;
 
 static constexpr u1 numberOfScannedAnalogInputs = 9;
 
+// Atmega32u4 Datasheet Table 24-4
+constexpr u1 TemperatureSensorMux = 0b100111;
+
 template <u1 N>
 typename ScanningADC<N>::Input ScanningADC<N>::inputs[] = {
     {Board::MUX::AS, &Analog::AS},
@@ -16,8 +19,8 @@ typename ScanningADC<N>::Input ScanningADC<N>::inputs[] = {
     {Board::MUX::CurrentSense, &Analog::current},
     {Board::MUX::SenseRef, &Analog::currentRef},
     // Give temperature hardware time to settle
-    {{0b100111, ADC::Reference::Internal}, []() {}},
-    {{0b100111, ADC::Reference::Internal}, &Analog::temperature},
+    {{TemperatureSensorMux, ADC::Reference::Internal}, []() {}},
+    {{TemperatureSensorMux, ADC::Reference::Internal}, &Analog::temperature},
 };
 
 // Is this line needed?
