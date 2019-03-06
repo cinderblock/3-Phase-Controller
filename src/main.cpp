@@ -131,17 +131,43 @@ void Analog::battery() { ADCValues::battery.setUnsafe(ADC); }
 void Analog::drive() {
   const auto adc = ADC;
 
-  if (adc < 350)
+  if (adc < 350) {
     ThreePhaseDriver::emergencyDisable();
+
+    if (setState(State::Fault))
+      fault = Fault::UndervoltageLockout;
+  }
 
   ADCValues::drive.setUnsafe(adc);
 }
 
-void Analog::temperature() { ADCValues::temperature.setUnsafe(ADC); }
+void Analog::temperature() {
+  const auto adc = ADC;
+
+  if (adc > 1000) {
+    ThreePhaseDriver::emergencyDisable();
+
+    if (setState(State::Fault))
+      fault = Fault::OverTemperature;
+  }
+
+  ADCValues::temperature.setUnsafe(adc);
+}
 
 void Analog::current() { ADCValues::current.setUnsafe(ADC); }
 
-void Analog::currentRef() { ADCValues::currentRef.setUnsafe(ADC); }
+void Analog::currentRef() {
+  const auto adc = ADC;
+
+  if (ADCValues::current.getUnsafe() - adc > 1000) {
+    ThreePhaseDriver::emergencyDisable();
+
+    if (setState(State::Fault))
+      fault = Fault::OverCurrent;
+  }
+
+  ADCValues::currentRef.setUnsafe(adc);
+}
 
 /**
  *
