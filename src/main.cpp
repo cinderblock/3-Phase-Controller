@@ -188,3 +188,35 @@ int main() {
   while (1)
     continue;
 }
+
+void ThreePhaseControllerNamespace::bootloaderJump() {
+  WDT::stop();
+
+  // Disable interrupts
+  cli();
+
+  // Shutdown important hardware
+  ThreePhaseDriver::emergencyDisable();
+
+  // WDT::start(WDT::T0015ms);
+  // while (1)
+  //   continue;
+  /**
+   * We might try to just make a WDT timeout happen to reset but,
+   * because of a bug in the old version of the LUFA DFU bootloader that we're using,
+   * that does not work for us. Since it does not, we use the following "hack".
+   */
+
+  // Extracted from a map of the current build for the bootloader (MagicBootKey)
+  constexpr u2 BootloaderMagicKeyRamAddress = 0x186;
+  // From bootloader source: MAGIC_BOOT_KEY
+  constexpr u2 BootloaderMagicKeyValue = 0xDC42;
+  // From our current bootloader size selection in AVR Fuses (BOOTSZ=00)
+  constexpr u2 BootloaderResetWordAddress = 0x3800;
+
+  // Bootloader expects a specific ram localtion set to a certain value
+  *(volatile u2 *)(BootloaderMagicKeyRamAddress) = BootloaderMagicKeyValue;
+
+  // Jump to the bootloader
+  ((void (*)(void))BootloaderResetWordAddress)();
+}

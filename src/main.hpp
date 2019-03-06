@@ -7,6 +7,8 @@ namespace ThreePhaseControllerNamespace {
 
 using namespace Basic;
 
+void bootloaderJump();
+
 enum class State : u1 {
   // Initial mode at startup
   Fault,
