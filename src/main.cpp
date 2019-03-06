@@ -6,7 +6,6 @@
  */
 
 #include "Board.hpp"
-#include <avr/wdt.h>
 #include <util/delay.h>
 
 #include "Calibration.hpp"
@@ -22,6 +21,7 @@
 #include "USB/Descriptors.h"
 #include "main.hpp"
 #include <AVR++/FlashData.hpp>
+#include <AVR++/WDT.hpp>
 #include <LUFA/Drivers/USB/USB.h>
 
 using namespace AVR;
@@ -143,7 +143,10 @@ int main() {
   Demo::main();
   MLXDebug::main();
 
+  WDT::start(WDT::T0120ms);
+
   while (1) {
+    WDT::tick();
     // These are very cheap calls if USB is not connected
     HID_Device_USBTask(&Generic_HID_Interface);
     USB_USBTask();
