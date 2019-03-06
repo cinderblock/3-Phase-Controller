@@ -39,6 +39,10 @@ __attribute__((constructor)) void init() {
   wdt_reset();
   wdt_disable();
 
+  // Check if we're doing it in the wrong order...
+  if (resetCauses.byte != MCUSR)
+    Board::LED::on();
+
   Debug::init();
   Debug::dout << PSTR("Beginning Inits\r\n");
 
