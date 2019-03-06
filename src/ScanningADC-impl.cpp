@@ -15,7 +15,7 @@ typename ScanningADC<N>::Input ScanningADC<N>::inputs[] = {
     {Board::MUX::VDDS, &Analog::drive},
     {Board::MUX::CurrentSense, &Analog::current},
     {Board::MUX::SenseRef, &Analog::currentRef},
-    {0b100111, &Analog::temperature},
+    {{0b100111, ADC::Reference::Internal}, &Analog::temperature},
 };
 
 // Is this line needed?
