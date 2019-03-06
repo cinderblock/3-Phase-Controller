@@ -4,7 +4,7 @@
 
 using namespace ThreePhaseControllerNamespace;
 
-static constexpr u1 numberOfScannedAnalogInputs = 8;
+static constexpr u1 numberOfScannedAnalogInputs = 9;
 
 template <u1 N>
 typename ScanningADC<N>::Input ScanningADC<N>::inputs[] = {
@@ -15,6 +15,8 @@ typename ScanningADC<N>::Input ScanningADC<N>::inputs[] = {
     {Board::MUX::VDDS, &Analog::drive},
     {Board::MUX::CurrentSense, &Analog::current},
     {Board::MUX::SenseRef, &Analog::currentRef},
+    // Give temperature hardware time to settle
+    {{0b100111, ADC::Reference::Internal}, []() {}},
     {{0b100111, ADC::Reference::Internal}, &Analog::temperature},
 };
 
