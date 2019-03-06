@@ -42,7 +42,7 @@ __attribute__((constructor)) void init() {
   Debug::init();
   Debug::dout << PSTR("Beginning Inits\r\n");
 
-  // Clear the MCU Status Register. Indicates previous reset's source.
+  // Clear the MCU Status Register so that we can distinguish reset reasons more easily.
   MCUSR = 0;
 
   // Set up the driver pins
