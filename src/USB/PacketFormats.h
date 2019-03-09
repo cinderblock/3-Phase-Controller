@@ -21,7 +21,7 @@
 
 namespace ThreePhaseControllerNamespace {
 
-enum class CommandMode : u1 { MLXDebug, ThreePhaseDebug, Calibration, Push, Servo, Bootloader = 0xfe };
+enum class CommandMode : u1 { MLXDebug, ThreePhaseDebug, Calibration, Push, Servo, ClearFault, Bootloader = 0xfe };
 
 /**
  * Shape of data going OUT of host.

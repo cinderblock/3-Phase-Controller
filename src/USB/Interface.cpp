@@ -102,6 +102,8 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
 
   switch (data->mode) {
   case CommandMode::MLXDebug:
+    if (state == State::Fault && fault != Fault::Init)
+      return;
     setState(State::Manual);
     MLX90363::stopTransmitting();
     memcpy(MLX90363::getTxBuffer(), data->mlx.mlxData, MLX90363::messageLength);
@@ -110,19 +112,27 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
     MLX90363::startTransmittingUnsafe();
     return;
   case CommandMode::ThreePhaseDebug:
+    if (state == State::Fault && fault != Fault::Init)
+      return;
     setState(State::Manual);
     // TODO: Implement body of this "method"
     return;
   case CommandMode::Calibration:
+    if (state == State::Fault && fault != Fault::Init)
+      return;
     setState(State::Manual);
     ThreePhaseDriver::setAmplitude(data->calibrate.amplitude);
     ThreePhaseDriver::advanceTo(data->calibrate.angle);
     return;
   case CommandMode::Push:
+    if (state == State::Fault && fault != Fault::Init)
+      return;
     setState(State::Normal);
     ThreePhaseController::setAmplitudeTarget(data->push.command);
     return;
   case CommandMode::Servo:
+    if (state == State::Fault && fault != Fault::Init)
+      return;
     setState(State::Normal);
     switch (data->servo.mode) {
     case 1:
