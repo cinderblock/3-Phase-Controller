@@ -6,6 +6,7 @@
  */
 
 #include "Board.hpp"
+#include <util/atomic.h>
 #include <util/delay.h>
 
 #include "Calibration.hpp"
@@ -76,39 +77,34 @@ State ThreePhaseControllerNamespace::state = State::Fault;
 Fault ThreePhaseControllerNamespace::fault = Fault::Init;
 
 bool ThreePhaseControllerNamespace::setState(State const s) {
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
 
-  // Don't do anything if we're already in that mode, or trying to go to an invalid mode...
-  if (state == s)
-    return false;
+    // Don't do anything if we're already in that mode, or trying to go to an invalid mode...
+    if (state == s)
+      return false;
 
-  // Disable Interrupts
-  cli();
+    switch (s) {
+    case State::Fault:
+      ThreePhaseController::stop();
+      ThreePhaseDriver::advanceTo(-1);
+      ServoController::setEnable(false);
+      break;
 
-  switch (s) {
-  case State::Fault:
-    ThreePhaseController::stop();
-    ThreePhaseDriver::advanceTo(-1);
-    ServoController::setEnable(false);
-    break;
+    case State::Manual:
+      ServoController::setEnable(false);
+      ThreePhaseController::stop();
+      MLX90363::stopTransmitting();
+      break;
 
-  case State::Manual:
-    ServoController::setEnable(false);
-    ThreePhaseController::stop();
-    MLX90363::stopTransmitting();
-    break;
+    case State::Normal:
+      ThreePhaseController::init();
+      ThreePhaseController::enable();
+      break;
+    }
 
-  case State::Normal:
-    ThreePhaseController::init();
-    ThreePhaseController::enable();
-    break;
+    state = s;
+    return true;
   }
-
-  state = s;
-
-  // Enable Interrupts
-  sei();
-
-  return true;
 }
 
 volatile Atomic<u2> ADCValues::AS;
