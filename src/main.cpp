@@ -243,6 +243,9 @@ void ThreePhaseControllerNamespace::bootloaderJump() {
   // Bootloader expects a specific ram localtion set to a certain value
   *(volatile u2 *)(BootloaderMagicKeyRamAddress) = BootloaderMagicKeyValue;
 
+  // Maybe this is the actual address...
+  *(volatile u2 *)(0x180) = BootloaderMagicKeyValue;
+
   // Jump to the bootloader
   ((void (*)(void))BootloaderResetWordAddress)();
 }
