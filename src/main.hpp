@@ -25,6 +25,7 @@ enum class Fault : u1 {
   OverTemperature,
   WatchdogReset,
   BrownOutReset,
+  InvalidCommand,
 };
 
 extern State state;

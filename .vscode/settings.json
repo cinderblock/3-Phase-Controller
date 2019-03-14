@@ -2,8 +2,8 @@
   "editor.formatOnSave": true,
   "C_Cpp.intelliSenseEngineFallback": "Disabled",
   "files.exclude": {
-    "Calibration-Tool/node_modules": true,
-    "Calibration-Tool/yarn.lock": true,
-    "Calibration-Tool/.vscode": true
+    "**/node_modules": true,
+    "**/yarn.lock": true,
+    "*/**/.vscode": true
   }
 }

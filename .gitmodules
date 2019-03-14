@@ -16,3 +16,6 @@
 [submodule "Calibration-Tool"]
 	path = Calibration-Tool
 	url = https://github.com/cinderblock/3-Phase-Calibration-Tool.git
+[submodule "node-api"]
+	path = node-api
+	url = https://github.com/cinderblock/smooth-control.git
