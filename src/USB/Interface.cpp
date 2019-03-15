@@ -111,7 +111,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
       MLX90363::fillTxBufferCRC();
     MLX90363::startTransmittingUnsafe();
     return;
-  case CommandMode::ThreePhaseDebug:
+  case CommandMode::ThreePhase:
     if (state == State::Fault && fault != Fault::Init)
       return;
     setState(State::Manual);
