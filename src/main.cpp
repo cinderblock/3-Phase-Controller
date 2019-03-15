@@ -77,7 +77,7 @@ State ThreePhaseControllerNamespace::state = State::Fault;
 Fault ThreePhaseControllerNamespace::fault = Fault::Init;
 
 void ThreePhaseControllerNamespace::clearFault() {
-  if (setState(State::Fault)) {
+  if (!setState(State::Fault)) {
     fault = Fault::Init;
   }
 }
