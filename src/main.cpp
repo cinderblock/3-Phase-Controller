@@ -76,6 +76,12 @@ __attribute__((constructor)) void init() {
 State ThreePhaseControllerNamespace::state = State::Fault;
 Fault ThreePhaseControllerNamespace::fault = Fault::Init;
 
+void ThreePhaseControllerNamespace::clearFault() {
+  if (setState(State::Fault)) {
+    fault = Fault::Init;
+  }
+}
+
 bool ThreePhaseControllerNamespace::setState(State const s) {
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
 

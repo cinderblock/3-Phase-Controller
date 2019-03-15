@@ -33,6 +33,8 @@ extern Fault fault;
 
 bool setState(State s);
 
+void clearFault();
+
 struct ResetCauses {
   union {
     struct {

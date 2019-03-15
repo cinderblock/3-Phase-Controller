@@ -101,6 +101,9 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
   USBDataOUTShape const *const data = (USBDataOUTShape *)ReportData;
 
   switch (data->mode) {
+  case CommandMode::ClearFault:
+    clearFault();
+    return;
   case CommandMode::MLXDebug:
     if (state == State::Fault && fault != Fault::Init)
       return;
