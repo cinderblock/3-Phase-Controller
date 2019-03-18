@@ -161,7 +161,9 @@ void Analog::current() { ADCValues::current.setUnsafe(ADC); }
 void Analog::currentRef() {
   const auto adc = ADC;
 
-  if (ADCValues::current.getUnsafe() - adc > 1000) {
+  const s2 current = ADCValues::current.getUnsafe() - adc;
+
+  if (current > 1000) {
     ThreePhaseDriver::emergencyDisable();
 
     if (setState(State::Fault))
