@@ -56,6 +56,8 @@ volatile Atomic<u2> MLX90363::X;
 volatile Atomic<u2> MLX90363::Y;
 volatile Atomic<u2> MLX90363::Z;
 
+volatile Atomic<u1> MLX90363::failedCRCs(0);
+
 volatile u1 MLX90363::err;
 volatile u1 MLX90363::VG;
 
@@ -197,6 +199,12 @@ void MLX90363::fillTxBufferCRC() {
 void MLX90363::handleResponse() {
   if (!checkRxBufferCRC()) {
     responseState = ResponseState::failedCRC;
+
+    auto &ref = failedCRCs.getUnsafe();
+
+    if (ref != 0xffff)
+      ref++;
+
     // Debug::dout << PSTR("CRC failed\r\n");
     return;
   }

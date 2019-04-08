@@ -63,6 +63,7 @@ private:
   static volatile Atomic<u2> X;
   static volatile Atomic<u2> Y;
   static volatile Atomic<u2> Z;
+  static volatile Atomic<u1> failedCRCs;
   static volatile u1 err;
   static volatile u1 VG;
   static volatile u1 ROLL;
@@ -227,6 +228,15 @@ public:
    * that it is set to an output (and stays that way) before calling this function.
    */
   static void init();
+
+  static u2 getCRCFailures() {
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+      auto &ref = failedCRCs.getUnsafe();
+      const auto ret = ref;
+      ref = 0;
+      return ret;
+    }
+  }
 
   static inline bool hasNewData(u1 &lastRoll) {
     u1 const r = ROLL;

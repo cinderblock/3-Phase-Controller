@@ -24,6 +24,8 @@ volatile bool ThreePhaseController::isForwardTorque;
 volatile u1 ThreePhaseController::dampingVelocityGain = 0;
 volatile ThreePhaseController::Amplitude ThreePhaseController::targetAmplitude = 0;
 
+volatile Atomic<u2> ThreePhaseController::loopCount(0);
+
 /**
  * This interrupt is triggered on TIMER4 (PWM6) overflow. This happens at the BOTTOM
  * of the dual slope timer. New OCR values are latched at BOTTOM as well.
@@ -54,6 +56,11 @@ void ThreePhaseController::controlLoop() {
 
   // Reset missed step count
   stepCount = 0;
+
+  auto &ref = loopCount.getUnsafe();
+
+  if (ref != 0xffff)
+    ref++;
 
   // Re-enable interrupts
   sei();

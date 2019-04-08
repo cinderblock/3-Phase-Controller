@@ -17,8 +17,8 @@
 #include "Driver.hpp"
 #include "LookupTable.hpp"
 #include "PositionEstimator.hpp"
+#include <AVR++/Atomic.hpp>
 #include <avr/interrupt.h>
-#include <util/atomic.h>
 
 ISR(TIMER4_OVF_vect);
 
@@ -56,7 +56,16 @@ class ThreePhaseController {
    */
   static constexpr u1 output90DegPhaseShift = ThreePhaseDriver::StepsPerCycle / 4;
 
+  volatile static AVR::Atomic<u2> loopCount;
+
 public:
+  inline static u2 getLoopCount() {
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+      const auto count = loopCount.getUnsafe();
+      loopCount.setUnsafe(0);
+      return count;
+    }
+  }
   /**
    * Initialize the controller
    */

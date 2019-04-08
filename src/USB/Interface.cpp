@@ -85,6 +85,9 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
     data->mlxResponseState = MLX90363::getResponseState();
   }
 
+  data->mlxFailedComms = MLX90363::getCRCFailures();
+  data->controlLoops = ThreePhaseController::getLoopCount();
+
   return true;
 }
 

@@ -99,6 +99,8 @@ typedef struct {
 
   u1 mlxResponse[8];
   MLX90363::ResponseState mlxResponseState;
+  u2 controlLoops;
+  u2 mlxFailedComms;
 } USBDataINShape;
 
 static_assert(sizeof(USBDataOUTShape) <= REPORT_SIZE, "Data going OUT of HOST must be shorter than REPORT_SIZE");
