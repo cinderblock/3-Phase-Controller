@@ -2,6 +2,8 @@
 #include "main.hpp"
 #include <AVR++/ScanningADC.cpp>
 
+#ifdef HOVER_DRIVE
+
 using namespace ThreePhaseControllerNamespace;
 
 static constexpr u1 numberOfScannedAnalogInputs = 9;
@@ -27,3 +29,6 @@ typename ScanningADC<N>::Input ScanningADC<N>::inputs[] = {
 template class ScanningADC<numberOfScannedAnalogInputs>;
 
 ISR(ADC_vect) { ScanningADC<numberOfScannedAnalogInputs>::interrupt(); }
+#else
+ISR(ADC_vect) {}
+#endif
