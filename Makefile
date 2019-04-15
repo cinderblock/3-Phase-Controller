@@ -68,9 +68,6 @@ all: build-lss
 # Program with AVR attached locally
 all: dfu-flash dfu-reset
 
-# Program with AVR attached to some remote host like an rPi
-#all: remote_prog
-
 #ASM = $(CPP:%=%.cpp.S)
 
 # Load local settings
@@ -119,7 +116,7 @@ REMOTE_HEX = $(TARGET).hex
 REMOTE = pi@raspberrySandwich
 # REMOTE = pi@sleepypi
 
-remote_prog: $(OUT_HEX)
+remote: $(OUT_HEX)
 	$(ECO) Sending $(OUT_HEX) to $(REMOTE)
 	pscp -q $(OUT_HEX) $(REMOTE):$(REMOTE_HEX)
 	-plink $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
