@@ -22,11 +22,17 @@ using namespace Basic;
  * adjust how large our steps are to match how fast we're really spinning.
  */
 class ThreePhasePositionEstimator {
+  /**
+   * "High" resolution version of current position
+   *
+   * Valid values: [0, 3 * 256 * ThreePhaseDriver::CyclesPerRevolution * 256]
+   */
+  typedef u4 subCountPosition;
 
   /**
    * The current position estimate. Higher resolution than output phase angle
    */
-  static u4 volatile drivePhaseMagEstimate;
+  static subCountPosition volatile drivePhaseMagEstimate;
 
   /**
    * For out internal estimate of position, increase the resolution by some
@@ -37,6 +43,8 @@ class ThreePhasePositionEstimator {
   /**
    * The current velocity estimate. Used to advance drivePhaseMagEstimate
    * position estimate
+   *
+   * Units: subCountPosition / dt
    */
   static s2 driveVelocityMagEstimate;
 
@@ -47,6 +55,8 @@ class ThreePhasePositionEstimator {
 
   /**
    * cached constant amount of phase advance for our current velocity
+   *
+   Units: subCountPosition
    */
   static s4 phaseAdvanceMagCachedAmount;
 
@@ -115,7 +125,7 @@ public:
    */
   static void init();
 
-  static constexpr u4 StepsPerRevolution = u4(ThreePhaseDriver::StepsPerRevolution) << drivePhaseMagSubResolution;
+  static constexpr u4 subStepsPerRevolution = u4(ThreePhaseDriver::StepsPerRevolution) << drivePhaseMagSubResolution;
 
   /**
    * Advance our prediction of where we currently are by one dt.
@@ -147,7 +157,9 @@ public:
   /**
    * Get the last measured position
    */
-  inline static typeof(drivePhaseMagEstimate) getMagnetometerPhaseEstimate() { return drivePhaseMagEstimate; };
+  inline static ThreePhaseDriver::PhasePosition getMagnetometerPhaseEstimate() {
+    return drivePhaseMagEstimate >> drivePhaseMagSubResolution;
+  };
 
   /**
    * Get currently extrapolated velocity
