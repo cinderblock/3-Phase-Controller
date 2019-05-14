@@ -145,7 +145,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
       ServoController::setAmplitude(data->servo.command);
       return;
     case 2:
-      ServoController::setPosition(data->servo.command);
+      ServoController::setPosition((u2)data->servo.command);
       return;
     case 3:
       ServoController::setVelocity(data->servo.command);

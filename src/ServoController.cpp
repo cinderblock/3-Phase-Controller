@@ -10,7 +10,7 @@ ServoController::Mode ServoController::servoMode = Mode::Init;
 s2 ServoController::amplitudeCommand;
 s4 ServoController::driveAmplitudeScaled;
 s2 ServoController::velocityCommand;
-u4 ServoController::positionCommand;
+ThreePhaseDriver::PhasePosition ServoController::positionCommand;
 s2 ServoController::onRotation;
 
 u1 ServoController::position_P;
@@ -25,28 +25,6 @@ u1 ServoController::positionShift;
 u1 ServoController::velocityShift;
 
 // u2 ServoController::initialPhasePosition;
-
-/**
- * Distance function with a wrap around
- */
-s4 wrapdist(u4 to, u4 from) {
-
-  s4 delta = to - from;
-
-  if (delta > s4(ThreePhaseDriver::StepsPerRevolution / 2)) {
-    delta -= ThreePhaseDriver::StepsPerRevolution;
-  } else if (delta < -s4(ThreePhaseDriver::StepsPerRevolution / 2)) {
-    delta += ThreePhaseDriver::StepsPerRevolution;
-  }
-
-  return delta;
-}
-
-s2 abs2(s2 num) {
-  if (num < 0)
-    return -num;
-  return num;
-}
 
 void ServoController::init() {
   ThreePhaseController::init();
@@ -105,9 +83,9 @@ void ServoController::update() {
 
     const s2 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
-    const s4 positionError = wrapdist(ThreePhasePositionEstimator::getMagnetometerPhaseEstimate(), positionCommand);
+    const s4 positionError = positionCommand - ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 
-    s4 command = (-position_P * positionError >> 10) - (vel * position_D >> 6); // - vel * position_D;
+    s4 command = ((positionError * position_P) >> 16) - (vel * position_D);
 
     // s4 command = positionError / (1024 * 4);
     // s4 command = (positionError * position_P + vel * position_D / 512) >> positionShift;
@@ -136,14 +114,17 @@ void ServoController::setVelocity(s2 velocity) {
   velocityCommand = velocity;
 }
 
-void ServoController::setPosition(u4 position) {
+void ServoController::setPosition(ThreePhaseDriver::PhasePosition position) {
   servoMode = Mode::Position;
   positionCommand = position;
 }
 
-void ServoController::setDistance(s4 dist) {
+void ServoController::setDistance(s2 dist) {
   servoMode = Mode::Position;
-  positionCommand += dist;
+  if (dist >= 0)
+    positionCommand += (u2)dist;
+  else
+    positionCommand -= (u2)(-dist);
 }
 
 void ServoController::setEnable(bool enable) {

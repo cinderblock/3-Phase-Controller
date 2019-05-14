@@ -50,7 +50,7 @@ private:
   /**
    * The current target position
    */
-  static u4 positionCommand;
+  static ThreePhaseDriver::PhasePosition positionCommand;
 
   /**
    * Number of full motor mechanical revolutions we've been through
@@ -106,13 +106,13 @@ public:
    * Put controller into position mode and sets the target
    * @param
    */
-  static void setPosition(u4);
+  static void setPosition(ThreePhaseDriver::PhasePosition);
 
   /**
    * Put controller into position mode and sets the target as a delta from current
    * @param
    */
-  static void setDistance(s4);
+  static void setDistance(s2);
 
   /**
    * Get the commanded position
