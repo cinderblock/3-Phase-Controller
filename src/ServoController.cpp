@@ -13,13 +13,13 @@ s2 ServoController::velocityCommand;
 ThreePhaseDriver::PhasePosition ServoController::positionCommand;
 s2 ServoController::onRotation;
 
-u1 ServoController::position_P;
-u1 ServoController::position_I;
-u1 ServoController::position_D;
+u2 ServoController::position_P;
+u2 ServoController::position_I;
+u2 ServoController::position_D;
 
-u1 ServoController::velocity_P;
-u1 ServoController::velocity_I;
-u1 ServoController::velocity_D;
+u2 ServoController::velocity_P;
+u2 ServoController::velocity_I;
+u2 ServoController::velocity_D;
 
 u1 ServoController::positionShift;
 u1 ServoController::velocityShift;
