@@ -113,8 +113,9 @@ include $(uMakerPath)tools/dfu.mk
 include $(uMakerPath)tools/mkdir.mk
 
 REMOTE_HEX = $(TARGET).hex
-REMOTE = pi@raspberrySandwich
+# REMOTE = pi@sleepypi-01
 # REMOTE = pi@sleepypi
+REMOTE = pi@raspberrysandwich
 
 remote: $(OUT_HEX)
 	$(ECO) Sending $(OUT_HEX) to $(REMOTE)
