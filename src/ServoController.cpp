@@ -33,10 +33,10 @@ s4 wrapdist(u4 to, u4 from) {
 
   s4 delta = to - from;
 
-  if (delta > s4(ThreePhasePositionEstimator::StepsPerRevolution / 2)) {
-    delta -= ThreePhasePositionEstimator::StepsPerRevolution;
-  } else if (delta < -s4(ThreePhasePositionEstimator::StepsPerRevolution / 2)) {
-    delta += ThreePhasePositionEstimator::StepsPerRevolution;
+  if (delta > s4(ThreePhaseDriver::StepsPerRevolution / 2)) {
+    delta -= ThreePhaseDriver::StepsPerRevolution;
+  } else if (delta < -s4(ThreePhaseDriver::StepsPerRevolution / 2)) {
+    delta += ThreePhaseDriver::StepsPerRevolution;
   }
 
   return delta;
@@ -107,7 +107,7 @@ void ServoController::update() {
 
     const s4 positionError = wrapdist(ThreePhasePositionEstimator::getMagnetometerPhaseEstimate(), positionCommand);
 
-    s4 command = (-position_P * positionError >> 18) - (vel * position_D >> 6); // - vel * position_D;
+    s4 command = (-position_P * positionError >> 10) - (vel * position_D >> 6); // - vel * position_D;
 
     // s4 command = positionError / (1024 * 4);
     // s4 command = (positionError * position_P + vel * position_D / 512) >> positionShift;
