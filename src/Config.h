@@ -8,9 +8,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// #define QUANTUM_DRIVE
+#define QUANTUM_DRIVE
 // #define BED_CONTROLLER
-#define HOVER_DRIVE
+// #define HOVER_DRIVE
 
 #include "ConfigCheck.h"
 

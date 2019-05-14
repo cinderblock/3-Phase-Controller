@@ -79,6 +79,7 @@ Fault ThreePhaseControllerNamespace::fault = Fault::Init;
 void ThreePhaseControllerNamespace::clearFault() {
   if (!setState(State::Fault)) {
     fault = Fault::Init;
+    // ThreePhaseDriver::emergencyOK();
   }
 }
 

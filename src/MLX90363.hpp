@@ -17,7 +17,7 @@
 #include <AVR++/bitTypes.hpp>
 
 // Declare interrupt. Doesn't need to block others.
-ISR(SPI_STC_vect);
+ISR(SPI_STC_vect, ISR_NOBLOCK);
 
 namespace ThreePhaseControllerNamespace {
 
