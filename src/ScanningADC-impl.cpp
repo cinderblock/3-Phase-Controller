@@ -2,7 +2,7 @@
 #include "main.hpp"
 #include <AVR++/ScanningADC.cpp>
 
-#ifdef HOVER_DRIVE
+#if defined(HOVER_DRIVE) || defined(QUANTUM_DRIVE)
 
 using namespace ThreePhaseControllerNamespace;
 
@@ -18,8 +18,13 @@ typename ScanningADC<N>::Input ScanningADC<N>::inputs[] = {
     {{Board::MUX::CS, ADC::Reference::Internal}, &Analog::CS},
     {{Board::MUX::VBATS, ADC::Reference::Internal}, &Analog::battery},
     {{Board::MUX::VDDS, ADC::Reference::Internal}, &Analog::drive},
+#if defined(HOVER_DRIVE)
     {{Board::MUX::CurrentSense, ADC::Reference::Internal}, &Analog::current},
     {{Board::MUX::SenseRef, ADC::Reference::Internal}, &Analog::currentRef},
+#elif defined(QUANTUM_DRIVE)
+    {{Board::MUX::CurrentSense, ADC::Reference::Internal}, nullptr},
+    {{Board::MUX::SenseRef, ADC::Reference::Internal}, nullptr},
+#endif
     // Give temperature hardware time to settle
     {{TemperatureSensorMux, ADC::Reference::Internal}, []() {}},
     {{TemperatureSensorMux, ADC::Reference::Internal}, &Analog::temperature},
