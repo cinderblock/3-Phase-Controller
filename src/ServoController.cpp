@@ -81,7 +81,7 @@ void ServoController::update() {
 
     // if(initialPhasePosition == 0) initialPhasePosition = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 
-    const s2 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
+    const s4 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
     const s4 positionError = positionCommand - ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 
