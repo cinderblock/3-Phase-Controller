@@ -110,6 +110,9 @@ public:
 
   /**
    * Put controller into position mode and sets the target as a delta from current
+   *
+   * @warning Broken for extreme values!
+   *
    * @param
    */
   static void setDistance(s2);
