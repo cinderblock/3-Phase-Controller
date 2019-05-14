@@ -85,7 +85,7 @@ void ServoController::update() {
 
     const s4 positionError = positionCommand - ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 
-    s4 command = ((positionError * position_P) >> 16) - (vel * position_D);
+    s4 command = ((positionError * position_P) >> 16) - ((vel * position_D) >> 8);
 
     // s4 command = positionError / (1024 * 4);
     // s4 command = (positionError * position_P + vel * position_D / 512) >> positionShift;
