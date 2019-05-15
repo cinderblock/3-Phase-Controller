@@ -7,8 +7,7 @@ using namespace ThreePhaseControllerNamespace;
 
 ServoController::Mode ServoController::servoMode = Mode::Init;
 
-s2 ServoController::amplitudeCommand;
-s4 ServoController::driveAmplitudeScaled;
+ThreePhaseController::Amplitude ServoController::amplitudeCommand(0);
 s2 ServoController::velocityCommand;
 ThreePhaseDriver::PhasePosition ServoController::positionCommand;
 s2 ServoController::onRotation;
@@ -39,9 +38,6 @@ void ServoController::init() {
 
   positionShift = 12;
 
-  amplitudeCommand = 0;
-  driveAmplitudeScaled = 0;
-
   // initialPhasePosition = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 }
 
@@ -57,7 +53,7 @@ void ServoController::update() {
 
   } else if (servoMode == Mode::Velocity) {
     static s2 lastVel = 0;
-    static s2 lastCommand = 0;
+    static ThreePhaseController::Amplitude lastCommand(0);
     const s2 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
     const s2 velocityDelta = vel - lastVel;
@@ -66,14 +62,9 @@ void ServoController::update() {
 
     s4 command = lastCommand + ((velocityError * velocity_P + velocityDelta * velocity_D) >> velocityShift);
 
-    constexpr s4 MAX = 255;
-    if (command > MAX) {
-      command = MAX;
-    } else if (command < -MAX) {
-      command = -MAX;
-    }
+    lastCommand = command;
 
-    ThreePhaseController::setAmplitudeTarget(lastCommand = (s2)command);
+    ThreePhaseController::setAmplitudeTarget(command);
 
     lastVel = vel;
 
@@ -87,18 +78,7 @@ void ServoController::update() {
 
     s4 command = ((positionError * position_P) >> 16) - ((vel * position_D) >> 8);
 
-    // s4 command = positionError / (1024 * 4);
-    // s4 command = (positionError * position_P + vel * position_D / 512) >> positionShift;
-    // s4 command = -vel * position_D / 512;
-
-    constexpr s4 MAX = 255;
-    if (command > MAX) {
-      command = MAX;
-    } else if (command < -MAX) {
-      command = -MAX;
-    }
-
-    ThreePhaseController::setAmplitudeTarget((s2)command);
+    ThreePhaseController::setAmplitudeTarget(command);
 
   } else {
   }

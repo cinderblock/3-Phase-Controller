@@ -120,7 +120,11 @@ public:
      */
     inline PhasePosition(u2 const commutation = 0) : commutation(commutation % FULL) {}
     inline PhasePosition(u4 const commutation) : commutation(commutation % FULL) {}
-    inline PhasePosition(int const commutation) : commutation(commutation % FULL) {}
+
+    /**
+     * Convenience constructor
+     */
+    constexpr inline PhasePosition(int const c) : commutation((u2)c % FULL) {}
 
     /**
      * Initialize a commutation angle with a subPhase angle and phase

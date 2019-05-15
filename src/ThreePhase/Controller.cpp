@@ -22,7 +22,7 @@ using namespace ThreePhaseControllerNamespace;
 volatile bool ThreePhaseController::enabled = false;
 volatile bool ThreePhaseController::isForwardTorque;
 volatile u1 ThreePhaseController::dampingVelocityGain = 0;
-volatile ThreePhaseController::Amplitude ThreePhaseController::targetAmplitude = 0;
+volatile ThreePhaseController::Amplitude ThreePhaseController::targetAmplitude(0);
 
 volatile Atomic<u2> ThreePhaseController::loopCount(0);
 
@@ -94,7 +94,7 @@ void ThreePhaseController::handleNewVelocityEstimate(s2 const v) {
   if (!enabled)
     return;
 
-  auto t = targetAmplitude + ((s4(v) * dampingVelocityGain >> 8));
+  const Amplitude t(targetAmplitude + (s2)((s4(v) * dampingVelocityGain) >> 8));
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     isForwardTorque = t.forward;
     ThreePhaseDriver::setAmplitude(t.amplitude);

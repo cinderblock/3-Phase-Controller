@@ -10,7 +10,7 @@
 #define SERVOCONTROLLER_H
 
 #include "MLX90363.hpp"
-#include "ThreePhase/Driver.hpp"
+#include "ThreePhase/Controller.hpp"
 #include <AVR++/basicTypes.hpp>
 
 namespace ThreePhaseControllerNamespace {
@@ -35,12 +35,7 @@ private:
   /**
    * Current command for simple amplitude control
    */
-  static s2 amplitudeCommand;
-
-  /**
-   * Current drive amplitude in higher resolution than we can actually use
-   */
-  static s4 driveAmplitudeScaled;
+  static ThreePhaseController::Amplitude amplitudeCommand;
 
   /**
    * The current target velocity

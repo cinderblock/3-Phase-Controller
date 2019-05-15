@@ -24,6 +24,10 @@ ISR(TIMER4_OVF_vect);
 
 namespace ThreePhaseControllerNamespace {
 
+inline constexpr u4 ulimit(u4 in, u4 limit) { return in > limit ? limit : in; }
+
+inline constexpr u2 ulimit(u2 in, u2 limit) { return in > limit ? limit : in; }
+
 using namespace Basic;
 
 /**
@@ -113,28 +117,16 @@ public:
     friend class ThreePhaseController;
 
   public:
-    inline Amplitude(s2 const t) : forward(t >= 0), amplitude(forward ? t : -t){};
+    inline Amplitude(s2 const t) : forward(t >= 0), amplitude(ulimit(u2(forward ? t : -t), 255)){};
+    inline Amplitude(s4 const t) : forward(t >= 0), amplitude(ulimit(u4(forward ? t : -t), 255)){};
 
     inline Amplitude(const bool fwd, u1 const ampl) : forward(fwd), amplitude(ampl){};
 
-    inline Amplitude &operator+=(s1 const d) {
-      s2 ampl = forward ? amplitude : -amplitude;
-      ampl += d;
-      if (ampl > 255)
-        ampl = 255;
-      else if (ampl < -255)
-        ampl = -255;
-      amplitude = (forward = ampl >= 0) ? ampl : -ampl;
-      return *this;
-    }
+    inline Amplitude(volatile const Amplitude &that) : forward(that.forward), amplitude(that.amplitude) {}
 
-    inline Amplitude operator+(s1 const d) volatile {
-      s2 ampl = forward ? amplitude : -amplitude;
+    inline s4 operator+(s2 const d) volatile {
+      s4 ampl = forward ? amplitude : -amplitude;
       ampl += d;
-      if (ampl > 255)
-        ampl = 255;
-      else if (ampl < -255)
-        ampl = -255;
       return ampl;
     }
   };
@@ -149,7 +141,7 @@ public:
   /**
    * Set the desired drive amplitude
    */
-  inline static void setAmplitudeTarget(const Amplitude t) {
+  inline static void setAmplitudeTarget(const Amplitude &t) {
     ATOMIC_BLOCK(ATOMIC_FORCEON) {
       targetAmplitude.amplitude = t.amplitude;
       targetAmplitude.forward = t.forward;
@@ -161,9 +153,7 @@ public:
    *
    * @return s2 (range [-255, 255])
    */
-  static inline Amplitude getAmplitudeTarget() {
-    return Amplitude(targetAmplitude.forward, targetAmplitude.amplitude);
-  };
+  static inline Amplitude getAmplitudeTarget() { return targetAmplitude; };
 
   static void handleNewVelocityEstimate(s2 const v);
 
