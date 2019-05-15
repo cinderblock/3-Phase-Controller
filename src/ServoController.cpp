@@ -11,13 +11,13 @@ ThreePhaseController::Amplitude ServoController::amplitudeCommand(0);
 s2 ServoController::velocityCommand;
 ThreePhaseDriver::PhasePosition ServoController::positionCommand;
 
-u2 ServoController::position_P;
-u2 ServoController::position_I;
-u2 ServoController::position_D;
+u2 ServoController::position_P = 0;
+u2 ServoController::position_I = 0;
+u2 ServoController::position_D = 0;
 
-u2 ServoController::velocity_P;
-u2 ServoController::velocity_I;
-u2 ServoController::velocity_D;
+u2 ServoController::velocity_P = 0;
+u2 ServoController::velocity_I = 0;
+u2 ServoController::velocity_D = 0;
 
 u1 ServoController::positionShift;
 u1 ServoController::velocityShift;
