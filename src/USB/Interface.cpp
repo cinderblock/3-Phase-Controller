@@ -69,10 +69,12 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
   data->fault = fault;
   data->position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
   data->velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
+  data->amplitude = ThreePhaseController::getAmplitudeTarget();
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     data->cpuTemp = ADCValues::temperature.getUnsafe();
     data->current = ADCValues::current.getUnsafe() - ADCValues::currentRef.getUnsafe();
-    data->battery = ADCValues::battery.getUnsafe();
+    data->VBatt = ADCValues::battery.getUnsafe();
+    data->VDD = ADCValues::drive.getUnsafe();
     data->AS = ADCValues::AS.getUnsafe();
     data->BS = ADCValues::BS.getUnsafe();
     data->CS = ADCValues::CS.getUnsafe();

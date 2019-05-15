@@ -17,6 +17,7 @@
 #include "../MLX90363.hpp"
 #include "../main.hpp"
 #include "Descriptors.h"
+#include "ThreePhase/Controller.hpp"
 #include <stdint.h>
 
 namespace ThreePhaseControllerNamespace {
@@ -92,7 +93,9 @@ typedef struct {
   u2 cpuTemp;
   s2 current;
 
-  u2 battery;
+  u2 VDD;
+  u2 VBatt;
+  ThreePhaseController::Amplitude amplitude;
   u2 AS;
   u2 BS;
   u2 CS;
