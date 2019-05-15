@@ -111,7 +111,7 @@ public:
    * Get the commanded position
    * @return
    */
-  inline static s4 getPositionCommand() { return positionCommand; };
+  inline static ThreePhaseDriver::PhasePosition getPositionCommand() { return positionCommand; };
 
   /**
    * Set P of position PID

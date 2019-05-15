@@ -186,7 +186,7 @@ void ThreePhasePositionEstimator::handleNewMagnetometerPositionReading(u2 alpha)
   // Capture our current position estimate
   ATOMIC_BLOCK(ATOMIC_FORCEON) { estimate = drivePhaseMagEstimate; }
 
-  const u4 phase = u4(Lookup::AlphaToPhase(alpha));
+  const u4 phase = Lookup::AlphaToPhase(alpha).getRaw();
   static u4 lastPhase = 0xFFFFFFFF;
   if (lastPhase == 0xFFFFFFFF)
     lastPhase = phase; // handle first case
@@ -266,7 +266,7 @@ void ThreePhasePositionEstimator::finishInit(u2 const alpha) {
   const auto phase = Lookup::AlphaToPhase(alpha);
 
   // lastMagPhase = phase.getMechanicalPosition();
-  drivePhaseMagEstimate = u4(phase) << drivePhaseMagSubResolution;
+  drivePhaseMagEstimate = phase.getRaw() << drivePhaseMagSubResolution;
 
   MLX90363::setAlphaHandler(&handleNewMagnetometerPositionReading);
 }

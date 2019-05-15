@@ -78,7 +78,7 @@ typedef struct {
 typedef struct {
   State state;
   Fault fault;
-  u2 position;
+  ThreePhaseDriver::PhasePosition position;
   s2 velocity;
 
   union {

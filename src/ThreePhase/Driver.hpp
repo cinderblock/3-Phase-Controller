@@ -202,9 +202,9 @@ public:
       return ret;
     }
 
-    inline operator u4() const { return commutation; }
+    inline u2 getRaw() const { return commutation; }
 
-    inline s2 operator-(PhasePosition &that) {
+    inline s2 operator-(PhasePosition const &that) {
       s2 delta = commutation - that.commutation;
 
       if (delta > s2(FULL / 2))
