@@ -10,7 +10,6 @@ ServoController::Mode ServoController::servoMode = Mode::Init;
 ThreePhaseController::Amplitude ServoController::amplitudeCommand(0);
 s2 ServoController::velocityCommand;
 ThreePhaseDriver::PhasePosition ServoController::positionCommand;
-s2 ServoController::onRotation;
 
 u2 ServoController::position_P;
 u2 ServoController::position_I;
@@ -23,22 +22,16 @@ u2 ServoController::velocity_D;
 u1 ServoController::positionShift;
 u1 ServoController::velocityShift;
 
-// u2 ServoController::initialPhasePosition;
-
 void ServoController::init() {
   ThreePhaseController::init();
 
   servoMode = Mode::Init;
-
-  onRotation = 0;
 
   position_P = 0;
   position_I = 0;
   position_D = 0; //(float) .12  = 61/512
 
   positionShift = 12;
-
-  // initialPhasePosition = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 }
 
 void ServoController::update() {
@@ -69,9 +62,6 @@ void ServoController::update() {
     lastVel = vel;
 
   } else if (servoMode == Mode::Position) {
-
-    // if(initialPhasePosition == 0) initialPhasePosition = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
-
     const s4 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
     const s4 positionError = positionCommand - ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();

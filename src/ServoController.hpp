@@ -47,11 +47,6 @@ private:
    */
   static ThreePhaseDriver::PhasePosition positionCommand;
 
-  /**
-   * Number of full motor mechanical revolutions we've been through
-   */
-  static s2 onRotation;
-
   static u2 position_P;
   static u2 position_I;
   static u2 position_D;
@@ -117,12 +112,6 @@ public:
    * @return
    */
   inline static s4 getPositionCommand() { return positionCommand; };
-
-  /**
-   * Get the current number of revolutions
-   * @return
-   */
-  inline static s2 getRevolution() { return onRotation; };
 
   /**
    * Set P of position PID
