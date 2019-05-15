@@ -111,6 +111,7 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
     state = s;
     return true;
   }
+  return true;
 }
 
 volatile Atomic<u2> ADCValues::AS;
