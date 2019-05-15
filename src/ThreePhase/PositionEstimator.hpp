@@ -146,7 +146,7 @@ public:
    * Set phase advance ratio
    * @param val
    */
-  inline static void setMagnetometorPhaseAdvanceRatio(u1 val) { phaseAdvanceMagRatio = val; }
+  inline static void setMagnetometerPhaseAdvanceRatio(u1 val) { phaseAdvanceMagRatio = val; }
 
   /**
    * Estimation of distance given there are delays in system (phaseAdvanceRatio
