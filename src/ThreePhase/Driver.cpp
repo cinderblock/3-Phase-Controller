@@ -268,6 +268,7 @@ void ThreePhaseDriver::emergencyDisable() {
    * 0b    0       0       0       0      0      0     0     1
    */
   TCCR4C = 0b00000001;
+  setAmplitude(0);
 }
 
 void ThreePhaseDriver::emergencyOK() {

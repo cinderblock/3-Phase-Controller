@@ -79,6 +79,8 @@ Fault ThreePhaseControllerNamespace::fault = Fault::Init;
 void ThreePhaseControllerNamespace::clearFault() {
   if (!setState(State::Fault)) {
     fault = Fault::Init;
+    ThreePhaseDriver::emergencyOK();
+    Board::LED::off();
   }
 }
 
@@ -91,8 +93,9 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
 
     switch (s) {
     case State::Fault:
+      ThreePhaseDriver::emergencyDisable();
       ThreePhaseController::stop();
-      ThreePhaseDriver::advanceTo(-1);
+      Board::LED::off();
       ServoController::setEnable(false);
       break;
 
@@ -105,6 +108,7 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
     case State::Normal:
       ThreePhaseController::init();
       ThreePhaseController::enable();
+      ServoController::setEnable(true);
       break;
     }
 
