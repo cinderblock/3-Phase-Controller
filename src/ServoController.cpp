@@ -66,7 +66,7 @@ void ServoController::update() {
 
     const s4 positionError = positionCommand - ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
 
-    s4 command = ((positionError * position_P) >> 16) - ((vel * position_D) >> 8);
+    const s4 command = ((positionError * position_P) >> 16) - ((vel * position_D) >> 8);
 
     ThreePhaseController::setAmplitudeTarget(command);
 
