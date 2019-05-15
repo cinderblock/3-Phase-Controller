@@ -207,10 +207,12 @@ public:
     inline s2 operator-(PhasePosition const &that) {
       s2 delta = commutation - that.commutation;
 
-      if (delta > s2(FULL / 2))
-        delta -= MAX;
-      if (delta < s2(-FULL / 2))
-        delta += MAX;
+      const u2 half = FULL / 2;
+
+      if (delta > s2(half))
+        delta -= FULL;
+      if (delta < s2(-half))
+        delta += FULL;
 
       return delta;
     }
