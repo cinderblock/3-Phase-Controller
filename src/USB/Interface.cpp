@@ -136,6 +136,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
     if (state == State::Fault && fault != Fault::Init)
       return;
     setState(State::Normal);
+    ServoController::setEnable(false);
     ThreePhaseController::setAmplitudeTarget(data->push.command);
     return;
   case CommandMode::Servo:
