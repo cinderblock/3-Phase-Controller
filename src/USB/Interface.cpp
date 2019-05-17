@@ -113,7 +113,6 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
     if (state == State::Fault && fault != Fault::Init)
       return;
     setState(State::Manual);
-    MLX90363::stopTransmitting();
     memcpy(MLX90363::getTxBuffer(), data->mlx.mlxData, MLX90363::messageLength);
     if (data->mlx.crc)
       MLX90363::fillTxBufferCRC();
