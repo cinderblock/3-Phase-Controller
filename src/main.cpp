@@ -108,7 +108,6 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
     case State::Normal:
       ThreePhaseController::init();
       ThreePhaseController::enable();
-      ServoController::setEnable(true);
       break;
     }
 
