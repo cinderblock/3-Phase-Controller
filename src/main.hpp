@@ -67,8 +67,7 @@ namespace ADCValues {
 extern volatile Atomic<u2> AS;
 extern volatile Atomic<u2> BS;
 extern volatile Atomic<u2> CS;
-extern volatile Atomic<u2> current;
-extern volatile Atomic<u2> currentRef;
+extern volatile Atomic<s2> current;
 extern volatile Atomic<u2> battery;
 extern volatile Atomic<u2> drive;
 extern volatile Atomic<u2> temperature;

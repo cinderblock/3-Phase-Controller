@@ -6,7 +6,7 @@
 
 using namespace ThreePhaseControllerNamespace;
 
-static constexpr u1 numberOfScannedAnalogInputs = 9;
+static constexpr u1 numberOfScannedAnalogInputs = 8;
 
 // Atmega32u4 Datasheet Table 24-4
 constexpr u1 TemperatureSensorMux = 0b100111;
@@ -20,12 +20,12 @@ typename ScanningADC<N>::Input ScanningADC<N>::inputs[] = {
     {{Board::MUX::VDDS, ADC::Reference::Internal}, &Analog::drive},
 #if defined(HOVER_DRIVE)
     {{Board::MUX::CurrentSense, ADC::Reference::Internal}, &Analog::current},
-    {{Board::MUX::SenseRef, ADC::Reference::Internal}, &Analog::currentRef},
+// {{Board::MUX::SenseRef, ADC::Reference::Internal}, &Analog::currentRef},
 #elif defined(QUANTUM_DRIVE)
     {{Board::MUX::CurrentSense, ADC::Reference::Internal}, nullptr},
     {{Board::MUX::SenseRef, ADC::Reference::Internal}, nullptr},
 #endif
-    // Give temperature hardware time to settle
+    // Extra dummy ADC read to give temperature hardware time to enable (from datasheet)
     {{TemperatureSensorMux, ADC::Reference::Internal}, []() {}},
     {{TemperatureSensorMux, ADC::Reference::Internal}, &Analog::temperature},
 };

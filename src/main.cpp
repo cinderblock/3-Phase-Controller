@@ -120,8 +120,7 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
 volatile Atomic<u2> ADCValues::AS;
 volatile Atomic<u2> ADCValues::BS;
 volatile Atomic<u2> ADCValues::CS;
-volatile Atomic<u2> ADCValues::current;
-volatile Atomic<u2> ADCValues::currentRef;
+volatile Atomic<s2> ADCValues::current;
 volatile Atomic<u2> ADCValues::battery;
 volatile Atomic<u2> ADCValues::drive;
 volatile Atomic<u2> ADCValues::temperature;
@@ -160,22 +159,19 @@ void Analog::temperature() {
   ADCValues::temperature.setUnsafe(adc);
 }
 
-void Analog::current() { ADCValues::current.setUnsafe(ADC); }
+union ADCt {
+  struct {
+    s2 s : 10;
+  };
+  struct {
+    u2 u : 10;
+  };
+  u2 raw;
 
-void Analog::currentRef() {
-  const auto adc = ADC;
+  inline ADCt(u2 value) : raw(value) {}
+};
 
-  const s2 current = ADCValues::current.getUnsafe() - adc;
-
-  if (current > 1000) {
-    ThreePhaseDriver::emergencyDisable();
-
-    if (setState(State::Fault))
-      fault = Fault::OverCurrent;
-  }
-
-  ADCValues::currentRef.setUnsafe(adc);
-}
+void Analog::current() { ADCValues::current.setUnsafe(((ADCt)ADC).s); }
 
 /**
  *

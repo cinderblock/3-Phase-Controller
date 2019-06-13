@@ -72,7 +72,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
   data->amplitude = ThreePhaseController::getAmplitudeTarget();
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     data->cpuTemp = ADCValues::temperature.getUnsafe();
-    data->current = ADCValues::current.getUnsafe() - ADCValues::currentRef.getUnsafe();
+    data->current = ADCValues::current.getUnsafe();
     data->VBatt = ADCValues::battery.getUnsafe();
     data->VDD = ADCValues::drive.getUnsafe();
     data->AS = ADCValues::AS.getUnsafe();

@@ -89,13 +89,17 @@ using VBATS = Input<Ports::F, 5, false>; // ADC5
 };                                       // namespace SEN
 
 namespace MUX {
-constexpr u1 AS = 4;           // ADC4 - PF4
-constexpr u1 BS = 7;           // ADC7 - PF7
-constexpr u1 CS = 0b100000;    // ADC8 - PD4
-constexpr u1 VBATS = 5;        // ADC5 - PF5
-constexpr u1 VDDS = 0b100011;  // ADC11 - PB4
-constexpr u1 CurrentSense = 0; // ADC0 - PF0
-constexpr u1 SenseRef = 1;     // ADC1 - PF1
+constexpr u1 AS = 4;          // ADC4 - PF4
+constexpr u1 BS = 7;          // ADC7 - PF7
+constexpr u1 CS = 0b100000;   // ADC8 - PD4
+constexpr u1 VBATS = 5;       // ADC5 - PF5
+constexpr u1 VDDS = 0b100011; // ADC11 - PB4
+
+// Differential channel (ADC6 - PF6) - (ADC1 - PF1)
+constexpr u1 CurrentSense = 0b010110; // 1x
+// constexpr u1 CurrentSense = 0b101110; // 10x
+// constexpr u1 CurrentSense = 0b110110; // 40x
+// constexpr u1 CurrentSense = 0b111110; // 200x
 } // namespace MUX
 #endif
 
