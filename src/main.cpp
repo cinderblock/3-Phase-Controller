@@ -149,7 +149,7 @@ void Analog::drive() {
 void Analog::temperature() {
   const auto adc = ADC;
 
-  if (adc > 1000) {
+  if (adc > 400) {
     ThreePhaseDriver::emergencyDisable();
 
     if (setState(State::Fault))
