@@ -157,6 +157,20 @@ public:
       return *this;
     }
 
+    inline PhasePosition &operator+=(s2 const steps) {
+      // TODO: This is broken if steps is very large and overflows commutation
+      commutation += steps;
+
+      while (commutation > MAX) {
+        if (steps > 0)
+          commutation -= FULL;
+        else
+          commutation += FULL;
+      }
+
+      return *this;
+    }
+
     inline PhasePosition &operator-=(u2 const steps) {
       commutation -= steps;
       // TODO: Better & faster math here
@@ -205,6 +219,19 @@ public:
     inline u2 getRaw() const { return commutation; }
 
     inline s2 operator-(PhasePosition const &that) {
+      s2 delta = commutation - that.commutation;
+
+      const u2 half = FULL / 2;
+
+      if (delta > s2(half))
+        delta -= FULL;
+      if (delta < s2(-half))
+        delta += FULL;
+
+      return delta;
+    }
+
+    inline s2 operator-(PhasePosition const &that) const {
       s2 delta = commutation - that.commutation;
 
       const u2 half = FULL / 2;
