@@ -229,7 +229,7 @@ public:
    */
   static void init();
 
-  static u2 getCRCFailures() {
+  static inline u1 getCRCFailures() {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       auto &ref = failedCRCs.getUnsafe();
       const auto ret = ref;
