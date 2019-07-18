@@ -129,6 +129,8 @@ public:
       ampl += d;
       return ampl;
     }
+
+    inline u1 getAmplitude() const { return amplitude; }
   };
 
 private:

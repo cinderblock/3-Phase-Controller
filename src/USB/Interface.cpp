@@ -67,29 +67,14 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
 
   data->state = state;
   data->fault = fault;
-  data->position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
-  data->velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
-  data->amplitude = ThreePhaseController::getAmplitudeTarget();
+  data->position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate().getRaw();
+  data->amplitude = ThreePhaseController::getAmplitudeTarget().getAmplitude();
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     data->cpuTemp = ADCValues::temperature.getUnsafe();
     data->current = ADCValues::current.getUnsafe();
-    data->VBatt = ADCValues::battery.getUnsafe();
-    data->VDD = ADCValues::drive.getUnsafe();
-    data->AS = ADCValues::AS.getUnsafe();
-    data->BS = ADCValues::BS.getUnsafe();
-    data->CS = ADCValues::CS.getUnsafe();
-  }
-  data->lookupValid = Lookup::isValid;
-  data->mlxDataValid = !MLX90363::isTransmitting();
-
-  if (data->mlxDataValid) {
-    memcpy(data->mlxResponse, MLX90363::getRxBuffer(), MLX90363::messageLength);
-    data->mlxResponseState = MLX90363::getResponseState();
   }
 
   data->mlxFailedComms = MLX90363::getCRCFailures();
-  data->controlLoops = ThreePhaseController::getLoopCount();
-
   return true;
 }
 
@@ -108,15 +93,6 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
   switch (data->mode) {
   case CommandMode::ClearFault:
     clearFault();
-    return;
-  case CommandMode::MLXDebug:
-    if (state == State::Fault && fault != Fault::Init)
-      return;
-    setState(State::Manual);
-    memcpy(MLX90363::getTxBuffer(), data->mlx.mlxData, MLX90363::messageLength);
-    if (data->mlx.crc)
-      MLX90363::fillTxBufferCRC();
-    MLX90363::startTransmittingUnsafe();
     return;
   case CommandMode::ThreePhase:
     if (state == State::Fault && fault != Fault::Init)

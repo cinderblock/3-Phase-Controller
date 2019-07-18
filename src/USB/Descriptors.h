@@ -38,7 +38,7 @@
 
 #include <LUFA/Drivers/USB/USB.h>
 
-#define REPORT_SIZE 37
+#define REPORT_SIZE 8
 
 #ifdef __cplusplus
 extern "C" {

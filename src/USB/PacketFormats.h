@@ -38,14 +38,6 @@ enum class CommandMode : u1 {
 typedef struct {
   CommandMode mode;
   union {
-
-    // MLXCommand
-    struct {
-      u1 mlxData[8];
-      // Should CRC be calculated locally
-      bool crc;
-    } mlx;
-
     // ThreePhaseCommand
     struct {
       u2 A;
@@ -76,34 +68,17 @@ typedef struct {
  * Shape of data going IN to host
  */
 typedef struct {
-  State state;
-  Fault fault;
-  ThreePhaseDriver::PhasePosition position;
-  s2 velocity;
+  State state : 3;
+  Fault fault : 3;
 
-  union {
-    u2 statusBitsWord;
-    struct {
-      u2 : 14;
-      bool mlxDataValid : 1;
-      bool lookupValid : 1;
-    };
-  };
+  u2 position : 10;
 
   u2 cpuTemp;
   s2 current;
 
-  u2 VDD;
-  u2 VBatt;
-  ThreePhaseController::Amplitude amplitude;
-  u2 AS;
-  u2 BS;
-  u2 CS;
+  u1 amplitude;
 
-  u1 mlxResponse[8];
-  MLX90363::ResponseState mlxResponseState;
-  u2 controlLoops;
-  u2 mlxFailedComms;
+  u1 mlxFailedComms;
 } USBDataINShape;
 
 static_assert(sizeof(USBDataOUTShape) <= REPORT_SIZE, "Data going OUT of HOST must be shorter than REPORT_SIZE");
