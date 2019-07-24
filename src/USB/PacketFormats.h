@@ -68,12 +68,13 @@ typedef struct {
  * Shape of data going IN to host
  */
 typedef struct {
-  State state : 3;
   Fault fault : 3;
 
-  u2 position : 10;
+  u2 position : 13;
 
-  u2 cpuTemp;
+  State state : 2;
+  u2 cpuTemp : 14;
+
   s2 current;
 
   u1 amplitude;
