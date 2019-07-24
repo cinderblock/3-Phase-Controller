@@ -177,17 +177,40 @@ inline static void setCompareMatchA(u2 const val) __attribute__((always_inline, 
 inline static void setCompareMatchB(u2 const val) __attribute__((always_inline, hot));
 inline static void setCompareMatchC(u2 const val) __attribute__((always_inline, hot));
 
-inline static void setCompareMatchA(u2 const val) {
+static constexpr u1 outputFilterShift = 0;
+
+inline static void setCompareMatchA(u2 val) {
+  static u4 last = val;
+
+  if (val)
+    val = (last * ((1 << outputFilterShift) - 1) + val) >> outputFilterShift;
+
+  last = val;
+
   TC4H = val >> 8;
   OCR4A = val;
 }
 
-inline static void setCompareMatchB(u2 const val) {
+inline static void setCompareMatchB(u2 val) {
+  static u4 last = val;
+
+  if (val)
+    val = (last * ((1 << outputFilterShift) - 1) + val) >> outputFilterShift;
+
+  last = val;
+
   TC4H = val >> 8;
   OCR4B = val;
 }
 
-inline static void setCompareMatchC(u2 const val) {
+inline static void setCompareMatchC(u2 val) {
+  static u4 last = val;
+
+  if (val)
+    val = (last * ((1 << outputFilterShift) - 1) + val) >> outputFilterShift;
+
+  last = val;
+
   TC4H = val >> 8;
   // For some reason, the TIMER4 hardware skips C...
   OCR4D = val;
@@ -198,9 +221,15 @@ inline static void setEnables(bool A, bool B, bool C) {
   TCCR4E = 0b01000000 | (A ? en << 0 : 0) | (B ? en << 2 : 0) | (C ? en << 4 : 0);
 }
 
+static constexpr u1 positionFilterShift = 0;
+
 void ThreePhaseDriver::advanceTo(const PhasePosition pp) {
-  auto const step = pp.getPosition();
-  auto const phase = pp.getPhase();
+  static auto lastPosition = pp;
+
+  lastPosition += s2((pp - lastPosition) >> positionFilterShift);
+
+  auto const step = lastPosition.getPosition();
+  auto const phase = lastPosition.getPhase();
 
   u2 const ONE = getPhasePWM(step);
   u2 const TWO = getPhasePWM(255 - step);
