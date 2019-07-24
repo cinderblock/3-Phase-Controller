@@ -97,6 +97,9 @@ ThreePhaseDriver::PhasePosition ThreePhasePositionEstimator::advance(u1 steps) {
     mlxPeriodsSinceLastValid += overflows;
   }
 
+  // Disable any velocity advance calculations
+  // return (drivePhaseMagEstimate >> drivePhaseMagSubResolution);
+
   //  HallWatcher::checkH1();
   //  HallWatcher::checkH2();
   //  HallWatcher::checkH3();
