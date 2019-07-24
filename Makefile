@@ -119,7 +119,7 @@ REMOTE = pi@raspberrySandwich
 remote: $(OUT_HEX)
 	$(ECO) Sending $(OUT_HEX) to $(REMOTE)
 	pscp -q $(OUT_HEX) $(REMOTE):$(REMOTE_HEX)
-	-plink $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
-	plink $(REMOTE) rm $(REMOTE_HEX)
+	-plink -batch $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
+	plink -batch $(REMOTE) rm $(REMOTE_HEX)
 
 .PHONY: all run remote_prog
