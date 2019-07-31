@@ -187,10 +187,7 @@ int main() {
   Demo::main();
   MLXDebug::main();
 
-  WDT::start(WDT::T0120ms);
-
   while (1) {
-    WDT::tick();
     // These are very cheap calls if USB is not connected
     HID_Device_USBTask(&Generic_HID_Interface);
     // USB_USBTask();
