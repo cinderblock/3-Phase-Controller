@@ -122,4 +122,13 @@ remote: $(OUT_HEX)
 	-plink -batch $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
 	plink -batch $(REMOTE) rm $(REMOTE_HEX)
 
+remote4: $(OUT_HEX)
+	$(ECO) Sending $(OUT_HEX) to $(REMOTE)
+	pscp -q $(OUT_HEX) $(REMOTE):$(REMOTE_HEX)
+	-plink -batch $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
+	-plink -batch $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
+	-plink -batch $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
+	-plink -batch $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
+	plink -batch $(REMOTE) rm $(REMOTE_HEX)
+
 .PHONY: all run remote_prog
