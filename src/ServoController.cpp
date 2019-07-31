@@ -98,6 +98,8 @@ void ServoController::setDistance(s2 dist) {
 }
 
 void ServoController::setEnable(bool enable) {
-  if (!enable)
-    servoMode = Mode::Init;
+  if (enable)
+    return;
+
+  servoMode = Mode::Init;
 }
