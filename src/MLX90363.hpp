@@ -236,6 +236,8 @@ public:
       ref = 0;
       return ret;
     }
+    // Won't get here. Prevent warning.
+    return 0;
   }
 
   static inline bool hasNewData(u1 &lastRoll) {
