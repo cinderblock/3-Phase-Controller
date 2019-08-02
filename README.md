@@ -73,7 +73,7 @@ Also playing with Hoverboard motors.
 
 After cloning this repo, you'll need to get the git submodules:
 
-```
+```bash
 git submodule init
 git submodule update
 ```
