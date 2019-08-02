@@ -26,6 +26,44 @@ This is very much a work in progress. The following list is of currently impleme
 
 This code is meant to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-7766-8-bit-AVR-ATmega16U4-32U4_Datasheet.pdf) on [3 Phase Driver Board](https://github.com/cinderblock/3-Phase-Driver).
 
+## Intital Programming and Calibration Procedure
+
+1. Program the Bootloader
+   1. Open a terminal in this project
+   1. cd into `bootloader` directory
+   1. Connect programmer to motor
+   1. Power the device (either option)
+      - Set switch on programmer to "5v"
+      - Provide 12V power to the board
+   1. Run `make`
+   1. Verify that the red LED flashes at 1 Hz
+1. Program with the main program
+   1. Plug in a USB (internal or external plug)
+   1. `cd ..` up to main project folder
+   1. Plug in DC power (generally 12v)
+   1. Verify that the red LED flashes at 1 Hz
+   1. Run `make`
+   1. Verify that the red LED on solid
+1. Run Calibration procedure
+   1. `cd Calibration-Tool`
+   1. ensure yarn dependencies are up to date: `yarn`
+   1. Run Calibration Procedure: `yarn start`
+      ```txt
+      Data file? [data.csv]: <enter>
+      Capture fresh? [No]: y<enter>
+      Fresh: true
+      Cycles per Rev: 15
+      Revolutions: 3
+      Amplitude: 65
+      Smooth Control - info: Started watching for USB devices
+      Device attached: 4:38:25 PM None
+      Serial Number [None]: <enter>
+      New serial number [1c28c9e0-b57f-11e9-b138-9de272fac789]: <enter>
+      ```
+1. Load calibration data onto device
+   1. Reset device
+   1. `dfu-programmer.exe atmega32u4 flash --force 1c28c9e0-b57f-11e9-b138-9de272fac789.hex`
+
 ## Motor
 
 Currently Testing with [Quanum MT5206](https://hobbyking.com/en_us/quanum-mt-series-5206-320kv-brushless-multirotor-motor-built-by-dys.html).
