@@ -92,6 +92,9 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
                                           const uint8_t ReportType, const void *ReportData, const uint16_t ReportSize) {
   USBDataOUTShape const *const data = (USBDataOUTShape *)ReportData;
 
+  Board::SER::Send::on();
+  Board::SER::Send::off();
+
   switch (data->mode) {
   case CommandMode::ClearFault:
     WDT::stop();
@@ -115,6 +118,8 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
   case CommandMode::Push:
     if (state == State::Fault && fault != Fault::Init)
       return;
+    UDR1 = 'p';
+
     WDT::start(WDT::T0120ms);
     setState(State::Normal);
     ServoController::setEnable(false);

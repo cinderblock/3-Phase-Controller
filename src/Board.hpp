@@ -69,6 +69,7 @@ inline bool isSlaveSelected() { return MagSel::isOn(); }
 namespace SER {
 using Rx = Input<Ports::D, 2>;
 using Tx = Output<Ports::D, 3>;
+using Send = Output<Ports::D, 5>;
 }; // namespace SER
 
 namespace DRV {

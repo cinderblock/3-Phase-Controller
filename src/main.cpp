@@ -204,6 +204,8 @@ int main() {
       // TODO: Check for fault?
       break;
     case State::Normal:
+
+      UDR1 = 'u';
       // TODO: Check for fault?
       ServoController::update();
       break;

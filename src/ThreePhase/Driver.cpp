@@ -199,6 +199,9 @@ inline static void setEnables(bool A, bool B, bool C) {
 }
 
 void ThreePhaseDriver::advanceTo(const PhasePosition pp) {
+
+  UDR1 = 'r';
+
   auto const step = pp.getPosition();
   auto const phase = pp.getPhase();
 
