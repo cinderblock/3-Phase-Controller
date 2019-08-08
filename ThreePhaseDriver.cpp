@@ -41,7 +41,7 @@ ISR(ADC_vect) {
 #ifdef USE_DISABLED_FLAG
     disabled = true;
 #endif
-//    Debug::LED::on();
+  //  Debug::LED::on();
     return;
   }
   
@@ -310,6 +310,10 @@ void ThreePhaseDriver::emergencyDisable() {
    * 0b    0       0       0       0      0      0     0     1
    */
   TCCR4C = 0b00000001;
+
+  Board::LED::on();
+
+  while (1);
 }
 
 void ThreePhaseDriver::emergencyOK() {

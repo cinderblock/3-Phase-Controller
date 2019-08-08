@@ -1,7 +1,7 @@
 // File generated with python in calibratorFunc Folder
 #include "../LookupTable.h"
 
-
+#error test
 /**
  * 12-bit lookup table for magnetometer Alpha value to Phase value
  */

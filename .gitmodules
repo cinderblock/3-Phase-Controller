@@ -4,9 +4,6 @@
 [submodule "uMaker"]
 	path = uMaker
 	url = https://github.com/cinderblock/uMaker.git
-[submodule "FilebotInterface"]
-	path = FilebotInterface
-	url = git@lab.isozilla.com:twill/FilebotInterface.git
 [submodule "libCameron"]
 	path = libCameron
 	url = git@github.com:cinderblock/libCameron.git

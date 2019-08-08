@@ -20,10 +20,10 @@ namespace Board {
 
 #ifdef BED_CONTROLLER
  using Sw1 = Input<Ports::F, 1>; // start switch pin
- using LED_L = Output<Ports::F, 4>;
- using LED_TX = Output<Ports::D, 5>; 
+//  using LED_L = Output<Ports::F, 4>;
+//  using LED_TX = Output<Ports::D, 5>; 
  // LED_RX is SPI_SS (PB0)
- using LED = LED_TX;
+ using LED = Output<Ports::B, 7>;
 #endif
 
 #ifdef QUANTUM_DRIVE
@@ -91,11 +91,11 @@ namespace Board {
 
 #ifdef BED_CONTROLLER
  namespace SEN {
-  using VBATS = Input<Ports::D, 4, false>; // ADC8
+  using VBATS = Input<Ports::F, 5, false>; // ADC5
  };
 
  namespace MUX {
-  constexpr u1 VBATS = 0b100000; // ADC8
+  constexpr u1 VBATS = 5; // ADC5
  }
 #endif
  

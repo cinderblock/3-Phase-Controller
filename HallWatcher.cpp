@@ -21,22 +21,12 @@ void (*HallWatcher::stateChangeReceiver)() = nullptr;
 
 #ifdef BED_CONTROLLER
 void INT6_vect() {
-  HallWatcher::checkH1();
 }
 
 void PCINT0_vect() {
-  HallWatcher::checkH2();
-  HallWatcher::checkH3();
 }
 
 void HallWatcher::init() {
-  // set edge detecction INT6
-  EICRB = 0b00010000;
-  // Enable INT6
-  EIMSK = 0b01000000;
-
-  // Enable PCINT7 & PCINT4
-  PCMSK0 = 0b10010000;
 #endif
 
 #ifdef QUANTUM_DRIVE
@@ -60,13 +50,4 @@ void HallWatcher::init() {
   PCMSK0 = 0b00010000;
 #endif
   
-// TODO: Make the above ifdef/endif less hacky
-  
-  
-  // Enable pin change interrupts in general
-  PCICR = 0b00000001;
-
-  checkH1();
-  checkH2();
-  checkH3();
 }

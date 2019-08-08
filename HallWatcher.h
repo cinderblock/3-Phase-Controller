@@ -25,8 +25,6 @@ ISR(PCINT0_vect); // H3 (PCINT4 in group PCINT0)
 #endif
 
 #ifdef BED_CONTROLLER
-ISR(INT6_vect); // H1
-ISR(PCINT0_vect); // H2 & H3 (PCINT7 & PCINT4 respectively)
 #endif
 
 namespace ThreePhaseControllerNamespace {
