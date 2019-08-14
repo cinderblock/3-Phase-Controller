@@ -35,6 +35,10 @@ void HallWatcher::init() {
 #endif
 
 #if defined(HOVER_DRIVE) || defined(BED_CONTROLLER)
+  void INT0_vect() {}
+  void INT1_vect() {}
+  void PCINT0_vect() {}
+
   void HallWatcher::init() {
     return;
 #endif

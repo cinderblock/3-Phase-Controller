@@ -70,6 +70,9 @@ all: dfu-flash dfu-reset
 
 #ASM = $(CPP:%=%.cpp.S)
 
+-include remote.temp.mk
+MAKEFILE_LIST := $(filter-out remote.temp.mk,$(MAKEFILE_LIST))
+
 # Load local settings
 -include local.mk
 -include local.$(shell hostname).mk
@@ -113,8 +116,7 @@ include $(uMakerPath)tools/dfu.mk
 include $(uMakerPath)tools/mkdir.mk
 
 REMOTE_HEX = $(TARGET).hex
-REMOTE = pi@sleepypi-04
-# REMOTE = pi@sleepypi
+REMOTE?=sleepypi-04
 
 remote: $(OUT_HEX)
 	$(ECO) Sending $(OUT_HEX) to $(REMOTE)
@@ -122,4 +124,13 @@ remote: $(OUT_HEX)
 	-plink -batch $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
 	plink -batch $(REMOTE) rm $(REMOTE_HEX)
 
-.PHONY: all run remote_prog
+remote4: $(OUT_HEX)
+	$(ECO) Sending $(OUT_HEX) to $(REMOTE)
+	pscp -q $(OUT_HEX) $(REMOTE):$(REMOTE_HEX)
+	-plink -batch $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
+	-plink -batch $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
+	-plink -batch $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
+	-plink -batch $(REMOTE) sudo $(DFU_TARGETED) flash $(REMOTE_HEX) \&\& sudo $(DFU_TARGETED) reset
+	plink -batch $(REMOTE) rm $(REMOTE_HEX)
+
+.PHONY: all run remote_prog remote remote4

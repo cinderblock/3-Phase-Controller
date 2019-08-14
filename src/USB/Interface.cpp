@@ -15,6 +15,8 @@
 #include "ServoController.hpp"
 #include "ThreePhase/Controller.hpp"
 
+#include <AVR++/WDT.hpp>
+
 #include <LUFA/Drivers/Board/LEDs.h>
 #include <LUFA/Drivers/USB/USB.h>
 #include <LUFA/Platform/Platform.h>
@@ -107,6 +109,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
 
   switch (data->mode) {
   case CommandMode::ClearFault:
+    WDT::stop();
     clearFault();
     return;
   case CommandMode::MLXDebug:
@@ -121,12 +124,14 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
   case CommandMode::ThreePhase:
     if (state == State::Fault && fault != Fault::Init)
       return;
+    WDT::stop();
     setState(State::Manual);
     // TODO: Implement body of this "method"
     return;
   case CommandMode::Calibration:
     if (state == State::Fault && fault != Fault::Init)
       return;
+    WDT::start(WDT::T1000ms);
     setState(State::Manual);
     ThreePhaseDriver::setAmplitude(data->calibrate.amplitude);
     ThreePhaseDriver::advanceTo(data->calibrate.angle);
@@ -134,6 +139,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
   case CommandMode::Push:
     if (state == State::Fault && fault != Fault::Init)
       return;
+    WDT::start(WDT::T0120ms);
     setState(State::Normal);
     ServoController::setEnable(false);
     ThreePhaseController::setAmplitudeTarget(data->push.command);
@@ -144,33 +150,42 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
     setState(State::Normal);
     switch (data->servo.mode) {
     case 1:
+      WDT::start(WDT::T0120ms);
       ServoController::setAmplitude(data->servo.command);
       return;
     case 2:
+      WDT::start(WDT::T0120ms);
       ServoController::setPosition((u2)data->servo.command);
       return;
     case 3:
+      WDT::start(WDT::T0120ms);
       ServoController::setVelocity(data->servo.command);
       return;
 
     case 11:
+      WDT::tick();
       ServoController::setPosition_P(data->servo.command);
       return;
     case 12:
+      WDT::tick();
       ServoController::setPosition_I(data->servo.command);
       return;
     case 13:
+      WDT::tick();
       ServoController::setPosition_D(data->servo.command);
       return;
 
     // not used just yet
     case 21:
+      WDT::tick();
       ServoController::setVelocity_P(data->servo.command);
       return;
     case 22:
+      WDT::tick();
       ServoController::setVelocity_I(data->servo.command);
       return;
     case 23:
+      WDT::tick();
       ServoController::setVelocity_D(data->servo.command);
       return;
     }
