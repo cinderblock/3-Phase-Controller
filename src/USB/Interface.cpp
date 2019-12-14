@@ -189,8 +189,12 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
       ServoController::setVelocity_D(data->servo.command);
       return;
 
+    case 98:
+      WDT::start(WDT::T0500ms);
+      ThreePhaseDriver::setAmplitude(data->servo.command);
+      return;
     case 99:
-      WDT::tick();
+      WDT::start(WDT::T0500ms);
       ServoController::setSynchronous(data->servo.command);
       return;
     }
