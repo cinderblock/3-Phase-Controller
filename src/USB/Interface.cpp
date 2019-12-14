@@ -188,6 +188,11 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
       WDT::tick();
       ServoController::setVelocity_D(data->servo.command);
       return;
+
+    case 99:
+      WDT::tick();
+      ServoController::setSynchronous(data->servo.command);
+      return;
     }
 
   case CommandMode::Bootloader:
