@@ -12,7 +12,7 @@ s2 ServoController::velocityCommand;
 ThreePhaseDriver::PhasePosition ServoController::positionCommand;
 
 u8 synchronousPosition;
-s2 synchronousVelocity;
+s4 synchronousVelocity;
 Clock::MicroTime lastSyncTime;
 bool lastSyncTimeValid = false;
 
@@ -108,7 +108,12 @@ void ServoController::update() {
   }
 }
 
-void ServoController::setSynchronous(s2 velocity) {
+void ServoController::setSynchronous(s4 velocity) {
+  // Multiply velocity in counts/second by ((1 << OverPrecisionBits)/MicroTicksPerSecond) for correct units
+  if (servoMode != Mode::Synchronous) {
+    lastSyncTimeValid = false;
+  }
+
   servoMode = Mode::Synchronous;
   synchronousVelocity = velocity;
 }

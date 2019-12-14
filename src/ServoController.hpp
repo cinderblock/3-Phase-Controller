@@ -76,7 +76,7 @@ public:
   /**
    * Set the controller into constant velocity mode
    */
-  static void setSynchronous(s2 velocity);
+  static void setSynchronous(s4 velocity);
 
   /**
    * Set the controller into constant amplitude mode with some amplitude
