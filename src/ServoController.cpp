@@ -11,6 +11,11 @@ ThreePhaseController::Amplitude ServoController::amplitudeCommand(0);
 s2 ServoController::velocityCommand;
 ThreePhaseDriver::PhasePosition ServoController::positionCommand;
 
+u8 synchronousPosition;
+s2 synchronousVelocity;
+Clock::MicroTime lastSyncTime;
+bool lastSyncTimeValid = false;
+
 u2 ServoController::position_P = 0;
 u2 ServoController::position_I = 0;
 u2 ServoController::position_D = 0;
@@ -69,9 +74,43 @@ void ServoController::update() {
     const s4 command = ((positionError * position_P) >> 16) - ((vel * position_D) >> 8);
 
     ThreePhaseController::setAmplitudeTarget(command);
+  } else if (servoMode == Mode::Synchronous) {
+    Clock::MicroTime now;
+    Clock::readTime(now);
 
-  } else {
+    if (lastSyncTimeValid) {
+      auto deltaTime = now;
+      deltaTime -= lastSyncTime;
+
+      const auto delta = deltaTime.timerTicks() * synchronousVelocity;
+
+      synchronousPosition += delta;
+
+      const u1 OverPrecisionBits = 32;
+
+      const auto synchronousPositionLimit = ThreePhaseDriver::StepsPerRevolution << OverPrecisionBits;
+
+      while (synchronousPosition > synchronousPositionLimit) {
+        if (delta > 0)
+          synchronousPosition -= synchronousPositionLimit;
+        else
+          synchronousPosition += synchronousPositionLimit;
+      }
+
+      ThreePhaseDriver::advanceTo(u2(synchronousPosition >> OverPrecisionBits));
+    } else {
+      Clock::readTime(lastSyncTime);
+      synchronousPosition = 0;
+      lastSyncTimeValid = true;
+    }
+
+    lastSyncTime = now;
   }
+}
+
+void ServoController::setSynchronous(s2 velocity) {
+  servoMode = Mode::Synchronous;
+  synchronousVelocity = velocity;
 }
 
 void ServoController::setAmplitude(s2 amplitude) {

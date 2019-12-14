@@ -25,7 +25,7 @@ private:
   /**
    * The different modes that we can use to servo
    */
-  enum class Mode : u1 { Init, Amplitude, Velocity, Position };
+  enum class Mode : u1 { Init, Amplitude, Velocity, Position, Synchronous };
 
   /**
    * Which mode are we currently in
@@ -72,6 +72,11 @@ public:
    * Initialize all the hardware. Also run init() functions of lower level software.
    */
   static void init();
+
+  /**
+   * Set the controller into constant velocity mode
+   */
+  static void setSynchronous(s2 velocity);
 
   /**
    * Set the controller into constant amplitude mode with some amplitude
