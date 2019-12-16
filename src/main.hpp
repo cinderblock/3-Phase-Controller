@@ -1,6 +1,7 @@
 #pragma once
 
 #include <AVR++/Atomic.hpp>
+#include <ThreePhase/Driver.hpp>
 #include <basicTypes.hpp>
 
 namespace ThreePhaseControllerNamespace {
@@ -73,5 +74,10 @@ extern volatile Atomic<u2> drive;
 extern volatile Atomic<u2> temperature;
 
 } // namespace ADCValues
+
+void setSynchronous(s4 const velocity);
+void stopSynchronous();
+
+ThreePhaseDriver::PhasePosition getManualPosition();
 
 } // namespace ThreePhaseControllerNamespace

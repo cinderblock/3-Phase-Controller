@@ -100,6 +100,7 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
       break;
 
     case State::Manual:
+      stopSynchronous();
       ServoController::setEnable(false);
       ThreePhaseController::stop();
       MLX90363::stopTransmitting();
@@ -173,6 +174,73 @@ union ADCt {
 
 void Analog::current() { ADCValues::current.setUnsafe(((ADCt)ADC).s); }
 
+Atomic<u8> synchronousPosition;
+Atomic<s4> synchronousVelocity;
+Clock::MicroTime lastSyncTime;
+enum class SynchronousMode { Off, Running, StartUp };
+
+const u1 OverPrecisionBits = 32;
+
+Atomic<SynchronousMode> syncMode = SynchronousMode::Off;
+
+void synchronousUpdate() {
+  if (syncMode == SynchronousMode::Off) {
+    return;
+  }
+
+  Clock::MicroTime now;
+  Clock::readTime(now);
+
+  if (syncMode == SynchronousMode::Running) {
+    auto deltaTime = now;
+    deltaTime -= lastSyncTime;
+
+    const auto delta = deltaTime.timerTicks() * synchronousVelocity;
+
+    synchronousPosition += delta;
+
+    const auto synchronousPositionLimit = ThreePhaseDriver::StepsPerRevolution << OverPrecisionBits;
+
+    while (synchronousPosition > synchronousPositionLimit) {
+      if (delta > 0)
+        synchronousPosition -= synchronousPositionLimit;
+      else
+        synchronousPosition += synchronousPositionLimit;
+    }
+
+    ThreePhaseDriver::advanceTo(getManualPosition());
+  } else {
+    Clock::readTime(lastSyncTime);
+    synchronousPosition = 0;
+    syncMode = SynchronousMode::Running;
+  }
+
+  lastSyncTime = now;
+}
+
+ThreePhaseDriver::PhasePosition ThreePhaseControllerNamespace::getManualPosition() {
+  if (syncMode == SynchronousMode::Running) {
+    return u2(synchronousPosition >> OverPrecisionBits);
+  }
+
+  // TODO: get position during other manual modes
+  return 0;
+}
+
+void ThreePhaseControllerNamespace::setSynchronous(s4 velocity) {
+  if (syncMode != SynchronousMode::Running) {
+    syncMode = SynchronousMode::StartUp;
+  }
+
+  // Multiply velocity in counts/second by ((1 << OverPrecisionBits)/MicroTicksPerSecond) for correct units
+  synchronousVelocity = velocity;
+}
+
+void ThreePhaseControllerNamespace::stopSynchronous() {
+  syncMode = SynchronousMode::Off;
+  // ThreePhaseDriver::setAmplitude(0);
+}
+
 /**
  *
  */
@@ -202,6 +270,7 @@ int main() {
       break;
     case State::Manual:
       // TODO: Check for fault?
+      synchronousUpdate();
       break;
     case State::Normal:
       // TODO: Check for fault?

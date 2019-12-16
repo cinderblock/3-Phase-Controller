@@ -29,6 +29,7 @@ enum class CommandMode : u1 {
   Push = 3,
   Servo = 4,
   ClearFault = 5,
+  SynchronousDrive = 6,
   Bootloader = 0xfe,
 };
 
@@ -69,6 +70,12 @@ typedef struct {
       u1 mode;
       s4 command;
     } servo;
+
+    // SynchronousCommand
+    struct {
+      u1 amplitude;
+      s4 velocity;
+    } synchronous;
   };
 } USBDataOUTShape;
 
