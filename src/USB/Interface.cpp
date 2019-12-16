@@ -124,7 +124,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
   case CommandMode::ThreePhase:
     if (state == State::Fault && fault != Fault::Init)
       return;
-    WDT::stop();
+    WDT::start(WDT::T1000ms);
     setState(State::Manual);
     // TODO: Implement body of this "method"
     return;
