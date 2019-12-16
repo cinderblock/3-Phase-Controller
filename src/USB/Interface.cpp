@@ -68,10 +68,34 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
   *ReportSize = REPORT_SIZE;
 
   data->state = state;
-  data->fault = fault;
-  data->position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
-  data->velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
-  data->amplitude = ThreePhaseController::getAmplitudeTarget();
+  switch (data->state) {
+  case State::Fault:
+    data->fault.fault = fault;
+    break;
+  case State::Manual:
+    data->manual.position = ThreePhaseControllerNamespace::getManualPosition();
+    data->manual.velocity = 0; // TODO: fill
+    data->manual.amplitude = ThreePhaseDriver::getAmplitude();
+
+    data->manual.mlxDataValid = !MLX90363::isTransmitting();
+    if (data->manual.mlxDataValid) {
+      memcpy(data->manual.mlxResponse, MLX90363::getRxBuffer(), MLX90363::messageLength);
+      data->manual.mlxResponseState = MLX90363::getResponseState();
+    }
+
+    break;
+  case State::Normal:
+    data->normal.position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
+    data->normal.velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
+    data->normal.amplitude = ThreePhaseController::getAmplitudeTarget();
+
+    data->normal.lookupValid = Lookup::isValid;
+
+    data->normal.mlxFailedCRCs = MLX90363::getCRCFailures();
+    data->normal.controlLoops = ThreePhaseController::getLoopCount();
+    break;
+  }
+
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     data->cpuTemp = ADCValues::temperature.getUnsafe();
     data->current = ADCValues::current.getUnsafe();
@@ -81,16 +105,6 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
     data->BS = ADCValues::BS.getUnsafe();
     data->CS = ADCValues::CS.getUnsafe();
   }
-  data->lookupValid = Lookup::isValid;
-  data->mlxDataValid = !MLX90363::isTransmitting();
-
-  if (data->mlxDataValid) {
-    memcpy(data->mlxResponse, MLX90363::getRxBuffer(), MLX90363::messageLength);
-    data->mlxResponseState = MLX90363::getResponseState();
-  }
-
-  data->mlxFailedComms = MLX90363::getCRCFailures();
-  data->controlLoops = ThreePhaseController::getLoopCount();
 
   return true;
 }
