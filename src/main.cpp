@@ -225,7 +225,7 @@ void ThreePhaseControllerNamespace::bootloaderJump() {
   // Shutdown important hardware
   ThreePhaseDriver::emergencyDisable();
 
-  // WDT::start(WDT::T0015ms);
+  // WDT::start(WDT::T__15ms);
   // while (1)
   //   continue;
   /**

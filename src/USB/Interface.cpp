@@ -139,7 +139,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
   case CommandMode::Push:
     if (state == State::Fault && fault != Fault::Init)
       return;
-    WDT::start(WDT::T0120ms);
+    WDT::start(WDT::T_120ms);
     setState(State::Normal);
     ServoController::setEnable(false);
     ThreePhaseController::setAmplitudeTarget(data->push.command);
@@ -150,15 +150,15 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
     setState(State::Normal);
     switch (data->servo.mode) {
     case 1:
-      WDT::start(WDT::T0120ms);
+      WDT::start(WDT::T_250ms);
       ServoController::setAmplitude(data->servo.command);
       return;
     case 2:
-      WDT::start(WDT::T0120ms);
+      WDT::start(WDT::T_250ms);
       ServoController::setPosition((u2)data->servo.command);
       return;
     case 3:
-      WDT::start(WDT::T0120ms);
+      WDT::start(WDT::T_250ms);
       ServoController::setVelocity(data->servo.command);
       return;
 
@@ -188,16 +188,16 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
       WDT::tick();
       ServoController::setVelocity_D(data->servo.command);
       return;
-
-    case 98:
-      WDT::start(WDT::T0500ms);
-      ThreePhaseDriver::setAmplitude(data->servo.command);
-      return;
-    case 99:
-      WDT::start(WDT::T0500ms);
-      ServoController::setSynchronous(data->servo.command);
-      return;
     }
+    // Should not run this return
+    return;
+
+  case CommandMode::SynchronousDrive:
+    WDT::start(WDT::T_500ms);
+    setState(State::Manual);
+    ThreePhaseControllerNamespace::setSynchronous(data->synchronous.velocity);
+    ThreePhaseDriver::setAmplitude(data->synchronous.amplitude);
+    return;
 
   case CommandMode::Bootloader:
     bootloaderJump();
