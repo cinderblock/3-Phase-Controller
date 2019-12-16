@@ -199,7 +199,7 @@ void synchronousUpdate() {
 
     synchronousPosition += delta;
 
-    const auto synchronousPositionLimit = ThreePhaseDriver::StepsPerRevolution << OverPrecisionBits;
+    const auto synchronousPositionLimit = u8(ThreePhaseDriver::StepsPerRevolution) << OverPrecisionBits;
 
     while (synchronousPosition > synchronousPositionLimit) {
       if (delta > 0)
