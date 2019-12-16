@@ -67,7 +67,7 @@ public:
    */
   static u2 constexpr StepsPerCycle = StepsPerPhase * PhasesPerCycle;
 
-  static u2 constexpr CyclesPerRevolution =
+  static u1 constexpr CyclesPerRevolution =
 #if defined(BED_CONTROLLER) || defined(HOVER_DRIVE)
       15
 #elif defined QUANTUM_DRIVE
