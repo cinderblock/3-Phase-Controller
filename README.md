@@ -47,7 +47,14 @@ This code is meant to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-
 1. Run Calibration procedure
    1. `cd Calibration-Tool`
    1. ensure yarn dependencies are up to date: `yarn`
+   1. `yarn mlx` to set the gain to a constant. (26 seems appropriate. Max raw is about 4000.)
+      1. reset device
+      1. cycle USB connection
+      1. return
+      1. set LowGain and HighGain to 26
+      1. enter to accept hex value
    1. Run Calibration Procedure: `yarn start`
+      1. Power cycle the motor
       ```txt
       Data file? [data.csv]: <enter>
       Capture fresh? [No]: y<enter>
@@ -58,11 +65,19 @@ This code is meant to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-
       Smooth Control - info: Started watching for USB devices
       Device attached: 4:38:25 PM None
       Serial Number [None]: <enter>
-      New serial number [1c28c9e0-b57f-11e9-b138-9de272fac789]: <enter>
+      New serial number [1c28c9e0-b57f-11e9-b138-9de272fac789]: (Must be clamped into test fixture at this point) <enter>
       ```
+   1. Look at data.html to verify that the curves are right. Max X and Y should be under 3800.
+   1. Run `yarn mlx` again to reset the gain to a better value iff there is a problem.
 1. Load calibration data onto device
    1. Reset device
-   1. `dfu-programmer.exe atmega32u4 flash --force 1c28c9e0-b57f-11e9-b138-9de272fac789.hex`
+   1. `dfu-programmer.exe atmega32u4 flash --force <SERIALNUMBER>.hex`
+1. Test the motor
+   1. power cycle the supply
+   1. `yarn test`
+      1. sysytem will check for devices present and present the serial number
+      1. `<enter>` starts a sine test
+      1. `cX <enter>` to to constant X force.
 
 ## Motor
 
