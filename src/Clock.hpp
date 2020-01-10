@@ -80,6 +80,36 @@ public:
       return *this;
     }
 
+    inline MicroTime &operator-=(MicroTime const &that) {
+      timerCount -= that.timerCount;
+      ticks -= that.ticks;
+      if (timerCount >= Timer::CountsPerClear) {
+        timerCount += Timer::CountsPerClear;
+        ticks--;
+      }
+      return *this;
+    }
+
+    inline MicroTime &operator+=(MicroTime &that) {
+      timerCount += that.timerCount;
+      ticks += that.ticks;
+      if (timerCount >= Timer::CountsPerClear) {
+        timerCount -= Timer::CountsPerClear;
+        ticks++;
+      }
+      return *this;
+    }
+
+    inline MicroTime &operator-=(MicroTime &that) {
+      timerCount -= that.timerCount;
+      ticks -= that.ticks;
+      if (timerCount >= Timer::CountsPerClear) {
+        timerCount += Timer::CountsPerClear;
+        ticks--;
+      }
+      return *this;
+    }
+
     inline bool operator<(MicroTime const &that) const {
       if (ticks < that.ticks)
         return true;
@@ -115,6 +145,8 @@ public:
       readTime(now);
       return *this > now;
     }
+
+    inline u8 timerTicks() const { return ticks * Timer::CountsPerClear + timerCount; }
   };
 
   /**

@@ -70,8 +70,8 @@ all: dfu-flash dfu-reset
 
 #ASM = $(CPP:%=%.cpp.S)
 
--include remote.temp.mk
-MAKEFILE_LIST := $(filter-out remote.temp.mk,$(MAKEFILE_LIST))
+-include remote-config.mk
+MAKEFILE_LIST := $(filter-out remote-config.mk,$(MAKEFILE_LIST))
 
 # Load local settings
 -include local.mk

@@ -63,13 +63,7 @@ class ThreePhaseController {
   volatile static AVR::Atomic<u2> loopCount;
 
 public:
-  inline static u2 getLoopCount() {
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-      const auto count = loopCount.getUnsafe();
-      loopCount.setUnsafe(0);
-      return count;
-    }
-  }
+  inline static u2 getLoopCount() { return loopCount.getAndSet(0); }
   /**
    * Initialize the controller
    */

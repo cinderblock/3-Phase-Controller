@@ -95,7 +95,7 @@ constexpr u1 CS = 0b100000;   // ADC8 - PD4
 constexpr u1 VBATS = 5;       // ADC5 - PF5
 constexpr u1 VDDS = 0b100011; // ADC11 - PB4
 
-// Differential channel (ADC6 - PF6) - (ADC1 - PF1)
+// Differential channel (ADC6 [PF6]) - (ADC1 [PF1])
 constexpr u1 CurrentSense = 0b010110; // 1x
 // constexpr u1 CurrentSense = 0b101110; // 10x
 // constexpr u1 CurrentSense = 0b110110; // 40x

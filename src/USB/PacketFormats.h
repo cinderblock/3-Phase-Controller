@@ -29,6 +29,7 @@ enum class CommandMode : u1 {
   Push = 3,
   Servo = 4,
   ClearFault = 5,
+  SynchronousDrive = 6,
   Bootloader = 0xfe,
 };
 
@@ -69,6 +70,12 @@ typedef struct {
       u1 mode;
       s4 command;
     } servo;
+
+    // SynchronousCommand
+    struct {
+      u1 amplitude;
+      s4 velocity;
+    } synchronous;
   };
 } USBDataOUTShape;
 
@@ -77,33 +84,50 @@ typedef struct {
  */
 typedef struct {
   State state;
-  Fault fault;
-  ThreePhaseDriver::PhasePosition position;
-  s2 velocity;
 
   union {
-    u2 statusBitsWord;
+    // Iff state == State::Fault
     struct {
-      u2 : 14;
-      bool mlxDataValid : 1;
+      Fault fault;
+    } fault;
+
+    // Iff state == State::Manual
+    struct {
+      ThreePhaseDriver::PhasePosition position;
+      s4 velocity;
+      ThreePhaseController::Amplitude amplitude;
+
+      bool mlxDataValid;
+
+      u1 mlxResponse[8];
+      MLX90363::ResponseState mlxResponseState;
+    } manual;
+
+    // Iff state == State::Normal
+    struct {
+      ThreePhaseDriver::PhasePosition position;
+      s2 velocity;
+      ThreePhaseController::Amplitude amplitude;
+
       bool lookupValid : 1;
-    };
+
+      u2 controlLoops;
+      u2 mlxFailedCRCs;
+    } normal;
   };
 
-  u2 cpuTemp;
-  s2 current;
+  // Analog group
+  struct {
+    u2 cpuTemp;
+    s2 current;
 
-  u2 VDD;
-  u2 VBatt;
-  ThreePhaseController::Amplitude amplitude;
-  u2 AS;
-  u2 BS;
-  u2 CS;
+    u2 VDD;
+    u2 VBatt;
 
-  u1 mlxResponse[8];
-  MLX90363::ResponseState mlxResponseState;
-  u2 controlLoops;
-  u2 mlxFailedComms;
+    u2 AS;
+    u2 BS;
+    u2 CS;
+  };
 } USBDataINShape;
 
 static_assert(sizeof(USBDataOUTShape) <= REPORT_SIZE, "Data going OUT of HOST must be shorter than REPORT_SIZE");

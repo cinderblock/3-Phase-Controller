@@ -229,16 +229,7 @@ public:
    */
   static void init();
 
-  static inline u1 getCRCFailures() {
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-      auto &ref = failedCRCs.getUnsafe();
-      const auto ret = ref;
-      ref = 0;
-      return ret;
-    }
-    // Won't get here. Prevent warning.
-    return 0;
-  }
+  static inline u1 getCRCFailures() { return failedCRCs.getAndSet(0); }
 
   static inline bool hasNewData(u1 &lastRoll) {
     u1 const r = ROLL;

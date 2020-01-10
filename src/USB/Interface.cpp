@@ -68,10 +68,34 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
   *ReportSize = REPORT_SIZE;
 
   data->state = state;
-  data->fault = fault;
-  data->position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
-  data->velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
-  data->amplitude = ThreePhaseController::getAmplitudeTarget();
+  switch (data->state) {
+  case State::Fault:
+    data->fault.fault = fault;
+    break;
+  case State::Manual:
+    data->manual.position = ThreePhaseControllerNamespace::getManualPosition();
+    data->manual.velocity = 0; // TODO: fill
+    data->manual.amplitude = ThreePhaseDriver::getAmplitude();
+
+    data->manual.mlxDataValid = !MLX90363::isTransmitting();
+    if (data->manual.mlxDataValid) {
+      memcpy(data->manual.mlxResponse, MLX90363::getRxBuffer(), MLX90363::messageLength);
+      data->manual.mlxResponseState = MLX90363::getResponseState();
+    }
+
+    break;
+  case State::Normal:
+    data->normal.position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
+    data->normal.velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
+    data->normal.amplitude = ThreePhaseController::getAmplitudeTarget();
+
+    data->normal.lookupValid = Lookup::isValid;
+
+    data->normal.mlxFailedCRCs = MLX90363::getCRCFailures();
+    data->normal.controlLoops = ThreePhaseController::getLoopCount();
+    break;
+  }
+
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
     data->cpuTemp = ADCValues::temperature.getUnsafe();
     data->current = ADCValues::current.getUnsafe();
@@ -81,16 +105,6 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
     data->BS = ADCValues::BS.getUnsafe();
     data->CS = ADCValues::CS.getUnsafe();
   }
-  data->lookupValid = Lookup::isValid;
-  data->mlxDataValid = !MLX90363::isTransmitting();
-
-  if (data->mlxDataValid) {
-    memcpy(data->mlxResponse, MLX90363::getRxBuffer(), MLX90363::messageLength);
-    data->mlxResponseState = MLX90363::getResponseState();
-  }
-
-  data->mlxFailedComms = MLX90363::getCRCFailures();
-  data->controlLoops = ThreePhaseController::getLoopCount();
 
   return true;
 }
@@ -124,7 +138,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
   case CommandMode::ThreePhase:
     if (state == State::Fault && fault != Fault::Init)
       return;
-    WDT::stop();
+    WDT::start(WDT::T1000ms);
     setState(State::Manual);
     // TODO: Implement body of this "method"
     return;
@@ -139,7 +153,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
   case CommandMode::Push:
     if (state == State::Fault && fault != Fault::Init)
       return;
-    WDT::start(WDT::T0120ms);
+    WDT::start(WDT::T_120ms);
     setState(State::Normal);
     ServoController::setEnable(false);
     ThreePhaseController::setAmplitudeTarget(data->push.command);
@@ -150,15 +164,15 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
     setState(State::Normal);
     switch (data->servo.mode) {
     case 1:
-      WDT::start(WDT::T0120ms);
+      WDT::start(WDT::T_250ms);
       ServoController::setAmplitude(data->servo.command);
       return;
     case 2:
-      WDT::start(WDT::T0120ms);
+      WDT::start(WDT::T_250ms);
       ServoController::setPosition((u2)data->servo.command);
       return;
     case 3:
-      WDT::start(WDT::T0120ms);
+      WDT::start(WDT::T_250ms);
       ServoController::setVelocity(data->servo.command);
       return;
 
@@ -189,6 +203,15 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
       ServoController::setVelocity_D(data->servo.command);
       return;
     }
+    // Should not run this return
+    return;
+
+  case CommandMode::SynchronousDrive:
+    WDT::start(WDT::T_500ms);
+    setState(State::Manual);
+    ThreePhaseControllerNamespace::setSynchronous(data->synchronous.velocity);
+    ThreePhaseDriver::setAmplitude(data->synchronous.amplitude);
+    return;
 
   case CommandMode::Bootloader:
     bootloaderJump();
