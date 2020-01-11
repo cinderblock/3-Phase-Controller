@@ -101,6 +101,9 @@ typedef struct {
   s2 velocity;
   ThreePhaseController::Amplitude amplitude;
 
+  /**
+   * Redundant. Being Removed.
+   */
   bool lookupValid : 1;
 
   u2 controlLoops;

@@ -85,10 +85,16 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
 
     break;
   case State::Normal:
-    data->normal.position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
-    data->normal.velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
+    if (Lookup::isValid) {
+      data->normal.position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
+      data->normal.velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
+    } else {
+      data->normal.velocity = 0x7fff;
+    }
+
     data->normal.amplitude = ThreePhaseController::getAmplitudeTarget();
 
+    // TODO: Remove...
     data->normal.lookupValid = Lookup::isValid;
 
     data->normal.mlxFailedCRCs = MLX90363::getCRCFailures();
