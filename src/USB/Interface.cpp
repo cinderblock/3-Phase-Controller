@@ -74,7 +74,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
     break;
   case State::Manual:
     data->manual.position = ThreePhaseControllerNamespace::getManualPosition();
-    data->manual.velocity = 0; // TODO: fill
+    data->manual.velocity = ThreePhaseControllerNamespace::getSynchronous();
     data->manual.amplitude = ThreePhaseDriver::getAmplitude();
 
     data->manual.mlxDataValid = !MLX90363::isTransmitting();
