@@ -227,7 +227,7 @@ ThreePhaseDriver::PhasePosition ThreePhaseControllerNamespace::getManualPosition
   return 0;
 }
 
-void ThreePhaseControllerNamespace::setSynchronous(s4 velocity) {
+void ThreePhaseControllerNamespace::setSynchronous(s4 const velocity) {
   if (syncMode != SynchronousMode::Running) {
     syncMode = SynchronousMode::StartUp;
   }
