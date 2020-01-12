@@ -236,6 +236,14 @@ void ThreePhaseControllerNamespace::setSynchronous(s4 const velocity) {
   synchronousVelocity = velocity;
 }
 
+s4 ThreePhaseControllerNamespace::getSynchronous() {
+  if (syncMode == SynchronousMode::Off)
+    return 0;
+
+  // Multiply velocity in counts/second by ((1 << OverPrecisionBits)/MicroTicksPerSecond) for correct units
+  return synchronousVelocity;
+}
+
 void ThreePhaseControllerNamespace::stopSynchronous() {
   syncMode = SynchronousMode::Off;
   // ThreePhaseDriver::setAmplitude(0);

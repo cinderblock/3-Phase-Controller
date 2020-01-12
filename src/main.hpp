@@ -76,6 +76,7 @@ extern volatile Atomic<u2> temperature;
 } // namespace ADCValues
 
 void setSynchronous(s4 const velocity);
+s4 getSynchronous();
 void stopSynchronous();
 
 ThreePhaseDriver::PhasePosition getManualPosition();
