@@ -25,3 +25,7 @@
 #if CONFIG_COUNT < 1
 #error "No configuration selected"
 #endif
+
+#if defined(QUANTUM_DRIVE2) && !defined(QUANTUM_DRIVE)
+#error "Can only use QUANTUM_DRIVE2 with QUANTUM_DRIVE"
+#endif

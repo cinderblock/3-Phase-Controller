@@ -18,7 +18,7 @@ typename ScanningADC<N>::Input ScanningADC<N>::inputs[] = {
     {{Board::MUX::CS, ADC::Reference::Internal}, &Analog::CS},
     {{Board::MUX::VBATS, ADC::Reference::Internal}, &Analog::battery},
     {{Board::MUX::VDDS, ADC::Reference::Internal}, &Analog::drive},
-#if defined(HOVER_DRIVE)
+#if defined(HOVER_DRIVE) || defined(QUANTUM_DRIVE2)
     {{Board::MUX::CurrentSense, ADC::Reference::Internal}, &Analog::current},
 // {{Board::MUX::SenseRef, ADC::Reference::Internal}, &Analog::currentRef},
 #elif defined(QUANTUM_DRIVE)
