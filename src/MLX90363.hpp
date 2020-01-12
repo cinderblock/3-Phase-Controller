@@ -355,7 +355,7 @@ public:
 
   enum class Result : u1 {
     /**
-     * Operation completed succesfully on remote
+     * Operation completed successfully on remote
      */
     OK,
     /**
