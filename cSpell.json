@@ -1,6 +1,18 @@
 {
   "version": "0.1",
   "language": "en",
-  "words": ["Bootloader", "CRCs", "melexis"],
-  "flagWords": []
+  "words": [
+    "ATmega",
+    "Bootloader",
+    "CRCs",
+    "LEDs",
+    "Cygwin",
+    "FORCEON",
+    "Hoverboard",
+    "mkdir",
+    "Quanum",
+    "submodule",
+    "submodules",
+    "Toolchain"
+  ]
 }

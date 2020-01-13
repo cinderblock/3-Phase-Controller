@@ -1,4 +1,4 @@
-# Twill Firmware for Turnigy Driver
+# Firmware for 3 Phase Motor Driver
 
 3 Phase motor controller driver firmware.
 
@@ -7,7 +7,7 @@
 This is very much a work in progress. The following list is of currently implemented and planned features.
 
 - [ ] Sensors
-  - [x] Magmentometer
+  - [x] Magnetometer
   - [ ] Back EMF Sensing
   - [ ] External Sensor
 - [x] Motor movement
@@ -17,8 +17,9 @@ This is very much a work in progress. The following list is of currently impleme
   - [x] Amplitude
   - [x] Velocity
   - [x] Position
-- [x] I2C Communication
+- [ ] I2C Communication
 - [x] USB Communication
+- [x] Serial Communication
 
 ## Getting Started
 
@@ -26,7 +27,7 @@ This is very much a work in progress. The following list is of currently impleme
 
 This code is meant to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-7766-8-bit-AVR-ATmega16U4-32U4_Datasheet.pdf) on [3 Phase Driver Board](https://github.com/cinderblock/3-Phase-Driver).
 
-## Intital Programming and Calibration Procedure
+## Initial Programming and Calibration Procedure
 
 1. Program the Bootloader
    1. Open a terminal in this project
@@ -71,11 +72,11 @@ This code is meant to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-
    1. Run `yarn mlx` again to reset the gain to a better value iff there is a problem.
 1. Load calibration data onto device
    1. Reset device
-   1. `dfu-programmer.exe atmega32u4 flash --force <SERIALNUMBER>.hex`
+   1. `dfu-programmer.exe ATmega32u4 flash --force <SerialNumber>.hex`
 1. Test the motor
    1. power cycle the supply
    1. `yarn test`
-      1. sysytem will check for devices present and present the serial number
+      1. Check for devices present and present the serial number
       1. `<enter>` starts a sine test
       1. `cX <enter>` to to constant X force.
 
@@ -84,16 +85,17 @@ This code is meant to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-
 Currently Testing with [Quanum MT5206](https://hobbyking.com/en_us/quanum-mt-series-5206-320kv-brushless-multirotor-motor-built-by-dys.html).
 Also playing with Hoverboard motors.
 
-### Git Submodules
+## Git Submodules
 
-After cloning this repo, you'll need to get the git submodules:
+Don't forget about the submodules we're using.
+Modern git checks out submodules correctly but older git requires some extra commands:
 
 ```bash
 git submodule init
 git submodule update
 ```
 
-### Build Requirements
+## Build Requirements
 
 Only real requirement is running the main `Makefile`.
 All build steps are configurable on a per machine hostname basis.
@@ -122,7 +124,7 @@ All paths in uMaker use `/` as a directory separator.
 
 Windows's `mkdir`/`md` does not support `/` directory separator.
 
-Installing cygwin is the easiest way to get building on Windows working.
+Installing Cygwin is the easiest way to get building on Windows working.
 Make sure `make` is "selected for installation".
 
 #### Troubleshooting
@@ -133,7 +135,7 @@ Try `make clean` first.
 
 The current Makefile is setup to program an AVR via USB DFU. It is possible to switch to using an ISP or other bootloader/programmer easily as well.
 
-## VSCode
+### VSCode
 
 To get VSCode IntelliSense to work, `local.avr-gcc.compilerDir` must be set in your User Settings.
 Likely something like `"/path/to/avr8-gnu-toolchain"` or `"C:/Program Files/avr8-win64"` is needed.
@@ -144,3 +146,7 @@ This directory should have a `bin` and `include` directory inside of it, among o
 - [Technical Docs](docs/README.md)
 - [3 Phase sine generation](docs/3%20Phase%20Sine%20Wave%20Generation.md)
 - [Triple Buffer](libCameron/Triple%20Buffer.png)
+
+### Communication Diagram
+
+[![Communication Diagram](docs/Control%20Sequence.svg)](docs/Control%20Sequence.svg)
