@@ -74,7 +74,7 @@ This code is meant to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-
    1. Reset device
    1. `dfu-programmer.exe ATmega32u4 flash --force <SerialNumber>.hex`
 1. Test the motor
-   1. power cycle the supply
+   1. power cycle the supply or USB
    1. `yarn test`
       1. Check for devices present and present the serial number
       1. `<enter>` starts a sine test
