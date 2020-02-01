@@ -43,6 +43,9 @@ This code is meant to run on the [ATmega32U4](http://www.atmel.com/Images/Atmel-
    1. `cd ..` up to main project folder
    1. Plug in DC power (generally 12v)
    1. Verify that the red LED flashes at 1 Hz
+      1. If not flashing or if it is not visible, do a reset
+      1. If still does not work, reload the bootloader
+         - requires the motor to be opened to use the programing board
    1. Run `make`
    1. Verify that the red LED on solid
 1. Run Calibration procedure
