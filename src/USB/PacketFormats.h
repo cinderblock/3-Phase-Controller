@@ -50,9 +50,7 @@ typedef struct {
   u1 amplitude;
 } CalibrationCommand;
 
-typedef struct {
-  s2 command;
-} PushCommand;
+typedef struct { s2 command; } PushCommand;
 
 typedef struct {
   u1 mode;
@@ -83,6 +81,9 @@ typedef CommandFormat USBDataOUTShape;
 
 typedef struct {
   Fault fault;
+
+  // GCC consistently puts this as the LSBit of the packed byte
+  bool lookupValid : 1;
 } FaultData;
 
 typedef struct {

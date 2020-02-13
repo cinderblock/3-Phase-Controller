@@ -137,7 +137,7 @@ void Analog::battery() { ADCValues::battery.setUnsafe(ADC); }
 void Analog::drive() {
   const auto adc = ADC;
 
-  if (adc < 350) {
+  if (adc < 170) {
     ThreePhaseDriver::emergencyDisable();
 
     if (setState(State::Fault))

@@ -71,6 +71,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
   switch (data->state) {
   case State::Fault:
     data->fault.fault = fault;
+    data->fault.lookupValid = Lookup::isValid;
     break;
   case State::Manual:
     data->manual.position = ThreePhaseControllerNamespace::getManualPosition();
@@ -95,6 +96,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
       data->normal.velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
     } else {
       data->normal.velocity = 0x7fff;
+      data->normal.position = 0;
     }
 
     data->normal.amplitude = ThreePhaseController::getAmplitudeTarget();
