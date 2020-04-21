@@ -2,8 +2,6 @@
   "editor.formatOnSave": true,
   "C_Cpp.intelliSenseEngineFallback": "Disabled",
   "files.exclude": {
-    "**/node_modules": true,
-    "**/yarn.lock": true,
     "*/**/.vscode": true
   }
 }
