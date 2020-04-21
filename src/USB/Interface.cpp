@@ -137,84 +137,94 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
     WDT::stop();
     clearFault();
     return;
+
   case CommandMode::MLXDebug:
     if (state == State::Fault && fault != Fault::Init)
       return;
-    setState(State::Manual);
+
+    if (setState(State::Manual))
+      WDT::stop();
+
     memcpy(MLX90363::getTxBuffer(), data->mlx.mlxData, MLX90363::messageLength);
     if (data->mlx.crc)
       MLX90363::fillTxBufferCRC();
     MLX90363::startTransmittingUnsafe();
     return;
+
   case CommandMode::ThreePhase:
     if (state == State::Fault && fault != Fault::Init)
       return;
-    WDT::start(WDT::T1000ms);
-    setState(State::Manual);
+
+    if (setState(State::Manual))
+      WDT::start(WDT::T1000ms);
+
     // TODO: Implement body of this "method"
     return;
+
   case CommandMode::Calibration:
     if (state == State::Fault && fault != Fault::Init)
       return;
-    WDT::start(WDT::T1000ms);
-    setState(State::Manual);
+
+    if (setState(State::Manual))
+      WDT::start(WDT::T1000ms);
+
     ThreePhaseDriver::setAmplitude(data->calibrate.amplitude);
     ThreePhaseDriver::advanceTo(data->calibrate.angle);
     return;
+
   case CommandMode::Push:
     if (state == State::Fault && fault != Fault::Init)
       return;
-    WDT::start(WDT::T_120ms);
-    setState(State::Normal);
+
+    if (setState(State::Normal))
+      WDT::start(WDT::T_120ms);
+
     ServoController::setEnable(false);
     ThreePhaseController::setAmplitudeTarget(data->push.command);
     return;
+
   case CommandMode::Servo:
     if (state == State::Fault && fault != Fault::Init)
       return;
-    setState(State::Normal);
+
+    if (setState(State::Normal))
+      WDT::start(WDT::T_250ms);
+
     switch (data->servo.mode) {
+    default:
+      return;
     case 1:
-      WDT::start(WDT::T_250ms);
       ServoController::setAmplitude(data->servo.command);
-      return;
+      break;
     case 2:
-      WDT::start(WDT::T_250ms);
       ServoController::setPosition((u2)data->servo.command);
-      return;
+      break;
     case 3:
-      WDT::start(WDT::T_250ms);
       ServoController::setVelocity(data->servo.command);
-      return;
+      break;
 
     case 11:
-      WDT::tick();
       ServoController::setPosition_P(data->servo.command);
-      return;
+      break;
     case 12:
-      WDT::tick();
       ServoController::setPosition_I(data->servo.command);
-      return;
+      break;
     case 13:
-      WDT::tick();
       ServoController::setPosition_D(data->servo.command);
-      return;
+      break;
 
-    // not used just yet
     case 21:
-      WDT::tick();
       ServoController::setVelocity_P(data->servo.command);
-      return;
+      break;
     case 22:
-      WDT::tick();
       ServoController::setVelocity_I(data->servo.command);
-      return;
+      break;
     case 23:
-      WDT::tick();
       ServoController::setVelocity_D(data->servo.command);
-      return;
+      break;
     }
-    // Should not run this return
+
+    WDT::tick();
     return;
 
   case CommandMode::SynchronousDrive:
