@@ -222,6 +222,10 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
     case 23:
       ServoController::setVelocity_D(data->servo.command);
       break;
+
+    case 199:
+      ThreePhaseDriver::setAmplitudeLimit(data->servo.command);
+      break;
     }
 
     WDT::tick();

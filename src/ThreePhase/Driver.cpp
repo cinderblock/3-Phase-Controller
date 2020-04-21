@@ -156,6 +156,9 @@ static const u2 limitedSinTable[ThreePhaseDriver::StepsPerPhase] PROGMEM = {
 
 volatile u1 ThreePhaseDriver::amplitude = 0;
 
+// Start with a decently low limit by default for safety
+volatile u1 ThreePhaseDriver::amplitudeLimit = 80;
+
 u2 ThreePhaseDriver::getPhasePWM(const u1 step) {
   // Make sure we get 0 out if amplitude is set to 0.
   if (!amplitude)

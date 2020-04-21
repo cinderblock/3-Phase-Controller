@@ -40,6 +40,8 @@ class ThreePhaseDriver {
    */
   static volatile u1 amplitude;
 
+  static volatile u1 amplitudeLimit;
+
   /**
    * Should we use ATmega32u4's PWM6 mode?
    *
@@ -258,7 +260,9 @@ public:
    */
   static void advanceTo(PhasePosition const phase) __attribute__((hot));
 
-  static inline void setAmplitude(u1 const a) { amplitude = a; }
+  static inline void setAmplitudeLimit(u1 const a) { amplitudeLimit = a; }
+
+  static inline void setAmplitude(u1 const a) { amplitude = min(a, amplitudeLimit); }
 
   static inline u1 getAmplitude() { return amplitude; };
 
