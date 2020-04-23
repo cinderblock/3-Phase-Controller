@@ -24,9 +24,9 @@ ISR(TIMER4_OVF_vect);
 
 namespace ThreePhaseControllerNamespace {
 
-inline constexpr u4 ulimit(u4 in, u4 limit) { return in > limit ? limit : in; }
-
 inline constexpr u2 ulimit(u2 in, u2 limit) { return in > limit ? limit : in; }
+inline constexpr u4 ulimit(u4 in, u4 limit) { return in > limit ? limit : in; }
+inline constexpr u8 ulimit(u8 in, u8 limit) { return in > limit ? limit : in; }
 
 using namespace Basic;
 
@@ -111,12 +111,14 @@ public:
     friend class ThreePhaseController;
 
   public:
-    inline Amplitude(s2 const t) : forward(t >= 0), amplitude(ulimit(u2(forward ? t : -t), 255)){};
-    inline Amplitude(s4 const t) : forward(t >= 0), amplitude(ulimit(u4(forward ? t : -t), 255)){};
+    constexpr inline Amplitude(s2 const t) : forward(t >= 0), amplitude(ulimit(u2(forward ? t : -t), 255)){};
+    constexpr inline Amplitude(s4 const t) : forward(t >= 0), amplitude(ulimit(u4(forward ? t : -t), 255)){};
+    constexpr inline Amplitude(s8 const t) : forward(t >= 0), amplitude(ulimit(u8(forward ? t : -t), 255)){};
 
-    inline Amplitude(const bool fwd, u1 const ampl) : forward(fwd), amplitude(ampl){};
+    constexpr inline Amplitude(const bool fwd, u1 const ampl) : forward(fwd), amplitude(ampl){};
 
     inline Amplitude(volatile const Amplitude &that) : forward(that.forward), amplitude(that.amplitude) {}
+    constexpr inline Amplitude(const Amplitude &that) : forward(that.forward), amplitude(that.amplitude) {}
 
     inline s4 operator+(s2 const d) volatile {
       s4 ampl = forward ? amplitude : -amplitude;

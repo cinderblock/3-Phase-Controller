@@ -17,6 +17,7 @@
 #include "../MLX90363.hpp"
 #include "../main.hpp"
 #include "Descriptors.h"
+#include "ServoController.hpp"
 #include "ThreePhase/Controller.hpp"
 #include <stdint.h>
 
@@ -55,14 +56,42 @@ typedef struct {
 } PushCommand;
 
 typedef struct {
-  u1 mode;
-  s4 command;
+  bool forward;
+  u1 amplitude;
+} ServoAmplitudeCommand;
+
+typedef struct {
+  // Not yet implemented
+} ServoVelocityCommand;
+
+typedef struct {
+  u2 commutation;
+  s4 turns;
+  u2 kP;
+  u2 kI;
+  u2 kD;
+} ServoPositionCommand;
+
+typedef struct {
+  ServoController::Mode mode;
+  union {
+    ServoAmplitudeCommand amplitude;
+    ServoVelocityCommand velocity;
+    ServoPositionCommand position;
+  };
 } ServoCommand;
 
 typedef struct {
   u1 amplitude;
   s4 velocity;
 } SynchronousCommand;
+
+typedef struct {
+  // TODO: fill
+  // - amplitudeLimit
+  // - deadTimes
+  // - Controller phase advance/anti-damping
+} ConfigurationCommand;
 
 typedef struct {
   CommandMode mode;
@@ -73,6 +102,7 @@ typedef struct {
     PushCommand push;
     ServoCommand servo;
     SynchronousCommand synchronous;
+    ConfigurationCommand configuration;
   };
 } CommandFormat;
 
@@ -86,29 +116,24 @@ typedef struct {
 } FaultData;
 
 typedef struct {
-  ThreePhaseDriver::PhasePosition position;
+  ThreePhaseDriver::PhasePosition drivePosition;
+  // If invalid, indicates no calibration
+  ThreePhaseDriver::PhasePosition realPosition;
   s4 velocity;
-  ThreePhaseController::Amplitude amplitude;
+  u1 amplitude;
 
-  bool mlxDataValid;
-
-  u1 mlxResponse[8];
   MLX90363::ResponseState mlxResponseState;
-} ManualData;
+  u1 mlxResponse[8];
+} ManualData; // 18 bytes
 
 typedef struct {
-  ThreePhaseDriver::PhasePosition position;
+  ServoController::MultiTurn position;
   s2 velocity;
   ThreePhaseController::Amplitude amplitude;
 
-  /**
-   * Redundant. Being Removed.
-   */
-  bool lookupValid : 1;
-
   u2 controlLoops;
   u2 mlxFailedCRCs;
-} NormalData;
+} NormalData; // 14 bytes
 
 typedef struct {
   State state;
@@ -116,9 +141,9 @@ typedef struct {
     FaultData fault;
     ManualData manual;
     NormalData normal;
-  };
+  }; // 18 bytes
 
-  // Analog group
+  // Analog group. Always share since they're always valid.
   struct {
     u2 cpuTemp;
     s2 current;
@@ -129,8 +154,8 @@ typedef struct {
     u2 AS;
     u2 BS;
     u2 CS;
-  };
-} DataFormat;
+  };          // 14 bytes
+} DataFormat; // 33 bytes
 
 /**
  * Shape of data going IN to host

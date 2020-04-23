@@ -90,6 +90,7 @@ public:
    * class to store and work with all possible output "angles"
    */
   class PhasePosition {
+  protected:
     /**
      * Internal byte + n bits that fully describe an output angle
      */
@@ -101,6 +102,8 @@ public:
     static constexpr decltype(commutation) MAX = StepsPerRevolution - 1;
 
     static constexpr decltype(commutation) FULL = StepsPerRevolution;
+
+    static constexpr decltype(commutation) INVALID = -1;
 
     friend class ThreePhaseDriver;
 
@@ -116,12 +119,20 @@ public:
      * @return A, B, or C
      */
     inline Phase getPhase() const { return (Phase)((commutation / StepsPerPhase) % PhasesPerCycle); }
-    /**
-     * Initialize a commutation angle with some current angle
-     * @param commutation
-     */
-    inline PhasePosition(u2 const commutation = 0) : commutation(commutation % FULL) {}
-    inline PhasePosition(u4 const commutation) : commutation(commutation % FULL) {}
+
+    inline u2 getRaw() const { return commutation; }
+
+    inline bool isValid() const { return commutation != INVALID; }
+
+    constexpr inline PhasePosition() : commutation(0) {}
+
+    constexpr inline PhasePosition(bool const invalid) : commutation(invalid ? INVALID : 0) {}
+
+    constexpr inline PhasePosition(u2 const commutation) : commutation(commutation % FULL) {}
+    constexpr inline PhasePosition(u4 const commutation) : commutation(commutation % FULL) {}
+    constexpr inline PhasePosition(s8 const commutation) : commutation((commutation % FULL + FULL) % FULL) {}
+
+    constexpr inline PhasePosition(PhasePosition const &copy) : commutation(copy.commutation) {}
 
     /**
      * Convenience constructor
@@ -217,8 +228,6 @@ public:
 
       return ret;
     }
-
-    inline u2 getRaw() const { return commutation; }
 
     inline s2 operator-(PhasePosition const &that) {
       s2 delta = commutation - that.commutation;

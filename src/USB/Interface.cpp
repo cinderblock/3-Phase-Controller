@@ -73,34 +73,20 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
     data->fault.fault = fault;
     break;
   case State::Manual:
-    data->manual.position = ThreePhaseControllerNamespace::getManualPosition();
+    data->manual.drivePosition = ThreePhaseControllerNamespace::getManualPosition();
+    data->manual.realPosition = Lookup::isValid ? ThreePhasePositionEstimator::getMagnetometerPhaseEstimate() : true;
     data->manual.velocity = ThreePhaseControllerNamespace::getSynchronous();
     data->manual.amplitude = ThreePhaseDriver::getAmplitude();
 
-    data->manual.mlxDataValid = !MLX90363::isTransmitting();
-    if (data->manual.mlxDataValid) {
-      auto test = MLX90363::getResponseState();
-
-      data->manual.mlxResponseState = test;
-
-      if (test > MLX90363::ResponseState::Ready) {
-        memcpy(data->manual.mlxResponse, MLX90363::getRxBuffer(), MLX90363::messageLength);
-      }
-    }
+    data->manual.mlxResponseState = MLX90363::getResponseState();
+    memcpy(data->manual.mlxResponse, MLX90363::getRxBuffer(), MLX90363::messageLength);
 
     break;
   case State::Normal:
-    if (Lookup::isValid) {
-      data->normal.position = ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
-      data->normal.velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
-    } else {
-      data->normal.velocity = 0x7fff;
-    }
+    data->normal.position = ServoController::getPosition();
+    data->normal.velocity = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
     data->normal.amplitude = ThreePhaseController::getAmplitudeTarget();
-
-    // TODO: Remove...
-    data->normal.lookupValid = Lookup::isValid;
 
     data->normal.mlxFailedCRCs = MLX90363::getCRCFailures();
     data->normal.controlLoops = ThreePhaseController::getLoopCount();
@@ -133,10 +119,13 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
   USBDataOUTShape const *const data = (USBDataOUTShape *)ReportData;
 
   switch (data->mode) {
+  default:
+    return;
+
   case CommandMode::ClearFault:
     WDT::stop();
     clearFault();
-    return;
+    break;
 
   case CommandMode::MLXDebug:
     if (state == State::Fault && fault != Fault::Init)
@@ -148,8 +137,9 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
     memcpy(MLX90363::getTxBuffer(), data->mlx.mlxData, MLX90363::messageLength);
     if (data->mlx.crc)
       MLX90363::fillTxBufferCRC();
+
     MLX90363::startTransmittingUnsafe();
-    return;
+    break;
 
   case CommandMode::ThreePhase:
     if (state == State::Fault && fault != Fault::Init)
@@ -159,7 +149,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
       WDT::start(WDT::T1000ms);
 
     // TODO: Implement body of this "method"
-    return;
+    break;
 
   case CommandMode::Calibration:
     if (state == State::Fault && fault != Fault::Init)
@@ -170,7 +160,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
 
     ThreePhaseDriver::setAmplitude(data->calibrate.amplitude);
     ThreePhaseDriver::advanceTo(data->calibrate.angle);
-    return;
+    break;
 
   case CommandMode::Push:
     if (state == State::Fault && fault != Fault::Init)
@@ -181,7 +171,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
 
     ServoController::setEnable(false);
     ThreePhaseController::setAmplitudeTarget(data->push.command);
-    return;
+    break;
 
   case CommandMode::Servo:
     if (state == State::Fault && fault != Fault::Init)
@@ -193,52 +183,47 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t *const HIDI
     switch (data->servo.mode) {
     default:
       return;
-    case 1:
-      ServoController::setAmplitude(data->servo.command);
-      break;
-    case 2:
-      ServoController::setPosition((u2)data->servo.command);
-      break;
-    case 3:
-      ServoController::setVelocity(data->servo.command);
+
+    case ServoController::Mode::Disabled:
+      ServoController::setEnable(false);
       break;
 
-    case 11:
-      ServoController::setPosition_P(data->servo.command);
-      break;
-    case 12:
-      ServoController::setPosition_I(data->servo.command);
-      break;
-    case 13:
-      ServoController::setPosition_D(data->servo.command);
+    case ServoController::Mode::Amplitude: {
+      const auto &parameters = data->servo.amplitude;
+      ServoController::setAmplitude(ThreePhaseController::Amplitude(parameters.forward, parameters.amplitude));
+    } break;
+
+    case ServoController::Mode::Velocity:
+      // TODO: Implement
+      ServoController::setVelocity(0);
       break;
 
-    case 21:
-      ServoController::setVelocity_P(data->servo.command);
-      break;
-    case 22:
-      ServoController::setVelocity_I(data->servo.command);
-      break;
-    case 23:
-      ServoController::setVelocity_D(data->servo.command);
-      break;
-
-    case 199:
-      ThreePhaseDriver::setAmplitudeLimit(data->servo.command);
-      break;
+    case ServoController::Mode::Position: {
+      const auto &parameters = data->servo.position;
+      ServoController::setPosition(ServoController::MultiTurn(parameters.turns, parameters.commutation));
+      ServoController::setPosition_P(parameters.kP);
+      ServoController::setPosition_I(parameters.kI);
+      ServoController::setPosition_D(parameters.kD);
+    } break;
     }
 
-    WDT::tick();
-    return;
+    break;
 
   case CommandMode::SynchronousDrive:
-    WDT::start(WDT::T_500ms);
-    setState(State::Manual);
+    if (setState(State::Manual))
+      WDT::start(WDT::T_500ms);
+
     ThreePhaseControllerNamespace::setSynchronous(data->synchronous.velocity);
     ThreePhaseDriver::setAmplitude(data->synchronous.amplitude);
-    return;
+    break;
 
   case CommandMode::Bootloader:
+    ThreePhaseDriver::emergencyDisable();
+    WDT::stop();
+    ServoController::setEnable(false);
     bootloaderJump();
+    break;
   }
+
+  WDT::tick();
 }

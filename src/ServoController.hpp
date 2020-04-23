@@ -21,17 +21,167 @@ using namespace AVR;
  * Static class for handling the various servo modes
  */
 class ServoController {
-private:
+public:
   /**
    * The different modes that we can use to servo
    */
-  enum class Mode : u1 { Init, Amplitude, Velocity, Position };
+  enum class Mode : u1 { Disabled = 0, Amplitude = 1, Velocity = 2, Position = 3 };
 
+private:
   /**
    * Which mode are we currently in
    */
   static Mode servoMode;
 
+  using PhasePosition = ThreePhaseDriver::PhasePosition;
+
+public:
+  class MultiTurn : private PhasePosition {
+  protected:
+    /**
+     * Number of turns
+     */
+    s4 turns;
+
+    friend class ServoController;
+
+  public:
+    /**
+     * Initialize a commutation angle with some current angle
+     * @param value
+     */
+    constexpr inline MultiTurn(const s8 value = 0) : PhasePosition(value), turns(value / FULL) {}
+
+    constexpr inline MultiTurn(const s4 turns, const PhasePosition pp) : PhasePosition(pp), turns(turns) {}
+
+  private:
+    /**
+     * Update this instance to match a new phase position
+     * @return the number of counts moved
+     */
+    inline s2 update(PhasePosition const &update) {
+      const auto delta = update - *this;
+
+      *this += delta;
+
+      return delta;
+    }
+
+  public:
+    inline MultiTurn &operator+=(u1 const steps) {
+      commutation += steps;
+      if (commutation > MAX) {
+        commutation -= FULL;
+        turns++;
+      }
+
+      return *this;
+    }
+
+    inline MultiTurn &operator-=(u1 const steps) {
+      commutation -= steps;
+      if (commutation > MAX) {
+        commutation += FULL;
+        turns--;
+      }
+
+      return *this;
+    }
+
+    inline MultiTurn &operator+=(u2 const steps) {
+      // TODO: This is broken if steps is very large and overflows commutation
+      commutation += steps;
+      if (commutation > MAX) {
+        commutation %= FULL;
+        turns++;
+      }
+
+      return *this;
+    }
+
+    inline MultiTurn &operator+=(s2 const steps) {
+      // TODO: This is broken if steps is very large and overflows commutation
+      commutation += steps;
+
+      while (commutation > MAX) {
+        if (steps > 0) {
+          commutation -= FULL;
+          turns++;
+        } else {
+          commutation += FULL;
+          turns--;
+        }
+      }
+
+      return *this;
+    }
+
+    inline MultiTurn &operator-=(u2 const steps) {
+      commutation -= steps;
+      // TODO: Better & faster math here
+      while (commutation > MAX) {
+        commutation += FULL;
+        turns--;
+      }
+
+      return *this;
+    }
+
+    inline MultiTurn &operator++() {
+      if (commutation == MAX) {
+        commutation = 0;
+        turns++;
+      } else {
+        commutation++;
+      }
+
+      return *this;
+    }
+
+    inline MultiTurn &operator--() {
+      if (commutation == 0) {
+        commutation = MAX;
+        turns--;
+      } else {
+        commutation--;
+      }
+
+      return *this;
+    }
+
+    inline MultiTurn operator++(int) {
+      MultiTurn ret(commutation);
+
+      ++*this;
+
+      return ret;
+    }
+
+    inline MultiTurn operator--(int) {
+      MultiTurn ret(commutation);
+
+      --*this;
+
+      return ret;
+    }
+
+    inline s8 operator-(MultiTurn const &that) { return PhasePosition::operator-(that) + (turns - that.turns) * FULL; }
+
+    inline s8 operator-(MultiTurn const &that) const {
+      return PhasePosition::operator-(that) + (turns - that.turns) * FULL;
+    }
+  };
+
+protected:
+  /**
+   * The number of turns we've moved and most recent sub-turn commutation
+   */
+  static MultiTurn position;
+
+public:
+  static inline MultiTurn getPosition() { return position; }
+
+protected:
   /**
    * Current command for simple amplitude control
    */
@@ -45,7 +195,7 @@ private:
   /**
    * The current target position
    */
-  static ThreePhaseDriver::PhasePosition positionCommand;
+  static MultiTurn positionCommand;
 
   static u2 position_P;
   static u2 position_I;
@@ -63,6 +213,8 @@ private:
   static const u1 DeadBand = 50;
 
 public:
+  static void zeroTurns();
+
   /**
    * Update amplitude command in ThreePhaseController based on current servo target parameters.
    */
@@ -76,7 +228,7 @@ public:
   /**
    * Set the controller into constant amplitude mode with some amplitude
    */
-  static void setAmplitude(s2);
+  static void setAmplitude(ThreePhaseController::Amplitude const &);
 
   /**
    * Puts the controller into constant velocity mode and sets the target
@@ -96,22 +248,13 @@ public:
    * Put controller into position mode and sets the target
    * @param
    */
-  static void setPosition(ThreePhaseDriver::PhasePosition);
-
-  /**
-   * Put controller into position mode and sets the target as a delta from current
-   *
-   * @warning Broken for extreme values!
-   *
-   * @param
-   */
-  static void setDistance(s2);
+  static void setPosition(MultiTurn const &);
 
   /**
    * Get the commanded position
    * @return
    */
-  inline static ThreePhaseDriver::PhasePosition getPositionCommand() { return positionCommand; };
+  inline static MultiTurn getPositionCommand() { return positionCommand; }
 
   /**
    * Set P of position PID

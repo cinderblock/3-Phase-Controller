@@ -5,11 +5,13 @@
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;
 
-ServoController::Mode ServoController::servoMode = Mode::Init;
+ServoController::Mode ServoController::servoMode = Mode::Disabled;
+
+ServoController::MultiTurn ServoController::position;
 
 ThreePhaseController::Amplitude ServoController::amplitudeCommand(0);
 s2 ServoController::velocityCommand;
-ThreePhaseDriver::PhasePosition ServoController::positionCommand;
+ServoController::MultiTurn ServoController::positionCommand = 0;
 
 u2 ServoController::position_P = 0;
 u2 ServoController::position_I = 0;
@@ -25,7 +27,7 @@ u1 ServoController::velocityShift;
 void ServoController::init() {
   ThreePhaseController::init();
 
-  servoMode = Mode::Init;
+  servoMode = Mode::Disabled;
 
   position_P = 0;
   position_I = 0;
@@ -39,15 +41,18 @@ void ServoController::update() {
   // It looks at its currently available data and calculates a signed amplitude
   // to pass back to the ThreePhaseController
 
-  if (servoMode == Mode::Init) {
+  const auto vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
+  static auto lastVel = decltype(vel){0};
+
+  position.update(ThreePhasePositionEstimator::getMagnetometerPhaseEstimate());
+
+  if (servoMode == Mode::Disabled) {
     // DO NOTHING
   } else if (servoMode == Mode::Amplitude) {
     ThreePhaseController::setAmplitudeTarget(amplitudeCommand);
 
   } else if (servoMode == Mode::Velocity) {
-    static s2 lastVel = 0;
     static ThreePhaseController::Amplitude lastCommand(0);
-    const s2 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
     const s2 velocityDelta = vel - lastVel;
 
@@ -59,21 +64,22 @@ void ServoController::update() {
 
     ThreePhaseController::setAmplitudeTarget(command);
 
-    lastVel = vel;
-
   } else if (servoMode == Mode::Position) {
-    const s4 vel = ThreePhasePositionEstimator::getMagnetometerVelocityEstimate();
 
-    const s4 positionError = positionCommand - ThreePhasePositionEstimator::getMagnetometerPhaseEstimate();
+    const auto positionError = position - positionCommand;
 
-    const s4 command = ((positionError * position_P) >> 16) - ((vel * position_D) >> 8);
+    const auto command = ((-positionError * position_P) >> 16) - ((vel * position_D) >> 8);
 
     ThreePhaseController::setAmplitudeTarget(command);
   } else {
   }
+
+  lastVel = vel;
 }
 
-void ServoController::setAmplitude(s2 amplitude) {
+void ServoController::zeroTurns() { position.turns = 0; }
+
+void ServoController::setAmplitude(ThreePhaseController::Amplitude const &amplitude) {
   servoMode = Mode::Amplitude;
   amplitudeCommand = amplitude;
 }
@@ -83,22 +89,14 @@ void ServoController::setVelocity(s2 velocity) {
   velocityCommand = velocity;
 }
 
-void ServoController::setPosition(ThreePhaseDriver::PhasePosition position) {
+void ServoController::setPosition(MultiTurn const &position) {
   servoMode = Mode::Position;
   positionCommand = position;
-}
-
-void ServoController::setDistance(s2 dist) {
-  servoMode = Mode::Position;
-  if (dist >= 0)
-    positionCommand += (u2)dist;
-  else
-    positionCommand -= (u2)(-dist);
 }
 
 void ServoController::setEnable(bool enable) {
   if (enable)
     return;
 
-  servoMode = Mode::Init;
+  servoMode = Mode::Disabled;
 }
