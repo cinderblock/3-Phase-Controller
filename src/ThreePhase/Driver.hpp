@@ -98,9 +98,9 @@ public:
     /**
      * The maximum valid value commutation can have
      */
-    static constexpr u2 MAX = StepsPerRevolution - 1;
+    static constexpr decltype(commutation) MAX = StepsPerRevolution - 1;
 
-    static constexpr u2 FULL = StepsPerRevolution;
+    static constexpr decltype(commutation) FULL = StepsPerRevolution;
 
     friend class ThreePhaseDriver;
 
@@ -113,9 +113,9 @@ public:
 
     /**
      * Get the current Phase
-     * @return
+     * @return A, B, or C
      */
-    inline Phase getPhase() const { return (Phase)((commutation >> 8) % PhasesPerCycle); }
+    inline Phase getPhase() const { return (Phase)((commutation / StepsPerPhase) % PhasesPerCycle); }
     /**
      * Initialize a commutation angle with some current angle
      * @param commutation

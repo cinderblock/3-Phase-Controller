@@ -88,7 +88,7 @@ public:
    * Get the commanded velocity
    * @return
    */
-  inline static s2 getVelocityCommand() { return velocityCommand; };
+  inline static s2 getVelocityCommand() { return velocityCommand; }
 
   //////////// angular position commands ////////////////
 
@@ -117,93 +117,93 @@ public:
    * Set P of position PID
    * @param p
    */
-  static inline void setPosition_P(u2 p) { position_P = p; };
+  static inline void setPosition_P(u2 p) { position_P = p; }
 
   /**
    * Get P of position PID
    * @return
    */
-  static inline u2 getPosition_P() { return position_P; };
+  static inline u2 getPosition_P() { return position_P; }
 
   /**
    * Set I of position PID
    * @param i
    */
-  static inline void setPosition_I(u2 i) { position_I = i; };
+  static inline void setPosition_I(u2 i) { position_I = i; }
 
   /**
    * Get I of position PID
    * @return
    */
-  static inline u2 getPosition_I() { return position_I; };
+  static inline u2 getPosition_I() { return position_I; }
 
   /**
    * Set D of position PID
    * @param d
    */
-  static inline void setPosition_D(u2 d) { position_D = d; };
+  static inline void setPosition_D(u2 d) { position_D = d; }
 
   /**
    * Get D of position PID
    * @return
    */
-  static inline u2 getPosition_D() { return position_D; };
+  static inline u2 getPosition_D() { return position_D; }
 
   /**
    * Set the shifted amount for scaling the position PID values
    */
-  static inline void setPositionShift(u1 p) { positionShift = p; };
+  static inline void setPositionShift(u1 p) { positionShift = p; }
 
   /**
    * Get the shift amount
    */
-  static inline u1 getPositionShift() { return positionShift; };
+  static inline u1 getPositionShift() { return positionShift; }
 
   /**
    * Set P of velocity PID
    * @param p
    */
-  static inline void setVelocity_P(u2 p) { velocity_P = p; };
+  static inline void setVelocity_P(u2 p) { velocity_P = p; }
 
   /**
    * Get P of velocity PID
    * @return
    */
-  static inline u2 getVelocity_P() { return velocity_P; };
+  static inline u2 getVelocity_P() { return velocity_P; }
 
   /**
    * Set I of velocity PID
    * @param i
    */
-  static inline void setVelocity_I(u2 i) { velocity_I = i; };
+  static inline void setVelocity_I(u2 i) { velocity_I = i; }
 
   /**
    * Get I of velocity PID
    * @return
    */
-  static inline u2 getVelocity_I() { return velocity_I; };
+  static inline u2 getVelocity_I() { return velocity_I; }
 
   /**
    * Set D of velocity PID
    * @param d
    */
-  static inline void setVelocity_D(u2 d) { velocity_D = d; };
+  static inline void setVelocity_D(u2 d) { velocity_D = d; }
 
   /**
    * Get D of velocity PID
    * @return
    */
-  static inline u2 getVelocity_D() { return velocity_D; };
+  static inline u2 getVelocity_D() { return velocity_D; }
 
   /**
    * Set the shifted amount for scaling the velocity to be set
    */
-  static inline void setVelocityShift(u1 p) { velocityShift = p; };
+  static inline void setVelocityShift(u1 p) { velocityShift = p; }
 
   /**
    * Get the velocity shift amount
    */
-  static inline u1 getVelocityShift() { return velocityShift; };
+  static inline u1 getVelocityShift() { return velocityShift; }
 
   /**
    * Enable or disable servo controller
