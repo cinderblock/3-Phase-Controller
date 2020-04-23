@@ -85,7 +85,7 @@ void ThreePhaseControllerNamespace::clearFault() {
 }
 
 bool ThreePhaseControllerNamespace::setState(State const s) {
-  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
 
     // Don't do anything if we're already in that mode, or trying to go to an invalid mode...
     if (state == s)
