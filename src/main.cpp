@@ -107,6 +107,8 @@ bool ThreePhaseControllerNamespace::setState(State const s) {
       break;
 
     case State::Normal:
+      if (!Lookup::isValid)
+        return false;
       ThreePhaseController::init();
       ThreePhaseController::enable();
       break;
