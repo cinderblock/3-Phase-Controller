@@ -71,7 +71,22 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
   switch (data->state) {
   case State::Fault:
     data->fault.fault = fault;
+
+    data->fault.init.cyclesPerRevolution = ThreePhaseDriver::CyclesPerRevolution;
+
+    data->fault.init.deadTimes = DT4;
+
+    // TODO:
+    data->fault.init.currentLimit = 0;
+
+    data->fault.init.validCalibration = Lookup::isValid;
+    if (Lookup::isValid) {
+      // TODO:
+      // data->fault.init.calibration.time = ;
+      // data->fault.init.calibration.version = ;
+    }
     break;
+
   case State::Manual:
     data->manual.drivePosition = ThreePhaseControllerNamespace::getManualPosition();
     data->manual.realPosition = Lookup::isValid ? ThreePhasePositionEstimator::getMagnetometerPhaseEstimate() : true;

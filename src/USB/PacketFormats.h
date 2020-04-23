@@ -113,6 +113,23 @@ typedef CommandFormat USBDataOUTShape;
 
 typedef struct {
   Fault fault;
+
+  union {
+    struct {
+      u1 cyclesPerRevolution;
+
+      bool validCalibration;
+
+      u1 deadTimes;
+
+      u2 currentLimit;
+
+      struct {
+        u1 version;
+        u8 time;
+      } calibration;
+    } init;
+  };
 } FaultData;
 
 typedef struct {
