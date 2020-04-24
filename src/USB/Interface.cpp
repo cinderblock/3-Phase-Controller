@@ -72,18 +72,20 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t *const HIDIn
   case State::Fault:
     data->fault.fault = fault;
 
-    data->fault.init.cyclesPerRevolution = ThreePhaseDriver::CyclesPerRevolution;
+    if (fault == Fault::Init) {
+      data->fault.init.cyclesPerRevolution = ThreePhaseDriver::CyclesPerRevolution;
 
-    data->fault.init.deadTimes = DT4;
+      data->fault.init.deadTimes = DT4;
 
-    // TODO:
-    data->fault.init.currentLimit = 0;
-
-    data->fault.init.validCalibration = Lookup::isValid;
-    if (Lookup::isValid) {
       // TODO:
-      // data->fault.init.calibration.time = ;
-      // data->fault.init.calibration.version = ;
+      data->fault.init.currentLimit = 0;
+
+      data->fault.init.validCalibration = Lookup::isValid;
+      if (Lookup::isValid) {
+        // TODO:
+        // data->fault.init.calibration.time = ;
+        // data->fault.init.calibration.version = ;
+      }
     }
     break;
 
