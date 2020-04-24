@@ -128,9 +128,9 @@ typedef struct {
         u1 version;
         u8 time;
       } calibration;
-    } init;
+    } init; // 14 bytes
   };
-} FaultData;
+} FaultData; // 15 bytes
 
 typedef struct {
   ThreePhaseDriver::PhasePosition drivePosition;
