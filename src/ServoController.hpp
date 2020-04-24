@@ -165,10 +165,12 @@ public:
       return ret;
     }
 
-    inline s8 operator-(MultiTurn const &that) { return PhasePosition::operator-(that) + (turns - that.turns) * FULL; }
+    inline s8 operator-(MultiTurn const &that) {
+      return s8(turns - that.turns) * FULL + commutation - that.commutation;
+    }
 
     inline s8 operator-(MultiTurn const &that) const {
-      return PhasePosition::operator-(that) + (turns - that.turns) * FULL;
+      return s8(turns - that.turns) * FULL + commutation - that.commutation;
     }
   };
 
