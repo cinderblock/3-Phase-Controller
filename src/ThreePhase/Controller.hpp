@@ -111,9 +111,9 @@ public:
     friend class ThreePhaseController;
 
   public:
-    constexpr inline Amplitude(s2 const t) : forward(t >= 0), amplitude(ulimit(u2(forward ? t : -t), 255)){};
-    constexpr inline Amplitude(s4 const t) : forward(t >= 0), amplitude(ulimit(u4(forward ? t : -t), 255)){};
-    constexpr inline Amplitude(s8 const t) : forward(t >= 0), amplitude(ulimit(u8(forward ? t : -t), 255)){};
+    constexpr inline Amplitude(s2 const a) : forward(a >= 0), amplitude(ulimit(u2(forward ? a : -a), 255)){};
+    constexpr inline Amplitude(s4 const a) : forward(a >= 0), amplitude(ulimit(u4(forward ? a : -a), 255)){};
+    constexpr inline Amplitude(s8 const a) : forward(a >= 0), amplitude(ulimit(u8(forward ? a : -a), 255)){};
 
     constexpr inline Amplitude(const bool fwd, u1 const ampl) : forward(fwd), amplitude(ampl){};
 

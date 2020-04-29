@@ -183,6 +183,12 @@ protected:
 public:
   static inline MultiTurn getPosition() { return position; }
 
+  typedef struct {
+    u2 kP;
+    u2 kI;
+    u2 kD;
+  } kPID;
+
 protected:
   /**
    * Current command for simple amplitude control
@@ -199,23 +205,11 @@ protected:
    */
   static MultiTurn positionCommand;
 
-  static u2 position_P;
-  static u2 position_I;
-  static u2 position_D;
-
-  static u2 velocity_P;
-  static u2 velocity_I;
-  static u2 velocity_D;
-
-  static u1 positionShift;
-  static u1 velocityShift;
-
-  // static u2 initialPhasePosition;
-
-  static const u1 DeadBand = 50;
+  static kPID kPosition;
+  static kPID kVelocity;
 
 public:
-  static void zeroTurns();
+  inline static void zeroTurns() { position.turns = 0; }
 
   /**
    * Update amplitude command in ThreePhaseController based on current servo target parameters.
@@ -230,13 +224,19 @@ public:
   /**
    * Set the controller into constant amplitude mode with some amplitude
    */
-  static void setAmplitude(ThreePhaseController::Amplitude const &);
+  inline static void setAmplitude(ThreePhaseController::Amplitude const amplitude) {
+    servoMode = Mode::Amplitude;
+    amplitudeCommand = amplitude;
+  }
 
   /**
    * Puts the controller into constant velocity mode and sets the target
    * @param
    */
-  static void setVelocity(s2);
+  inline static void setVelocity(s2 velocity) {
+    servoMode = Mode::Velocity;
+    velocityCommand = velocity;
+  }
 
   /**
    * Get the commanded velocity
@@ -250,7 +250,10 @@ public:
    * Put controller into position mode and sets the target
    * @param
    */
-  static void setPosition(MultiTurn const &);
+  inline static void setPosition(MultiTurn const &position) {
+    servoMode = Mode::Position;
+    positionCommand = position;
+  }
 
   /**
    * Get the commanded position
@@ -259,101 +262,98 @@ public:
   inline static MultiTurn getPositionCommand() { return positionCommand; }
 
   /**
+   * Set Position PID
+   * @param k the struct to copy
+   */
+  static inline void setPositionK(const kPID k) { kPosition = k; }
+
+  /**
+   * Set Velocity PID
+   * @param k the struct to copy
+   */
+  static inline void setVelocityK(const kPID k) { kVelocity = k; }
+
+  /**
    * Set P of position PID
    * @param p
    */
-  static inline void setPosition_P(u2 p) { position_P = p; }
+  static inline void setPosition_P(u2 p) { kPosition.kP = p; }
 
   /**
    * Get P of position PID
    * @return
    */
-  static inline u2 getPosition_P() { return position_P; }
+  static inline u2 getPosition_P() { return kPosition.kP; }
 
   /**
    * Set I of position PID
    * @param i
    */
-  static inline void setPosition_I(u2 i) { position_I = i; }
+  static inline void setPosition_I(u2 i) { kPosition.kI = i; }
 
   /**
    * Get I of position PID
    * @return
    */
-  static inline u2 getPosition_I() { return position_I; }
+  static inline u2 getPosition_I() { return kPosition.kI; }
 
   /**
    * Set D of position PID
    * @param d
    */
-  static inline void setPosition_D(u2 d) { position_D = d; }
+  static inline void setPosition_D(u2 d) { kPosition.kD = d; }
 
   /**
    * Get D of position PID
    * @return
    */
-  static inline u2 getPosition_D() { return position_D; }
-
-  /**
-   * Set the shifted amount for scaling the position PID values
-   */
-  static inline void setPositionShift(u1 p) { positionShift = p; }
-
-  /**
-   * Get the shift amount
-   */
-  static inline u1 getPositionShift() { return positionShift; }
+  static inline u2 getPosition_D() { return kPosition.kD; }
 
   /**
    * Set P of velocity PID
    * @param p
    */
-  static inline void setVelocity_P(u2 p) { velocity_P = p; }
+  static inline void setVelocity_P(u2 p) { kVelocity.kP = p; }
 
   /**
    * Get P of velocity PID
    * @return
    */
-  static inline u2 getVelocity_P() { return velocity_P; }
+  static inline u2 getVelocity_P() { return kVelocity.kP; }
 
   /**
    * Set I of velocity PID
    * @param i
    */
-  static inline void setVelocity_I(u2 i) { velocity_I = i; }
+  static inline void setVelocity_I(u2 i) { kVelocity.kI = i; }
 
   /**
    * Get I of velocity PID
    * @return
    */
-  static inline u2 getVelocity_I() { return velocity_I; }
+  static inline u2 getVelocity_I() { return kVelocity.kI; }
 
   /**
    * Set D of velocity PID
    * @param d
    */
-  static inline void setVelocity_D(u2 d) { velocity_D = d; }
+  static inline void setVelocity_D(u2 d) { kVelocity.kD = d; }
 
   /**
    * Get D of velocity PID
    * @return
    */
-  static inline u2 getVelocity_D() { return velocity_D; }
+  static inline u2 getVelocity_D() { return kVelocity.kD; }
 
   /**
-   * Set the shifted amount for scaling the velocity to be set
+   * Disable servo controller
    */
-  static inline void setVelocityShift(u1 p) { velocityShift = p; }
+  inline static void setEnable(bool enable) {
+    if (enable)
+      return;
 
-  /**
-   * Get the velocity shift amount
-   */
-  static inline u1 getVelocityShift() { return velocityShift; }
-
-  /**
-   * Enable or disable servo controller
-   */
-  static void setEnable(bool);
+    servoMode = Mode::Disabled;
+  }
 };
 
 }; // namespace ThreePhaseControllerNamespace
