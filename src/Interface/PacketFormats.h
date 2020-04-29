@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "MLX90363.hpp"
+#include "Sensors/MLX90363.hpp"
 #include "ServoController.hpp"
 #include "ThreePhase/Controller.hpp"
 #include "main.hpp"

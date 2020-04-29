@@ -5,25 +5,26 @@
  * Created on Nov 28, 2014, 2:02 PM
  */
 
-#include "Board.hpp"
-#include <util/atomic.h>
-#include <util/delay.h>
-
-#include "Calibration.hpp"
-#include "Clock.hpp"
-#include "Debug.hpp"
-#include "Demo.hpp"
-#include "MLX90363.hpp"
-#include "MLXDebug.hpp"
-#include "SerialInterface.hpp"
-#include "ServoController.hpp"
-#include "ThreePhase/Controller.hpp"
-#include "ThreePhase/FaultTester.hpp"
-#include "USB/Descriptors.h"
-#include "main.hpp"
 #include <AVR++/FlashData.hpp>
 #include <AVR++/WDT.hpp>
 #include <LUFA/Drivers/USB/USB.h>
+#include <util/atomic.h>
+#include <util/delay.h>
+
+#include "Debug.hpp"
+#include "ServoController.hpp"
+#include "main.hpp"
+
+#include "Interface/Serial.hpp"
+#include "Interface/USB/Descriptors.h"
+#include "Routines/Calibration.hpp"
+#include "Routines/Demo.hpp"
+#include "Sensors/MLX90363.hpp"
+#include "Sensors/MLXDebug.hpp"
+#include "System/Board.hpp"
+#include "System/Clock.hpp"
+#include "ThreePhase/Controller.hpp"
+#include "ThreePhase/FaultTester.hpp"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;

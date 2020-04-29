@@ -6,7 +6,7 @@
  */
 
 #include "Clock.hpp"
-#include "Timer.hpp"
+#include "AVR/Timer.hpp"
 
 using namespace Basic;
 

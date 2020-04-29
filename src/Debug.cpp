@@ -6,7 +6,7 @@
  */
 
 #include "Debug.hpp"
-#include "Clock.hpp"
+#include "System/Clock.hpp"
 #include <avr/io.h>
 
 #include <CRC8.hpp>
@@ -22,12 +22,12 @@ static CRC8 CRC;
 
 void Debug::init() {
   Board::SER::Tx::on();
-  
+
   UBRR1 = 0;
 
-  #ifndef UCSR1D
-  #define UCSR1D _SFR_MEM8(0xCB)
-  #endif
+#ifndef UCSR1D
+#define UCSR1D _SFR_MEM8(0xCB)
+#endif
 
   // Set default
   UCSR1D = 0b00;
@@ -67,9 +67,7 @@ void Debug::reportClock() {
   reportU2(t);
 }
 
-void Debug::start() {
-  CRC.reset();
-}
+void Debug::start() { CRC.reset(); }
 
 void Debug::end() {
   sendByte(CRC.getCRC());

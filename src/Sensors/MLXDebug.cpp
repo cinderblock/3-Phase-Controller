@@ -14,7 +14,7 @@
 #include <avr/pgmspace.h>
 #include <util/delay.h>
 
-#include "Debug.hpp"
+#include "../Debug.hpp"
 #include "MLX90363.hpp"
 #include "MLXDebug.hpp"
 #include <AVR++/USART.hpp>

@@ -14,6 +14,6 @@
 
 #define QUANTUM_DRIVE2
 
-#include "ConfigCheck.h"
+#include "System/ConfigCheck.h"
 
 #endif /* CONFIG_H */

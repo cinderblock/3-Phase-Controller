@@ -9,7 +9,7 @@
 #ifndef SERVOCONTROLLER_H
 #define SERVOCONTROLLER_H
 
-#include "MLX90363.hpp"
+#include "Sensors/MLX90363.hpp"
 #include "ThreePhase/Controller.hpp"
 #include <AVR++/basicTypes.hpp>
 

@@ -1,12 +1,12 @@
 
 #include "PositionEstimator.hpp"
-#include "LookupTable.hpp"
+#include "CalibrationData/LookupTable.hpp"
 // #include "Debug.hpp"
 #include "Config.h"
 #include "Controller.hpp"
 #include "Debug.hpp"
-#include "HallWatcher.hpp"
-#include "MLX90363.hpp"
+#include "Sensors/HallWatcher.hpp"
+#include "Sensors/MLX90363.hpp"
 #include "ServoController.hpp"
 #include <util/atomic.h>
 #include <util/delay.h>

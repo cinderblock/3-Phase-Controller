@@ -1,5 +1,5 @@
-#include "Board.hpp"
-#include "main.hpp"
+#include "../System/Board.hpp"
+#include "../main.hpp"
 #include <AVR++/ScanningADC.cpp>
 
 #if defined(HOVER_DRIVE) || defined(QUANTUM_DRIVE)

@@ -5,15 +5,15 @@
  * Created on December 10, 2014, 4:11 PM
  */
 
+#include <AVR++/SPI.hpp>
 #include <avr/pgmspace.h>
 
-#include "Board.hpp"
-#include "Debug.hpp"
 #include "MLX90363.hpp"
 
-#include "Clock.hpp"
-#include "ThreePhase/PositionEstimator.hpp"
-#include <AVR++/SPI.hpp>
+#include "../Debug.hpp"
+#include "../System/Board.hpp"
+#include "../System/Clock.hpp"
+#include "../ThreePhase/PositionEstimator.hpp"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;

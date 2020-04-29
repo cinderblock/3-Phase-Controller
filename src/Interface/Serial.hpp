@@ -14,14 +14,14 @@
 #ifndef SERIALINTERFACE_H
 #define SERIALINTERFACE_H
 
-#include <stddef.h>
 #include <AVR++/basicTypes.hpp>
 #include <TripleBuffer.hpp>
 #include <avr/interrupt.h>
+#include <stddef.h>
 
 #include <CRC8.hpp>
 
-#include "Board.hpp"
+#include "System/Board.hpp"
 
 ISR(USART1_RX_vect);
 
@@ -33,6 +33,7 @@ using namespace libCameron;
 class SerialInterface {
   friend void ::USART1_RX_vect();
   inline static void receiveByte() __attribute__((always_inline, hot));
+
 public:
   static void init();
   class Message {
@@ -72,30 +73,27 @@ public:
      * @param b the byte to parse
      */
     void feed(u1 b);
+
   public:
-    inline s2 getCommand() const {
-      return data.command;
-    }
+    inline s2 getCommand() const { return data.command; }
   };
 
 public:
   inline static bool isMessageReady() {
-    if (!incoming.isNewData()) return false;
+    if (!incoming.isNewData())
+      return false;
 
     incoming.reserveNewestBufferForReading();
 
     return (incoming.getReadBuffer()->checkCRC() == 0);
   }
 
-  inline static Message const * getMessage() {
-    return isMessageReady() ? incoming.getReadBuffer() : nullptr;
-  }
+  inline static Message const *getMessage() { return isMessageReady() ? incoming.getReadBuffer() : nullptr; }
 
 private:
   static TripleBuffer<Message, true> incoming;
-
 };
 
-}
+} // namespace ThreePhaseControllerNamespace
 
 #endif /* SERIALINTERFACE_H */

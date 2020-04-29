@@ -11,10 +11,11 @@
  * Created on April 16, 2018, 12:58 PM
  */
 
-#include "FaultTester.hpp"
-#include "AVRClock.hpp"
-#include "Board.hpp"
 #include <avr/io.h>
+
+#include "AVR/Clock.hpp"
+#include "FaultTester.hpp"
+#include "System/Board.hpp"
 
 using namespace ThreePhaseControllerNamespace;
 

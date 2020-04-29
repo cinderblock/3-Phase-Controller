@@ -14,8 +14,8 @@
 
 #include <AVR++/basicTypes.hpp>
 
+#include "CalibrationData/LookupTable.hpp"
 #include "Driver.hpp"
-#include "LookupTable.hpp"
 #include "PositionEstimator.hpp"
 #include <AVR++/Atomic.hpp>
 #include <avr/interrupt.h>

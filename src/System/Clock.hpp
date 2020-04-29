@@ -12,7 +12,7 @@
 
 #include <avr/interrupt.h>
 
-#include "Timer.hpp"
+#include "AVR/Timer.hpp"
 
 namespace ThreePhaseControllerNamespace {
 

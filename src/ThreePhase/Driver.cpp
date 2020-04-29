@@ -7,10 +7,10 @@
 
 #include <avr/pgmspace.h>
 
-#include "AVRClock.hpp"
-#include "Board.hpp"
+#include "AVR/Clock.hpp"
 #include "Debug.hpp"
 #include "Driver.hpp"
+#include "System/Board.hpp"
 
 using namespace AVR;
 using namespace ThreePhaseControllerNamespace;

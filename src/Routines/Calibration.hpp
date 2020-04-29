@@ -14,8 +14,8 @@
 #ifndef CALIBRATION_H
 #define CALIBRATION_H
 
-#include "Config.h"
-#include "ThreePhase/Driver.hpp"
+#include "../Config.h"
+#include "../ThreePhase/Driver.hpp"
 #include <AVR++/basicTypes.hpp>
 
 namespace ThreePhaseControllerNamespace {

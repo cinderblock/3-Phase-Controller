@@ -8,43 +8,45 @@
 cNames =
 
 # List of CPP file basenames to build
-cppNames = main Board Debug Timer Clock
+cppNames = main Debug
+cppNames += System/Board
+cppNames += System/Clock
+
+cppNames += AVR/Timer
 
 cppNames += ThreePhase/Driver
-cppNames += MLX90363 ThreePhase/PositionEstimator ThreePhase/Controller
+cppNames += Sensors/MLX90363 ThreePhase/PositionEstimator ThreePhase/Controller
 
 cppNames += ThreePhase/FaultTester
 
 cppNames += ServoController
 
-cppNames += MLXDebug
+cppNames += Sensors/MLXDebug
 
-cppNames += TripleBuffer-impl BlockBuffer-impl
+cppNames += GenericImplementations/TripleBuffer-impl
+cppNames += GenericImplementations/BlockBuffer-impl
 
-cppNames += Demo
-cppNames += Calibration
+cppNames += Routines/Demo
+cppNames += Routines/Calibration
 
-cppNames += HallWatcher
+cppNames += Sensors/HallWatcher
 
-#cppNames += LookupTable/$(MotorID)
+cppNames += CalibrationData/LookupTable
+cppNames += CalibrationData/idBlock
 
-cppNames += LookupTable
+cppNames += Interface/Serial
 
-cppNames += SerialInterface
+cppNames += Interface/Interface
 
-cppNames += idBlock
+cppNames += Interface/USB/Interface
 
-cppNames += Interface
-
-cppNames += USB/Interface
-
-cppNames += USB/Descriptors
-cNames += USB/Descriptors
+cppNames += Interface/USB/Descriptors
+cNames += Interface/USB/Descriptors
 
 #MotorID = Motor1
 
 AVRpp_SRC = TimerTimeout USART gccGuard FlashCRC
-cppNames += ScanningADC-impl
+cppNames += Sensors/ScanningADC-impl
 
 libCameron_SRC = CRC8 DecPrintFormatter
 

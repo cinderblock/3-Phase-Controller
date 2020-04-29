@@ -4,14 +4,14 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   SerialInterface.cpp
  * Author: Cameron
- * 
+ *
  * Created on March 26, 2018, 6:45 PM
  */
 
-#include "SerialInterface.hpp"
+#include "Serial.hpp"
 
 #include <avr/io.h>
 
@@ -25,9 +25,7 @@ constexpr u1 SerialInterface::Message::header[headerLength];
 
 u1 SerialInterface::Message::pos = 0;
 
-void USART1_RX_vect() {
-  ThreePhaseControllerNamespace::SerialInterface::receiveByte();
-}
+void USART1_RX_vect() { ThreePhaseControllerNamespace::SerialInterface::receiveByte(); }
 
 void SerialInterface::init() {
   // at F_CPU == 16MHz, this is 1MBaud
@@ -49,9 +47,7 @@ void SerialInterface::init() {
   UCSR1B = (1 << TXEN1) | (1 << RXEN1) | (1 << RXCIE1);
 }
 
-void SerialInterface::receiveByte() {
-  incoming.getWriteBuffer()->feed(UDR1);
-}
+void SerialInterface::receiveByte() { incoming.getWriteBuffer()->feed(UDR1); }
 
 void SerialInterface::Message::feed(u1 b) {
   // NOTE: This is a little "hacky". Doesn't handle missalignment well. Could get lost.
@@ -68,7 +64,8 @@ void SerialInterface::Message::feed(u1 b) {
 
   pos++;
 
-  if (pos < headerLength + length) return;
+  if (pos < headerLength + length)
+    return;
 
   pos = 0;
   incoming.markNewestBuffer();

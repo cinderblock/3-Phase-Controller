@@ -8,11 +8,11 @@
 #include <util/atomic.h>
 #include <util/delay.h>
 
+#include "CalibrationData/LookupTable.hpp"
 #include "Config.h"
 #include "Controller.hpp"
 #include "Debug.hpp"
 #include "Driver.hpp"
-#include "LookupTable.hpp"
 #include "PositionEstimator.hpp"
 #include "ServoController.hpp"
 

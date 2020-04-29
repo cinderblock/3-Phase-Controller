@@ -12,10 +12,10 @@
  */
 
 #include "Demo.hpp"
-#include "LookupTable.hpp"
-#include "MLX90363.hpp"
-#include "ThreePhase/Controller.hpp"
-#include "ThreePhase/Driver.hpp"
+#include "../CalibrationData/LookupTable.hpp"
+#include "../Sensors/MLX90363.hpp"
+#include "../ThreePhase/Controller.hpp"
+#include "../ThreePhase/Driver.hpp"
 #include <AVR++/TimerTimeout.hpp>
 #include <avr/eeprom.h>
 #include <util/atomic.h>

@@ -10,8 +10,8 @@
 
 #include <avr/interrupt.h>
 
-#include "Board.hpp"
-#include "Clock.hpp"
+#include "System/Board.hpp"
+#include "System/Clock.hpp"
 #include <AVR++/Atomic.hpp>
 #include <AVR++/IOpin.hpp>
 #include <AVR++/bitTypes.hpp>

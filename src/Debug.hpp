@@ -8,8 +8,8 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#include "Board.hpp"
-#include "DecPrintFormatter.hpp"
+#include "System/Board.hpp"
+#include <DecPrintFormatter.hpp>
 
 namespace ThreePhaseControllerNamespace {
 
