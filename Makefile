@@ -34,6 +34,8 @@ cppNames += SerialInterface
 
 cppNames += idBlock
 
+cppNames += Interface
+
 cppNames += USB/Interface
 
 cppNames += USB/Descriptors
