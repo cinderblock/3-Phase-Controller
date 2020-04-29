@@ -172,6 +172,8 @@ public:
     inline s8 operator-(MultiTurn const &that) const {
       return s8(turns - that.turns) * FULL + commutation - that.commutation;
     }
+
+    inline bool operator<(MultiTurn const &that) const { return (*this - that) < 0; }
   };
 
 protected:
@@ -207,6 +209,21 @@ protected:
 
   static kPID kPosition;
   static kPID kVelocity;
+
+  static struct {
+    struct {
+      ThreePhaseController::Amplitude upper;
+      ThreePhaseController::Amplitude lower;
+    } push;
+    struct {
+      MultiTurn upper;
+      MultiTurn lower;
+    } position;
+    struct {
+      s2 upper;
+      s2 lower;
+    } velocity;
+  } limits;
 
 public:
   inline static void zeroTurns() { position.turns = 0; }
@@ -344,6 +361,37 @@ public:
    * @return
    */
   static inline u2 getVelocity_D() { return kVelocity.kD; }
+
+  static inline void setAmplitudeLimit(const ThreePhaseController::Amplitude &a,
+                                       const ThreePhaseController::Amplitude &b) {
+    if (a < b) {
+      limits.push.upper = b;
+      limits.push.lower = a;
+    } else {
+      limits.push.upper = a;
+      limits.push.lower = b;
+    }
+  }
+
+  static inline void setVelocityLimit(const s2 a, const s2 b) {
+    if (a < b) {
+      limits.velocity.upper = b;
+      limits.velocity.lower = a;
+    } else {
+      limits.velocity.upper = a;
+      limits.velocity.lower = b;
+    }
+  }
+
+  static inline void setPositionLimit(const MultiTurn a, const MultiTurn b) {
+    if (a < b) {
+      limits.position.upper = b;
+      limits.position.lower = a;
+    } else {
+      limits.position.upper = a;
+      limits.position.lower = b;
+    }
+  }
 
   /**
    * Disable servo controller

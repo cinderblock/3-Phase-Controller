@@ -61,6 +61,14 @@ void ServoController::update() {
 
     ThreePhaseController::Amplitude command = ((-positionError * kPosition.kP) >> 16) - ((vel * kPosition.kD) >> 8);
 
+    // TODO: velocity limit
+
+    if (command > limits.push.upper)
+      command = limits.push.upper;
+
+    if (command < limits.push.lower)
+      command = limits.push.lower;
+
     ThreePhaseController::setAmplitudeTarget(command);
   } else {
   }

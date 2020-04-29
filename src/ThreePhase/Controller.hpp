@@ -119,11 +119,44 @@ public:
 
     inline Amplitude(volatile const Amplitude &that) : forward(that.forward), amplitude(that.amplitude) {}
     constexpr inline Amplitude(const Amplitude &that) : forward(that.forward), amplitude(that.amplitude) {}
+    constexpr inline Amplitude(Amplitude &that) : forward(that.forward), amplitude(that.amplitude) {}
 
     inline s4 operator+(s2 const d) volatile {
       s4 ampl = forward ? amplitude : -amplitude;
       ampl += d;
       return ampl;
+    }
+
+    inline bool operator<(Amplitude const &that) const {
+      if (forward) {
+        if (that.forward) {
+          return amplitude < that.amplitude;
+        } else {
+          return false;
+        }
+      } else {
+        if (!that.forward) {
+          return amplitude > that.amplitude;
+        } else {
+          return true;
+        }
+      }
+    }
+
+    inline bool operator>(Amplitude const &that) const {
+      if (forward) {
+        if (that.forward) {
+          return amplitude > that.amplitude;
+        } else {
+          return true;
+        }
+      } else {
+        if (!that.forward) {
+          return amplitude < that.amplitude;
+        } else {
+          return false;
+        }
+      }
     }
   };
 
