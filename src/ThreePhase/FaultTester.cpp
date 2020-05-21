@@ -58,7 +58,7 @@ void ThreePhaseFaultTester::init() {
    * DT4H3 DT4H2 DT4H1 DT4H0 DT4L3 DT4L2 DT4L1 DT4L0
    * 0b  0     0     0     0     0     0     0     0
    */
-  DT4 = 0xFF;
+  DT4 = 0x88;
 
   // Make sure fault protection is off, clear the possible flag, and set PWM mode
   /**
