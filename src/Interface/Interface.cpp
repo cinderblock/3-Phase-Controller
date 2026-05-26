@@ -34,7 +34,7 @@ void ThreePhaseControllerNamespace::handleIncomingCommand(const CommandFormat &d
       return;
 
     if (setState(State::Manual))
-      WDT::start(WDT::T1000ms);
+      WDT::start(WDT::Timeout::T1000ms);
 
     // TODO: Implement body of this "method"
     break;
@@ -44,7 +44,7 @@ void ThreePhaseControllerNamespace::handleIncomingCommand(const CommandFormat &d
       return;
 
     if (setState(State::Manual))
-      WDT::start(WDT::T1000ms);
+      WDT::start(WDT::Timeout::T1000ms);
 
     ThreePhaseDriver::setAmplitude(data.calibrate.amplitude);
     ThreePhaseDriver::advanceTo(data.calibrate.angle);
@@ -55,7 +55,7 @@ void ThreePhaseControllerNamespace::handleIncomingCommand(const CommandFormat &d
       return;
 
     if (setState(State::Normal))
-      WDT::start(WDT::T_120ms);
+      WDT::start(WDT::Timeout::T_120ms);
 
     ServoController::setEnable(false);
     ThreePhaseController::setAmplitudeTarget(data.push.command);
@@ -66,7 +66,7 @@ void ThreePhaseControllerNamespace::handleIncomingCommand(const CommandFormat &d
       return;
 
     if (setState(State::Normal))
-      WDT::start(WDT::T_250ms);
+      WDT::start(WDT::Timeout::T_250ms);
 
     switch (data.servo.mode) {
     default:
@@ -108,7 +108,7 @@ void ThreePhaseControllerNamespace::handleIncomingCommand(const CommandFormat &d
 
   case CommandMode::SynchronousDrive:
     if (setState(State::Manual))
-      WDT::start(WDT::T_500ms);
+      WDT::start(WDT::Timeout::T_500ms);
 
     ThreePhaseControllerNamespace::setSynchronous(data.synchronous.velocity);
     ThreePhaseDriver::setAmplitude(data.synchronous.amplitude);
