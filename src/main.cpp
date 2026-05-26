@@ -8,6 +8,7 @@
 #include <AVR++/FlashData.hpp>
 #include <AVR++/WDT.hpp>
 #include <LUFA/Drivers/USB/USB.h>
+#include <avr/wdt.h>
 #include <util/atomic.h>
 #include <util/delay.h>
 
