@@ -1,4 +1,4 @@
-name: Build firmware
+name: Build
 
 on:
   push:
@@ -22,9 +22,9 @@ jobs:
 
       - name: Toolchain versions
         run: |
-          avr-gcc --version
-          avr-g++ --version
-          avr-libc-dev -v 2>/dev/null || dpkg -s avr-libc | grep '^Version'
+          avr-gcc --version | head -1
+          avr-g++ --version | head -1
+          dpkg -s avr-libc | grep '^Version'
           make --version | head -1
 
       - name: make build
