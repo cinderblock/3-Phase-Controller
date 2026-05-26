@@ -1,0 +1,49 @@
+name: Build firmware
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Install AVR toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gcc-avr avr-libc binutils-avr make
+
+      - name: Toolchain versions
+        run: |
+          avr-gcc --version
+          avr-g++ --version
+          avr-libc-dev -v 2>/dev/null || dpkg -s avr-libc | grep '^Version'
+          make --version | head -1
+
+      - name: make build
+        run: make build
+
+      - name: make build-lss
+        run: make build-lss
+
+      - name: make size
+        run: make size
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: controller-firmware
+          path: |
+            out/controller.elf
+            out/controller.hex
+            out/controller.lss
+            out/controller.map
+            out/controller.sym
+          if-no-files-found: warn
