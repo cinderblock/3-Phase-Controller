@@ -63,6 +63,9 @@ INCLUDES = src
 # Make compilation fail on first error
 Build_Flags_Extra = -Wfatal-errors
 
+# AVR++ uses C++14+ features (multi-statement constexpr, etc.)
+Build_LanguageStandard_GXX = gnu++17
+
 TARGET = controller
 
 MCU = atmega32u4
