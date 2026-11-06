@@ -1,5 +1,16 @@
 # Firmware for 3 Phase Motor Driver
 
+> ## Retired
+>
+> This project is retired and the repository is archived, read-only.
+>
+> The hardware it drives — the Smooth Control / Quantum Drive / Hover Drive
+> motors and their AVR controller — has been superseded by a new generation
+> built on STM32G4 and CAN-FD. That work is not public.
+>
+> The code here is preserved as-is and still builds; it is simply no longer
+> maintained. Last substantive work: May 2026.
+
 3 Phase motor controller driver firmware.
 
 ## Current Implementation
